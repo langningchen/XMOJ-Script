@@ -1947,7 +1947,7 @@
                 CopyButton.innerText = "复制代码";
                 CopyButton.style.marginBottom = "10px";
                 CopyButton.addEventListener("click", () => {
-                    CopyToClipboard(document.querySelector(".syntaxhighlighter > table > tbody > tr > td.code > div").innerText);
+                    CopyToClipboard(document.querySelector(".syntaxhighlighter > table > tbody > tr > td.code > div").innerText.replaceAll(" ", " "));
                     CopyButton.innerText = "复制成功";
                     setTimeout(() => {
                         CopyButton.innerText = "复制代码";
