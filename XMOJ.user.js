@@ -237,39 +237,39 @@
     let Style = document.createElement("style");
     document.body.appendChild(Style);
     Style.innerHTML = `
-        .status_y:hover {
-            box-shadow: #52c41a 1px 1px 10px 0px !important;
-        }
-        .status_n:hover {
-            box-shadow: #fe4c61 1px 1px 10px 0px !important;
-        }
-        .test-case {
-            border-radius: 5px !important;
-        }
-        .test-case:hover {
-            box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 20px 3px !important;
-        }
-        .software_list {
-            width: unset !important;
-        }
-        .software_item {
-            margin: 5px 10px !important;
-        }`
+            .status_y:hover {
+                box-shadow: #52c41a 1px 1px 10px 0px !important;
+            }
+            .status_n:hover {
+                box-shadow: #fe4c61 1px 1px 10px 0px !important;
+            }
+            .test-case {
+                border-radius: 5px !important;
+            }
+            .test-case:hover {
+                box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 20px 3px !important;
+            }
+            .software_list {
+                width: unset !important;
+            }
+            .software_item {
+                margin: 5px 10px !important;
+            }`
     if (UtilityEnabled("AddAnimation")) {
         Style.innerHTML += `.status, .test-case {
-            transition: 0.5s !important;
-        }`;
+                transition: 0.5s !important;
+            }`;
     }
     if (UtilityEnabled("AddColorText")) {
         Style.innerHTML += `.red {
-            color: red !important;
-        }
-        .green {
-            color: green !important;
-        }
-        .blue {
-            color: blue !important;
-        }`;
+                color: red !important;
+            }
+            .green {
+                color: green !important;
+            }
+            .blue {
+                color: blue !important;
+            }`;
     }
 
     if (location.pathname == "/index.php" || location.pathname == "/") {
@@ -356,6 +356,7 @@
                         { "ID": "AutoRefresh", "Type": "A", "Name": "比赛列表、比赛排名界面自动刷新" },
                         { "ID": "AutoCountdown", "Type": "A", "Name": "比赛列表等界面的时间自动倒计时" },
                         { "ID": "DownloadPlayback", "Type": "A", "Name": "回放视频增加下载功能" },
+                        { "ID": "ImproveACRate", "Type": "A", "Name": "自动提交签到提以提高AC率" },
                         { "ID": "AutoO2", "Type": "F", "Name": "代码提交界面自动选择O2优化" },
                         {
                             "ID": "Beautify", "Type": "F", "Name": "美化界面", "Children": [
@@ -485,11 +486,13 @@
             let Temp = document.querySelector("body > div > div > center").childNodes[2].data.trim();
             let IOFilename = Temp.substring(0, Temp.length - 3);
             let SearchParams = new URLSearchParams(location.search);
+            let PID = 0;
             if (SearchParams.get("id") != null) {
-                localStorage.setItem("UserScript-Problem-" + SearchParams.get("id") + "-IOFilename", IOFilename);
+                PID = SearchParams.get("id");
             } else if (SearchParams.get("cid") != null && SearchParams.get("pid") != null) {
-                localStorage.setItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + SearchParams.get("pid") + "-IOFilename", IOFilename);
+                PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + SearchParams.get("pid") + "-PID");
             }
+            localStorage.setItem("UserScript-Problem-" + PID + "-IOFilename", IOFilename);
         }
 
         if (UtilityEnabled("CopyMD")) {
@@ -521,40 +524,40 @@
         if (new URL(location.href).searchParams.get("ByUserScript") == null) {
             if (UtilityEnabled("NewBootstrap")) {
                 document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
-        <input class="form-control" type="text" size="4" name="user_id" value="` + document.getElementById("profile").innerText + `" style="display: none;">
-        <div class="col-md-1">
-            <label for="problem_id" class="form-label">题目编号</label>
-            <input type="text" class="form-control" id="problem_id" name="problem_id" size="4">
-        </div>
-        <div class="col-md-1">
-            <label for="language" class="form-label">语言</label>
-            <select id="language" name="language" class="form-select">
-                <option value="-1" selected="">全部</option>
-                <option value="0">C</option>
-                <option value="1">C++</option>
-                <option value="2">Pascal</option>
-            </select>
-        </div><div class="col-md-1">
-            <label for="jresult" class="form-label">结果</label>
-            <select id="jresult" name="jresult" class="form-select">
-                <option value="-1" selected="">全部</option>
-                <option value="4">正确</option>
-                <option value="5">格式错误</option>
-                <option value="6">答案错误</option>
-                <option value="7">时间超限</option>
-                <option value="8">内存超限</option>
-                <option value="9">输出超限</option>
-                <option value="10">运行错误</option>
-                <option value="11">编译错误</option>
-                <option value="0">等待</option>
-                <option value="1">等待重判</option>
-                <option value="2">编译中</option>
-                <option value="3">运行并评判</option>
-            </select>
-        </div>
-        <div class="col-md-1">
-            <button type="submit" class="btn btn-primary">查找</button>
-        </div><div id="csrf"></div></form>`;
+            <input class="form-control" type="text" size="4" name="user_id" value="` + document.getElementById("profile").innerText + `" style="display: none;">
+            <div class="col-md-1">
+                <label for="problem_id" class="form-label">题目编号</label>
+                <input type="text" class="form-control" id="problem_id" name="problem_id" size="4">
+            </div>
+            <div class="col-md-1">
+                <label for="language" class="form-label">语言</label>
+                <select id="language" name="language" class="form-select">
+                    <option value="-1" selected="">全部</option>
+                    <option value="0">C</option>
+                    <option value="1">C++</option>
+                    <option value="2">Pascal</option>
+                </select>
+            </div><div class="col-md-1">
+                <label for="jresult" class="form-label">结果</label>
+                <select id="jresult" name="jresult" class="form-select">
+                    <option value="-1" selected="">全部</option>
+                    <option value="4">正确</option>
+                    <option value="5">格式错误</option>
+                    <option value="6">答案错误</option>
+                    <option value="7">时间超限</option>
+                    <option value="8">内存超限</option>
+                    <option value="9">输出超限</option>
+                    <option value="10">运行错误</option>
+                    <option value="11">编译错误</option>
+                    <option value="0">等待</option>
+                    <option value="1">等待重判</option>
+                    <option value="2">编译中</option>
+                    <option value="3">运行并评判</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary">查找</button>
+            </div><div id="csrf"></div></form>`;
             }
 
             if (UtilityEnabled("GetOthersSample")) {
@@ -567,6 +570,52 @@
                 };
                 GetOthersSampleButton.style.marginBottom = GetOthersSampleButton.style.marginRight = "7px";
                 GetOthersSampleButton.style.marginRight = "7px";
+            }
+            if (UtilityEnabled("ImproveACRate")) {
+                let ImproveACRateButton = document.createElement("button");
+                document.querySelector("body > div.container > div > div.input-append").appendChild(ImproveACRateButton);
+                ImproveACRateButton.className = "btn btn-outline-secondary";
+                ImproveACRateButton.innerText = "提高AC率";
+                await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.getElementById("profile").innerText)
+                    .then((Response) => {
+                        return Response.text();
+                    }).then((Response) => {
+                        let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                        ImproveACRateButton.innerText += "(" + (parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(4) > td:nth-child(2)").innerText) / parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(3) > td:nth-child(2)").innerText) * 100).toFixed(2) + "%)";
+                    });
+                ImproveACRateButton.onclick = async () => {
+                    ImproveACRateButton.disabled = true;
+                    await fetch("http://www.xmoj.tech/csrf.php")
+                        .then((Response) => {
+                            return Response.text();
+                        }).then((Response) => {
+                            CSRF = new DOMParser().parseFromString(Response, "text/html").querySelector("input[name=csrf]").value;
+                        });
+                    let Count = 0;
+                    const SubmitTimes = 3;
+                    let SubmitInterval = setInterval(async () => {
+                        if (Count >= SubmitTimes) {
+                            clearInterval(SubmitInterval);
+                            location.reload();
+                            return;
+                        }
+                        Count++;
+                        ImproveACRateButton.innerText = "正在提交 (" + Count + "/" + SubmitTimes + ")";
+                        await fetch("http://www.xmoj.tech/submit.php", {
+                            "headers": {
+                                "content-type": "application/x-www-form-urlencoded"
+                            },
+                            "referrer": "http://www.xmoj.tech/submitpage.php?id=2298",
+                            "method": "POST",
+                            "body": "id=2298&" +
+                                "language=1&" +
+                                "source=%23include+%3Cbits%2Fstdc%2B%2B.h%3E%0D%0Ausing+namespace+std%3B%0D%0Aint+main%28%29%0D%0A%7B%0D%0A++++printf%28%220%5Cn%22%29%3B%0D%0A++++return+0%3B%0D%0A%7D%0D%0A&" +
+                                "enable_O2=on"
+                        });
+                    }, 1000);
+                };
+                ImproveACRateButton.style.marginBottom = ImproveACRateButton.style.marginRight = "7px";
+                ImproveACRateButton.style.marginRight = "7px";
             }
             if (UtilityEnabled("CompareSource")) {
                 let CompareButton = document.createElement("button");
@@ -674,48 +723,57 @@
         }
         else if (UtilityEnabled("GetOthersSample")) {
             document.querySelector(".jumbotron").innerHTML = `<div class="jumbotron">
-    <div class="row g-3 align-items-center mb-2">
-      <div class="col-auto">
-        <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
-      </div>
-      <div class="col-auto">
-        <input type="text" id="NameInput" class="form-control" value="` + document.getElementById("profile").innerText + `">
-      </div>
-    </div>
-    <div class="row g-3 align-items-center mb-2">
-      <div class="col-auto">
-        <label for="DateInput" class="col-form-label">测试点获取的日期</label>
-      </div>
-      <div class="col-auto">
-        <input type="date" id="DateInput" class="form-control" value="` + new Date().toISOString().slice(0, 10) + `">
-      </div>
-    </div>
-    <div class="row g-3 align-items-center mb-2">
-      <div class="col-auto">
-        <label for="ProblemInput" class="col-form-label">获取测试点的提交ID</label>
-      </div>
-      <div class="col-auto">
-        <input type="number" id="ProblemInput" class="form-control">
-      </div>
-    </div>
-    <div class="row g-3 align-items-center mb-2">
-      <div class="col-auto">
-        <label for="SampleInput" class="col-form-label">获取的测试点编号</label>
-      </div>
-      <div class="col-auto">
-        <input type="number" id="SampleInput" class="form-control">
-      </div>
-    </div>
-    <button type="submit" class="btn btn-primary mb-3" id="GetSample">获取</button>
-    <div role="alert" id="GetSampleAlert" style="display: none"></div>
-</div>`;
+        <div class="row g-3 align-items-center mb-2">
+        <div class="col-auto">
+            <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
+        </div>
+        <div class="col-auto">
+            <input type="text" id="NameInput" class="form-control" value="` + document.getElementById("profile").innerText + `">
+        </div>
+        </div>
+        <div class="row g-3 align-items-center mb-2">
+        <div class="col-auto">
+            <label for="DateInput" class="col-form-label">测试点获取的日期</label>
+        </div>
+        <div class="col-auto">
+            <input type="date" id="DateInput" class="form-control" value="` + new Date().toISOString().slice(0, 10) + `">
+        </div>
+        </div>
+        <div class="row g-3 align-items-center mb-2">
+        <div class="col-auto">
+            <label for="ProblemInput" class="col-form-label">获取测试点的题目ID</label>
+        </div>
+        <div class="col-auto">
+            <input type="number" id="ProblemInput" class="form-control">
+        </div>
+        </div>
+        <div class="row g-3 align-items-center mb-2">
+        <div class="col-auto">
+            <label for="SID" class="col-form-label">获取测试点的提交ID</label>
+        </div>
+        <div class="col-auto">
+            <input type="number" id="SID" class="form-control">
+        </div>
+        </div>
+        <div class="row g-3 align-items-center mb-2">
+        <div class="col-auto">
+            <label for="SampleInput" class="col-form-label">获取的测试点编号</label>
+        </div>
+        <div class="col-auto">
+            <input type="number" id="SampleInput" class="form-control">
+        </div>
+        </div>
+        <button type="submit" class="btn btn-primary mb-3" id="GetSample">获取</button>
+        <div role="alert" id="GetSampleAlert" style="display: none"></div>
+    </div>`;
             document.getElementById("GetSample").onclick = async () => {
                 document.getElementById("GetSampleAlert").style.display = "none";
                 let Name = document.getElementById("NameInput").value;
                 let DateInput = document.getElementById("DateInput").value.replaceAll("-", "");
-                let Problem = document.getElementById("ProblemInput").value;
+                let ProblemID = document.getElementById("ProblemInput").value;
+                let SID = document.getElementById("SID").value;
                 let Sample = document.getElementById("SampleInput").value;
-                if (Name == "" || DateInput == "" || Problem == "" || Sample == "") {
+                if (Name == "" || DateInput == "" || SID == "" || Sample == "") {
                     document.getElementById("GetSampleAlert").classList = "alert alert-danger";
                     document.getElementById("GetSampleAlert").innerText = "请填写完整信息";
                     document.getElementById("GetSampleAlert").style.display = "block";
@@ -737,7 +795,11 @@
                             document.getElementById("GetSampleAlert").style.display = "block";
                             return;
                         }
-                        await fetch("http://www.xmoj.tech/data_down/" + DateInput + "/" + Name + "_" + Problem + "_" + Sample + ".zip")
+                        await fetch("http://www.xmoj.tech/data_down/" + DateInput + "/" + Name + "_" + SID + "_" +
+                            (localStorage.getItem("UserScript-Problem-" + ProblemID + "-IOFilename") == null ?
+                                "" :
+                                localStorage.getItem("UserScript-Problem-" + ProblemID + "-IOFilename"))
+                            + Sample + ".zip")
                             .then((Response) => {
                                 if (Response.status == 404) {
                                     document.getElementById("GetSampleAlert").classList = "alert alert-danger";
@@ -756,7 +818,7 @@
                                 document.getElementById("GetSampleAlert").style.display = "block";
                                 let a = document.createElement("a");
                                 a.href = window.URL.createObjectURL(Response);
-                                a.download = Name + "_" + Problem + "_" + Sample + ".zip";
+                                a.download = Name + "_" + SID + "_" + Sample + ".zip";
                                 a.click();
                             });
                     });
@@ -1182,7 +1244,7 @@
                                     "chensiru": "陈斯如", "chenzerui": "陈泽睿", "chenzecong": "陈泽聪", "chenlangning": "陈朗宁", "taoxianyu": "陶羡榆",
                                     "suiruochen": "隋若宸", "leijiahan": "雷家涵", "hanshujian": "韩书简", "guyuchen": "顾毓辰", "gaochenming": "高晨茗",
                                     "huangwei": "黄唯", "huangruina": "黄睿纳", "huangmingxuan": "黄铭宣", "liaoyanxu": "廖彦旭", "youzhouhang": "尤周杭",
-                                    "putong": "蒲通", "xieliren": "谢立仁"
+                                    "putong": "蒲通", "xieliren": "谢立仁", "lianzhongzhe": "连中哲"
                                 };
                                 NameCell.innerText = (Names[RowData.Username] == undefined ? "" : Names[RowData.Username]);
 
@@ -1248,8 +1310,11 @@
         document.querySelector("body > div.container > div > center").style.paddingBottom = "10px";
         document.querySelector("body > div.container > div > center > a").style.display = "none";
     } else if (location.pathname == "/contestrank-correct.php") {
-        if (document.querySelector("body > div > div").children[1].innerText == "") {
-            document.querySelector("body > div.container > div").innerHTML = "<center><h3>比赛排名</h3><table id=\"rank\">比赛暂时还没有排名</table></center>";
+        if (document.querySelector("#rank") == null) {
+            document.querySelector("body > div > div").innerHTML = "<center><h3>比赛排名</h3><a></a><table id=\"rank\"></table>";
+        }
+        if (document.querySelector("body > div > div > center > h3").innerText == "比赛排名") {
+            document.querySelector("#rank").innerText = "比赛暂时还没有排名";
         }
         else {
             if (UtilityEnabled("ResetType")) {
@@ -1284,7 +1349,6 @@
                             Temp[i].cells[1].children[0].target = "_blank";
                             Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                             Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;
-
                         }
                         document.querySelector("#rank > tbody").innerHTML = ParsedDocument.querySelector("#rank > tbody").innerHTML;
                     });
@@ -1363,11 +1427,15 @@
             eAL.toggle("source");
             let Source = document.getElementById("source").value;
             let SearchParams = new URL(location.href).searchParams;
-            let IOFilename = SearchParams.get("id") == null ?
-                ((SearchParams.get("cid") != null && SearchParams.get("pid") != null) ?
-                    localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + SearchParams.get("pid") + "-IOFilename")
-                    : null)
-                : localStorage.getItem("UserScript-Problem-" + SearchParams.get("id") + "-IOFilename");
+            let PID = 0;
+            let IOFilename = "";
+            if (SearchParams.get("cid") != null && SearchParams.get("pid") != null) {
+                PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + SearchParams.get("pid") + "-PID")
+            }
+            else {
+                PID = SearchParams.get("id");
+            }
+            IOFilename = localStorage.getItem("UserScript-Problem-" + PID + "-IOFilename");
             if (UtilityEnabled("IOFile") && IOFilename != null) {
                 if (Source.indexOf(IOFilename) == -1) {
                     PassCheck.style.display = "";
@@ -1538,7 +1606,24 @@
                 Temp[i].remove();
             }
         }
-        eval(document.querySelector("body > script:nth-child(6)").innerHTML);
+        eval(document.querySelector("body > script:nth-child(5)").innerHTML);
+        document.querySelector("#statics > caption").remove();
+        document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").innerText = "AC题目列表";
+
+        let Temp = document.querySelector("#statics > tbody").children;
+        for (let i = 0; i < Temp.length; i++) {
+            if (Temp[i].children[0] != undefined) {
+                if (Temp[i].children[0].innerText == "Statistics") {
+                    Temp[i].children[0].innerText = "统计";
+                }
+                else if (Temp[i].children[0].innerText == "Email:") {
+                    Temp[i].children[0].innerText = "电子邮箱";
+                }
+                else {
+                    Temp[i].children[1].innerText = Temp[i].children[1].innerText;
+                }
+            }
+        }
     } else if (location.pathname == "/conteststatistics.php") {
         document.querySelector("body > div > div > center > h3").innerText = "比赛统计";
         if (UtilityEnabled("ResetType")) {
@@ -1546,21 +1631,25 @@
             for (let i = 0; i < Temp.length; i++) {
                 Temp[i].remove();
             }
-            eval(document.querySelector("body > div.container > div > center > table:nth-child(4) > script:nth-child(7)").innerHTML);
+            eval(document.querySelector("body > div.container > div > center > table:nth-child(4) > script:nth-child(6)").innerHTML);
             document.querySelector("#cs > thead > tr > th:nth-child(1)").innerText = "题目编号";
             document.querySelector("#cs > thead > tr > th:nth-child(10)").remove();
             document.querySelector("#cs > thead > tr > th:nth-child(11)").innerText = "总和";
-            document.querySelector("#cs > thead > tr > th:nth-child(14)").remove();
+            document.querySelector("#cs > thead > tr > th:nth-child(12)").remove();
+            document.querySelector("#cs > thead > tr > th:nth-child(12)").remove();
+            document.querySelector("#cs > thead > tr > th:nth-child(12)").remove();
             document.querySelector("#cs > tbody > tr:last-child > td").innerText = "总和";
+            TidyTable(document.getElementById("cs"));
             Temp = document.querySelector("#cs > tbody").children;
             for (let i = 0; i < Temp.length; i++) {
-                let CurrentRow = Temp[i].children;
-                for (let j = 0; j < CurrentRow.length; j++) {
-                    if (j == 9 || j == 13) {
-                        CurrentRow[j].remove();
-                    }
-                    else if (CurrentRow[j].innerText == "") {
-                        CurrentRow[j].innerText = "0";
+                let CurrentRowChildren = Temp[i].children;
+                CurrentRowChildren[9].remove();
+                CurrentRowChildren[11].remove();
+                CurrentRowChildren[11].remove();
+                CurrentRowChildren[11].remove();
+                for (let j = 0; j < CurrentRowChildren.length; j++) {
+                    if (CurrentRowChildren[j].innerText == "") {
+                        CurrentRowChildren[j].innerText = "0";
                     }
                 }
             }
@@ -1612,31 +1701,31 @@
     } else if (location.pathname == "/loginpage.php") {
         if (UtilityEnabled("NewBootstrap")) {
             document.querySelector("#login").innerHTML = `<form id="login" action="login.php" method="post">
-    <div class="row g-3 align-items-center mb-3">
-        <div class="col-auto">
-        <label for="user_id" class="col-form-label">用户名（学号）</label>
+        <div class="row g-3 align-items-center mb-3">
+            <div class="col-auto">
+            <label for="user_id" class="col-form-label">用户名（学号）</label>
+            </div>
+            <div class="col-auto">
+            <input type="text" id="user_id" name="user_id" class="form-control">
+            </div>
         </div>
-        <div class="col-auto">
-        <input type="text" id="user_id" name="user_id" class="form-control">
+        <div class="row g-3 align-items-center mb-3">
+            <div class="col-auto">
+            <label for="password" class="col-form-label">密码</label>
+            </div>
+            <div class="col-auto">
+            <input type="password" id="password" name="password" class="form-control">
+            </div>
         </div>
-    </div>
-    <div class="row g-3 align-items-center mb-3">
-        <div class="col-auto">
-        <label for="password" class="col-form-label">密码</label>
+        <div class="row g-3 align-items-center mb-3">
+            <div class="col-auto">
+            <button name="submit" type="button" class="btn btn-primary">登录</button>
+            </div>
+            <div class="col-auto">
+            <a class="btn btn-warning" href="lostpassword.php">忘记密码</a>
+            </div>
         </div>
-        <div class="col-auto">
-        <input type="password" id="password" name="password" class="form-control">
-        </div>
-    </div>
-    <div class="row g-3 align-items-center mb-3">
-        <div class="col-auto">
-        <button name="submit" type="button" class="btn btn-primary">登录</button>
-        </div>
-        <div class="col-auto">
-        <a class="btn btn-warning" href="lostpassword.php">忘记密码</a>
-        </div>
-    </div>
-    </form>`;
+        </form>`;
         }
         let ErrorText = document.createElement("div");
         ErrorText.style.color = "red";
@@ -1881,6 +1970,54 @@
                     "</li>";
             }
         }
+    } else if (location.pathname == "/problemstatus.php") {
+        document.querySelector("body > div > div > center").insertBefore(document.querySelector("#statics"), document.querySelector("body > div > div > center > table"));
+        document.querySelector("body > div > div > center").insertBefore(document.querySelector("#problemstatus"), document.querySelector("body > div > div > center > table"));
+
+        document.querySelector("body > div > div > center > table:nth-child(3)").remove();
+        let Temp = document.querySelector("#statics").rows;
+        for (let i = 0; i < Temp.length; i++) {
+            Temp[i].removeAttribute("class");
+            if (Temp[i].children.length == 2) {
+                Temp[i].children[1].innerHTML = Temp[i].children[1].innerText;
+            }
+        }
+
+        document.querySelector("#problemstatus > thead > tr").innerHTML =
+            document.querySelector("#problemstatus > thead > tr").innerHTML.replaceAll("td", "th");
+        document.querySelector("#problemstatus > thead > tr > th:nth-child(2)").innerText = "运行编号";
+        document.querySelector("#problemstatus > thead > tr > th:nth-child(4)").remove();
+        document.querySelector("#problemstatus > thead > tr > th:nth-child(4)").remove();
+        document.querySelector("#problemstatus > thead > tr > th:nth-child(4)").remove();
+        document.querySelector("#problemstatus > thead > tr > th:nth-child(4)").remove();
+        Temp = document.querySelector("#problemstatus > thead > tr").children;
+        for (let i = 0; i < Temp.length; i++) {
+            Temp[i].removeAttribute("class");
+        }
+        Temp = document.querySelector("#problemstatus > tbody").children;
+        for (let i = 0; i < Temp.length; i++) {
+            if (Temp[i].children[5].children[0] != null) {
+                Temp[i].children[1].innerHTML = `<a href="` + Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText + `</a>`;
+            }
+            Temp[i].children[3].remove();
+            Temp[i].children[3].remove();
+            Temp[i].children[3].remove();
+            Temp[i].children[3].remove();
+        }
+
+
+        let CurrentPage = parseInt(new URLSearchParams(location.search).get("page") || 1);
+        let PID = new URLSearchParams(location.search).get("id");
+        let Pagination = `<nav class="center"><ul class="pagination justify-content-center">`;
+        if (CurrentPage != 1) {
+            Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=1" class="page-link">&lt;&lt;</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1) + `</a></li>`;
+        }
+        Pagination += `<li class="active page-item"><a href="problemstatus.php?id=` + PID + `&page=` + CurrentPage + `" class="page-link">` + CurrentPage + `</a></li>`;
+        if (document.querySelector("#problemstatus > tbody").children != null && document.querySelector("#problemstatus > tbody").children.length == 20) {
+            Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">` + (CurrentPage + 1) + `</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">&gt;&gt;</a></li>`;
+        }
+        Pagination += `</ul></nav>`;
+        document.querySelector("body > div > div > center").innerHTML += Pagination;
     }
 
     if (UtilityEnabled("RemoveUseless")) {
