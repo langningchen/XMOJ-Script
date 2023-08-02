@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.1
+// @version      0.1.1
 // @description  Test
 // @author       @langningchen
 // @match        http://www.xmoj.tech/*
@@ -9,6 +9,12 @@
 // @require      https://raw.githubusercontent.com/drudru/ansi_up/master/ansi_up.js
 // @grant        GM_registerMenuCommand
 // ==/UserScript==
+
+/**
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 (async () => {
     let SecondsToString = (InputSeconds) => {
@@ -109,6 +115,26 @@
         }
         location.reload();
     });
+
+    await fetch("https://langningchen.github.io/XMOJ/Version.html")
+        .then((Response) => {
+            return Response.text();
+        })
+        .then((Response) => {
+            let Version = GM_info.script.version;
+            let LatestVersion = Response.trim();
+            if (Version <= LatestVersion) {
+                location.href = "https://langningchen.github.io/XMOJ/Update.html";
+            }
+        });
+
+    await fetch("https://langningchen.github.io/XMOJ/AddonScript.js")
+        .then((Response) => {
+            return Response.text();
+        })
+        .then((Response) => {
+            eval(Response);
+        });
 
     if (localStorage.getItem("UserScript-Debug") == null) {
         window.onkeydown = (Event) => {
@@ -415,7 +441,7 @@
                     let FeedbackCardLink = document.createElement("a");
                     FeedbackCardLink.className = "card-link";
                     FeedbackCardLink.innerText = "GitHub";
-                    FeedbackCardLink.href = "https://github.com/langningchen/XMOJ-UserScript";
+                    FeedbackCardLink.href = "https://github.com/langningchen/XMOJ-Script";
                     FeedbackCardBody.appendChild(FeedbackCardLink);
                 }
                 FeedbackCard.appendChild(FeedbackCardBody);
