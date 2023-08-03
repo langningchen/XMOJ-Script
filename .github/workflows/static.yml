@@ -60,8 +60,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./XMOJ.user.min.js
-          asset_name: XMOJ.user.min.js
+          asset_path: ./XMOJ.min.user.js
+          asset_name: XMOJ.min.user.js
           asset_content_type: text/plain
       - name: Push new version
         run: |
