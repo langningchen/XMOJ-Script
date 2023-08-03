@@ -2223,7 +2223,7 @@
             let Version = GM_info.script.version;
             let LatestVersion = Response.trim();
             if (Version < LatestVersion) {
-                location.href = "https://langningchen.github.io/XMOJ-Script/XMOJ.user.js";
+                location.href = "https://langningchen.github.io/XMOJ-Script/XMOJ.min.user.js";
             }
         });
 
