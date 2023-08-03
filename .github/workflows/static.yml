@@ -11,7 +11,57 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get Version
+        id: get_version
+        run: |
+          VersionString=$(grep -oP '(?<=@version)\s+\d+\.\d+\.\d+' ./XMOJ.user.js | tr -d '[:space:]')
+          MainVersion=$(echo $VersionString | cut -d'.' -f1)
+          MinorVersion=$(echo $VersionString | cut -d'.' -f2)
+          PatchVersion=$(echo $VersionString | cut -d'.' -f3)
+          PatchVersion=$((PatchVersion + 1))
+          echo version=$MainVersion.$MinorVersion.$PatchVersion >> $GITHUB_OUTPUT
+      - name: Update Version
+        run: |
+          echo ${{ steps.get_version.outputs.version }} > ./Version.html
+          grep -Pzo '(?<=@version)\s+\d+\.\d+\.\d+' ./XMOJ.user.js | tr -d '[:space:]' | xargs -0 -I {} sed -i 's/{}/${{ steps.get_version.outputs.version }}/g' ./XMOJ.user.js
+      # - name: Encrypt the JS File using Google Closure Compiler
+      #   run: |
+      #     curl -X POST -s --data-urlencode "input@./XMOJ.user.js" https://closure-compiler.appspot.com/compile -d output_format=json -d output_info=compiled_code -d output_info=warnings -d output_info=errors -d output_info=statistics -d compilation_level=SIMPLE_OPTIMIZATIONS | jq -r '.compiledCode' > ./XMOJ.user.js
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: ${{ steps.get_version.outputs.version }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./XMOJ.user.js
+          asset_name: XMOJ.user.js
+          asset_content_type: text/plain
+      # Push the new version to the repo
+      - name: Push new version
+        run: |
+          git config --global user.name "langningchen"
+          git config --global user.email "jpxx_chenlangning@outlook.com"
+          git add .
+          git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
+          git push
   deploy:
+    needs: release
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
