@@ -33,10 +33,13 @@ jobs:
         run: |
           echo ${{ steps.get_version.outputs.version }} > ./Version.html
           grep -Pzo '(?<=@version)\s+\d+\.\d+\.\d+' ./XMOJ.user.js | tr -d '[:space:]' | xargs -0 -I {} sed -i 's/{}/${{ steps.get_version.outputs.version }}/g' ./XMOJ.user.js
-      - name: Unglify JS
+      - name: Obfuse JS
         run: |
-          npm install uglify-js -g
-          uglifyjs XMOJ.user.js -c -m --mangle-props --comments "all" -o XMOJ.min.user.js --source-map
+          npm install javascript-obfuscator -g
+          javascript-obfuscator XMOJ.user.js --output XMOJ.min.tmp.user.js --compact true --control-flow-flattening false --dead-code-injection false --debug-protection false --debug-protection-interval 0 --disable-console-output false --identifier-names-generator hexadecimal --log false --numbers-to-expressions false --rename-globals false --self-defending false --simplify true --split-strings false --string-array true --string-array-calls-transform false --string-array-calls-transform-threshold 0.5 --string-array-encoding rc4 --string-array-index-shift true --string-array-rotate true --string-array-shuffle true --string-array-wrappers-count 1 --string-array-wrappers-chained-calls true --string-array-wrappers-parameters-max-count 2 --string-array-wrappers-type variable --string-array-threshold 0.75 --unicode-escape-sequence false
+          sed -n '/\/\/ Program Start/q;p' XMOJ.user.js > XMOJ.min.user.js
+          cat XMOJ.min.tmp.user.js >> XMOJ.min.user.js
+          rm XMOJ.min.tmp.user.js
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1

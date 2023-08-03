@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Program Start
 let SecondsToString = (InputSeconds) => {
     let Hours = Math.floor(InputSeconds / 3600);
     let Minutes = Math.floor((InputSeconds % 3600) / 60);
@@ -288,140 +289,130 @@ if (document.querySelector("#navbar") != null) {
             let UtilitiesCard = document.createElement("div");
             UtilitiesCard.classList.add("card");
             UtilitiesCard.classList.add("mb-3");
-            {
-                let UtilitiesCardHeader = document.createElement("div");
-                UtilitiesCardHeader.classList.add("card-header");
-                UtilitiesCardHeader.innerText = "功能列表";
-                UtilitiesCard.appendChild(UtilitiesCardHeader);
-                let UtilitiesCardBody = document.createElement("div");
-                UtilitiesCardBody.classList.add("card-body");
-                {
-                    const CreateList = (Data) => {
-                        let List = document.createElement("ul");
-                        List.classList.add("list-group");
-                        for (let i = 0; i < Data.length; i++) {
-                            let Row = document.createElement("li");
-                            Row.classList.add("list-group-item");
-                            if (Data[i].Type == "A") {
-                                Row.classList.add("list-group-item-success");
-                            }
-                            else if (Data[i].Type == "F") {
-                                Row.classList.add("list-group-item-warning");
-                            }
-                            else if (Data[i].Type == "D") {
-                                Row.classList.add("list-group-item-danger");
-                            }
-                            {
-                                if (Data[i].Children == undefined) {
-                                    let CheckBox = document.createElement("input");
-                                    CheckBox.classList.add("form-check-input");
-                                    CheckBox.classList.add("me-1");
-                                    CheckBox.type = "checkbox";
-                                    CheckBox.id = Data[i].ID;
-                                    if (localStorage.getItem("UserScript-Setting-" + Data[i].ID) == null) {
-                                        localStorage.setItem("UserScript-Setting-" + Data[i].ID, "true");
-                                    }
-                                    if (localStorage.getItem("UserScript-Setting-" + Data[i].ID) == "false") {
-                                        CheckBox.checked = false;
-                                    }
-                                    else {
-                                        CheckBox.checked = true;
-                                    }
-                                    CheckBox.onchange = () => {
-                                        localStorage.setItem("UserScript-Setting-" + Data[i].ID, CheckBox.checked);
-                                    };
-
-                                    Row.appendChild(CheckBox);
-                                    let Label = document.createElement("label");
-                                    Label.classList.add("form-check-label");
-                                    Label.htmlFor = Data[i].ID;
-                                    Label.innerText = Data[i].Name;
-                                    Row.appendChild(Label);
-                                }
-                                else {
-                                    let Label = document.createElement("label");
-                                    Label.innerText = Data[i].Name;
-                                    Row.appendChild(Label);
-                                }
-                            }
-                            if (Data[i].Children != undefined) {
-                                Row.appendChild(CreateList(Data[i].Children));
-                            }
-                            List.appendChild(Row);
+            let UtilitiesCardHeader = document.createElement("div");
+            UtilitiesCardHeader.classList.add("card-header");
+            UtilitiesCardHeader.innerText = "功能列表";
+            UtilitiesCard.appendChild(UtilitiesCardHeader);
+            let UtilitiesCardBody = document.createElement("div");
+            UtilitiesCardBody.classList.add("card-body");
+            const CreateList = (Data) => {
+                let List = document.createElement("ul");
+                List.classList.add("list-group");
+                for (let i = 0; i < Data.length; i++) {
+                    let Row = document.createElement("li");
+                    Row.classList.add("list-group-item");
+                    if (Data[i].Type == "A") {
+                        Row.classList.add("list-group-item-success");
+                    }
+                    else if (Data[i].Type == "F") {
+                        Row.classList.add("list-group-item-warning");
+                    }
+                    else if (Data[i].Type == "D") {
+                        Row.classList.add("list-group-item-danger");
+                    }
+                    if (Data[i].Children == undefined) {
+                        let CheckBox = document.createElement("input");
+                        CheckBox.classList.add("form-check-input");
+                        CheckBox.classList.add("me-1");
+                        CheckBox.type = "checkbox";
+                        CheckBox.id = Data[i].ID;
+                        if (localStorage.getItem("UserScript-Setting-" + Data[i].ID) == null) {
+                            localStorage.setItem("UserScript-Setting-" + Data[i].ID, "true");
                         }
-                        return List;
-                    };
-                    UtilitiesCardBody.appendChild(CreateList([
-                        { "ID": "ACMRank", "Type": "A", "Name": "比赛ACM排名，并且能下载ACM排名" },
-                        { "ID": "MoreSTD", "Type": "F", "Name": "查看到更多标程" },
-                        { "ID": "GetOthersSample", "Type": "A", "Name": "获取到别人的测试点数据" },
-                        { "ID": "AutoRefresh", "Type": "A", "Name": "比赛列表、比赛排名界面自动刷新" },
-                        { "ID": "AutoCountdown", "Type": "A", "Name": "比赛列表等界面的时间自动倒计时" },
-                        { "ID": "DownloadPlayback", "Type": "A", "Name": "回放视频增加下载功能" },
-                        { "ID": "ImproveACRate", "Type": "A", "Name": "自动提交签到提以提高AC率" },
-                        { "ID": "AutoO2", "Type": "F", "Name": "代码提交界面自动选择O2优化" },
-                        {
-                            "ID": "Beautify", "Type": "F", "Name": "美化界面", "Children": [
-                                { "ID": "NewBootstrap", "Type": "F", "Name": "使用新版的Bootstrap样式库*" },
-                                { "ID": "ResetType", "Type": "F", "Name": "重新排版*" },
-                                { "ID": "AddColorText", "Type": "A", "Name": "增加彩色文字" },
-                                { "ID": "AddUnits", "Type": "A", "Name": "状态界面内存与耗时添加单位" },
-                                { "ID": "AddAnimation", "Type": "A", "Name": "增加动画" },
-                                { "ID": "ReplaceYN", "Type": "F", "Name": "题目前对错的Y和N替换为勾和叉" },
-                                { "ID": "RemoveAlerts", "Type": "D", "Name": "去除多余反复的提示" },
-                                { "ID": "Translate", "Type": "F", "Name": "统一使用中文，翻译了部分英文*" },
-                                { "ID": "ReplaceLinks", "Type": "F", "Name": "将网站中所有以方括号包装的链接替换为按钮" },
-                                { "ID": "RemoveUseless", "Type": "D", "Name": "删去无法使用的功能*" },
-                                { "ID": "ReplaceXM", "Type": "F", "Name": "将网站中所有“小明”关键字替换为“高老师”，所有“小红”关键字替换为“高老师2号”，所有“下海”、“海上”替换为“上海”" }
-                            ]
-                        },
-                        { "ID": "AutoLogin", "Type": "A", "Name": "在需要登录的界面自动跳转到登陆界面" },
-                        { "ID": "SavePassword", "Type": "A", "Name": "自动保存用户名与密码，免去每次手动输入密码的繁琐" },
-                        { "ID": "CopySamples", "Type": "F", "Name": "题目界面测试样例有时复制无效" },
-                        { "ID": "RefreshSolution", "Type": "F", "Name": "状态页面结果自动刷新每次只能刷新一个" },
-                        { "ID": "CopyMD", "Type": "A", "Name": "复制题目内容" },
-                        { "ID": "OpenAllProblem", "Type": "A", "Name": "比赛题目界面一键打开所有题目" },
-                        {
-                            "ID": "CheckCode", "Type": "A", "Name": "提交代码前对代码进行检查", "Children": [
-                                { "ID": "IOFile", "Type": "A", "Name": "是否使用了文件输入输出（如果需要使用）" },
-                                { "ID": "CompileError", "Type": "A", "Name": "是否有编译错误" }
-                            ]
-                        },
-                        { "ID": "ExportACCode", "Type": "F", "Name": "导出AC代码每一道题目一个文件" },
-                        { "ID": "LoginFailed", "Type": "F", "Name": "登录后跳转失败*" },
-                        { "ID": "NewDownload", "Type": "A", "Name": "下载页面增加下载内容" },
-                        { "ID": "CompareSource", "Type": "A", "Name": "比较代码" }
-                    ]));
-                    let UtilitiesCardFooter = document.createElement("div");
-                    UtilitiesCardFooter.className = "card-footer text-muted";
-                    UtilitiesCardFooter.innerText = "* 不建议关闭，可能会导致系统不稳定、界面错乱、功能缺失等问题\n绿色：增加功能　黄色：修改功能　红色：删除功能";
-                    UtilitiesCardBody.appendChild(UtilitiesCardFooter);
+                        if (localStorage.getItem("UserScript-Setting-" + Data[i].ID) == "false") {
+                            CheckBox.checked = false;
+                        }
+                        else {
+                            CheckBox.checked = true;
+                        }
+                        CheckBox.onchange = () => {
+                            localStorage.setItem("UserScript-Setting-" + Data[i].ID, CheckBox.checked);
+                        };
+
+                        Row.appendChild(CheckBox);
+                        let Label = document.createElement("label");
+                        Label.classList.add("form-check-label");
+                        Label.htmlFor = Data[i].ID;
+                        Label.innerText = Data[i].Name;
+                        Row.appendChild(Label);
+                    }
+                    else {
+                        let Label = document.createElement("label");
+                        Label.innerText = Data[i].Name;
+                        Row.appendChild(Label);
+                    }
+                    if (Data[i].Children != undefined) {
+                        Row.appendChild(CreateList(Data[i].Children));
+                    }
+                    List.appendChild(Row);
                 }
-                UtilitiesCard.appendChild(UtilitiesCardBody);
-            }
+                return List;
+            };
+            UtilitiesCardBody.appendChild(CreateList([
+                { "ID": "ACMRank", "Type": "A", "Name": "比赛ACM排名，并且能下载ACM排名" },
+                { "ID": "MoreSTD", "Type": "F", "Name": "查看到更多标程" },
+                { "ID": "GetOthersSample", "Type": "A", "Name": "获取到别人的测试点数据" },
+                { "ID": "AutoRefresh", "Type": "A", "Name": "比赛列表、比赛排名界面自动刷新" },
+                { "ID": "AutoCountdown", "Type": "A", "Name": "比赛列表等界面的时间自动倒计时" },
+                { "ID": "DownloadPlayback", "Type": "A", "Name": "回放视频增加下载功能" },
+                { "ID": "ImproveACRate", "Type": "A", "Name": "自动提交签到提以提高AC率" },
+                { "ID": "AutoO2", "Type": "F", "Name": "代码提交界面自动选择O2优化" },
+                {
+                    "ID": "Beautify", "Type": "F", "Name": "美化界面", "Children": [
+                        { "ID": "NewBootstrap", "Type": "F", "Name": "使用新版的Bootstrap样式库*" },
+                        { "ID": "ResetType", "Type": "F", "Name": "重新排版*" },
+                        { "ID": "AddColorText", "Type": "A", "Name": "增加彩色文字" },
+                        { "ID": "AddUnits", "Type": "A", "Name": "状态界面内存与耗时添加单位" },
+                        { "ID": "AddAnimation", "Type": "A", "Name": "增加动画" },
+                        { "ID": "ReplaceYN", "Type": "F", "Name": "题目前对错的Y和N替换为勾和叉" },
+                        { "ID": "RemoveAlerts", "Type": "D", "Name": "去除多余反复的提示" },
+                        { "ID": "Translate", "Type": "F", "Name": "统一使用中文，翻译了部分英文*" },
+                        { "ID": "ReplaceLinks", "Type": "F", "Name": "将网站中所有以方括号包装的链接替换为按钮" },
+                        { "ID": "RemoveUseless", "Type": "D", "Name": "删去无法使用的功能*" },
+                        { "ID": "ReplaceXM", "Type": "F", "Name": "将网站中所有“小明”关键字替换为“高老师”，所有“小红”关键字替换为“高老师2号”，所有“下海”、“海上”替换为“上海”" }
+                    ]
+                },
+                { "ID": "AutoLogin", "Type": "A", "Name": "在需要登录的界面自动跳转到登陆界面" },
+                { "ID": "SavePassword", "Type": "A", "Name": "自动保存用户名与密码，免去每次手动输入密码的繁琐" },
+                { "ID": "CopySamples", "Type": "F", "Name": "题目界面测试样例有时复制无效" },
+                { "ID": "RefreshSolution", "Type": "F", "Name": "状态页面结果自动刷新每次只能刷新一个" },
+                { "ID": "CopyMD", "Type": "A", "Name": "复制题目内容" },
+                { "ID": "OpenAllProblem", "Type": "A", "Name": "比赛题目界面一键打开所有题目" },
+                {
+                    "ID": "CheckCode", "Type": "A", "Name": "提交代码前对代码进行检查", "Children": [
+                        { "ID": "IOFile", "Type": "A", "Name": "是否使用了文件输入输出（如果需要使用）" },
+                        { "ID": "CompileError", "Type": "A", "Name": "是否有编译错误" }
+                    ]
+                },
+                { "ID": "ExportACCode", "Type": "F", "Name": "导出AC代码每一道题目一个文件" },
+                { "ID": "LoginFailed", "Type": "F", "Name": "登录后跳转失败*" },
+                { "ID": "NewDownload", "Type": "A", "Name": "下载页面增加下载内容" },
+                { "ID": "CompareSource", "Type": "A", "Name": "比较代码" }
+            ]));
+            let UtilitiesCardFooter = document.createElement("div");
+            UtilitiesCardFooter.className = "card-footer text-muted";
+            UtilitiesCardFooter.innerText = "* 不建议关闭，可能会导致系统不稳定、界面错乱、功能缺失等问题\n绿色：增加功能　黄色：修改功能　红色：删除功能";
+            UtilitiesCardBody.appendChild(UtilitiesCardFooter);
+            UtilitiesCard.appendChild(UtilitiesCardBody);
             Container.appendChild(UtilitiesCard);
             let FeedbackCard = document.createElement("div");
             FeedbackCard.className = "card mb-3";
-            {
-                let FeedbackCardHeader = document.createElement("div");
-                FeedbackCardHeader.className = "card-header";
-                FeedbackCardHeader.innerText = "反馈、源代码、联系作者";
-                FeedbackCard.appendChild(FeedbackCardHeader);
-                let FeedbackCardBody = document.createElement("div");
-                FeedbackCardBody.className = "card-body";
-                {
-                    let FeedbackCardText = document.createElement("p");
-                    FeedbackCardText.className = "card-text";
-                    FeedbackCardText.innerText = "如果您有任何建议或者发现了bug，请前往本项目的GitHub页面并提交issue。提交issue前请先搜索是否有相同的issue，如果有请在该issue下留言。请在issue中尽可能详细地描述您的问题，并且附上您的浏览器版本、操作系统版本、脚本版本、复现步骤等信息。谢谢您支持本项目。";
-                    FeedbackCardBody.appendChild(FeedbackCardText);
-                    let FeedbackCardLink = document.createElement("a");
-                    FeedbackCardLink.className = "card-link";
-                    FeedbackCardLink.innerText = "GitHub";
-                    FeedbackCardLink.href = "https://github.com/langningchen/XMOJ-Script";
-                    FeedbackCardBody.appendChild(FeedbackCardLink);
-                }
-                FeedbackCard.appendChild(FeedbackCardBody);
-            }
+            let FeedbackCardHeader = document.createElement("div");
+            FeedbackCardHeader.className = "card-header";
+            FeedbackCardHeader.innerText = "反馈、源代码、联系作者";
+            FeedbackCard.appendChild(FeedbackCardHeader);
+            let FeedbackCardBody = document.createElement("div");
+            FeedbackCardBody.className = "card-body";
+            let FeedbackCardText = document.createElement("p");
+            FeedbackCardText.className = "card-text";
+            FeedbackCardText.innerText = "如果您有任何建议或者发现了bug，请前往本项目的GitHub页面并提交issue。提交issue前请先搜索是否有相同的issue，如果有请在该issue下留言。请在issue中尽可能详细地描述您的问题，并且附上您的浏览器版本、操作系统版本、脚本版本、复现步骤等信息。谢谢您支持本项目。";
+            FeedbackCardBody.appendChild(FeedbackCardText);
+            let FeedbackCardLink = document.createElement("a");
+            FeedbackCardLink.className = "card-link";
+            FeedbackCardLink.innerText = "GitHub";
+            FeedbackCardLink.href = "https://github.com/langningchen/XMOJ-Script";
+            FeedbackCardBody.appendChild(FeedbackCardLink);
+            FeedbackCard.appendChild(FeedbackCardBody);
             Container.appendChild(FeedbackCard);
         }
     } else if (location.pathname == "/problemset.php") {
