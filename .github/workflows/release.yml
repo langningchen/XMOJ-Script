@@ -45,3 +45,7 @@ jobs:
           asset_path: ./XMOJ.user.js
           asset_name: XMOJ.user.js
           asset_content_type: text/plain
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: master
