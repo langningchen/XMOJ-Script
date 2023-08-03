@@ -48,7 +48,7 @@ jobs:
       - name: Sync Repo
         uses: repo-sync/github-sync@v2
         with:
-          source_repo: "XMOJ/XMOJ"
+          source_repo: "langningchen/XMOJ-Script"
           source_branch: "master"
           destination_branch: "master"
           github_token: ${{ secrets.GITHUB_TOKEN }}
