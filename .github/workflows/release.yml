@@ -23,6 +23,9 @@ jobs:
         run: |
           echo ${{ steps.get_version.outputs.version }} > ./HTML/Version.html
           grep -Pzo '(?<=@version)\s+\d+\.\d+\.\d+' ./XMOJ.user.js | tr -d '[:space:]' | xargs -0 -I {} sed -i 's/{}/${{ steps.get_version.outputs.version }}/g' ./XMOJ.user.js
+      # - name: Encrypt the JS File using Google Closure Compiler
+      #   run: |
+      #     curl -X POST -s --data-urlencode "input@./XMOJ.user.js" https://closure-compiler.appspot.com/compile -d output_format=json -d output_info=compiled_code -d output_info=warnings -d output_info=errors -d output_info=statistics -d compilation_level=SIMPLE_OPTIMIZATIONS | jq -r '.compiledCode' > ./XMOJ.user.js
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1

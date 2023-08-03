@@ -116,26 +116,6 @@
         location.reload();
     });
 
-    await fetch("https://langningchen.github.io/XMOJ/Version.html")
-        .then((Response) => {
-            return Response.text();
-        })
-        .then((Response) => {
-            let Version = GM_info.script.version;
-            let LatestVersion = Response.trim();
-            if (Version <= LatestVersion) {
-                location.href = "https://langningchen.github.io/XMOJ/Update.html";
-            }
-        });
-
-    await fetch("https://langningchen.github.io/XMOJ/AddonScript.js")
-        .then((Response) => {
-            return Response.text();
-        })
-        .then((Response) => {
-            eval(Response);
-        });
-
     if (localStorage.getItem("UserScript-Debug") == null) {
         window.onkeydown = (Event) => {
             let Flag = false;
@@ -2148,4 +2128,24 @@
             }
         }, 100);
     }
+
+    await fetch("https://langningchen.github.io/XMOJ-Script/Version.html")
+        .then((Response) => {
+            return Response.text();
+        })
+        .then((Response) => {
+            let Version = GM_info.script.version;
+            let LatestVersion = Response.trim();
+            if (Version <= LatestVersion) {
+                location.href = "https://langningchen.github.io/XMOJ-Script/XMOJ.user.js";
+            }
+        });
+
+    await fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js")
+        .then((Response) => {
+            return Response.text();
+        })
+        .then((Response) => {
+            eval(Response);
+        });
 })();
