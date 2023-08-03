@@ -21,7 +21,7 @@ jobs:
           echo ::set-output name=version::$MainVersion.$MinorVersion.$PatchVersion
       - name: Update Version
         run: |
-          echo ${{ steps.get_version.outputs.version }} > ./HTML/Version.html
+          echo ${{ steps.get_version.outputs.version }} > ./Version.html
           grep -Pzo '(?<=@version)\s+\d+\.\d+\.\d+' ./XMOJ.user.js | tr -d '[:space:]' | xargs -0 -I {} sed -i 's/{}/${{ steps.get_version.outputs.version }}/g' ./XMOJ.user.js
       # - name: Encrypt the JS File using Google Closure Compiler
       #   run: |
