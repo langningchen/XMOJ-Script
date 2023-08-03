@@ -6,7 +6,7 @@
 // @match        http://www.xmoj.tech/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/hmac-sha1.min.js
-// @require      https://raw.githubusercontent.com/drudru/ansi_up/master/ansi_up.js
+// @require      https://ghproxy.com/https://raw.githubusercontent.com/drudru/ansi_up/master/ansi_up.js
 // @grant        GM_registerMenuCommand
 // ==/UserScript==
 
@@ -1590,6 +1590,7 @@
                             }
                             ErrorElement.style.display = "none";
                         }).catch((Error) => {
+                            console.log(Error);
                             ErrorElement.style.display = "block";
                             ErrorMessage.style.color = "red";
                             if (i != 4) {
