@@ -45,7 +45,10 @@ jobs:
           asset_path: ./XMOJ.user.js
           asset_name: XMOJ.user.js
           asset_content_type: text/plain
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Sync Repo
+        uses: repo-sync/github-sync@v2
         with:
-          ref: master
+          source_repo: "XMOJ/XMOJ"
+          source_branch: "master"
+          destination_branch: "master"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
