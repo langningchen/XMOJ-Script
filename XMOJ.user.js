@@ -498,29 +498,31 @@ if (document.querySelector("#navbar") != null) {
         }
 
         if (UtilityEnabled("CopyMD")) {
-            await fetch(location.href).then((Response) => {
-                return Response.text();
-            }).then((Response) => {
-                let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
-                let Temp = ParsedDocument.querySelectorAll(".cnt-row");
-                for (let i = 0; i < Temp.length; i++) {
-                    if (Temp[i].children[1].children[0].className == "content") {
-                        let CopyMDButton = document.createElement("button");
-                        CopyMDButton.className = "btn btn-sm btn-outline-secondary copy-btn";
-                        CopyMDButton.innerText = "复制";
-                        CopyMDButton.style.marginLeft = "10px";
-                        CopyMDButton.type = "button";
-                        document.querySelectorAll(".cnt-row")[i].children[0].appendChild(CopyMDButton);
-                        CopyMDButton.onclick = () => {
-                            CopyToClipboard(Temp[i].children[1].children[0].innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
-                            CopyMDButton.innerText = "复制成功";
-                            setTimeout(() => {
-                                CopyMDButton.innerText = "复制";
-                            }, 1000);
-                        };
+            (async () => {
+                await fetch(location.href).then((Response) => {
+                    return Response.text();
+                }).then((Response) => {
+                    let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                    let Temp = ParsedDocument.querySelectorAll(".cnt-row");
+                    for (let i = 0; i < Temp.length; i++) {
+                        if (Temp[i].children[1].children[0].className == "content") {
+                            let CopyMDButton = document.createElement("button");
+                            CopyMDButton.className = "btn btn-sm btn-outline-secondary copy-btn";
+                            CopyMDButton.innerText = "复制";
+                            CopyMDButton.style.marginLeft = "10px";
+                            CopyMDButton.type = "button";
+                            document.querySelectorAll(".cnt-row")[i].children[0].appendChild(CopyMDButton);
+                            CopyMDButton.onclick = () => {
+                                CopyToClipboard(Temp[i].children[1].children[0].innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
+                                CopyMDButton.innerText = "复制成功";
+                                setTimeout(() => {
+                                    CopyMDButton.innerText = "复制";
+                                }, 1000);
+                            };
+                        }
                     }
-                }
-            });
+                });
+            })();
         }
     } else if (location.pathname == "/status.php") {
         if (new URL(location.href).searchParams.get("ByUserScript") == null) {
@@ -578,13 +580,15 @@ if (document.querySelector("#navbar") != null) {
                 document.querySelector("body > div.container > div > div.input-append").appendChild(ImproveACRateButton);
                 ImproveACRateButton.className = "btn btn-outline-secondary";
                 ImproveACRateButton.innerText = "提高AC率";
-                await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.getElementById("profile").innerText)
-                    .then((Response) => {
-                        return Response.text();
-                    }).then((Response) => {
-                        let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
-                        ImproveACRateButton.innerText += "(" + (parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(4) > td:nth-child(2)").innerText) / parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(3) > td:nth-child(2)").innerText) * 100).toFixed(2) + "%)";
-                    });
+                (async () => {
+                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.getElementById("profile").innerText)
+                        .then((Response) => {
+                            return Response.text();
+                        }).then((Response) => {
+                            let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                            ImproveACRateButton.innerText += "(" + (parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(4) > td:nth-child(2)").innerText) / parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(3) > td:nth-child(2)").innerText) * 100).toFixed(2) + "%)";
+                        });
+                })();
                 ImproveACRateButton.onclick = async () => {
                     ImproveACRateButton.disabled = true;
                     await fetch("http://www.xmoj.tech/csrf.php")
@@ -926,27 +930,29 @@ if (document.querySelector("#navbar") != null) {
             }
             else if (UtilityEnabled("AutoRefresh")) {
                 onfocus = async () => {
-                    await fetch(location.href)
-                        .then((Response) => {
-                            return Response.text();
-                        })
-                        .then((Response) => {
-                            let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
-                            let Temp = ParsedDocument.querySelector("#problemset > tbody").children;
-                            if (UtilityEnabled("ReplaceYN")) {
-                                for (let i = 0; i < Temp.length; i++) {
-                                    let Status = Temp[i].children[0].innerText;
-                                    if (Status.indexOf("Y") != -1) {
-                                        document.querySelector("#problemset > tbody").children[i].children[0].children[0].className = "status status_y";
-                                        document.querySelector("#problemset > tbody").children[i].children[0].children[0].innerText = "✓";
-                                    }
-                                    else if (Status.indexOf("N") != -1) {
-                                        document.querySelector("#problemset > tbody").children[i].children[0].children[0].className = "status status_n";
-                                        document.querySelector("#problemset > tbody").children[i].children[0].children[0].innerText = "✗";
+                    (async () => {
+                        await fetch(location.href)
+                            .then((Response) => {
+                                return Response.text();
+                            })
+                            .then((Response) => {
+                                let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                                let Temp = ParsedDocument.querySelector("#problemset > tbody").children;
+                                if (UtilityEnabled("ReplaceYN")) {
+                                    for (let i = 0; i < Temp.length; i++) {
+                                        let Status = Temp[i].children[0].innerText;
+                                        if (Status.indexOf("Y") != -1) {
+                                            document.querySelector("#problemset > tbody").children[i].children[0].children[0].className = "status status_y";
+                                            document.querySelector("#problemset > tbody").children[i].children[0].children[0].innerText = "✓";
+                                        }
+                                        else if (Status.indexOf("N") != -1) {
+                                            document.querySelector("#problemset > tbody").children[i].children[0].children[0].className = "status status_n";
+                                            document.querySelector("#problemset > tbody").children[i].children[0].children[0].innerText = "✗";
+                                        }
                                     }
                                 }
-                            }
-                        });
+                            });
+                    })();
                 };
                 document.querySelector("body > div > div > center > br:nth-child(2)").remove();
                 document.querySelector("body > div > div > center > br:nth-child(2)").remove();
@@ -1240,7 +1246,7 @@ if (document.querySelector("#navbar") != null) {
                                     "xiaoguanxun": "肖贯勋", "xiaojiasheng": "肖嘉盛", "xiaruicheng": "夏瑞成", "xiaweimin": "夏蔚民", "xiaxuran": "夏诩然", "xiebingxiu": "谢秉修", "xiebingxiu": "谢秉修", "xieliren": "谢立仁", "xinyihan": "辛轶涵", "xuconghan": "徐从瀚", "xukan": "徐衎",
                                     "xuweiyi": "徐维易", "yanghaochen": "杨皓宸", "yezijiong": "叶梓炅", "youzhouhang": "尤周杭", "yuanruiqing": "袁瑞擎", "yutingjun": "于庭郡", "zhangchenming": "张宸铭", "zhangqiuze": "张秋泽", "zhangshuxuan": "张澍萱", "zhangwenda": "张闻达", "zhangyifu": "张亦夫",
                                     "zhangyouheng": "张佑恒", "zhaochenshen": "赵晨神", "zhaochenwei": "赵晨伟", "zhengyinan": "郑逸楠", "zhonghongyi": "钟弘毅", "zhoujunyu": "周峻瑜", "zhouziyi": "周子逸", "zhouziyou": "周子游", "zhuchenrui2": "朱晨瑞", "zhuruichen": "朱睿宸", "zhuxule": "朱徐乐",
-                                    "zhuyikun": "朱奕坤"
+                                    "zhuyikun": "朱奕坤", "leiwenda": "雷文达"
                                 };
                                 NameCell.innerText = (Names[RowData.Username] == undefined ? "" : Names[RowData.Username]);
 
@@ -1827,22 +1833,24 @@ if (document.querySelector("#navbar") != null) {
                 "Channel": "HTML5"
             });
             URLParams.sort();
-            await fetch("https://vod." + VideoData.region + ".aliyuncs.com/?" +
-                URLParams.toString() +
-                "&Signature=" +
-                encodeURIComponent(CryptoJS.HmacSHA1("GET&%2F&" + encodeURIComponent(URLParams.toString()),
-                    VideoData.accessKeySecret + "&").toString(CryptoJS.enc.Base64)))
-                .then((Response) => {
-                    return Response.json();
-                })
-                .then((Response) => {
-                    let DownloadButton = document.createElement("a");
-                    DownloadButton.className = "btn btn-outline-secondary";
-                    DownloadButton.innerText = "下载";
-                    DownloadButton.href = Response["PlayInfoList"]["PlayInfo"][0]["PlayURL"];
-                    DownloadButton.download = Response["VideoBase"]["Title"];
-                    document.querySelector("body > div > div > center").appendChild(DownloadButton);
-                });
+            (async () => {
+                await fetch("https://vod." + VideoData.region + ".aliyuncs.com/?" +
+                    URLParams.toString() +
+                    "&Signature=" +
+                    encodeURIComponent(CryptoJS.HmacSHA1("GET&%2F&" + encodeURIComponent(URLParams.toString()),
+                        VideoData.accessKeySecret + "&").toString(CryptoJS.enc.Base64)))
+                    .then((Response) => {
+                        return Response.json();
+                    })
+                    .then((Response) => {
+                        let DownloadButton = document.createElement("a");
+                        DownloadButton.className = "btn btn-outline-secondary";
+                        DownloadButton.innerText = "下载";
+                        DownloadButton.href = Response["PlayInfoList"]["PlayInfo"][0]["PlayURL"];
+                        DownloadButton.download = Response["VideoBase"]["Title"];
+                        document.querySelector("body > div > div > center").appendChild(DownloadButton);
+                    });
+            })();
         }
     } else if (location.pathname == "/reinfo.php") {
         if (document.querySelector("#results > div") == undefined) {
@@ -2120,23 +2128,24 @@ if (document.querySelector("#navbar") != null) {
         }, 100);
     }
 
-    await fetch("https://langningchen.github.io/XMOJ-Script/Version.html", { cache: "no-cache" })
-        .then((Response) => {
-            return Response.text();
-        })
-        .then((Response) => {
-            let Version = GM_info.script.version;
-            let LatestVersion = Response.trim();
-            if (Version < LatestVersion) {
-                location.href = "https://langningchen.github.io/XMOJ-Script/XMOJ.min.user.js";
-            }
-        });
-
-    await fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js")
-        .then((Response) => {
-            return Response.text();
-        })
-        .then((Response) => {
-            eval(Response);
-        });
+    (async () => {
+        await fetch("https://langningchen.github.io/XMOJ-Script/Version.html", { cache: "no-cache" })
+            .then((Response) => {
+                return Response.text();
+            })
+            .then((Response) => {
+                let Version = GM_info.script.version;
+                let LatestVersion = Response.trim();
+                if (Version < LatestVersion) {
+                    location.href = "https://langningchen.github.io/XMOJ-Script/XMOJ.min.user.js";
+                }
+            });
+        await fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js")
+            .then((Response) => {
+                return Response.text();
+            })
+            .then((Response) => {
+                eval(Response);
+            });
+    })();
 }
