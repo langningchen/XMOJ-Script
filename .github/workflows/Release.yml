@@ -1,4 +1,4 @@
-name: Deploy static content to Pages
+name: Release
 on:
   push:
     branches: ["master"]
@@ -12,6 +12,9 @@ permissions:
     deployments: write
 jobs:
   release:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     name: Release
     runs-on: ubuntu-latest
     steps:
@@ -64,22 +67,6 @@ jobs:
           asset_path: ./XMOJ.min.user.js
           asset_name: XMOJ.min.user.js
           asset_content_type: text/plain
-      - name: Push new version
-        run: |
-          git config --global user.name "langningchen"
-          git config --global user.email "jpxx_chenlangning@outlook.com"
-          git add .
-          git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
-          git push
-  deploy:
-    needs: release
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
@@ -89,3 +76,10 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+      - name: Push new version
+        run: |
+          git config --global user.name "langningchen"
+          git config --global user.email "jpxx_chenlangning@outlook.com"
+          git add .
+          git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
+          git push
