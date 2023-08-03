@@ -2,6 +2,8 @@ name: Deploy static content to Pages
 on:
   push:
     branches: ["master"]
+    paths:
+      - "XMOJ.user.js"
   workflow_dispatch:
 permissions:
     id-token: write
@@ -12,7 +14,6 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(github.event.head_commit.modified, 'XMOJ.user.js')
     steps:
       - name: Checkout
         uses: actions/checkout@v2
