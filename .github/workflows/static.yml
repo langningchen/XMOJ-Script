@@ -25,6 +25,7 @@ jobs:
           MinorVersion=$(echo $VersionString | cut -d'.' -f2)
           PatchVersion=$(echo $VersionString | cut -d'.' -f3)
           PatchVersion=$((PatchVersion + 1))
+          echo short_version=$MainVersion.$MinorVersion >> $GITHUB_OUTPUT
           echo version=$MainVersion.$MinorVersion.$PatchVersion >> $GITHUB_OUTPUT
       - name: Update Version
         run: |
@@ -40,7 +41,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
+          tag_name: ${{ steps.get_version.outputs.short_version }}
           release_name: ${{ steps.get_version.outputs.version }}
           draft: false
           prerelease: false
