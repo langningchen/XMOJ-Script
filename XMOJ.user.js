@@ -2129,7 +2129,7 @@
         }, 100);
     }
 
-    await fetch("https://langningchen.github.io/XMOJ-Script/Version.html")
+    await fetch("https://langningchen.github.io/XMOJ-Script/Version.html", { cache: "no-cache" })
         .then((Response) => {
             return Response.text();
         })
