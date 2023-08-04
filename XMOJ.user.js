@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.1.21
+// @version      0.1.22
 // @description  Test
 // @author       @langningchen
 // @match        http://*.xmoj.tech/*
