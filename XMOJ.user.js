@@ -117,25 +117,6 @@ GM_registerMenuCommand("重置数据", () => {
 });
 
 if (localStorage.getItem("UserScript-Debug") == null) {
-    window.onkeydown = (Event) => {
-        let Flag = false;
-        if (Event.keyCode == 123) {
-            Flag = true;
-        } else if (Event.ctrlKey && Event.shiftKey && Event.keyCode == 73) {
-            Flag = true;
-        } else if (Event.ctrlKey && Event.shiftKey && Event.keyCode == 74) {
-            Flag = true;
-        } else if (Event.ctrlKey && Event.keyCode == 85) {
-            Flag = true;
-        }
-        if (Flag) {
-            document.body.innerHTML = "";
-            location.href = "about:blank";
-        }
-    };
-    document.oncontextmenu = () => {
-        return false;
-    };
     setInterval(() => {
         let StartTime = new Date().getTime();
         eval("debugger");
