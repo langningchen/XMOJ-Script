@@ -465,31 +465,29 @@ if (document.querySelector("#navbar") != null) {
         }
 
         if (UtilityEnabled("CopyMD")) {
-            (async () => {
-                await fetch(location.href).then((Response) => {
-                    return Response.text();
-                }).then((Response) => {
-                    let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
-                    let Temp = ParsedDocument.querySelectorAll(".cnt-row");
-                    for (let i = 0; i < Temp.length; i++) {
-                        if (Temp[i].children[1].children[0].className == "content") {
-                            let CopyMDButton = document.createElement("button");
-                            CopyMDButton.className = "btn btn-sm btn-outline-secondary copy-btn";
-                            CopyMDButton.innerText = "复制";
-                            CopyMDButton.style.marginLeft = "10px";
-                            CopyMDButton.type = "button";
-                            document.querySelectorAll(".cnt-row")[i].children[0].appendChild(CopyMDButton);
-                            CopyMDButton.onclick = () => {
-                                CopyToClipboard(Temp[i].children[1].children[0].innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
-                                CopyMDButton.innerText = "复制成功";
-                                setTimeout(() => {
-                                    CopyMDButton.innerText = "复制";
-                                }, 1000);
-                            };
-                        }
+            await fetch(location.href).then((Response) => {
+                return Response.text();
+            }).then((Response) => {
+                let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                let Temp = ParsedDocument.querySelectorAll(".cnt-row");
+                for (let i = 0; i < Temp.length; i++) {
+                    if (Temp[i].children[1].children[0].className == "content") {
+                        let CopyMDButton = document.createElement("button");
+                        CopyMDButton.className = "btn btn-sm btn-outline-secondary copy-btn";
+                        CopyMDButton.innerText = "复制";
+                        CopyMDButton.style.marginLeft = "10px";
+                        CopyMDButton.type = "button";
+                        document.querySelectorAll(".cnt-row")[i].children[0].appendChild(CopyMDButton);
+                        CopyMDButton.onclick = () => {
+                            CopyToClipboard(Temp[i].children[1].children[0].innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
+                            CopyMDButton.innerText = "复制成功";
+                            setTimeout(() => {
+                                CopyMDButton.innerText = "复制";
+                            }, 1000);
+                        };
                     }
-                });
-            })();
+                }
+            });
         }
     } else if (location.pathname == "/status.php") {
         if (new URL(location.href).searchParams.get("ByUserScript") == null) {
@@ -547,15 +545,13 @@ if (document.querySelector("#navbar") != null) {
                 document.querySelector("body > div.container > div > div.input-append").appendChild(ImproveACRateButton);
                 ImproveACRateButton.className = "btn btn-outline-secondary";
                 ImproveACRateButton.innerText = "提高AC率";
-                (async () => {
-                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.getElementById("profile").innerText)
-                        .then((Response) => {
-                            return Response.text();
-                        }).then((Response) => {
-                            let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
-                            ImproveACRateButton.innerText += "(" + (parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(4) > td:nth-child(2)").innerText) / parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(3) > td:nth-child(2)").innerText) * 100).toFixed(2) + "%)";
-                        });
-                })();
+                await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.getElementById("profile").innerText)
+                    .then((Response) => {
+                        return Response.text();
+                    }).then((Response) => {
+                        let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                        ImproveACRateButton.innerText += "(" + (parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(4) > td:nth-child(2)").innerText) / parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(3) > td:nth-child(2)").innerText) * 100).toFixed(2) + "%)";
+                    });
                 ImproveACRateButton.onclick = async () => {
                     ImproveACRateButton.disabled = true;
                     await fetch("http://www.xmoj.tech/csrf.php")
@@ -897,29 +893,27 @@ if (document.querySelector("#navbar") != null) {
             }
             else if (UtilityEnabled("AutoRefresh")) {
                 onfocus = async () => {
-                    (async () => {
-                        await fetch(location.href)
-                            .then((Response) => {
-                                return Response.text();
-                            })
-                            .then((Response) => {
-                                let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
-                                let Temp = ParsedDocument.querySelector("#problemset > tbody").children;
-                                if (UtilityEnabled("ReplaceYN")) {
-                                    for (let i = 0; i < Temp.length; i++) {
-                                        let Status = Temp[i].children[0].innerText;
-                                        if (Status.indexOf("Y") != -1) {
-                                            document.querySelector("#problemset > tbody").children[i].children[0].children[0].className = "status status_y";
-                                            document.querySelector("#problemset > tbody").children[i].children[0].children[0].innerText = "✓";
-                                        }
-                                        else if (Status.indexOf("N") != -1) {
-                                            document.querySelector("#problemset > tbody").children[i].children[0].children[0].className = "status status_n";
-                                            document.querySelector("#problemset > tbody").children[i].children[0].children[0].innerText = "✗";
-                                        }
+                    await fetch(location.href)
+                        .then((Response) => {
+                            return Response.text();
+                        })
+                        .then((Response) => {
+                            let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                            let Temp = ParsedDocument.querySelector("#problemset > tbody").children;
+                            if (UtilityEnabled("ReplaceYN")) {
+                                for (let i = 0; i < Temp.length; i++) {
+                                    let Status = Temp[i].children[0].innerText;
+                                    if (Status.indexOf("Y") != -1) {
+                                        document.querySelector("#problemset > tbody").children[i].children[0].children[0].className = "status status_y";
+                                        document.querySelector("#problemset > tbody").children[i].children[0].children[0].innerText = "✓";
+                                    }
+                                    else if (Status.indexOf("N") != -1) {
+                                        document.querySelector("#problemset > tbody").children[i].children[0].children[0].className = "status status_n";
+                                        document.querySelector("#problemset > tbody").children[i].children[0].children[0].innerText = "✗";
                                     }
                                 }
-                            });
-                    })();
+                            }
+                        });
                 };
                 document.querySelector("body > div > div > center > br:nth-child(2)").remove();
                 document.querySelector("body > div > div > center > br:nth-child(2)").remove();
@@ -1800,24 +1794,22 @@ if (document.querySelector("#navbar") != null) {
                 "Channel": "HTML5"
             });
             URLParams.sort();
-            (async () => {
-                await fetch("https://vod." + VideoData.region + ".aliyuncs.com/?" +
-                    URLParams.toString() +
-                    "&Signature=" +
-                    encodeURIComponent(CryptoJS.HmacSHA1("GET&%2F&" + encodeURIComponent(URLParams.toString()),
-                        VideoData.accessKeySecret + "&").toString(CryptoJS.enc.Base64)))
-                    .then((Response) => {
-                        return Response.json();
-                    })
-                    .then((Response) => {
-                        let DownloadButton = document.createElement("a");
-                        DownloadButton.className = "btn btn-outline-secondary";
-                        DownloadButton.innerText = "下载";
-                        DownloadButton.href = Response["PlayInfoList"]["PlayInfo"][0]["PlayURL"];
-                        DownloadButton.download = Response["VideoBase"]["Title"];
-                        document.querySelector("body > div > div > center").appendChild(DownloadButton);
-                    });
-            })();
+            await fetch("https://vod." + VideoData.region + ".aliyuncs.com/?" +
+                URLParams.toString() +
+                "&Signature=" +
+                encodeURIComponent(CryptoJS.HmacSHA1("GET&%2F&" + encodeURIComponent(URLParams.toString()),
+                    VideoData.accessKeySecret + "&").toString(CryptoJS.enc.Base64)))
+                .then((Response) => {
+                    return Response.json();
+                })
+                .then((Response) => {
+                    let DownloadButton = document.createElement("a");
+                    DownloadButton.className = "btn btn-outline-secondary";
+                    DownloadButton.innerText = "下载";
+                    DownloadButton.href = Response["PlayInfoList"]["PlayInfo"][0]["PlayURL"];
+                    DownloadButton.download = Response["VideoBase"]["Title"];
+                    document.querySelector("body > div > div > center").appendChild(DownloadButton);
+                });
         }
     } else if (location.pathname == "/reinfo.php") {
         if (document.querySelector("#results > div") == undefined) {
@@ -2047,6 +2039,10 @@ if (document.querySelector("#navbar") != null) {
                     }
                     Temp[i].classList.add("dropdown-item");
                 }
+                let SettingsButton = document.createElement("li");
+                SettingsButton.className = "dropdown-item";
+                SettingsButton.innerHTML = `<a href="index.php?ByUserScript=1">插件设置</a>`;
+                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").appendChild(SettingsButton);
             }
         }
         if (document.querySelector(".syntaxhighlighter > table > tbody > tr > td.code > div") != undefined) {
@@ -2095,24 +2091,22 @@ if (document.querySelector("#navbar") != null) {
         }, 100);
     }
 
-    (async () => {
-        await fetch("https://langningchen.github.io/XMOJ-Script/Version.html", { cache: "no-cache" })
-            .then((Response) => {
-                return Response.text();
-            })
-            .then((Response) => {
-                let Version = GM_info.script.version;
-                let LatestVersion = Response.trim();
-                if (Version < LatestVersion) {
-                    location.href = "https://langningchen.github.io/XMOJ-Script/XMOJ.min.user.js";
-                }
-            });
-        await fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js")
-            .then((Response) => {
-                return Response.text();
-            })
-            .then((Response) => {
-                eval(Response);
-            });
-    })();
+    await fetch("https://langningchen.github.io/XMOJ-Script/Version.html", { cache: "no-cache" })
+        .then((Response) => {
+            return Response.text();
+        })
+        .then((Response) => {
+            let Version = GM_info.script.version;
+            let LatestVersion = Response.trim();
+            if (Version < LatestVersion) {
+                location.href = "https://langningchen.github.io/XMOJ-Script/XMOJ.min.user.js";
+            }
+        });
+    await fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js")
+        .then((Response) => {
+            return Response.text();
+        })
+        .then((Response) => {
+            eval(Response);
+        });
 }
