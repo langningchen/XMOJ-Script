@@ -3,7 +3,7 @@
 // @version      0.1.21
 // @description  Test
 // @author       @langningchen
-// @match        http://www.xmoj.tech/*
+// @match        http://*.xmoj.tech/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/hmac-sha1.min.js
 // @require      https://ghproxy.com/https://raw.githubusercontent.com/drudru/ansi_up/master/ansi_up.js
@@ -108,12 +108,10 @@ let UtilityEnabled = (Name) => {
 };
 
 GM_registerMenuCommand("重置数据", () => {
-    for (let i = 0; i < localStorage.length; i++) {
-        if (localStorage.key(i).substring(0, 10) == "UserScript") {
-            localStorage.removeItem(localStorage.key(i));
-        }
+    if (confirm("确定要重置数据吗？")) {
+        localStorage.clear();
+        location.reload();
     }
-    location.reload();
 });
 
 if (localStorage.getItem("UserScript-Debug") == null) {
