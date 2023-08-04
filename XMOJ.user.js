@@ -144,10 +144,6 @@ if (localStorage.getItem("UserScript-Debug") == null) {
             document.body.innerHTML = "";
             location.href = "about:blank";
         }
-        if (outerHeight - innerHeight > 200 || outerWidth - innerWidth > 200) {
-            document.body.innerHTML = "";
-            location.href = "about:blank";
-        }
     }, 100);
 }
 if (localStorage.getItem("UserScript-Opened") == null) {
