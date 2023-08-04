@@ -158,10 +158,11 @@ if (document.querySelector("#navbar") != null) {
                 "<button onclick=\"location.href='$1'\" class=\"btn btn-outline-secondary\">$2</button>");
     }
     if (UtilityEnabled("ReplaceXM")) {
+        document.body.innerHTML = String(document.body.innerHTML).replaceAll("我", "高老师");
         document.body.innerHTML = String(document.body.innerHTML).replaceAll("小明", "高老师");
         document.body.innerHTML = String(document.body.innerHTML).replaceAll("下海", "上海");
         document.body.innerHTML = String(document.body.innerHTML).replaceAll("海上", "上海");
-        document.body.innerHTML = String(document.body.innerHTML).replaceAll("小红", "高老师2号");
+        document.body.innerHTML = String(document.body.innerHTML).replaceAll("小红", "低老师");
         document.title = String(document.title).replaceAll("小明", "高老师");
     }
 
