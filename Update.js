@@ -20,7 +20,7 @@ var LastVersion = LastJSONVersion.split(".");
 console.log("Last version: " + LastJSONVersion);
 var LatestVersion = LastVersion[0] + "." + LastVersion[1] + "." + (parseInt(LastVersion[2]) + 1);
 console.log("Latest version: " + LatestVersion);
-execSync("echo " + LatestVersion + " >> $GITHUB_OUTPUT");
+execSync("echo version=" + LatestVersion + " >> $GITHUB_OUTPUT");
 JSONObject.UpdateHistory[LatestVersion] = {
     "UpdateDate": Date.now(),
     "UpdateCommits": []
