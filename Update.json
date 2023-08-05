@@ -1,5 +1,22 @@
 {
     "UpdateHistory": {
-        "0.1.23": {}
+        "0.1.23": {},
+        "0.1.24": {
+            "UpdateDate": 1691200800661,
+            "UpdateCommits": [
+                {
+                    "Commit": "17a1f8e",
+                    "Description": "fix workflow run"
+                },
+                {
+                    "Commit": "9e9a704",
+                    "Description": "Update test"
+                },
+                {
+                    "Commit": "359727c",
+                    "Description": "test"
+                }
+            ]
+        }
     }
 }
