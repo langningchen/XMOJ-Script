@@ -1207,7 +1207,7 @@ if (document.querySelector("#navbar") != null) {
                                     "xiaoguanxun": "肖贯勋", "xiaojiasheng": "肖嘉盛", "xiaruicheng": "夏瑞成", "xiaweimin": "夏蔚民", "xiaxuran": "夏诩然", "xiebingxiu": "谢秉修", "xiebingxiu": "谢秉修", "xieliren": "谢立仁", "xinyihan": "辛轶涵", "xuconghan": "徐从瀚", "xukan": "徐衎",
                                     "xuweiyi": "徐维易", "yanghaochen": "杨皓宸", "yezijiong": "叶梓炅", "youzhouhang": "尤周杭", "yuanruiqing": "袁瑞擎", "yutingjun": "于庭郡", "zhangchenming": "张宸铭", "zhangqiuze": "张秋泽", "zhangshuxuan": "张澍萱", "zhangwenda": "张闻达", "zhangyifu": "张亦夫",
                                     "zhangyouheng": "张佑恒", "zhaochenshen": "赵晨神", "zhaochenwei": "赵晨伟", "zhengyinan": "郑逸楠", "zhonghongyi": "钟弘毅", "zhoujunyu": "周峻瑜", "zhouziyi": "周子逸", "zhouziyou": "周子游", "zhuchenrui2": "朱晨瑞", "zhuruichen": "朱睿宸", "zhuxule": "朱徐乐",
-                                    "zhuyikun": "朱奕坤", "leiwenda": "雷文达"
+                                    "zhuyikun": "朱奕坤", "leiwenda": "雷文达", "wangyuancheng": "王源成", "zhuyiyang": "朱奕阳"
                                 };
                                 NameCell.innerText = (Names[RowData.Username] == undefined ? "" : Names[RowData.Username]);
 
