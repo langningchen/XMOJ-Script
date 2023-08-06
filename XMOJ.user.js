@@ -1999,7 +1999,7 @@ if (document.querySelector("#navbar") != null) {
     }
 
     setInterval(() => {
-        if (diff != undefined) {
+        try {
             let CurrentDate = new Date(new Date().getTime() + diff);
             let Year = CurrentDate.getFullYear();
             if (Year > 3000) {
@@ -2017,7 +2017,7 @@ if (document.querySelector("#navbar") != null) {
                 (Hours < 10 ? "0" : "") + Hours + ":" +
                 (Minutes < 10 ? "0" : "") + Minutes + ":" +
                 (Seconds < 10 ? "0" : "") + Seconds;
-        }
+        } catch (e) { }
 
         if (UtilityEnabled("ResetType")) {
             if (document.querySelector("#profile") != undefined &&
