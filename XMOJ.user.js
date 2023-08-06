@@ -2067,6 +2067,7 @@ if (document.querySelector("#navbar") != null) {
             for (let i = 0; i < Temp.length; i++) {
                 let TimeStamp = parseInt(Temp[i].getAttribute("EndTime")) - new Date().getTime() - diff;
                 if (TimeStamp < 3000) {
+                    Temp[i].classList.remove("UpdateByJS");
                     location.reload();
                 }
                 let CurrentDate = new Date(TimeStamp);
@@ -2105,7 +2106,7 @@ if (document.querySelector("#navbar") != null) {
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 <div>
                     XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                    <a href="https://langningchen.github.io/XMOJ-Script/XMOJ.min.user.js" target="_blank" class="alert-link">此处</a>
+                    <a href="https://langningchen.github.io/XMOJ-Script/XMOJ.`+ (localStorage.getItem("UserScript-Debug") == null ? "min." : "") + `user.js" target="_blank" class="alert-link">此处</a>
                     更新
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
