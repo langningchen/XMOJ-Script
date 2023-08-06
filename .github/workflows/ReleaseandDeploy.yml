@@ -12,11 +12,9 @@ permissions:
     deployments: write
 jobs:
   release:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     name: Release
     runs-on: ubuntu-latest
+    if: contains(${{ github.event.head_commit.message }}, "[Deploy only]") == false
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -24,8 +22,7 @@ jobs:
           fetch-depth: 0
       - name: Update Version
         id: get_version
-        run: |
-          node ./Update.js
+        run: node ./Update.js
       - name: Obfuse JS
         run: |
           npm install javascript-obfuscator -g
@@ -62,6 +59,18 @@ jobs:
           asset_path: ./XMOJ.min.user.js
           asset_name: XMOJ.min.user.js
           asset_content_type: text/plain
+  deploy:
+    name: Deploy
+    needs: [release]
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
