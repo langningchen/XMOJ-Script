@@ -12,10 +12,10 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(github.event.head_commit.modified, 'XMOJ.user.js')
     steps:
-      - name: Debug
-        run: echo ${{ github.event.head_commit.modified }}
+      - name: Exit
+        if: github.event_name == 'push' && contains(github.event.head_commit.modified, 'XMOJ.user.js')
+        run: exit 0
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -61,7 +61,7 @@ jobs:
           asset_content_type: text/plain
   deploy:
     name: Deploy
-    needs: [release]
+    needs: release
     runs-on: ubuntu-latest
     environment:
       name: github-pages
