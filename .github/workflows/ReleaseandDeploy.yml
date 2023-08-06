@@ -12,7 +12,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: ${{ github.event_name}} == 'push' && contains(${{ github.event.head_commit.modified }} ,'XMOJ.user.js')
+    if: github.event_name == 'push' && contains(github.event.head_commit.modified, 'XMOJ.user.js')
     steps:
       - name: Debug
         run: echo ${{ github.event.head_commit.modified }}
