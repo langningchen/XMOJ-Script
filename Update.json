@@ -9,6 +9,91 @@
                     "Description": "不再强制弹出更新窗口 增加新版本内容介绍功能"
                 }
             ]
+        },
+        "0.1.26": {
+            "UpdateDate": 1691307544276,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "536a6fe",
+                    "Commit": "536a6fe045dcba5959511c99ec6e5672ed221cbd",
+                    "Description": "修正比赛列表如果运行中且小于1小时时间错误"
+                },
+                {
+                    "ShortCommit": "df1865c",
+                    "Commit": "df1865cb05f048a6f260f0f87e5893cad11f9376",
+                    "Description": "更新README文件"
+                },
+                {
+                    "ShortCommit": "3e6ab6b",
+                    "Commit": "3e6ab6be16c6a1cd486dd68e07aaddcc6b1eeef2",
+                    "Description": "修复自动发布脚本错误"
+                },
+                {
+                    "ShortCommit": "a6dca39",
+                    "Commit": "a6dca392aaad748867e54890430a396aee67eb68",
+                    "Description": "更改脚本描述并增加命名空间"
+                },
+                {
+                    "ShortCommit": "e34e1c0",
+                    "Commit": "e34e1c0d1406ad0f258363e5bc6655bf83b1cad7",
+                    "Description": "删去死代码"
+                },
+                {
+                    "ShortCommit": "8817354",
+                    "Commit": "881735431b661db4f3515f0528efce168568ddfa",
+                    "Description": "修正比赛列表时间不准确"
+                },
+                {
+                    "ShortCommit": "821bd63",
+                    "Commit": "821bd63812592c9f950f046cefb00f0c45fe651e",
+                    "Description": "修复了比赛列表快结束时无限刷新"
+                },
+                {
+                    "ShortCommit": "c0d7e32",
+                    "Commit": "c0d7e323c4b849df8da09fdca3cfff7b024d851e",
+                    "Description": "这样总应该可以了"
+                },
+                {
+                    "ShortCommit": "da4e4b7",
+                    "Commit": "da4e4b702a6e805d5518038ea286a89fe8c12c48",
+                    "Description": "再改"
+                },
+                {
+                    "ShortCommit": "0020f3f",
+                    "Commit": "0020f3f1c6cdd70b11f3af7ba255af0c6c4275da",
+                    "Description": "写错了"
+                },
+                {
+                    "ShortCommit": "bdeed1b",
+                    "Commit": "bdeed1beff2123717c4c9252ed47c6d0e3868b85",
+                    "Description": "修正Deploy不运行"
+                },
+                {
+                    "ShortCommit": "1fb36ed",
+                    "Commit": "1fb36ed5c40065b268645f66002a9c045ea792cd",
+                    "Description": "这样对吗？"
+                },
+                {
+                    "ShortCommit": "66535e7",
+                    "Commit": "66535e72132748ae46fba9e244597fba28b58acb",
+                    "Description": "调试一下"
+                },
+                {
+                    "ShortCommit": "4df1a45",
+                    "Commit": "4df1a45647ff1ab6b0d71178959acdc0b0ede0fc",
+                    "Description": "修正自动化脚本执行"
+                },
+                {
+                    "ShortCommit": "817cbd8",
+                    "Commit": "817cbd8fa0575e20a90f667acb3e1fc39dd8bb18",
+                    "Description": "[Deploy only] 上一次的提交有错，这样就好了"
+                },
+                {
+                    "ShortCommit": "988b05b",
+                    "Commit": "988b05b31d61a4beca9d9a564f269a4c44c59f70",
+                    "Description": "更改版本号HTML以适应旧版本"
+                }
+            ]
         }
     }
 }
