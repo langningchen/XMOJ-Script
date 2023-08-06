@@ -30,10 +30,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-      - name: Push new version
-        run: |
-          git config --global user.name "langningchen"
-          git config --global user.email "jpxx_chenlangning@outlook.com"
-          git add .
-          git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
-          git push
