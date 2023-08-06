@@ -49,44 +49,9 @@
                     "Description": "修复了比赛列表快结束时无限刷新"
                 },
                 {
-                    "ShortCommit": "c0d7e32",
-                    "Commit": "c0d7e323c4b849df8da09fdca3cfff7b024d851e",
-                    "Description": "这样总应该可以了"
-                },
-                {
-                    "ShortCommit": "da4e4b7",
-                    "Commit": "da4e4b702a6e805d5518038ea286a89fe8c12c48",
-                    "Description": "再改"
-                },
-                {
-                    "ShortCommit": "0020f3f",
-                    "Commit": "0020f3f1c6cdd70b11f3af7ba255af0c6c4275da",
-                    "Description": "写错了"
-                },
-                {
-                    "ShortCommit": "bdeed1b",
-                    "Commit": "bdeed1beff2123717c4c9252ed47c6d0e3868b85",
-                    "Description": "修正Deploy不运行"
-                },
-                {
-                    "ShortCommit": "1fb36ed",
-                    "Commit": "1fb36ed5c40065b268645f66002a9c045ea792cd",
-                    "Description": "这样对吗？"
-                },
-                {
-                    "ShortCommit": "66535e7",
-                    "Commit": "66535e72132748ae46fba9e244597fba28b58acb",
-                    "Description": "调试一下"
-                },
-                {
                     "ShortCommit": "4df1a45",
                     "Commit": "4df1a45647ff1ab6b0d71178959acdc0b0ede0fc",
                     "Description": "修正自动化脚本执行"
-                },
-                {
-                    "ShortCommit": "817cbd8",
-                    "Commit": "817cbd8fa0575e20a90f667acb3e1fc39dd8bb18",
-                    "Description": "[Deploy only] 上一次的提交有错，这样就好了"
                 },
                 {
                     "ShortCommit": "988b05b",
