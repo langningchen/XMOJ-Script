@@ -2,6 +2,8 @@ name: Release and Deploy
 on:
   push:
     branches: ["master"]
+    paths:
+      - "XMOJ.user.js"
   workflow_dispatch:
 permissions:
     id-token: write
@@ -10,19 +12,18 @@ permissions:
     deployments: write
 jobs:
   release:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     name: Release
     runs-on: ubuntu-latest
     steps:
-      - name: Stop workflow if not push or XMOJ.user.js not modified
-        if: github.event_name != 'push' || !contains(github.event.head_commit.modified, 'XMOJ.user.js')
-        run: exit 78
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Update Version
-        id: update_version
-        run: node ./Update.js
+        id: get_version
+        run: |
+          node ./Update.js
       - name: Obfuse JS
         run: |
           npm install javascript-obfuscator -g
@@ -36,11 +37,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.update_version.outputs.version }}
-          release_name: ${{ steps.update_version.outputs.version }}
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: ${{ steps.get_version.outputs.version }}
           draft: false
           prerelease: false
-          body: ${{ steps.update_version.outputs.version }}
+          body: ${{ steps.get_version.outputs.version }}
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
@@ -59,21 +60,6 @@ jobs:
           asset_path: ./XMOJ.min.user.js
           asset_name: XMOJ.min.user.js
           asset_content_type: text/plain
-  deploy:
-    name: Deploy
-    needs: release
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Get Version
-        id: get_version
-        run: echo "version=$(cat XMOJ.user.js | grep -oP '(?<=@version)\s*.*' | tr -d ' ')" >> $GITHUB_ENV
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
