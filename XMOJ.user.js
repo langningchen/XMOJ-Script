@@ -826,9 +826,9 @@ if (document.querySelector("#navbar") != null) {
                 if (CurrentElement[1].childNodes[0].data.indexOf("运行中") != -1) {
                     let Time = String(CurrentElement[1].childNodes[1].innerText).substring(4);
                     let Day = parseInt(Time.substring(0, Time.indexOf("天"))) || 0;
-                    let Hour = parseInt(Time.substring(Math.max(0, Time.indexOf("天") + 1), Time.indexOf("小时"))) || 0;
-                    let Minute = parseInt(Time.substring(Math.max(0, Time.indexOf("小时") + 2), Time.indexOf("分"))) || 0;
-                    let Second = parseInt(Time.substring(Math.max(0, Time.indexOf("分") + 1), Time.indexOf("秒"))) || 0;
+                    let Hour = parseInt(Time.substring((Time.indexOf("天") == -1 ? 0 : Time.indexOf("天") + 1), Time.indexOf("小时"))) || 0;
+                    let Minute = parseInt(Time.substring((Time.indexOf("小时") == -1 ? 0 : Time.indexOf("小时") + 2), Time.indexOf("分"))) || 0;
+                    let Second = parseInt(Time.substring((Time.indexOf("分") == -1 ? 0 : Time.indexOf("分") + 1), Time.indexOf("秒"))) || 0;
                     let TimeStamp = new Date().getTime() + diff + ((((isNaN(Day) ? 0 : Day) * 24 + Hour) * 60 + Minute) * 60 + Second) * 1000;
                     CurrentElement[1].childNodes[1].setAttribute("EndTime", TimeStamp);
                     CurrentElement[1].childNodes[1].classList.add("UpdateByJS");
