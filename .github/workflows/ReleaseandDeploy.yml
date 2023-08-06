@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Exit
-        if: github.event_name == 'push' && contains(github.event.head_commit.modified, 'XMOJ.user.js')
+        if: github.event_name != 'push' || !contains(github.event.head_commit.modified, 'XMOJ.user.js')
         run: exit 0
       - name: Checkout
         uses: actions/checkout@v2
