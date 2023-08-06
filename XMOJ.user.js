@@ -354,7 +354,7 @@ if (document.querySelector("#navbar") != null) {
                 { "ID": "SavePassword", "Type": "A", "Name": "自动保存用户名与密码，免去每次手动输入密码的繁琐" },
                 { "ID": "CopySamples", "Type": "F", "Name": "题目界面测试样例有时复制无效" },
                 { "ID": "RefreshSolution", "Type": "F", "Name": "状态页面结果自动刷新每次只能刷新一个" },
-                { "ID": "CopyMD", "Type": "A", "Name": "复制题目内容" },
+                { "ID": "CopyMD", "Type": "A", "Name": "复制题目或题解内容" },
                 { "ID": "OpenAllProblem", "Type": "A", "Name": "比赛题目界面一键打开所有题目" },
                 {
                     "ID": "CheckCode", "Type": "A", "Name": "提交代码前对代码进行检查", "Children": [
@@ -1964,6 +1964,27 @@ if (document.querySelector("#navbar") != null) {
         }
         Pagination += `</ul></nav>`;
         document.querySelector("body > div > div > center").innerHTML += Pagination;
+    } else if (location.pathname == "/problem_solution.php") {
+        if (UtilityEnabled("CopyMD")) {
+            await fetch(location.href).then((Response) => {
+                return Response.text();
+            }).then((Response) => {
+                let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                let CopyMDButton = document.createElement("button");
+                CopyMDButton.className = "btn btn-sm btn-outline-secondary copy-btn";
+                CopyMDButton.innerText = "复制";
+                CopyMDButton.style.marginLeft = "10px";
+                CopyMDButton.type = "button";
+                document.querySelector("body > div > div > center > h2").appendChild(CopyMDButton);
+                CopyMDButton.onclick = () => {
+                    CopyToClipboard(ParsedDocument.querySelector("body > div > div > div").innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
+                    CopyMDButton.innerText = "复制成功";
+                    setTimeout(() => {
+                        CopyMDButton.innerText = "复制";
+                    }, 1000);
+                };
+            });
+        }
     }
 
     if (UtilityEnabled("RemoveUseless")) {
