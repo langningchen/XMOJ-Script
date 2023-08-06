@@ -796,27 +796,7 @@ if (document.querySelector("#navbar") != null) {
         }
     } else if (location.pathname == "/contest.php") {
         if (UtilityEnabled("AutoCountdown")) {
-            clock = () => {
-                setInterval(() => {
-                    let CurrentDate = new Date(new Date().getTime() + diff);
-                    let Year = CurrentDate.getFullYear();
-                    if (Year > 3000) {
-                        Year -= 1900;
-                    }
-                    let Month = CurrentDate.getMonth() + 1;
-                    let _Date = CurrentDate.getDate();
-                    let Hours = CurrentDate.getHours();
-                    let Minutes = CurrentDate.getMinutes();
-                    let Seconds = CurrentDate.getSeconds();
-                    document.getElementById("nowdate").innerHTML =
-                        Year + "-" +
-                        (Month < 10 ? "0" : "") + Month + "-" +
-                        (_Date < 10 ? "0" : "") + _Date + " " +
-                        (Hours < 10 ? "0" : "") + Hours + ":" +
-                        (Minutes < 10 ? "0" : "") + Minutes + ":" +
-                        (Seconds < 10 ? "0" : "") + Seconds;
-                }, 200);
-            }
+            clock = () => { }
         }
         if (location.href.indexOf("?cid=") == -1) {
             if (UtilityEnabled("ResetType")) {
@@ -852,7 +832,7 @@ if (document.querySelector("#navbar") != null) {
                     CurrentElement[1].childNodes[1].setAttribute("EndTime", TimeStamp);
                     CurrentElement[1].childNodes[1].classList.add("UpdateByJS");
                 } else if (CurrentElement[1].childNodes[0].data.indexOf("开始于") != -1) {
-                    let TimeStamp = Date.parse(String(CurrentElement[1].childNodes[0].data).substring(4)) - diff;
+                    let TimeStamp = Date.parse(String(CurrentElement[1].childNodes[0].data).substring(4)) + diff;
                     CurrentElement[1].setAttribute("EndTime", TimeStamp);
                     CurrentElement[1].classList.add("UpdateByJS");
                 } else if (CurrentElement[1].childNodes[0].data.indexOf("已结束") != -1) {
@@ -2018,6 +1998,26 @@ if (document.querySelector("#navbar") != null) {
     }
 
     setInterval(() => {
+        if (diff != undefined) {
+            let CurrentDate = new Date(new Date().getTime() + diff);
+            let Year = CurrentDate.getFullYear();
+            if (Year > 3000) {
+                Year -= 1900;
+            }
+            let Month = CurrentDate.getMonth() + 1;
+            let _Date = CurrentDate.getDate();
+            let Hours = CurrentDate.getHours();
+            let Minutes = CurrentDate.getMinutes();
+            let Seconds = CurrentDate.getSeconds();
+            document.getElementById("nowdate").innerHTML =
+                Year + "-" +
+                (Month < 10 ? "0" : "") + Month + "-" +
+                (_Date < 10 ? "0" : "") + _Date + " " +
+                (Hours < 10 ? "0" : "") + Hours + ":" +
+                (Minutes < 10 ? "0" : "") + Minutes + ":" +
+                (Seconds < 10 ? "0" : "") + Seconds;
+        }
+
         if (UtilityEnabled("ResetType")) {
             if (document.querySelector("#profile") != undefined &&
                 document.querySelector("#profile").innerHTML == "登录") {
@@ -2065,7 +2065,7 @@ if (document.querySelector("#navbar") != null) {
         if (UtilityEnabled("AutoCountdown")) {
             let Temp = document.getElementsByClassName("UpdateByJS");
             for (let i = 0; i < Temp.length; i++) {
-                let TimeStamp = parseInt(Temp[i].getAttribute("EndTime")) - new Date().getTime() - diff;
+                let TimeStamp = parseInt(Temp[i].getAttribute("EndTime")) - new Date().getTime();
                 if (TimeStamp < 3000) {
                     Temp[i].classList.remove("UpdateByJS");
                     location.reload();
