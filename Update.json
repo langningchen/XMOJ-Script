@@ -24,6 +24,16 @@
                     "Description": "test"
                 }
             ]
+        },
+        "0.1.25": {
+            "UpdateDate": 1691289399566,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "4dd089e",
+                    "Commit": "4dd089ecc1b49dacbf4a4aa043affdd078808fb9",
+                    "Description": "不再强制弹出更新窗口 增加新版本内容介绍功能"
+                }
+            ]
         }
     }
 }
