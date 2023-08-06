@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name         XMOJ
 // @version      0.1.25
-// @description  Test
+// @description  XMOJ增强脚本
 // @author       @langningchen
+// @namespace    https://github/langningchen
 // @match        http://*.xmoj.tech/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/hmac-sha1.min.js
