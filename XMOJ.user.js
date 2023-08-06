@@ -2083,16 +2083,6 @@ if (document.querySelector("#navbar") != null) {
         }
     }, 100);
 
-    if (UtilityEnabled("NewBootstrap")) {
-        let BootStrapInterval = setInterval(() => {
-            if (typeof bootstrap !== 'undefined') {
-                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-                const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-                clearInterval(BootStrapInterval);
-            }
-        }, 100);
-    }
-
     await fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
         .then((Response) => {
             return Response.json();
