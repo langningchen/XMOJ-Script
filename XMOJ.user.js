@@ -8,6 +8,7 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/hmac-sha1.min.js
 // @require      https://ghproxy.com/https://raw.githubusercontent.com/drudru/ansi_up/master/ansi_up.js
 // @grant        GM_registerMenuCommand
+// @grant        GM_notification
 // ==/UserScript==
 
 /**
@@ -180,8 +181,8 @@ if (document.querySelector("#navbar") != null) {
         let PopperScriptElement = document.createElement("script"); document.head.appendChild(PopperScriptElement);
         PopperScriptElement.type = "module";
         PopperScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/popper.js/2.11.7/umd/popper.min.js";
-        let SentryScriptElement = document.createElement("script"); document.head.appendChild(SentryScriptElement);
-        SentryScriptElement.src = "https://js.sentry-cdn.com/a4c8d48a19954926bf0d8e3d6d6c3024.min.js";
+        // let SentryScriptElement = document.createElement("script"); document.head.appendChild(SentryScriptElement);
+        // SentryScriptElement.src = "https://js.sentry-cdn.com/a4c8d48a19954926bf0d8e3d6d6c3024.min.js";
         Temp = document.querySelectorAll("script");
         for (var i = 0; i < Temp.length; i++) {
             if (Temp[i].src.indexOf("bootstrap.min.js") != -1) {
@@ -1207,7 +1208,7 @@ if (document.querySelector("#navbar") != null) {
                                     "xiaoguanxun": "肖贯勋", "xiaojiasheng": "肖嘉盛", "xiaruicheng": "夏瑞成", "xiaweimin": "夏蔚民", "xiaxuran": "夏诩然", "xiebingxiu": "谢秉修", "xiebingxiu": "谢秉修", "xieliren": "谢立仁", "xinyihan": "辛轶涵", "xuconghan": "徐从瀚", "xukan": "徐衎",
                                     "xuweiyi": "徐维易", "yanghaochen": "杨皓宸", "yezijiong": "叶梓炅", "youzhouhang": "尤周杭", "yuanruiqing": "袁瑞擎", "yutingjun": "于庭郡", "zhangchenming": "张宸铭", "zhangqiuze": "张秋泽", "zhangshuxuan": "张澍萱", "zhangwenda": "张闻达", "zhangyifu": "张亦夫",
                                     "zhangyouheng": "张佑恒", "zhaochenshen": "赵晨神", "zhaochenwei": "赵晨伟", "zhengyinan": "郑逸楠", "zhonghongyi": "钟弘毅", "zhoujunyu": "周峻瑜", "zhouziyi": "周子逸", "zhouziyou": "周子游", "zhuchenrui2": "朱晨瑞", "zhuruichen": "朱睿宸", "zhuxule": "朱徐乐",
-                                    "zhuyikun": "朱奕坤", "leiwenda": "雷文达", "wangyuancheng": "王源成", "zhuyiyang": "朱奕阳"
+                                    "zhuyikun": "朱奕坤", "leiwenda": "雷文达", "wangyuancheng": "王源成", "zhuyiyang": "朱奕阳", "hanjialin": "韩佳霖"
                                 };
                                 NameCell.innerText = (Names[RowData.Username] == undefined ? "" : Names[RowData.Username]);
 
@@ -2091,15 +2092,84 @@ if (document.querySelector("#navbar") != null) {
         }, 100);
     }
 
-    await fetch("https://langningchen.github.io/XMOJ-Script/Version.html", { cache: "no-cache" })
+    await fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
         .then((Response) => {
-            return Response.text();
+            return Response.json();
         })
         .then((Response) => {
-            let Version = GM_info.script.version;
-            let LatestVersion = Response.trim();
-            if (Version < LatestVersion) {
-                location.href = "https://langningchen.github.io/XMOJ-Script/XMOJ.min.user.js";
+            let CurrentVersion = GM_info.script.version;
+            let LatestVersion = Object.keys(Response["UpdateHistory"])[Object.keys(Response["UpdateHistory"]).length - 1];
+            if (CurrentVersion < LatestVersion) {
+                let UpdateDiv = document.createElement("div");
+                UpdateDiv.innerHTML = `
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <div>
+                    XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
+                    <a href="https://langningchen.github.io/XMOJ-Script/XMOJ.min.user.js" target="_blank" class="alert-link">此处</a>
+                    更新
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`;
+                document.querySelector("body > div").insertBefore(UpdateDiv, document.querySelector("body > div > div"));
+            }
+            if (localStorage.getItem("UserScript-Update-LastVersion") != GM_info.script.version) {
+                localStorage.setItem("UserScript-Update-LastVersion", GM_info.script.version);
+                let UpdateDiv = document.createElement("div"); document.querySelector("body").appendChild(UpdateDiv);
+                UpdateDiv.className = "modal fade";
+                UpdateDiv.id = "UpdateModal";
+                UpdateDiv.tabIndex = "-1";
+                let UpdateDialog = document.createElement("div"); UpdateDiv.appendChild(UpdateDialog);
+                UpdateDialog.className = "modal-dialog";
+                let UpdateContent = document.createElement("div"); UpdateDialog.appendChild(UpdateContent);
+                UpdateContent.className = "modal-content";
+                let UpdateHeader = document.createElement("div"); UpdateContent.appendChild(UpdateHeader);
+                UpdateHeader.className = "modal-header";
+                let UpdateTitle = document.createElement("h5"); UpdateHeader.appendChild(UpdateTitle);
+                UpdateTitle.className = "modal-title";
+                UpdateTitle.innerText = "更新日志";
+                let UpdateCloseButton = document.createElement("button"); UpdateHeader.appendChild(UpdateCloseButton);
+                UpdateCloseButton.type = "button";
+                UpdateCloseButton.className = "btn-close";
+                UpdateCloseButton.setAttribute("data-bs-dismiss", "modal");
+                let UpdateBody = document.createElement("div"); UpdateContent.appendChild(UpdateBody);
+                UpdateBody.className = "modal-body";
+                let UpdateFooter = document.createElement("div"); UpdateContent.appendChild(UpdateFooter);
+                UpdateFooter.className = "modal-footer";
+                let UpdateButton = document.createElement("button"); UpdateFooter.appendChild(UpdateButton);
+                UpdateButton.type = "button";
+                UpdateButton.className = "btn btn-secondary";
+                UpdateButton.setAttribute("data-bs-dismiss", "modal");
+                UpdateButton.innerText = "关闭";
+                for (let i = Object.keys(Response["UpdateHistory"]).length - 1; i >= 0; i--) {
+                    let UpdateDataCard = document.createElement("div"); UpdateBody.appendChild(UpdateDataCard);
+                    UpdateDataCard.className = "card mb-3";
+                    let UpdateDataCardBody = document.createElement("div"); UpdateDataCard.appendChild(UpdateDataCardBody);
+                    UpdateDataCardBody.className = "card-body";
+                    let UpdateDataCardTitle = document.createElement("h5"); UpdateDataCardBody.appendChild(UpdateDataCardTitle);
+                    UpdateDataCardTitle.className = "card-title";
+                    UpdateDataCardTitle.innerText = Object.keys(Response["UpdateHistory"])[i];
+                    let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
+                    UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
+                    UpdateDataCardSubtitle.innerText = new Date(Response["UpdateHistory"][Object.keys(Response["UpdateHistory"])[i]]["UpdateDate"]).toLocaleString();
+                    let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
+                    UpdateDataCardText.className = "card-text";
+                    let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
+                    UpdateDataCardList.className = "list-group list-group-flush";
+                    for (let j = 0; j < Response["UpdateHistory"][Object.keys(Response["UpdateHistory"])[i]]["UpdateCommits"].length; j++) {
+                        let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
+                        UpdateDataCardListItem.className = "list-group-item";
+                        UpdateDataCardListItem.innerHTML =
+                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Response["UpdateHistory"][Object.keys(Response["UpdateHistory"])[i]]["UpdateCommits"][j]["Commit"] + "\" target=\"_blank\">"
+                            + Response["UpdateHistory"][Object.keys(Response["UpdateHistory"])[i]]["UpdateCommits"][j]["ShortCommit"] + "</a>) " +
+                            Response["UpdateHistory"][Object.keys(Response["UpdateHistory"])[i]]["UpdateCommits"][j]["Description"];
+                    }
+                    let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
+                    UpdateDataCardLink.className = "card-link";
+                    UpdateDataCardLink.href = "https://github.com/langningchen/XMOJ-Script/releases/tag/" + Object.keys(Response["UpdateHistory"])[i];
+                    UpdateDataCardLink.target = "_blank";
+                    UpdateDataCardLink.innerText = "查看该版本";
+                }
+                new bootstrap.Modal(document.getElementById("UpdateModal")).show();
             }
         });
     await fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js")

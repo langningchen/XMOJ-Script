@@ -26,18 +26,20 @@ JSONObject.UpdateHistory[LatestVersion] = {
     "UpdateCommits": []
 };
 
-var Commits = execSync("git log --pretty=format:'%h %s' " + LastJSONVersion + "..HEAD").toString().split("\n");
+var Commits = execSync("git log --pretty=format:'%h %H %s' " + LastJSONVersion + "..HEAD").toString().split("\n");
 Commits.pop();
 console.log("Commits (" + Commits.length + "):");
 for (var i = 0; i < Commits.length; i++) {
     var Commit = Commits[i].split(" ");
-    var CommitHash = Commit[0];
-    var CommitDescription = Commit.slice(1).join(" ");
+    var ShortCommitHash = Commit[0];
+    var LongCommitHash = Commit[1];
+    var CommitDescription = Commit.slice(2).join(" ");
     JSONObject.UpdateHistory[LatestVersion].UpdateCommits.push({
-        "Commit": CommitHash,
+        "ShortCommit": ShortCommitHash,
+        "Commit": LongCommitHash,
         "Description": CommitDescription
     });
-    console.log("    Commit " + i + "(" + CommitHash + "): " + CommitDescription);
+    console.log("    Commit " + i + "(" + ShortCommitHash + "): " + CommitDescription);
 }
 writeFileSync(JSONFileName, JSON.stringify(JSONObject, null, 4), "utf8");
 
