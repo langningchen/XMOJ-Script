@@ -1,30 +1,5 @@
 {
     "UpdateHistory": {
-        "0.1.24": {
-            "UpdateDate": 1691289279154,
-            "UpdateCommits": [
-                {
-                    "ShortCommit": "9f9aceb",
-                    "Commit": "9f9acebb99c4c7433cb5e7b0fbba96bfa02d102e",
-                    "Description": "Update version to 0.1.24"
-                },
-                {
-                    "ShortCommit": "17a1f8e",
-                    "Commit": "17a1f8eac64ca51bd8f3cd8f885baee05a95a1e2",
-                    "Description": "fix workflow run"
-                },
-                {
-                    "ShortCommit": "9e9a704",
-                    "Commit": "9e9a704ba09a1e554de361420c07f0e89f0abd0a",
-                    "Description": "Update test"
-                },
-                {
-                    "ShortCommit": "359727c",
-                    "Commit": "359727cdbecb3e99292cfaed2a97e8187c23f0c5",
-                    "Description": "test"
-                }
-            ]
-        },
         "0.1.25": {
             "UpdateDate": 1691289399566,
             "UpdateCommits": [
