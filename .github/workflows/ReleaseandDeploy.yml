@@ -13,9 +13,9 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
-      - name: Exit
+      - name: Stop workflow if not push or XMOJ.user.js not modified
         if: github.event_name != 'push' || !contains(github.event.head_commit.modified, 'XMOJ.user.js')
-        run: exit 0
+        run: exit 78
       - name: Checkout
         uses: actions/checkout@v2
         with:
