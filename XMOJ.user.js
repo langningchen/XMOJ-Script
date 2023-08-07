@@ -722,7 +722,7 @@ if (document.querySelector("#navbar") != null) {
             }
         }
         else if (UtilityEnabled("GetOthersSample")) {
-            document.querySelector(".jumbotron").innerHTML = `< div class="jumbotron" >
+            document.querySelector(".jumbotron").innerHTML = `<div class="jumbotron">
         <div class="row g-3 align-items-center mb-2">
         <div class="col-auto">
             <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
@@ -834,7 +834,7 @@ if (document.querySelector("#navbar") != null) {
                     String(document.querySelector("body > div > div > center").innerHTML).replaceAll("ServerTime:", "服务器时间：");
                 document.querySelector("body > div > div > center > table").style.marginTop = "10px";
 
-                document.querySelector("body > div > div > center > form").outerHTML = `< div class="row" >
+                document.querySelector("body > div > div > center > form").outerHTML = `<div class="row">
                     <div class="col-md-4"></div>
                     <form method="post" action="contest.php" class="col-md-4">
                         <div class="input-group">
