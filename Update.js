@@ -34,6 +34,9 @@ for (var i = 0; i < Commits.length; i++) {
     var ShortCommitHash = Commit[0];
     var LongCommitHash = Commit[1];
     var CommitDescription = Commit.slice(2).join(" ");
+    if (CommitDescription.indexOf("Merge branch") != -1) {
+        continue;
+    }
     JSONObject.UpdateHistory[LatestVersion].UpdateCommits.push({
         "ShortCommit": ShortCommitHash,
         "Commit": LongCommitHash,
