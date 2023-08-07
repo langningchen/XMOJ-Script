@@ -513,8 +513,8 @@ if (document.querySelector("#navbar") != null) {
     } else if (location.pathname == "/status.php") {
         if (new URL(location.href).searchParams.get("ByUserScript") == null) {
             if (UtilityEnabled("NewBootstrap")) {
-                document.querySelector("#simform").outerHTML = `< form id = "simform" class="justify-content-center form-inline row g-2" action = "status.php" method = "get" style = "padding-bottom: 7px;" >
-            <input class="form-control" type="text" size="4" name="user_id" value="` + document.getElementById(" profile").innerText + `" style = "display: none;" >
+                document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
+            <input class="form-control" type="text" size="4" name="user_id" value="` + document.getElementById("profile").innerText + `" style="display: none;">
             <div class="col-md-1">
                 <label for="problem_id" class="form-label">题目编号</label>
                 <input type="text" class="form-control" id="problem_id" name="problem_id" size="4">
@@ -547,7 +547,7 @@ if (document.querySelector("#navbar") != null) {
             </div>
             <div class="col-md-1">
                 <button type="submit" class="btn btn-primary">查找</button>
-            </div><div id="csrf"></div></form > `;
+            </div><div id="csrf"></div></form>`;
             }
 
             if (UtilityEnabled("GetOthersSample")) {
@@ -712,7 +712,7 @@ if (document.querySelector("#navbar") != null) {
             }
         }
         else if (UtilityEnabled("GetOthersSample")) {
-            document.querySelector(".jumbotron").innerHTML = `< div class="jumbotron" >
+            document.querySelector(".jumbotron").innerHTML = `<div class="jumbotron">
         <div class="row g-3 align-items-center mb-2">
         <div class="col-auto">
             <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
@@ -755,7 +755,7 @@ if (document.querySelector("#navbar") != null) {
         </div>
         <button type="submit" class="btn btn-primary mb-3" id="GetSample">获取</button>
         <div role="alert" id="GetSampleAlert" style="display: none"></div>
-    </div > `;
+    </div>`;
             document.getElementById("GetSample").onclick = async () => {
                 document.getElementById("GetSampleAlert").style.display = "none";
                 let Name = document.getElementById("NameInput").value;
@@ -1665,7 +1665,7 @@ if (document.querySelector("#navbar") != null) {
         }
     } else if (location.pathname == "/loginpage.php") {
         if (UtilityEnabled("NewBootstrap")) {
-            document.querySelector("#login").innerHTML = `< form id = "login" action = "login.php" method = "post" >
+            document.querySelector("#login").innerHTML = `<form id="login" action="login.php" method="post">
         <div class="row g-3 align-items-center mb-3">
             <div class="col-auto">
             <label for="user_id" class="col-form-label">用户名（学号）</label>
@@ -1690,7 +1690,7 @@ if (document.querySelector("#navbar") != null) {
             <a class="btn btn-warning" href="lostpassword.php">忘记密码</a>
             </div>
         </div>
-        </form > `;
+        </form>`;
         }
         let ErrorText = document.createElement("div");
         ErrorText.style.color = "red";
@@ -1962,7 +1962,7 @@ if (document.querySelector("#navbar") != null) {
         Temp = document.querySelector("#problemstatus > tbody").children;
         for (let i = 0; i < Temp.length; i++) {
             if (Temp[i].children[5].children[0] != null) {
-                Temp[i].children[1].innerHTML = `< a href = "` + Temp[i].children[5].children[0].href + `" > ` + Temp[i].children[1].innerText + `</a > `;
+                Temp[i].children[1].innerHTML = `<a href="` + Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText + `</a>`;
             }
             Temp[i].children[3].remove();
             Temp[i].children[3].remove();
@@ -1973,7 +1973,7 @@ if (document.querySelector("#navbar") != null) {
 
         let CurrentPage = parseInt(new URLSearchParams(location.search).get("page") || 1);
         let PID = new URLSearchParams(location.search).get("id");
-        let Pagination = `< nav class="center" > <ul class="pagination justify-content-center">`;
+        let Pagination = `<nav class="center"><ul class="pagination justify-content-center">`;
         if (CurrentPage != 1) {
             Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=1" class="page-link">&lt;&lt;</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1) + `</a></li>`;
         }
@@ -1981,7 +1981,7 @@ if (document.querySelector("#navbar") != null) {
         if (document.querySelector("#problemstatus > tbody").children != null && document.querySelector("#problemstatus > tbody").children.length == 20) {
             Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">` + (CurrentPage + 1) + `</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">&gt;&gt;</a></li>`;
         }
-        Pagination += `</ul></nav > `;
+        Pagination += `</ul></nav>`;
         document.querySelector("body > div > div > center").innerHTML += Pagination;
     } else if (location.pathname == "/problem_solution.php") {
         if (UtilityEnabled("CopyMD")) {
@@ -2083,7 +2083,7 @@ if (document.querySelector("#navbar") != null) {
                 }
                 let SettingsButton = document.createElement("li");
                 SettingsButton.className = "dropdown-item";
-                SettingsButton.innerHTML = `< a href = "index.php?ByUserScript=1" > 插件设置</a > `;
+                SettingsButton.innerHTML = `<a href="index.php?ByUserScript=1">插件设置</a>`;
                 document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").appendChild(SettingsButton);
             }
         }
@@ -2134,14 +2134,14 @@ if (document.querySelector("#navbar") != null) {
             if (CurrentVersion < LatestVersion) {
                 let UpdateDiv = document.createElement("div");
                 UpdateDiv.innerHTML = `
-            < div class="alert alert-warning alert-dismissible fade show" role = "alert" >
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 <div>
                     XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                    <a href="https://langningchen.github.io/XMOJ-Script/XMOJ.`+ (localStorage.getItem(" UserScript-Debug") == null ? "min." : "") + `user.js" target="_blank" class="alert-link">此处</a>
-        更新
-                </div >
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div > `;
+                    <a href="https://langningchen.github.io/XMOJ-Script/XMOJ.`+ (localStorage.getItem("UserScript-Debug") == null ? "min." : "") + `user.js" target="_blank" class="alert-link">此处</a>
+                    更新
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`;
                 document.querySelector("body > div").insertBefore(UpdateDiv, document.querySelector("body > div > div"));
             }
             if (localStorage.getItem("UserScript-Update-LastVersion") != GM_info.script.version) {
