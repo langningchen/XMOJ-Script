@@ -1924,6 +1924,13 @@ if (document.querySelector("#navbar") != null) {
             }
         }
     } else if (location.pathname == "/downloads.php") {
+        let SoftwareList = document.querySelector("body > div > ul");
+        SoftwareList.remove();
+        SoftwareList = document.createElement("ul");
+        SoftwareList.className = "software_list";
+        let Container = document.createElement("div"); document.querySelector("body > div").appendChild(Container);
+        Container.className = "jumbotron";
+        Container.appendChild(SoftwareList);
         if (UtilityEnabled("NewDownload")) {
             let Softwares = [{
                 "Name": "Bloodshed Dev-C++",
@@ -1966,9 +1973,8 @@ if (document.querySelector("#navbar") != null) {
                 "Image": "https://www.mingw-w64.org/logo.svg",
                 "URL": "https://sourceforge.net/projects/mingw/"
             }];
-            document.querySelector("body > div > ul").innerHTML = "";
             for (let i = 0; i < Softwares.length; i++) {
-                document.querySelector("body > div > ul").innerHTML +=
+                SoftwareList.innerHTML +=
                     "<li class=\"software_item\">" +
                     "<a href=\"" + Softwares[i].URL + "\">" +
                     "<div class=\"item-info\">" +
