@@ -2172,7 +2172,7 @@ if (document.querySelector("#navbar") != null) {
                 UpdateButton.className = "btn btn-secondary";
                 UpdateButton.setAttribute("data-bs-dismiss", "modal");
                 UpdateButton.innerText = "关闭";
-                for (let i = Object.keys(Response["UpdateHistory"]).length - 1; i >= math.max(Object.keys(Response["UpdateHistory"]).length - 3, 0); i--) {
+                for (let i = Object.keys(Response["UpdateHistory"]).length - 1; i >= Math.max(Object.keys(Response["UpdateHistory"]).length - 3, 0); i--) {
                     let Version = Object.keys(Response["UpdateHistory"])[i];
                     let Data = Response["UpdateHistory"][Version];
                     let UpdateDataCard = document.createElement("div"); UpdateBody.appendChild(UpdateDataCard);
