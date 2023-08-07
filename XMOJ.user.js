@@ -411,15 +411,15 @@ if (document.querySelector("#navbar") != null) {
         <div class="row">
             <div class="center col-md-4"></div>
             <div class="col-md-2">
-                <form action="problem.php" class="row">
-                    <div class="col-md-8"><input class="form-control" type="number" name="id" placeholder="题目编号"></div>
-                    <div class="col-md-4"><button class="form-control" type="submit">跳转</button></div>
+                <form action="problem.php" class="input-group">
+                    <input class="form-control" type="number" name="id" placeholder="题目编号">
+                    <button class="btn btn-outline-secondary" type="submit">跳转</button>
                 </form>
             </div>
             <div class="col-md-2">
-                <form action="problemset.php" class="row">
-                    <div class="col-md-8"><input class="form-control" type="text" name="search" placeholder="标题或内容"></div>
-                    <div class="col-md-4"><button class="form-control" type="submit">查找</button></div>
+                <form action="problemset.php" class="input-group">
+                    <input class="form-control" type="text" name="search" placeholder="标题或内容">
+                    <button class="btn btn-outline-secondary" type="submit">查找</button>
                 </form>
             </div>
         </div>`;
