@@ -1953,6 +1953,10 @@ if (document.querySelector("#navbar") != null) {
                 "Image": "https://a.fsdn.com/allura/s/embarcadero-dev-cpp/icon",
                 "URL": "https://sourceforge.net/software/product/Embarcadero-Dev-Cpp/"
             }, {
+                "Name": "RedPanda C++",
+                "Image": "https://a.fsdn.com/allura/p/redpanda-cpp/icon",
+                "URL": "https://sourceforge.net/projects/redpanda-cpp/"
+            }, {
                 "Name": "Code::Blocks",
                 "Image": "https://a.fsdn.com/allura/p/codeblocks/icon",
                 "URL": "https://sourceforge.net/projects/codeblocks/"
