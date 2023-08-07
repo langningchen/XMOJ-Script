@@ -139,6 +139,16 @@
                     "Description": "紧急修复：更新日志不显示错误"
                 }
             ]
+        },
+        "0.1.29": {
+            "UpdateDate": 1691376922967,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "1d9e86a",
+                    "Commit": "1d9e86a5e815809198ec5f6bf8f4b7eaef557381",
+                    "Description": "解决HTML显示问题"
+                }
+            ]
         }
     }
 }
