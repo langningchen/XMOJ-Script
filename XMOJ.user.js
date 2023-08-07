@@ -825,14 +825,16 @@ if (document.querySelector("#navbar") != null) {
                 document.querySelector("body > div > div > center").innerHTML =
                     String(document.querySelector("body > div > div > center").innerHTML).replaceAll("ServerTime:", "服务器时间：");
                 document.querySelector("body > div > div > center > table").style.marginTop = "10px";
-                document.querySelector("body > div > div > center > form").childNodes[0].data = "";
-                document.querySelector("body > div > div > center > form > input[type=text]:nth-child(1)").className = "form-control";
-                document.querySelector("body > div > div > center > form > input[type=text]:nth-child(1)").style.width = "200px";
-                document.querySelector("body > div > div > center > form > input[type=text]:nth-child(1)").style.display = "inline-block";
-                document.querySelector("body > div > div > center > form > input[type=submit]:nth-child(2)").value = "搜索";
-                document.querySelector("body > div > div > center > form > input[type=submit]:nth-child(2)").className = "form-control";
-                document.querySelector("body > div > div > center > form > input[type=submit]:nth-child(2)").style.width = "unset";
-                document.querySelector("body > div > div > center > form > input[type=submit]:nth-child(2)").style.display = "inline-block";
+
+                document.querySelector("body > div > div > center > form").outerHTML = `<div class="row">
+                    <div class="col-md-4"></div>
+                    <form method="post" action="contest.php" class="col-md-4">
+                        <div class="input-group">
+                            <input name="keyword" type="text" class="form-control" spellcheck="false" data-ms-editor="true">
+                            <input type="submit" value="搜索" class="btn btn-outline-secondary">
+                        </div>
+                    </form>
+                </div>`;
             }
             if (UtilityEnabled("Translate")) {
                 document.querySelector("body > div > div > center > table > thead > tr").childNodes[0].innerText = "编号";
