@@ -1211,7 +1211,7 @@ if (document.querySelector("#navbar") != null) {
                                 NicknameCell.innerText = (RowData.Nickname.length < 16 ? RowData.Nickname : RowData.Nickname.substring(0, 15) + "...");
 
                                 let Names = {
-                                    "chenlangning": "陈朗宁", "chensiru": "陈斯如", "chentianle": "陈天乐", "chenxuanhe": "陈宣合", "chenzecong": "陈泽聪", "chenzerui": "陈泽睿", "danwenxiao": "单文骁", "dongminghui": "董明辉", "gaochenming": "高晨茗", "guoqingtong": "郭庆桐", "guoruiqun": "郭睿群", "guyuchen": "顾毓辰",
+                                    "huangkai": "黄开", "chenlangning": "陈朗宁", "chensiru": "陈斯如", "chentianle": "陈天乐", "chenxuanhe": "陈宣合", "chenzecong": "陈泽聪", "chenzerui": "陈泽睿", "danwenxiao": "单文骁", "dongminghui": "董明辉", "gaochenming": "高晨茗", "guoqingtong": "郭庆桐", "guoruiqun": "郭睿群", "guyuchen": "顾毓辰",
                                     "hanshujian": "韩书简", "heshuhan": "贺书瀚", "hexinyi": "何昕弈", "huangmingxuan": "黄铭宣", "huangruina": "黄睿纳", "huangwei": "黄唯", "huyiyang": "胡以杨", "jiangxingyu": "姜星宇", "jingtaiyu": "荆泰宇", "jinweizhe": "金炜喆", "leijiahan": "雷家涵",
                                     "lianzhongzhe": "连中哲", "liaoyanxu": "廖彦旭", "lingzixiang": "凌梓翔", "linziyi": "林子懿", "liujianhao": "刘健豪", "liujiankun": "刘健坤", "liuxianyong": "刘先勇", "liuxixian": "刘希贤", "liyihan": "李亦涵", "luojinyang": "罗金阳", "lutianfeng": "陆天枫",
                                     "meitianyi": "梅天一", "panyinliang": "潘胤良", "pengyixuan": "彭议萱", "putong": "蒲通", "qianqingyuan": "钱清源", "qidekai": "戚得凯", "shanwenxiao": "单文骁", "shenxichen": "沈熙晨", "shihongxi": "施泓熙", "shimufan": "施慕梵", "shiyichen": "施奕辰",
