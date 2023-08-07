@@ -349,7 +349,7 @@ if (document.querySelector("#navbar") != null) {
                         { "ID": "Translate", "Type": "F", "Name": "统一使用中文，翻译了部分英文*" },
                         { "ID": "ReplaceLinks", "Type": "F", "Name": "将网站中所有以方括号包装的链接替换为按钮" },
                         { "ID": "RemoveUseless", "Type": "D", "Name": "删去无法使用的功能*" },
-                        { "ID": "ReplaceXM", "Type": "F", "Name": "将网站中所有“小明”关键字替换为“高老师”，所有“小红”关键字替换为“高老师2号”，所有“下海”、“海上”替换为“上海”" }
+                        { "ID": "ReplaceXM", "Type": "F", "Name": "将网站中所有“小明”和“我”关键字替换为“高老师”，所有“小红”关键字替换为“低老师”，所有“下海”、“海上”替换为“上海”" }
                     ]
                 },
                 { "ID": "AutoLogin", "Type": "A", "Name": "在需要登录的界面自动跳转到登陆界面" },
@@ -461,7 +461,7 @@ if (document.querySelector("#navbar") != null) {
                     let CurrentButton = $(Event.currentTarget);
                     let span = CurrentButton.parent().last().find(".sampledata");
                     if (!span.length) {
-                        CurrentButton.text("未找到pre").addClass("done");
+                        CurrentButton.text("未找到代码块").addClass("done");
                         setTimeout(() => {
                             $(".copy-btn").text("复制").removeClass("done");
                         }, 1000);
@@ -1100,7 +1100,7 @@ if (document.querySelector("#navbar") != null) {
                         let StartPosition = Response.indexOf("var solutions=") + 14;
                         let EndPosition = Response.indexOf("}];", StartPosition) + 2;
                         if (EndPosition == 1) {
-                            Table.innerHTML = "暂时还没有人提交";
+                            Table.innerHTML = "暂时还没有人提交呢";
                         }
                         else {
                             let SubmitRecord = JSON.parse(Response.substring(StartPosition, EndPosition));
@@ -1426,7 +1426,7 @@ if (document.querySelector("#navbar") != null) {
                     PassCheck.style.display = "";
                     ErrorElement.style.display = "block";
                     ErrorMessage.style.color = "red";
-                    ErrorMessage.innerText = "请不要注释freopen";
+                    ErrorMessage.innerText = "请不要注释freopen语句";
                     document.querySelector("#Submit").disabled = false;
                     document.querySelector("#Submit").value = "提交";
                     return false;
@@ -1581,7 +1581,7 @@ if (document.querySelector("#navbar") != null) {
                                 ExportProgressBar.max = ACCode.length - 1;
                                 let DownloadCode = (i) => {
                                     if (i >= ACCode.length) {
-                                        ExportACCode.innerText = "导出成功";
+                                        ExportACCode.innerText = "AC代码导出成功";
                                         ExportACCode.disabled = false;
                                         ExportProgressBar.remove();
                                         setTimeout(() => {
@@ -1606,7 +1606,7 @@ if (document.querySelector("#navbar") != null) {
                                 DownloadCode(0);
                             } else {
                                 ExportACCode.disabled = false;
-                                ExportACCode.innerText = "导出失败";
+                                ExportACCode.innerText = "AC代码导出失败";
                                 setTimeout(() => {
                                     ExportACCode.innerText = "导出AC代码";
                                 }, 1000);
