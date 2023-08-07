@@ -132,6 +132,10 @@ if (localStorage.getItem("UserScript-Opened") == null) {
 }
 
 if (document.querySelector("#navbar") != null) {
+    if (document.querySelector("body > div > div") != null) {
+        document.querySelector("body > div > div").className = "mt-3";
+    }
+
     if (UtilityEnabled("AutoLogin") &&
         document.querySelector("#profile") != null &&
         document.querySelector("#profile").innerHTML == "登录" &&
@@ -172,12 +176,22 @@ if (document.querySelector("#navbar") != null) {
         let Temp = document.querySelectorAll("link");
         for (var i = 0; i < Temp.length; i++) {
             if (Temp[i].href.indexOf("bootstrap.min.css") != -1) {
-                Temp[i].href = "https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css";
+                Temp[i].href = "https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0-alpha3/css/bootstrap.min.css";
+            }
+            else if (Temp[i].href.indexOf("white.css") != -1) {
+                Temp[i].remove();
+            }
+            else if (Temp[i].href.indexOf("semantic.min.css") != -1) {
+                Temp[i].remove();
             }
             else if (Temp[i].href.indexOf("bootstrap-theme.min.css") != -1) {
                 Temp[i].remove();
             }
+            else if (Temp[i].href.indexOf("problem.css") != -1) {
+                Temp[i].remove();
+            }
         }
+        document.querySelector("html").setAttribute("data-bs-theme", "dark");
 
         let PopperScriptElement = document.createElement("script"); document.head.appendChild(PopperScriptElement);
         PopperScriptElement.type = "module";
@@ -190,7 +204,7 @@ if (document.querySelector("#navbar") != null) {
                 Temp[i].remove();
                 let BootstrapScriptElement = document.createElement("script"); document.head.appendChild(BootstrapScriptElement);
                 BootstrapScriptElement.type = "module";
-                BootstrapScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.min.js";
+                BootstrapScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0-alpha3/js/bootstrap.min.js";
             }
         }
         document.querySelector("nav").className = "navbar navbar-expand-lg bg-body-tertiary";
@@ -218,6 +232,10 @@ if (document.querySelector("#navbar") != null) {
     let Style = document.createElement("style");
     document.body.appendChild(Style);
     Style.innerHTML = `
+            nav {
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
             .status_y:hover {
                 box-shadow: #52c41a 1px 1px 10px 0px !important;
             }
@@ -235,7 +253,12 @@ if (document.querySelector("#navbar") != null) {
             }
             .software_item {
                 margin: 5px 10px !important;
-            }`
+                background-color: var(--bs-secondary-bg) !important;
+            }
+            .item-txt {
+                color: var(--bs-emphasis-color) !important;
+            }
+            `
     if (UtilityEnabled("AddAnimation")) {
         Style.innerHTML += `.status, .test-case {
                 transition: 0.5s !important;
@@ -256,7 +279,7 @@ if (document.querySelector("#navbar") != null) {
     if (location.pathname == "/index.php" || location.pathname == "/") {
         if (new URL(location.href).searchParams.get("ByUserScript") != null) {
             localStorage.setItem("UserScript-Opened", "true");
-            let Container = document.getElementsByClassName("jumbotron")[0];
+            let Container = document.getElementsByClassName("mt-3")[0];
             Container.innerHTML = "";
             let Alert = document.createElement("div");
             Alert.classList.add("alert");
@@ -519,7 +542,63 @@ if (document.querySelector("#navbar") != null) {
                     }
                 });
             }
-        }
+        } Style.innerHTML += "code, kbd, pre, samp {";
+        Style.innerHTML += "    font-family: monospace, Consolas, 'Courier New';";
+        Style.innerHTML += "    font-size: 1rem;";
+        Style.innerHTML += "}";
+        Style.innerHTML += "pre {";
+        Style.innerHTML += "    padding: 0.3em 0.5em;";
+        Style.innerHTML += "    margin: 0.5em 0;";
+        Style.innerHTML += "}";
+        Style.innerHTML += ".cnt-row {";
+        Style.innerHTML += "    justify-content: inherit;";
+        Style.innerHTML += "    align-items: stretch;";
+        Style.innerHTML += "    width: 100% !important;";
+        Style.innerHTML += "    padding: 1rem 0;";
+        Style.innerHTML += "}";
+        Style.innerHTML += ".cnt-row-head {";
+        Style.innerHTML += "    padding: 0.8em 1em;";
+        Style.innerHTML += "    background-color: var(--bs-secondary-bg);";
+        Style.innerHTML += "    border-radius: 0.3rem 0.3rem 0 0;";
+        Style.innerHTML += "    width: 100%;";
+        Style.innerHTML += "}";
+        Style.innerHTML += ".cnt-row-body {";
+        Style.innerHTML += "    padding: 1em;";
+        Style.innerHTML += "    border: 1px solid var(--bs-secondary-bg);";
+        Style.innerHTML += "    border-top: none;";
+        Style.innerHTML += "    border-radius: 0 0 0.3rem 0.3rem;";
+        Style.innerHTML += "}";
+        Style.innerHTML += ".in-out {";
+        Style.innerHTML += "    overflow: hidden;";
+        Style.innerHTML += "    display: flex;";
+        Style.innerHTML += "    padding: 0.5em 0;";
+        Style.innerHTML += "}";
+        Style.innerHTML += ".in-out .in-out-item {";
+        Style.innerHTML += "    flex: 1;";
+        Style.innerHTML += "    overflow: hidden;";
+        Style.innerHTML += "}";
+        Style.innerHTML += ".cnt-row .title {";
+        Style.innerHTML += "    font-weight: bolder;";
+        Style.innerHTML += "    font-size: 1.1rem;";
+        Style.innerHTML += "}";
+        Style.innerHTML += ".cnt-row .content {";
+        Style.innerHTML += "    overflow: hidden;";
+        Style.innerHTML += "}";
+        Style.innerHTML += "a.copy-btn {";
+        Style.innerHTML += "    float: right;";
+        Style.innerHTML += "    padding: 0 0.4em;";
+        Style.innerHTML += "    border: 1px solid var(--bs-primary-text-emphasis);";
+        Style.innerHTML += "    border-radius: 3px;";
+        Style.innerHTML += "    color: var(--bs-primary-text-emphasis);";
+        Style.innerHTML += "    cursor: pointer;";
+        Style.innerHTML += "}";
+        Style.innerHTML += "a.copy-btn:hover {";
+        Style.innerHTML += "    background-color: var(--bs-secondary-bg);";
+        Style.innerHTML += "}";
+        Style.innerHTML += "a.done, a.done:hover {";
+        Style.innerHTML += "    background-color: var(--bs-primary-text-emphasis);";
+        Style.innerHTML += "    color: var(--bs-emphasis-color);";
+        Style.innerHTML += "}";
     } else if (location.pathname == "/status.php") {
         if (new URL(location.href).searchParams.get("ByUserScript") == null) {
             if (UtilityEnabled("NewBootstrap")) {
@@ -722,7 +801,7 @@ if (document.querySelector("#navbar") != null) {
             }
         }
         else if (UtilityEnabled("GetOthersSample")) {
-            document.querySelector(".jumbotron").innerHTML = `<div class="jumbotron">
+            document.querySelector("body > div > div").innerHTML = `<div class="mt-3">
         <div class="row g-3 align-items-center mb-2">
         <div class="col-auto">
             <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
@@ -1937,7 +2016,7 @@ if (document.querySelector("#navbar") != null) {
         SoftwareList = document.createElement("ul");
         SoftwareList.className = "software_list";
         let Container = document.createElement("div"); document.querySelector("body > div").appendChild(Container);
-        Container.className = "jumbotron";
+        Container.className = "mt-3";
         Container.appendChild(SoftwareList);
         if (UtilityEnabled("NewDownload")) {
             let Softwares = [{
