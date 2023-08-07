@@ -523,8 +523,8 @@ if (document.querySelector("#navbar") != null) {
     } else if (location.pathname == "/status.php") {
         if (new URL(location.href).searchParams.get("ByUserScript") == null) {
             if (UtilityEnabled("NewBootstrap")) {
-                document.querySelector("#simform").outerHTML = `< form id = "simform" class="justify-content-center form-inline row g-2" action = "status.php" method = "get" style = "padding-bottom: 7px;" >
-                <input class="form-control" type="text" size="4" name="user_id" value="` + document.getElementById(" profile").innerText + `" style = "display: none;" >
+                document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
+                <input class="form-control" type="text" size="4" name="user_id" value="` + document.getElementById("profile").innerText + `"style="display: none;">
             <div class="col-md-1">
                 <label for="problem_id" class="form-label">题目编号</label>
                 <input type="text" class="form-control" id="problem_id" name="problem_id" size="4">
@@ -557,7 +557,7 @@ if (document.querySelector("#navbar") != null) {
             </div>
             <div class="col-md-1">
                 <button type="submit" class="btn btn-primary">查找</button>
-            </div><div id="csrf"></div></form > `;
+            </div><div id="csrf"></div></form>`;
             }
 
             if (UtilityEnabled("GetOthersSample")) {
@@ -765,7 +765,7 @@ if (document.querySelector("#navbar") != null) {
         </div>
         <button type="submit" class="btn btn-primary mb-3" id="GetSample">获取</button>
         <div role="alert" id="GetSampleAlert" style="display: none"></div>
-    </div > `;
+    </div>`;
             document.getElementById("GetSample").onclick = async () => {
                 document.getElementById("GetSampleAlert").style.display = "none";
                 let Name = document.getElementById("NameInput").value;
