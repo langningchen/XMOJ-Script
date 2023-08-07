@@ -423,6 +423,9 @@ if (document.querySelector("#navbar") != null) {
                 </form>
             </div>
         </div>`;
+        if (new URLSearchParams(location.search).get("search") != null) {
+            document.querySelector("body > div > div > center > div > div:nth-child(3) > form > input").value = new URLSearchParams(location.search).get("search");
+        }
 
         let Temp = document.querySelector("#problemset").rows;
         for (let i = 1; i < Temp.length; i++) {
