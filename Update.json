@@ -59,6 +59,71 @@
                     "Description": "更改版本号HTML以适应旧版本"
                 }
             ]
+        },
+        "0.1.27": {
+            "UpdateDate": 1691376192887,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "9cf296c",
+                    "Commit": "9cf296c38e821ffe90ed3068eddce2aebb17e6b5",
+                    "Description": "Merge branch 'master' of github.com:langningchen/XMOJ-Script"
+                },
+                {
+                    "ShortCommit": "6c20d66",
+                    "Commit": "6c20d66932cef4361c0dee6d2bbc4863194a5945",
+                    "Description": "增加跳转回显功能"
+                },
+                {
+                    "ShortCommit": "8f5668f",
+                    "Commit": "8f5668f5ff59f625d1eba969476ada020cb99ed7",
+                    "Description": "美化跳转界面"
+                },
+                {
+                    "ShortCommit": "1ddafd9",
+                    "Commit": "1ddafd94b27d2a20dfaa224dcff9cf241bc67edf",
+                    "Description": "恢复题目列表页跳转功能"
+                },
+                {
+                    "ShortCommit": "01d1ac0",
+                    "Commit": "01d1ac0c742892412b49bb916763a8e7583fa803",
+                    "Description": "Remove useless sourcemap"
+                },
+                {
+                    "ShortCommit": "affd568",
+                    "Commit": "affd56832bed09b42ba9f9352c188015836d73db",
+                    "Description": "题解界面增加复制功能"
+                },
+                {
+                    "ShortCommit": "daf5359",
+                    "Commit": "daf53599d86ed442bced397ead64fcd5a0f02fce",
+                    "Description": "解决diff is not set错误"
+                },
+                {
+                    "ShortCommit": "eec9a20",
+                    "Commit": "eec9a201c74edf0325b7585439a8156c621359ee",
+                    "Description": "重命名README文件"
+                },
+                {
+                    "ShortCommit": "390e319",
+                    "Commit": "390e3192583a60d7a6c1eaf0efa73446875c7a9f",
+                    "Description": "设置更新日志最多显示最近三次"
+                },
+                {
+                    "ShortCommit": "0e0106a",
+                    "Commit": "0e0106a43cdd8bee7f7eda3c35e5bb77d3a17cf0",
+                    "Description": "修复README badge不显示"
+                },
+                {
+                    "ShortCommit": "3d67aa6",
+                    "Commit": "3d67aa6c73f7eed4174e1de57a13943a53096623",
+                    "Description": "修正自动化脚本仅部署时push错误"
+                },
+                {
+                    "ShortCommit": "9f4a57b",
+                    "Commit": "9f4a57bdf6370d8a461dbb0ac4eb10a00bb6a87b",
+                    "Description": "修正更新日志错误"
+                }
+            ]
         }
     }
 }
