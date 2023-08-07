@@ -169,6 +169,16 @@
                     "Description": "修改错别字"
                 }
             ]
+        },
+        "0.1.31": {
+            "UpdateDate": 1691382549869,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "2e0ed3d",
+                    "Commit": "2e0ed3dc5d1bafd993113054cd47ac3245428859",
+                    "Description": "Fix div class row"
+                }
+            ]
         }
     }
 }
