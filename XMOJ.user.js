@@ -460,7 +460,7 @@ if (document.querySelector("#navbar") != null) {
                     let CurrentButton = $(Event.currentTarget);
                     let span = CurrentButton.parent().last().find(".sampledata");
                     if (!span.length) {
-                        CurrentButton.text("未找到前项").addClass("done");
+                        CurrentButton.text("未找到代码块").addClass("done");
                         setTimeout(() => {
                             $(".copy-btn").text("复制").removeClass("done");
                         }, 1000);
