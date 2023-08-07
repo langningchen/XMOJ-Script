@@ -441,82 +441,90 @@ if (document.querySelector("#navbar") != null) {
                     "-Problem-" + new URLSearchParams(location.search).get("pid") + "-PID") +
                 ")";
         }
-        document.querySelector("body > div > div > center").lastChild.style.marginLeft = "10px";
-        Temp = document.querySelectorAll(".sampledata");
-        for (var i = 0; i < Temp.length; i++) {
-            Temp[i].parentElement.className = "card";
+        if (document.querySelector("body > div > div > h2") != null) {
+            document.querySelector("body > div > div").innerHTML = "没有此题目";
+            setTimeout(() => {
+                location.href = "problemset.php";
+            }, 1000);
         }
-        if (UtilityEnabled("RemoveUseless")) {
-            document.getElementsByTagName("center")[1].remove();
-        }
-        if (UtilityEnabled("CopySamples")) {
-            $(".copy-btn").click((Event) => {
-                let CurrentButton = $(Event.currentTarget);
-                let span = CurrentButton.parent().last().find(".sampledata");
-                if (!span.length) {
-                    CurrentButton.text("未找到pre").addClass("done");
+        else {
+            document.querySelector("body > div > div > center").lastChild.style.marginLeft = "10px";
+            Temp = document.querySelectorAll(".sampledata");
+            for (var i = 0; i < Temp.length; i++) {
+                Temp[i].parentElement.className = "card";
+            }
+            if (UtilityEnabled("RemoveUseless")) {
+                document.getElementsByTagName("center")[1].remove();
+            }
+            if (UtilityEnabled("CopySamples")) {
+                $(".copy-btn").click((Event) => {
+                    let CurrentButton = $(Event.currentTarget);
+                    let span = CurrentButton.parent().last().find(".sampledata");
+                    if (!span.length) {
+                        CurrentButton.text("未找到pre").addClass("done");
+                        setTimeout(() => {
+                            $(".copy-btn").text("复制").removeClass("done");
+                        }, 1000);
+                        return;
+                    }
+                    CopyToClipboard(span.text());
+                    CurrentButton.text("复制成功").addClass("done");
                     setTimeout(() => {
                         $(".copy-btn").text("复制").removeClass("done");
                     }, 1000);
-                    return;
+                    document.body.removeChild(textarea[0]);
+                });
+            }
+            let IOFileElement = document.querySelector("body > div > div > center > h3");
+            if (IOFileElement != null) {
+                while (IOFileElement.childNodes.length >= 1) {
+                    IOFileElement.parentNode.insertBefore(IOFileElement.childNodes[0], IOFileElement);
                 }
-                CopyToClipboard(span.text());
-                CurrentButton.text("复制成功").addClass("done");
-                setTimeout(() => {
-                    $(".copy-btn").text("复制").removeClass("done");
-                }, 1000);
-                document.body.removeChild(textarea[0]);
-            });
-        }
-        let IOFileElement = document.querySelector("body > div > div > center > h3");
-        if (IOFileElement != null) {
-            while (IOFileElement.childNodes.length >= 1) {
-                IOFileElement.parentNode.insertBefore(IOFileElement.childNodes[0], IOFileElement);
+                IOFileElement.parentNode.insertBefore(document.createElement("br"), IOFileElement);
+                IOFileElement.remove();
+                let Temp = document.querySelector("body > div > div > center").childNodes[2].data.trim();
+                let IOFilename = Temp.substring(0, Temp.length - 3);
+                let SearchParams = new URLSearchParams(location.search);
+                let PID = 0;
+                if (SearchParams.get("id") != null) {
+                    PID = SearchParams.get("id");
+                } else if (SearchParams.get("cid") != null && SearchParams.get("pid") != null) {
+                    PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + SearchParams.get("pid") + "-PID");
+                }
+                localStorage.setItem("UserScript-Problem-" + PID + "-IOFilename", IOFilename);
             }
-            IOFileElement.parentNode.insertBefore(document.createElement("br"), IOFileElement);
-            IOFileElement.remove();
-            let Temp = document.querySelector("body > div > div > center").childNodes[2].data.trim();
-            let IOFilename = Temp.substring(0, Temp.length - 3);
-            let SearchParams = new URLSearchParams(location.search);
-            let PID = 0;
-            if (SearchParams.get("id") != null) {
-                PID = SearchParams.get("id");
-            } else if (SearchParams.get("cid") != null && SearchParams.get("pid") != null) {
-                PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + SearchParams.get("pid") + "-PID");
-            }
-            localStorage.setItem("UserScript-Problem-" + PID + "-IOFilename", IOFilename);
-        }
 
-        if (UtilityEnabled("CopyMD")) {
-            await fetch(location.href).then((Response) => {
-                return Response.text();
-            }).then((Response) => {
-                let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
-                let Temp = ParsedDocument.querySelectorAll(".cnt-row");
-                for (let i = 0; i < Temp.length; i++) {
-                    if (Temp[i].children[1].children[0].className == "content") {
-                        let CopyMDButton = document.createElement("button");
-                        CopyMDButton.className = "btn btn-sm btn-outline-secondary copy-btn";
-                        CopyMDButton.innerText = "复制";
-                        CopyMDButton.style.marginLeft = "10px";
-                        CopyMDButton.type = "button";
-                        document.querySelectorAll(".cnt-row")[i].children[0].appendChild(CopyMDButton);
-                        CopyMDButton.onclick = () => {
-                            CopyToClipboard(Temp[i].children[1].children[0].innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
-                            CopyMDButton.innerText = "复制成功";
-                            setTimeout(() => {
-                                CopyMDButton.innerText = "复制";
-                            }, 1000);
-                        };
+            if (UtilityEnabled("CopyMD")) {
+                await fetch(location.href).then((Response) => {
+                    return Response.text();
+                }).then((Response) => {
+                    let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                    let Temp = ParsedDocument.querySelectorAll(".cnt-row");
+                    for (let i = 0; i < Temp.length; i++) {
+                        if (Temp[i].children[1].children[0].className == "content") {
+                            let CopyMDButton = document.createElement("button");
+                            CopyMDButton.className = "btn btn-sm btn-outline-secondary copy-btn";
+                            CopyMDButton.innerText = "复制";
+                            CopyMDButton.style.marginLeft = "10px";
+                            CopyMDButton.type = "button";
+                            document.querySelectorAll(".cnt-row")[i].children[0].appendChild(CopyMDButton);
+                            CopyMDButton.onclick = () => {
+                                CopyToClipboard(Temp[i].children[1].children[0].innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
+                                CopyMDButton.innerText = "复制成功";
+                                setTimeout(() => {
+                                    CopyMDButton.innerText = "复制";
+                                }, 1000);
+                            };
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     } else if (location.pathname == "/status.php") {
         if (new URL(location.href).searchParams.get("ByUserScript") == null) {
             if (UtilityEnabled("NewBootstrap")) {
-                document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
-            <input class="form-control" type="text" size="4" name="user_id" value="` + document.getElementById("profile").innerText + `" style="display: none;">
+                document.querySelector("#simform").outerHTML = `< form id = "simform" class="justify-content-center form-inline row g-2" action = "status.php" method = "get" style = "padding-bottom: 7px;" >
+                <input class="form-control" type="text" size="4" name="user_id" value="` + document.getElementById(" profile").innerText + `" style = "display: none;" >
             <div class="col-md-1">
                 <label for="problem_id" class="form-label">题目编号</label>
                 <input type="text" class="form-control" id="problem_id" name="problem_id" size="4">
@@ -549,7 +557,7 @@ if (document.querySelector("#navbar") != null) {
             </div>
             <div class="col-md-1">
                 <button type="submit" class="btn btn-primary">查找</button>
-            </div><div id="csrf"></div></form>`;
+            </div><div id="csrf"></div></form > `;
             }
 
             if (UtilityEnabled("GetOthersSample")) {
@@ -714,7 +722,7 @@ if (document.querySelector("#navbar") != null) {
             }
         }
         else if (UtilityEnabled("GetOthersSample")) {
-            document.querySelector(".jumbotron").innerHTML = `<div class="jumbotron">
+            document.querySelector(".jumbotron").innerHTML = `< div class="jumbotron" >
         <div class="row g-3 align-items-center mb-2">
         <div class="col-auto">
             <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
@@ -757,7 +765,7 @@ if (document.querySelector("#navbar") != null) {
         </div>
         <button type="submit" class="btn btn-primary mb-3" id="GetSample">获取</button>
         <div role="alert" id="GetSampleAlert" style="display: none"></div>
-    </div>`;
+    </div > `;
             document.getElementById("GetSample").onclick = async () => {
                 document.getElementById("GetSampleAlert").style.display = "none";
                 let Name = document.getElementById("NameInput").value;
@@ -826,7 +834,7 @@ if (document.querySelector("#navbar") != null) {
                     String(document.querySelector("body > div > div > center").innerHTML).replaceAll("ServerTime:", "服务器时间：");
                 document.querySelector("body > div > div > center > table").style.marginTop = "10px";
 
-                document.querySelector("body > div > div > center > form").outerHTML = `<div class="row">
+                document.querySelector("body > div > div > center > form").outerHTML = `< div class="row" >
                     <div class="col-md-4"></div>
                     <form method="post" action="contest.php" class="col-md-4">
                         <div class="input-group">
