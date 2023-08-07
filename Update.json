@@ -124,6 +124,21 @@
                     "Description": "修正更新日志错误"
                 }
             ]
+        },
+        "0.1.28": {
+            "UpdateDate": 1691376349321,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "fd2584d",
+                    "Commit": "fd2584d6d3b22f3423e1ed63365eb222bc331156",
+                    "Description": "Merge branch 'master' of github.com:langningchen/XMOJ-Script"
+                },
+                {
+                    "ShortCommit": "1177d0c",
+                    "Commit": "1177d0c68c8137c6a2e88befb55bf3553eb4ee19",
+                    "Description": "紧急修复：更新日志不显示错误"
+                }
+            ]
         }
     }
 }
