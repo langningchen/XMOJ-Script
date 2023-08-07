@@ -262,7 +262,9 @@ if (document.querySelector("#navbar") != null) {
             Alert.classList.add("alert");
             Alert.classList.add("alert-primary");
             Alert.role = "alert";
-            Alert.innerHTML = "欢迎使用XMOJ增强脚本！";
+            Alert.innerHTML = `欢迎使用XMOJ增强脚本！点击
+            <a class="alert-link" href="modifypage.php?ByUserScript=1" target="_blank">此处</a>
+            查看更新日志。`;
             Container.appendChild(Alert);
             let UtilitiesCard = document.createElement("div");
             UtilitiesCard.classList.add("card");
@@ -1487,81 +1489,123 @@ if (document.querySelector("#navbar") != null) {
             }
         };
     } else if (location.pathname == "/modifypage.php") {
-        if (UtilityEnabled("ResetType")) {
-            document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(1) > td").innerText = "修改账号";
-            for (let i = 3; i <= 12; i++) {
-                document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(" + i + ") > td:nth-child(2) > input").classList.add("form-control");
-                document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(" + i + ") > td:nth-child(2) > input").style.marginBottom = "5px";
-            }
-            document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(2) > td:nth-child(1)").innerText = "用户ID";
-            let Temp = document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(13) > td:nth-child(2) > input:nth-child(1)");
-            Temp.classList.add("form-control");
-            Temp.style.width = "40%";
-            Temp.style.display = "inline-block";
-            Temp.value = "修改";
-            Temp = document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(13) > td:nth-child(2) > input:nth-child(2)");
-            Temp.classList.add("form-control");
-            Temp.style.width = "40%";
-            Temp.style.display = "inline-block";
-            Temp.value = "重置";
-            document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(13) > td:nth-child(2)").childNodes[1].remove();
-            document.querySelector("body > div.container > div > form > a").remove();
+        if (new URL(location.href).searchParams.get("ByUserScript") != null) {
+            document.querySelector("body > div > div").innerHTML = "";
+            await fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
+                .then((Response) => {
+                    return Response.json();
+                })
+                .then((Response) => {
+                    for (let i = Object.keys(Response["UpdateHistory"]).length - 1; i >= 0; i--) {
+                        let Version = Object.keys(Response["UpdateHistory"])[i];
+                        let Data = Response["UpdateHistory"][Version];
+                        let UpdateDataCard = document.createElement("div"); document.querySelector("body > div > div").appendChild(UpdateDataCard);
+                        UpdateDataCard.className = "card mb-3";
+                        let UpdateDataCardBody = document.createElement("div"); UpdateDataCard.appendChild(UpdateDataCardBody);
+                        UpdateDataCardBody.className = "card-body";
+                        let UpdateDataCardTitle = document.createElement("h5"); UpdateDataCardBody.appendChild(UpdateDataCardTitle);
+                        UpdateDataCardTitle.className = "card-title";
+                        UpdateDataCardTitle.innerText = Version;
+                        let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
+                        UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
+                        UpdateDataCardSubtitle.innerText = new Date(Data["UpdateDate"]).toLocaleString();
+                        let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
+                        UpdateDataCardText.className = "card-text";
+                        let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
+                        UpdateDataCardList.className = "list-group list-group-flush";
+                        for (let j = 0; j < Data["UpdateCommits"].length; j++) {
+                            let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
+                            UpdateDataCardListItem.className = "list-group-item";
+                            UpdateDataCardListItem.innerHTML =
+                                "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data["UpdateCommits"][j]["Commit"] + "\" target=\"_blank\">"
+                                + Data["UpdateCommits"][j]["ShortCommit"] + "</a>) " +
+                                Data["UpdateCommits"][j]["Description"];
+                        }
+                        let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
+                        UpdateDataCardLink.className = "card-link";
+                        UpdateDataCardLink.href = "https://github.com/langningchen/XMOJ-Script/releases/tag/" + Version;
+                        UpdateDataCardLink.target = "_blank";
+                        UpdateDataCardLink.innerText = "查看该版本";
+                    }
+                });
         }
-        if (UtilityEnabled("ExportACCode")) {
-            let ExportACCode = document.createElement("button");
-            document.querySelector("body > div.container > div").appendChild(ExportACCode);
-            ExportACCode.innerText = "导出AC代码";
-            ExportACCode.className = "btn btn-outline-secondary";
-            ExportACCode.onclick = () => {
-                ExportACCode.disabled = true;
-                let ExportProgressBar = document.getElementsByTagName("progress")[0] || document.createElement("progress");
-                ExportProgressBar.removeAttribute("value");
-                ExportProgressBar.removeAttribute("max");
-                document.querySelector("body > div.container > div").appendChild(ExportProgressBar);
-                ExportACCode.innerText = "正在导出...";
-                let Request = new XMLHttpRequest();
-                Request.onreadystatechange = () => {
-                    if (Request.readyState == 4) {
-                        if (Request.status == 200) {
-                            let Response = Request.responseText;
-                            let ACCode = Response.split("------------------------------------------------------\r\n");
-                            ExportProgressBar.max = ACCode.length - 1;
-                            let DownloadCode = (i) => {
-                                if (i >= ACCode.length) {
-                                    ExportACCode.innerText = "导出成功";
-                                    ExportACCode.disabled = false;
-                                    ExportProgressBar.remove();
+        else {
+            if (UtilityEnabled("ResetType")) {
+                document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(1) > td").innerText = "修改账号";
+                for (let i = 3; i <= 12; i++) {
+                    document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(" + i + ") > td:nth-child(2) > input").classList.add("form-control");
+                    document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(" + i + ") > td:nth-child(2) > input").style.marginBottom = "5px";
+                }
+                document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(2) > td:nth-child(1)").innerText = "用户ID";
+                let Temp = document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(13) > td:nth-child(2) > input:nth-child(1)");
+                Temp.classList.add("form-control");
+                Temp.style.width = "40%";
+                Temp.style.display = "inline-block";
+                Temp.value = "修改";
+                Temp = document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(13) > td:nth-child(2) > input:nth-child(2)");
+                Temp.classList.add("form-control");
+                Temp.style.width = "40%";
+                Temp.style.display = "inline-block";
+                Temp.value = "重置";
+                document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(13) > td:nth-child(2)").childNodes[1].remove();
+                document.querySelector("body > div.container > div > form > a").remove();
+            }
+            if (UtilityEnabled("ExportACCode")) {
+                let ExportACCode = document.createElement("button");
+                document.querySelector("body > div.container > div").appendChild(ExportACCode);
+                ExportACCode.innerText = "导出AC代码";
+                ExportACCode.className = "btn btn-outline-secondary";
+                ExportACCode.onclick = () => {
+                    ExportACCode.disabled = true;
+                    let ExportProgressBar = document.getElementsByTagName("progress")[0] || document.createElement("progress");
+                    ExportProgressBar.removeAttribute("value");
+                    ExportProgressBar.removeAttribute("max");
+                    document.querySelector("body > div.container > div").appendChild(ExportProgressBar);
+                    ExportACCode.innerText = "正在导出...";
+                    let Request = new XMLHttpRequest();
+                    Request.onreadystatechange = () => {
+                        if (Request.readyState == 4) {
+                            if (Request.status == 200) {
+                                let Response = Request.responseText;
+                                let ACCode = Response.split("------------------------------------------------------\r\n");
+                                ExportProgressBar.max = ACCode.length - 1;
+                                let DownloadCode = (i) => {
+                                    if (i >= ACCode.length) {
+                                        ExportACCode.innerText = "导出成功";
+                                        ExportACCode.disabled = false;
+                                        ExportProgressBar.remove();
+                                        setTimeout(() => {
+                                            ExportACCode.innerText = "导出AC代码";
+                                        }, 1000);
+                                        return;
+                                    }
+                                    let CurrentCode = ACCode[i];
+                                    if (CurrentCode != "") {
+                                        let CurrentQuestionID = CurrentCode.substring(7, 11);
+                                        CurrentCode = CurrentCode.substring(14);
+                                        ExportProgressBar.value = i + 1;
+                                        let DownloadLink = document.createElement("a");
+                                        DownloadLink.href = window.URL.createObjectURL(new Blob([CurrentCode]));
+                                        DownloadLink.download = CurrentQuestionID + ".cpp";
+                                        DownloadLink.click();
+                                    }
                                     setTimeout(() => {
-                                        ExportACCode.innerText = "导出AC代码";
-                                    }, 1000);
-                                    return;
-                                }
-                                let CurrentCode = ACCode[i];
-                                if (CurrentCode != "") {
-                                    let CurrentQuestionID = CurrentCode.substring(7, 11);
-                                    CurrentCode = CurrentCode.substring(14);
-                                    ExportProgressBar.value = i + 1;
-                                    let DownloadLink = document.createElement("a");
-                                    DownloadLink.href = window.URL.createObjectURL(new Blob([CurrentCode]));
-                                    DownloadLink.download = CurrentQuestionID + ".cpp";
-                                    DownloadLink.click();
-                                }
+                                        DownloadCode(i + 1);
+                                    }, 50);
+                                };
+                                DownloadCode(0);
+                            } else {
+                                ExportACCode.disabled = false;
+                                ExportACCode.innerText = "导出失败";
                                 setTimeout(() => {
-                                    DownloadCode(i + 1);
-                                }, 50);
-                            };
-                            DownloadCode(0);
-                        } else {
-                            ExportACCode.disabled = false;
-                            ExportACCode.innerText = "导出失败";
-                            setTimeout(() => {
-                                ExportACCode.innerText = "导出AC代码";
-                            }, 1000);
+                                    ExportACCode.innerText = "导出AC代码";
+                                }, 1000);
+                            }
                         }
                     }
+                    Request.open("GET", "http://www.xmoj.tech/export_ac_code.php", true);
+                    Request.send();
                 }
-                Request.open("GET", "http://www.xmoj.tech/export_ac_code.php", true);
-                Request.send();
             }
         }
     } else if (location.pathname == "/userinfo.php") {
