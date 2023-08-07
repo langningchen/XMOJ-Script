@@ -134,6 +134,41 @@
                     "Description": "解决HTML显示问题"
                 }
             ]
+        },
+        "0.1.30": {
+            "UpdateDate": 1691378897757,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "2586e3f",
+                    "Commit": "2586e3f089781110d8beb18b8fcb30842848d664",
+                    "Description": "将题目不存在界面更友好"
+                },
+                {
+                    "ShortCommit": "eb75550",
+                    "Commit": "eb755508f5cb90b71a1be36d9194f94847fa95f3",
+                    "Description": "修复下载页面更新框在内容下面"
+                },
+                {
+                    "ShortCommit": "b85ad47",
+                    "Commit": "b85ad475626561b7eda3d7ae60e5843d79019aa5",
+                    "Description": "将比赛列表与题目列表的搜索框样式统一"
+                },
+                {
+                    "ShortCommit": "336003d",
+                    "Commit": "336003d870d1ef5e2e00ed24d9963d2c7ebaf46f",
+                    "Description": "手动删去多余的更新日志"
+                },
+                {
+                    "ShortCommit": "80eff5d",
+                    "Commit": "80eff5dc79ade3030c597b33894238e2a1403ec9",
+                    "Description": "增加全部更新日志查看功能"
+                },
+                {
+                    "ShortCommit": "70dc91b",
+                    "Commit": "70dc91b63744a80fa37bbf92defba72948b0434a",
+                    "Description": "修改错别字"
+                }
+            ]
         }
     }
 }
