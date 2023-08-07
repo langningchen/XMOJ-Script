@@ -333,7 +333,7 @@ if (document.querySelector("#navbar") != null) {
                 { "ID": "AutoRefresh", "Type": "A", "Name": "比赛列表、比赛排名界面自动刷新" },
                 { "ID": "AutoCountdown", "Type": "A", "Name": "比赛列表等界面的时间自动倒计时" },
                 { "ID": "DownloadPlayback", "Type": "A", "Name": "回放视频增加下载功能" },
-                { "ID": "ImproveACRate", "Type": "A", "Name": "自动提交签到提以提高AC率" },
+                { "ID": "ImproveACRate", "Type": "A", "Name": "自动提交签到题以提高AC率" },
                 { "ID": "AutoO2", "Type": "F", "Name": "代码提交界面自动选择O2优化" },
                 {
                     "ID": "Beautify", "Type": "F", "Name": "美化界面", "Children": [
