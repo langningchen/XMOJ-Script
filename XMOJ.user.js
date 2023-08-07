@@ -2266,7 +2266,7 @@ if (document.querySelector("#navbar") != null) {
                 new bootstrap.Modal(document.getElementById("UpdateModal")).show();
             }
         });
-    await fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js")
+    await fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js", { cache: "no-cache" })
         .then((Response) => {
             return Response.text();
         })
