@@ -434,14 +434,14 @@ if (document.querySelector("#navbar") != null) {
         }
         document.querySelector("body > div > div > center > table:nth-child(2)").outerHTML = `
         <div class="row">
-            <div class="center col-md-4"></div>
+            <div class="center col-md-3"></div>
             <div class="col-md-2">
                 <form action="problem.php" class="input-group">
-                    <input class="form-control" type="number" name="id" placeholder="题目编号">
+                    <input class="form-control" type="number" name="id" placeholder="题目编号" min="0">
                     <button class="btn btn-outline-secondary" type="submit">跳转</button>
                 </form>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
                 <form action="problemset.php" class="input-group">
                     <input class="form-control" type="text" name="search" placeholder="标题或内容">
                     <button class="btn btn-outline-secondary" type="submit">查找</button>
