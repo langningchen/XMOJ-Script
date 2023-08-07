@@ -229,6 +229,51 @@
                     "Description": "TestAddonScript"
                 }
             ]
+        },
+        "0.1.33": {
+            "UpdateDate": 1691401229016,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "afe28a7",
+                    "Commit": "afe28a7dd5c00e0036f2430b557d4eddef213b0f",
+                    "Description": "[#11] Fix username and nickname disappear"
+                },
+                {
+                    "ShortCommit": "fbd74cc",
+                    "Commit": "fbd74cc77064c8aea0c540cf5311e4926c0ec9a9",
+                    "Description": "Update version to 0.1.32"
+                },
+                {
+                    "ShortCommit": "1ea4b24",
+                    "Commit": "1ea4b24ecf5a7f853a9c2686185b2df00694be90",
+                    "Description": "Remove extra brackets in README"
+                },
+                {
+                    "ShortCommit": "6725a7d",
+                    "Commit": "6725a7df66c5d6e63ccc189b05970b4667f855e2",
+                    "Description": "[#6] 修复题目编号为复数并增大搜索框"
+                },
+                {
+                    "ShortCommit": "a495ccf",
+                    "Commit": "a495ccf469c13d5cd18b7686bf305cf320fd4d0b",
+                    "Description": "增加黑暗模式"
+                },
+                {
+                    "ShortCommit": "5985bcd",
+                    "Commit": "5985bcd0ae64cf657df8bc4db2747aecd93c4a01",
+                    "Description": "解决状态页面显示问题"
+                },
+                {
+                    "ShortCommit": "ee3f780",
+                    "Commit": "ee3f780d323ba1f873b4a7c22b0a2dd768c59409",
+                    "Description": "Enhance obfuscate js"
+                },
+                {
+                    "ShortCommit": "dbf26ba",
+                    "Commit": "dbf26ba71f82b5de18fe4f72fadce55609735275",
+                    "Description": "解决附加脚本缓存问题"
+                }
+            ]
         }
     }
 }
