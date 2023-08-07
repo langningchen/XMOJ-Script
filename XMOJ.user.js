@@ -1705,7 +1705,6 @@ if (document.querySelector("#navbar") != null) {
             }
         }
         eval(document.querySelector("body > script:nth-child(5)").innerHTML);
-        document.querySelector("#statics > caption").remove();
         document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").innerText = "AC题目列表";
 
         let Temp = document.querySelector("#statics > tbody").children;
@@ -1722,6 +1721,11 @@ if (document.querySelector("#navbar") != null) {
                 }
             }
         }
+        let UserID, UserName;
+        [UserID, UserName] = document.querySelector("#statics > caption").childNodes[0].data.trim().split("--");
+        document.querySelector("#statics > caption").remove();
+        document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(1)").innerHTML = "用户名：" + UserID;
+        document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(2)").innerHTML = "昵称：" + UserName;
     } else if (location.pathname == "/conteststatistics.php") {
         document.querySelector("body > div > div > center > h3").innerText = "比赛统计";
         if (UtilityEnabled("ResetType")) {
