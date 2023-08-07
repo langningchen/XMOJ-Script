@@ -136,7 +136,8 @@ if (document.querySelector("#navbar") != null) {
         document.querySelector("#profile") != null &&
         document.querySelector("#profile").innerHTML == "登录" &&
         location.pathname != "/login.php" &&
-        location.pathname != "/loginpage.php") {
+        location.pathname != "/loginpage.php" &&
+        location.pathname != "/lostpassword.php") {
         localStorage.setItem("UserScript-LastPage", location.pathname + location.search);
         location.href = "loginpage.php";
     }
@@ -1008,7 +1009,7 @@ if (document.querySelector("#navbar") != null) {
                     }
                     let OpenUnsolvedButton = document.createElement("button");
                     OpenUnsolvedButton.className = "btn btn-outline-secondary";
-                    OpenUnsolvedButton.innerText = "打开未解决题目（OI模式下请手动打开题目）";
+                    OpenUnsolvedButton.innerText = "打开未解决题目";
                     OpenAllDiv.appendChild(OpenUnsolvedButton);
                     OpenUnsolvedButton.onclick = () => {
                         let Rows = document.querySelector("#problemset > tbody").rows;
@@ -1580,7 +1581,7 @@ if (document.querySelector("#navbar") != null) {
                                 ExportProgressBar.max = ACCode.length - 1;
                                 let DownloadCode = (i) => {
                                     if (i >= ACCode.length) {
-                                        ExportACCode.innerText = "导出成功";
+                                        ExportACCode.innerText = "AC代码导出成功";
                                         ExportACCode.disabled = false;
                                         ExportProgressBar.remove();
                                         setTimeout(() => {
