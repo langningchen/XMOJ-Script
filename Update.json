@@ -64,11 +64,6 @@
             "UpdateDate": 1691376192887,
             "UpdateCommits": [
                 {
-                    "ShortCommit": "9cf296c",
-                    "Commit": "9cf296c38e821ffe90ed3068eddce2aebb17e6b5",
-                    "Description": "Merge branch 'master' of github.com:langningchen/XMOJ-Script"
-                },
-                {
                     "ShortCommit": "6c20d66",
                     "Commit": "6c20d66932cef4361c0dee6d2bbc4863194a5945",
                     "Description": "增加跳转回显功能"
@@ -82,11 +77,6 @@
                     "ShortCommit": "1ddafd9",
                     "Commit": "1ddafd94b27d2a20dfaa224dcff9cf241bc67edf",
                     "Description": "恢复题目列表页跳转功能"
-                },
-                {
-                    "ShortCommit": "01d1ac0",
-                    "Commit": "01d1ac0c742892412b49bb916763a8e7583fa803",
-                    "Description": "Remove useless sourcemap"
                 },
                 {
                     "ShortCommit": "affd568",
@@ -128,11 +118,6 @@
         "0.1.28": {
             "UpdateDate": 1691376349321,
             "UpdateCommits": [
-                {
-                    "ShortCommit": "fd2584d",
-                    "Commit": "fd2584d6d3b22f3423e1ed63365eb222bc331156",
-                    "Description": "Merge branch 'master' of github.com:langningchen/XMOJ-Script"
-                },
                 {
                     "ShortCommit": "1177d0c",
                     "Commit": "1177d0c68c8137c6a2e88befb55bf3553eb4ee19",
