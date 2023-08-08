@@ -234,6 +234,51 @@
                     "Description": "增加学生姓名"
                 }
             ]
+        },
+        "0.1.35": {
+            "UpdateDate": 1691463816222,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "800138e",
+                    "Commit": "800138e2b39d035f4b36a60221c47bc0bcb078bc",
+                    "Description": "[#1] 修复题解中代码块不显示"
+                },
+                {
+                    "ShortCommit": "15306be",
+                    "Commit": "15306befadf88d9c081b757f1bd38c998e72d344",
+                    "Description": "[#19] 解决主页新闻框消失"
+                },
+                {
+                    "ShortCommit": "d62f63f",
+                    "Commit": "d62f63f8bf358a243595490bdf60031f188554d2",
+                    "Description": "[#14] 解决测试点信息页面深色模式不匹配"
+                },
+                {
+                    "ShortCommit": "eacc8af",
+                    "Commit": "eacc8af0266feeb3c3ec59e600a5c17eec594e2c",
+                    "Description": "手动修改更新日志"
+                },
+                {
+                    "ShortCommit": "1b9c518",
+                    "Commit": "1b9c5183dd587e664755b370c96df11cfba47b54",
+                    "Description": "删去对旧版本的支持"
+                },
+                {
+                    "ShortCommit": "063e094",
+                    "Commit": "063e0941b06217da79f4e4eec4392cd01bbd3730",
+                    "Description": "[#5] 解决非www界面登录失败"
+                },
+                {
+                    "ShortCommit": "99e833f",
+                    "Commit": "99e833f4e8113c0fdfe493f11f78a0b6b2797201",
+                    "Description": "提交代码页面新的样式"
+                },
+                {
+                    "ShortCommit": "5b7c74e",
+                    "Commit": "5b7c74ed611f465f56a0d6e7d7ae8134dbd5e024",
+                    "Description": "[#15] 增加深色模式选择"
+                }
+            ]
         }
     }
 }
