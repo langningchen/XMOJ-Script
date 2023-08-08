@@ -304,6 +304,16 @@
                     "Description": "Create CODE_OF_CONDUCT.md"
                 }
             ]
+        },
+        "0.1.37": {
+            "UpdateDate": 1691470548279,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "05ac8d1",
+                    "Commit": "05ac8d1a6cc31d775f17ee04bdf67ac7db067fc1",
+                    "Description": "解决因为比赛题目列表脚本运行失败而导致的ACM排名不显示"
+                }
+            ]
         }
     }
 }
