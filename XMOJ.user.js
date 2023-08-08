@@ -1317,11 +1317,6 @@ if (document.querySelector("#navbar") != null) {
                         Temp[i].childNodes[2].innerText);
                 }
 
-                if (UtilityEnabled("ResetType")) {
-                    document.querySelector("#problemset > thead > tr > td:nth-child(1)").innerText = "状态";
-                    document.querySelector("#problemset").style.marginTop = "10px";
-                }
-
                 if (UtilityEnabled("OpenAllProblem")) {
                     let OpenAllDiv = document.createElement("div");
                     OpenAllDiv.style.marginTop = "20px";
