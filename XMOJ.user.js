@@ -7,6 +7,8 @@
 // @match        http://*.xmoj.tech/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/hmac-sha1.min.js
+// @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/codemirror.min.js
+// @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/mode/clike/clike.min.js
 // @require      https://ghproxy.com/https://raw.githubusercontent.com/drudru/ansi_up/master/ansi_up.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_notification
@@ -201,6 +203,9 @@ if (document.querySelector("#navbar") != null) {
         let PopperScriptElement = document.createElement("script"); document.head.appendChild(PopperScriptElement);
         PopperScriptElement.type = "module";
         PopperScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/popper.js/2.11.7/umd/popper.min.js";
+        let CodeMirrorStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrorStyleElement);
+        CodeMirrorStyleElement.rel = "stylesheet";
+        CodeMirrorStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/codemirror.min.css";
         // let SentryScriptElement = document.createElement("script"); document.head.appendChild(SentryScriptElement);
         // SentryScriptElement.src = "https://js.sentry-cdn.com/a4c8d48a19954926bf0d8e3d6d6c3024.min.js";
         Temp = document.querySelectorAll("script");
@@ -280,6 +285,214 @@ if (document.querySelector("#navbar") != null) {
                 color: blue !important;
             }`;
     }
+
+    if (UtilityEnabled("RemoveUseless")) {
+        if (document.getElementsByClassName("footer")[0] != null) {
+            document.getElementsByClassName("footer")[0].remove();
+        }
+    }
+
+    if (UtilityEnabled("ReplaceYN")) {
+        Temp = document.getElementsByClassName("status_y");
+        for (let i = 0; i < Temp.length; i++) {
+            Temp[i].innerText = "✓";
+        }
+        Temp = document.getElementsByClassName("status_n");
+        for (let i = 0; i < Temp.length; i++) {
+            Temp[i].innerText = "✗";
+        }
+    }
+
+    Temp = document.getElementsByClassName("page-item");
+    for (let i = 0; i < Temp.length; i++) {
+        Temp[i].children[0].className = "page-link";
+    }
+    if (document.getElementsByClassName("pagination")[0] != null) {
+        document.getElementsByClassName("pagination")[0].classList.add("justify-content-center");
+    }
+
+    Temp = document.getElementsByTagName("table");
+    for (let i = 0; i < Temp.length; i++) {
+        if (Temp[i].querySelector("thead") != null) {
+            TidyTable(Temp[i]);
+        }
+    }
+
+    setInterval(() => {
+        try {
+            let CurrentDate = new Date(new Date().getTime() + diff);
+            let Year = CurrentDate.getFullYear();
+            if (Year > 3000) {
+                Year -= 1900;
+            }
+            let Month = CurrentDate.getMonth() + 1;
+            let _Date = CurrentDate.getDate();
+            let Hours = CurrentDate.getHours();
+            let Minutes = CurrentDate.getMinutes();
+            let Seconds = CurrentDate.getSeconds();
+            document.getElementById("nowdate").innerHTML =
+                Year + "-" +
+                (Month < 10 ? "0" : "") + Month + "-" +
+                (_Date < 10 ? "0" : "") + _Date + " " +
+                (Hours < 10 ? "0" : "") + Hours + ":" +
+                (Minutes < 10 ? "0" : "") + Minutes + ":" +
+                (Seconds < 10 ? "0" : "") + Seconds;
+        } catch (e) { }
+
+        if (UtilityEnabled("ResetType")) {
+            if (document.querySelector("#profile") != undefined &&
+                document.querySelector("#profile").innerHTML == "登录") {
+                if (document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").childNodes.length == 3) {
+                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").childNodes[3].remove();
+                }
+            }
+            else if (document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(3) > a > span") != undefined &&
+                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(3) > a > span").innerText != "个人中心") {
+                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(3) > a > span").innerText = "个人中心";
+                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(4)").remove();
+                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(4)").remove();
+                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(4)").remove();
+                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").innerHTML =
+                    String(document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").innerHTML).replaceAll("&nbsp;", "");
+                let Temp = document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").children;
+                for (var i = 0; i < Temp.length; i++) {
+                    if (Temp[i].tagName.toLowerCase() != "li") {
+                        Temp[i].remove();
+                    }
+                    Temp[i].classList.add("dropdown-item");
+                }
+                let SettingsButton = document.createElement("li");
+                SettingsButton.className = "dropdown-item";
+                SettingsButton.innerHTML = `<a href="index.php?ByUserScript=1">插件设置</a>`;
+                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").appendChild(SettingsButton);
+            }
+        }
+        if (document.querySelector(".syntaxhighlighter > table > tbody > tr > td.code > div") != undefined) {
+            if (document.querySelector(".syntaxhighlighter").children.length == 2) {
+                let CopyButton = document.createElement("button");
+                CopyButton.className = "btn btn-outline-secondary";
+                CopyButton.innerText = "复制代码";
+                CopyButton.style.marginBottom = "10px";
+                CopyButton.addEventListener("click", () => {
+                    CopyToClipboard(document.querySelector(".syntaxhighlighter > table > tbody > tr > td.code > div").innerText.replaceAll(" ", " "));
+                    CopyButton.innerText = "复制成功";
+                    setTimeout(() => {
+                        CopyButton.innerText = "复制代码";
+                    }, 1000);
+                });
+                document.querySelector(".syntaxhighlighter").insertBefore(CopyButton, document.querySelector(".syntaxhighlighter").firstChild);
+            }
+        }
+        if (UtilityEnabled("AutoCountdown")) {
+            let Temp = document.getElementsByClassName("UpdateByJS");
+            for (let i = 0; i < Temp.length; i++) {
+                let TimeStamp = parseInt(Temp[i].getAttribute("EndTime")) - new Date().getTime();
+                if (TimeStamp < 3000) {
+                    Temp[i].classList.remove("UpdateByJS");
+                    location.reload();
+                }
+                let CurrentDate = new Date(TimeStamp);
+                let Day = parseInt(TimeStamp / 1000 / 60 / 60 / 24);
+                let Hour = CurrentDate.getUTCHours();
+                let Minute = CurrentDate.getUTCMinutes();
+                let Second = CurrentDate.getUTCSeconds();
+                Temp[i].innerText = (Day != 0 ? Day + "天" : "") +
+                    (Hour != 0 ? (Hour < 10 ? "0" : "") + Hour + "小时" : "") +
+                    (Minute != 0 ? (Minute < 10 ? "0" : "") + Minute + "分" : "") +
+                    (Second != 0 ? (Second < 10 ? "0" : "") + Second + "秒" : "");
+            }
+        }
+    }, 100);
+
+    await fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
+        .then((Response) => {
+            return Response.json();
+        })
+        .then((Response) => {
+            let CurrentVersion = GM_info.script.version;
+            let LatestVersion = Object.keys(Response["UpdateHistory"])[Object.keys(Response["UpdateHistory"]).length - 1];
+            if (CurrentVersion < LatestVersion) {
+                let UpdateDiv = document.createElement("div");
+                UpdateDiv.innerHTML = `
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <div>
+                    XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
+                    <a href="https://langningchen.github.io/XMOJ-Script/XMOJ.`+ (localStorage.getItem("UserScript-Debug") == null ? "min." : "") + `user.js" target="_blank" class="alert-link">此处</a>
+                    更新
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`;
+                document.querySelector("body > div").insertBefore(UpdateDiv, document.querySelector("body > div > div"));
+            }
+            if (localStorage.getItem("UserScript-Update-LastVersion") != GM_info.script.version) {
+                localStorage.setItem("UserScript-Update-LastVersion", GM_info.script.version);
+                let UpdateDiv = document.createElement("div"); document.querySelector("body").appendChild(UpdateDiv);
+                UpdateDiv.className = "modal fade";
+                UpdateDiv.id = "UpdateModal";
+                UpdateDiv.tabIndex = "-1";
+                let UpdateDialog = document.createElement("div"); UpdateDiv.appendChild(UpdateDialog);
+                UpdateDialog.className = "modal-dialog";
+                let UpdateContent = document.createElement("div"); UpdateDialog.appendChild(UpdateContent);
+                UpdateContent.className = "modal-content";
+                let UpdateHeader = document.createElement("div"); UpdateContent.appendChild(UpdateHeader);
+                UpdateHeader.className = "modal-header";
+                let UpdateTitle = document.createElement("h5"); UpdateHeader.appendChild(UpdateTitle);
+                UpdateTitle.className = "modal-title";
+                UpdateTitle.innerText = "更新日志";
+                let UpdateCloseButton = document.createElement("button"); UpdateHeader.appendChild(UpdateCloseButton);
+                UpdateCloseButton.type = "button";
+                UpdateCloseButton.className = "btn-close";
+                UpdateCloseButton.setAttribute("data-bs-dismiss", "modal");
+                let UpdateBody = document.createElement("div"); UpdateContent.appendChild(UpdateBody);
+                UpdateBody.className = "modal-body";
+                let UpdateFooter = document.createElement("div"); UpdateContent.appendChild(UpdateFooter);
+                UpdateFooter.className = "modal-footer";
+                let UpdateButton = document.createElement("button"); UpdateFooter.appendChild(UpdateButton);
+                UpdateButton.type = "button";
+                UpdateButton.className = "btn btn-secondary";
+                UpdateButton.setAttribute("data-bs-dismiss", "modal");
+                UpdateButton.innerText = "关闭";
+                for (let i = Object.keys(Response["UpdateHistory"]).length - 1; i >= Math.max(Object.keys(Response["UpdateHistory"]).length - 3, 0); i--) {
+                    let Version = Object.keys(Response["UpdateHistory"])[i];
+                    let Data = Response["UpdateHistory"][Version];
+                    let UpdateDataCard = document.createElement("div"); UpdateBody.appendChild(UpdateDataCard);
+                    UpdateDataCard.className = "card mb-3";
+                    let UpdateDataCardBody = document.createElement("div"); UpdateDataCard.appendChild(UpdateDataCardBody);
+                    UpdateDataCardBody.className = "card-body";
+                    let UpdateDataCardTitle = document.createElement("h5"); UpdateDataCardBody.appendChild(UpdateDataCardTitle);
+                    UpdateDataCardTitle.className = "card-title";
+                    UpdateDataCardTitle.innerText = Version;
+                    let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
+                    UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
+                    UpdateDataCardSubtitle.innerText = new Date(Data["UpdateDate"]).toLocaleString();
+                    let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
+                    UpdateDataCardText.className = "card-text";
+                    let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
+                    UpdateDataCardList.className = "list-group list-group-flush";
+                    for (let j = 0; j < Data["UpdateCommits"].length; j++) {
+                        let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
+                        UpdateDataCardListItem.className = "list-group-item";
+                        UpdateDataCardListItem.innerHTML =
+                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data["UpdateCommits"][j]["Commit"] + "\" target=\"_blank\">"
+                            + Data["UpdateCommits"][j]["ShortCommit"] + "</a>) " +
+                            Data["UpdateCommits"][j]["Description"];
+                    }
+                    let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
+                    UpdateDataCardLink.className = "card-link";
+                    UpdateDataCardLink.href = "https://github.com/langningchen/XMOJ-Script/releases/tag/" + Version;
+                    UpdateDataCardLink.target = "_blank";
+                    UpdateDataCardLink.innerText = "查看该版本";
+                }
+                new bootstrap.Modal(document.getElementById("UpdateModal")).show();
+            }
+        });
+    await fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js", { cache: "no-cache" })
+        .then((Response) => {
+            return Response.text();
+        })
+        .then((Response) => {
+            eval(Response);
+        });
 
     if (location.pathname == "/index.php" || location.pathname == "/") {
         if (new URL(location.href).searchParams.get("ByUserScript") != null) {
@@ -1420,74 +1633,82 @@ if (document.querySelector("#navbar") != null) {
             }
         }
     } else if (location.pathname == "/submitpage.php") {
+        let SearchParams = new URLSearchParams(location.search);
+        document.querySelector("body > div > div").innerHTML = `<center class="mb-3">` +
+            `<h3>提交代码</h3>` +
+            (SearchParams.get("id") != null ?
+                `题目<span class="blue">` + SearchParams.get("id") + `</span>` :
+                `比赛<span class="blue">` + SearchParams.get("cid") + `</span>&emsp;题目<span class="blue">` + String.fromCharCode(65 + parseInt(SearchParams.get("pid"))) + `</span>`) +
+            `</center>
+<textarea id="CodeInput"></textarea>
+<center class="mt-3">
+    <input id="enable_O2" name="enable_O2" type="checkbox"><label for="enable_O2">打开O2开关</label>
+    <br>
+    <input id="Submit" class="btn btn-info mt-2" type="button" value="提交">
+    <div id="ErrorElement" class="mt-2" style="display: none; text-align: left; padding: 10px;">
+        <div id="ErrorMessage" style="white-space: pre; background-color: rgba(0, 0, 0, 0.1); padding: 10px; border-radius: 5px;"></div>
+        <button id="PassCheck" class="btn btn-outline-secondary mt-2" style="display: none">强制提交</button>
+    </div>
+</center>`;
         if (UtilityEnabled("AutoO2")) {
             document.querySelector("#enable_O2").checked = true;
         }
-        document.querySelector("#frmSolution").childNodes[0].nodeValue = "题目";
-        document.querySelector("#language_span").childNodes[0].nodeValue = "语言：";
-        document.querySelector("#language").style.marginTop = "10px";
-        document.querySelector("#language").style.marginBottom = "10px";
-        document.querySelector("#source").classList.add("form-control");
-        let CheckInterval = setInterval(() => {
-            if (document.querySelector("#edit_area_toggle_reg_syntax\\.js > label") != null) {
-                document.querySelector("#EditAreaArroundInfos_source").style.display = "block";
-                document.querySelector("#EditAreaArroundInfos_source").style.height = "0px";
-                document.querySelector("#edit_area_toggle_reg_syntax\\.js > label").innerText = "使用编辑器";
-                clearInterval(CheckInterval);
-            }
-        }, 100);
-        if (UtilityEnabled("ResetType")) {
-            let O2Label = document.createElement("label");
-            document.querySelector("#frmSolution").insertBefore(O2Label, document.querySelector("#enable_O2").nextElementSibling);
-            O2Label.innerText = "打开O2开关";
-            O2Label.setAttribute("for", "enable_O2");
-            let Temp = document.querySelector("#frmSolution").childNodes;
-            for (let i = 0; i < Temp.length; i++) {
-                if (Temp[i].data == "打开O2开关") {
-                    Temp[i].remove();
-                    i--;
-                } else if (Temp[i].id == "EditAreaArroundInfos_source")
-                    Temp[i + 1].remove();
-                else if (Temp[i].getAttribute != null && Temp[i].getAttribute("for") == "enable_O2") {
-                    Temp[i + 1].remove();
-                    Temp[i + 1].remove();
+        let CodeMirrorElement;
+        (() => {
+            CodeMirrorElement = CodeMirror.fromTextArea(document.querySelector("#CodeInput"), {
+                lineNumbers: true,
+                matchBrackets: true,
+                mode: "text/x-c++src",
+                indentUnit: 4,
+                indentWithTabs: true,
+                enterMode: "keep",
+                tabMode: "shift",
+                theme: "default",
+                extraKeys: {
+                    "Ctrl-Space": "autocomplete",
+                    "Ctrl-Enter": function (instance) {
+                        Submit.click();
+                    }
                 }
-            }
-        }
-        let ErrorElement = document.createElement("div");
-        ErrorElement.style.marginTop = "10px";
-        ErrorElement.style.display = "none";
-        ErrorElement.style.textAlign = "left";
-        ErrorElement.style.padding = "10px";
-        document.querySelector("body > div > div > center").appendChild(ErrorElement);
-        let ErrorMessage = document.createElement("div");
-        ErrorMessage.style.whiteSpace = "pre";
-        ErrorMessage.style.backgroundColor = "rgb(0, 0, 0, 0.1)";
-        ErrorMessage.style.padding = "10px";
-        ErrorMessage.style.borderRadius = "5px";
-        ErrorElement.appendChild(ErrorMessage);
-        let PassCheck = document.createElement("button");
-        PassCheck.style.display = "none";
-        PassCheck.className = "btn btn-outline-secondary";
-        PassCheck.style.marginTop = "10px";
-        PassCheck.innerText = "强制提交";
-        PassCheck.onclick = () => {
+            })
+        })();
+        CodeMirrorElement.setSize("100%", "auto");
+        PassCheck.onclick = async () => {
             document.querySelector("#Submit").disabled = true;
             document.querySelector("#Submit").value = "正在提交...";
-            document.querySelector("#frmSolution").submit();
+            await fetch("http://www.xmoj.tech/submit.php", {
+                "headers": {
+                    "content-type": "application/x-www-form-urlencoded"
+                },
+                "referrer": location.href,
+                "method": "POST",
+                "body":
+                    (SearchParams.get("id") != null ?
+                        "id=" + SearchParams.get("id") :
+                        "cid=" + SearchParams.get("cid") + "&pid=" + SearchParams.get("pid")) +
+                    "language=1&" +
+                    "source=" + encodeURIComponent(CodeMirrorElement.getValue()) + "&" +
+                    "enable_O2=on"
+            }).then((Response) => {
+                if (Response.redirected) {
+                    location.href = Response.url;
+                }
+                else {
+                    ErrorElement.style.display = "block";
+                    ErrorMessage.style.color = "red";
+                    ErrorMessage.innerText = "提交失败！请关闭脚本后重试！";
+                    Submit.disabled = false;
+                    Submit.value = "提交";
+                }
+            })
         }
-        ErrorElement.appendChild(PassCheck);
 
-        document.querySelector("#Submit").type = "button";
-        document.querySelector("#Submit").onclick = async () => {
+        Submit.onclick = async () => {
             PassCheck.style.display = "none";
             ErrorElement.style.display = "none";
             document.querySelector("#Submit").disabled = true;
             document.querySelector("#Submit").value = "正在检查...";
-            eAL.toggle("source");
-            eAL.toggle("source");
-            let Source = document.getElementById("source").value;
-            let SearchParams = new URL(location.href).searchParams;
+            let Source = CodeMirrorElement.getValue();
             let PID = 0;
             let IOFilename = "";
             if (SearchParams.get("cid") != null && SearchParams.get("pid") != null) {
@@ -2158,212 +2379,4 @@ if (document.querySelector("#navbar") != null) {
             });
         }
     }
-
-    if (UtilityEnabled("RemoveUseless")) {
-        if (document.getElementsByClassName("footer")[0] != null) {
-            document.getElementsByClassName("footer")[0].remove();
-        }
-    }
-
-    if (UtilityEnabled("ReplaceYN")) {
-        Temp = document.getElementsByClassName("status_y");
-        for (let i = 0; i < Temp.length; i++) {
-            Temp[i].innerText = "✓";
-        }
-        Temp = document.getElementsByClassName("status_n");
-        for (let i = 0; i < Temp.length; i++) {
-            Temp[i].innerText = "✗";
-        }
-    }
-
-    Temp = document.getElementsByClassName("page-item");
-    for (let i = 0; i < Temp.length; i++) {
-        Temp[i].children[0].className = "page-link";
-    }
-    if (document.getElementsByClassName("pagination")[0] != null) {
-        document.getElementsByClassName("pagination")[0].classList.add("justify-content-center");
-    }
-
-    Temp = document.getElementsByTagName("table");
-    for (let i = 0; i < Temp.length; i++) {
-        if (Temp[i].querySelector("thead") != null) {
-            TidyTable(Temp[i]);
-        }
-    }
-
-    setInterval(() => {
-        try {
-            let CurrentDate = new Date(new Date().getTime() + diff);
-            let Year = CurrentDate.getFullYear();
-            if (Year > 3000) {
-                Year -= 1900;
-            }
-            let Month = CurrentDate.getMonth() + 1;
-            let _Date = CurrentDate.getDate();
-            let Hours = CurrentDate.getHours();
-            let Minutes = CurrentDate.getMinutes();
-            let Seconds = CurrentDate.getSeconds();
-            document.getElementById("nowdate").innerHTML =
-                Year + "-" +
-                (Month < 10 ? "0" : "") + Month + "-" +
-                (_Date < 10 ? "0" : "") + _Date + " " +
-                (Hours < 10 ? "0" : "") + Hours + ":" +
-                (Minutes < 10 ? "0" : "") + Minutes + ":" +
-                (Seconds < 10 ? "0" : "") + Seconds;
-        } catch (e) { }
-
-        if (UtilityEnabled("ResetType")) {
-            if (document.querySelector("#profile") != undefined &&
-                document.querySelector("#profile").innerHTML == "登录") {
-                if (document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").childNodes.length == 3) {
-                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").childNodes[3].remove();
-                }
-            }
-            else if (document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(3) > a > span") != undefined &&
-                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(3) > a > span").innerText != "个人中心") {
-                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(3) > a > span").innerText = "个人中心";
-                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(4)").remove();
-                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(4)").remove();
-                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(4)").remove();
-                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").innerHTML =
-                    String(document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").innerHTML).replaceAll("&nbsp;", "");
-                let Temp = document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").children;
-                for (var i = 0; i < Temp.length; i++) {
-                    if (Temp[i].tagName.toLowerCase() != "li") {
-                        Temp[i].remove();
-                    }
-                    Temp[i].classList.add("dropdown-item");
-                }
-                let SettingsButton = document.createElement("li");
-                SettingsButton.className = "dropdown-item";
-                SettingsButton.innerHTML = `<a href="index.php?ByUserScript=1">插件设置</a>`;
-                document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").appendChild(SettingsButton);
-            }
-        }
-        if (document.querySelector(".syntaxhighlighter > table > tbody > tr > td.code > div") != undefined) {
-            if (document.querySelector(".syntaxhighlighter").children.length == 2) {
-                let CopyButton = document.createElement("button");
-                CopyButton.className = "btn btn-outline-secondary";
-                CopyButton.innerText = "复制代码";
-                CopyButton.style.marginBottom = "10px";
-                CopyButton.addEventListener("click", () => {
-                    CopyToClipboard(document.querySelector(".syntaxhighlighter > table > tbody > tr > td.code > div").innerText.replaceAll(" ", " "));
-                    CopyButton.innerText = "复制成功";
-                    setTimeout(() => {
-                        CopyButton.innerText = "复制代码";
-                    }, 1000);
-                });
-                document.querySelector(".syntaxhighlighter").insertBefore(CopyButton, document.querySelector(".syntaxhighlighter").firstChild);
-            }
-        }
-        if (UtilityEnabled("AutoCountdown")) {
-            let Temp = document.getElementsByClassName("UpdateByJS");
-            for (let i = 0; i < Temp.length; i++) {
-                let TimeStamp = parseInt(Temp[i].getAttribute("EndTime")) - new Date().getTime();
-                if (TimeStamp < 3000) {
-                    Temp[i].classList.remove("UpdateByJS");
-                    location.reload();
-                }
-                let CurrentDate = new Date(TimeStamp);
-                let Day = parseInt(TimeStamp / 1000 / 60 / 60 / 24);
-                let Hour = CurrentDate.getUTCHours();
-                let Minute = CurrentDate.getUTCMinutes();
-                let Second = CurrentDate.getUTCSeconds();
-                Temp[i].innerText = (Day != 0 ? Day + "天" : "") +
-                    (Hour != 0 ? (Hour < 10 ? "0" : "") + Hour + "小时" : "") +
-                    (Minute != 0 ? (Minute < 10 ? "0" : "") + Minute + "分" : "") +
-                    (Second != 0 ? (Second < 10 ? "0" : "") + Second + "秒" : "");
-            }
-        }
-    }, 100);
-
-    await fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
-        .then((Response) => {
-            return Response.json();
-        })
-        .then((Response) => {
-            let CurrentVersion = GM_info.script.version;
-            let LatestVersion = Object.keys(Response["UpdateHistory"])[Object.keys(Response["UpdateHistory"]).length - 1];
-            if (CurrentVersion < LatestVersion) {
-                let UpdateDiv = document.createElement("div");
-                UpdateDiv.innerHTML = `
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <div>
-                    XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                    <a href="https://langningchen.github.io/XMOJ-Script/XMOJ.`+ (localStorage.getItem("UserScript-Debug") == null ? "min." : "") + `user.js" target="_blank" class="alert-link">此处</a>
-                    更新
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>`;
-                document.querySelector("body > div").insertBefore(UpdateDiv, document.querySelector("body > div > div"));
-            }
-            if (localStorage.getItem("UserScript-Update-LastVersion") != GM_info.script.version) {
-                localStorage.setItem("UserScript-Update-LastVersion", GM_info.script.version);
-                let UpdateDiv = document.createElement("div"); document.querySelector("body").appendChild(UpdateDiv);
-                UpdateDiv.className = "modal fade";
-                UpdateDiv.id = "UpdateModal";
-                UpdateDiv.tabIndex = "-1";
-                let UpdateDialog = document.createElement("div"); UpdateDiv.appendChild(UpdateDialog);
-                UpdateDialog.className = "modal-dialog";
-                let UpdateContent = document.createElement("div"); UpdateDialog.appendChild(UpdateContent);
-                UpdateContent.className = "modal-content";
-                let UpdateHeader = document.createElement("div"); UpdateContent.appendChild(UpdateHeader);
-                UpdateHeader.className = "modal-header";
-                let UpdateTitle = document.createElement("h5"); UpdateHeader.appendChild(UpdateTitle);
-                UpdateTitle.className = "modal-title";
-                UpdateTitle.innerText = "更新日志";
-                let UpdateCloseButton = document.createElement("button"); UpdateHeader.appendChild(UpdateCloseButton);
-                UpdateCloseButton.type = "button";
-                UpdateCloseButton.className = "btn-close";
-                UpdateCloseButton.setAttribute("data-bs-dismiss", "modal");
-                let UpdateBody = document.createElement("div"); UpdateContent.appendChild(UpdateBody);
-                UpdateBody.className = "modal-body";
-                let UpdateFooter = document.createElement("div"); UpdateContent.appendChild(UpdateFooter);
-                UpdateFooter.className = "modal-footer";
-                let UpdateButton = document.createElement("button"); UpdateFooter.appendChild(UpdateButton);
-                UpdateButton.type = "button";
-                UpdateButton.className = "btn btn-secondary";
-                UpdateButton.setAttribute("data-bs-dismiss", "modal");
-                UpdateButton.innerText = "关闭";
-                for (let i = Object.keys(Response["UpdateHistory"]).length - 1; i >= Math.max(Object.keys(Response["UpdateHistory"]).length - 3, 0); i--) {
-                    let Version = Object.keys(Response["UpdateHistory"])[i];
-                    let Data = Response["UpdateHistory"][Version];
-                    let UpdateDataCard = document.createElement("div"); UpdateBody.appendChild(UpdateDataCard);
-                    UpdateDataCard.className = "card mb-3";
-                    let UpdateDataCardBody = document.createElement("div"); UpdateDataCard.appendChild(UpdateDataCardBody);
-                    UpdateDataCardBody.className = "card-body";
-                    let UpdateDataCardTitle = document.createElement("h5"); UpdateDataCardBody.appendChild(UpdateDataCardTitle);
-                    UpdateDataCardTitle.className = "card-title";
-                    UpdateDataCardTitle.innerText = Version;
-                    let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
-                    UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
-                    UpdateDataCardSubtitle.innerText = new Date(Data["UpdateDate"]).toLocaleString();
-                    let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
-                    UpdateDataCardText.className = "card-text";
-                    let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
-                    UpdateDataCardList.className = "list-group list-group-flush";
-                    for (let j = 0; j < Data["UpdateCommits"].length; j++) {
-                        let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
-                        UpdateDataCardListItem.className = "list-group-item";
-                        UpdateDataCardListItem.innerHTML =
-                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data["UpdateCommits"][j]["Commit"] + "\" target=\"_blank\">"
-                            + Data["UpdateCommits"][j]["ShortCommit"] + "</a>) " +
-                            Data["UpdateCommits"][j]["Description"];
-                    }
-                    let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
-                    UpdateDataCardLink.className = "card-link";
-                    UpdateDataCardLink.href = "https://github.com/langningchen/XMOJ-Script/releases/tag/" + Version;
-                    UpdateDataCardLink.target = "_blank";
-                    UpdateDataCardLink.innerText = "查看该版本";
-                }
-                new bootstrap.Modal(document.getElementById("UpdateModal")).show();
-            }
-        });
-    await fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js", { cache: "no-cache" })
-        .then((Response) => {
-            return Response.text();
-        })
-        .then((Response) => {
-            eval(Response);
-        });
 }
