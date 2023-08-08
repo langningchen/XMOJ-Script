@@ -339,6 +339,26 @@
                     "Description": "Remove issue template"
                 }
             ]
+        },
+        "0.1.39": {
+            "UpdateDate": 1691484837725,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "bacfe0a",
+                    "Commit": "bacfe0a54469ff7f1e3f79537548177ff1734cef",
+                    "Description": "测试服务器"
+                },
+                {
+                    "ShortCommit": "d5c48a5",
+                    "Commit": "d5c48a5b0d335424fb20297e9481fc5ab07ced18",
+                    "Description": "解决无线刷新问题"
+                },
+                {
+                    "ShortCommit": "c17fd7c",
+                    "Commit": "c17fd7c81dedf1bee3e94f2e962b75fc49aecec6",
+                    "Description": "Add or update the Azure App Service build and deployment workflow config"
+                }
+            ]
         }
     }
 }
