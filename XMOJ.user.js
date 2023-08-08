@@ -134,9 +134,6 @@ else {
             }
         }, 100);
     }
-    if (localStorage.getItem("UserScript-Opened") == null) {
-        location.href = "/index.php?ByUserScript=1";
-    }
 
     if (document.querySelector("#navbar") != null) {
         if (document.querySelector("body > div > div.jumbotron") != null) {
