@@ -186,47 +186,12 @@
                 {
                     "ShortCommit": "fb6c546",
                     "Commit": "fb6c5463d817fffe927bec5b3e8d266e2a0e07ae",
-                    "Description": "Merge pull request #8 from PythonSmall-Q/PythonSmall-Q-patch-1"
+                    "Description": "将解释更人性化"
                 },
                 {
                     "ShortCommit": "a6084a4",
                     "Commit": "a6084a4cef439f324c73c04a7d9475e9f8a5bd7a",
-                    "Description": "Merge pull request #10 from PythonSmall-Q/PythonSmall-Q-patch-1-2"
-                },
-                {
-                    "ShortCommit": "191b9fe",
-                    "Commit": "191b9fe08c3586fd6008672451902b5bf00e5d44",
-                    "Description": "Update XMOJ.user.js"
-                },
-                {
-                    "ShortCommit": "dc5da64",
-                    "Commit": "dc5da6443d7051b6ab652cf80e2aebc694e4c0a0",
-                    "Description": "Update XMOJ.user.js"
-                },
-                {
-                    "ShortCommit": "a7dbb80",
-                    "Commit": "a7dbb803dc3874f773f9e2d21efefb5b8cb5b0ca",
-                    "Description": "Update XMOJ.user.js"
-                },
-                {
-                    "ShortCommit": "da3fcd7",
-                    "Commit": "da3fcd7232d01ce56632d98b9859d4cfc9218f3c",
-                    "Description": "PR：部分优化"
-                },
-                {
-                    "ShortCommit": "01572d0",
-                    "Commit": "01572d0502168dfbfaaea9e92159cc6610c7e8ae",
-                    "Description": "去掉提示"
-                },
-                {
-                    "ShortCommit": "35c2daa",
-                    "Commit": "35c2daac3cd643b56924f457f325026b4f930e08",
-                    "Description": "提示"
-                },
-                {
-                    "ShortCommit": "dda6cce",
-                    "Commit": "dda6cce6dd21e85511ad4b976d1da810b922f444",
-                    "Description": "TestAddonScript"
+                    "Description": "增加小熊猫Dev-C++的下载"
                 }
             ]
         },
@@ -236,17 +201,7 @@
                 {
                     "ShortCommit": "afe28a7",
                     "Commit": "afe28a7dd5c00e0036f2430b557d4eddef213b0f",
-                    "Description": "[#11] Fix username and nickname disappear"
-                },
-                {
-                    "ShortCommit": "fbd74cc",
-                    "Commit": "fbd74cc77064c8aea0c540cf5311e4926c0ec9a9",
-                    "Description": "Update version to 0.1.32"
-                },
-                {
-                    "ShortCommit": "1ea4b24",
-                    "Commit": "1ea4b24ecf5a7f853a9c2686185b2df00694be90",
-                    "Description": "Remove extra brackets in README"
+                    "Description": "[#11] 解决用户界面用户名和昵称消失"
                 },
                 {
                     "ShortCommit": "6725a7d",
@@ -264,11 +219,6 @@
                     "Description": "解决状态页面显示问题"
                 },
                 {
-                    "ShortCommit": "ee3f780",
-                    "Commit": "ee3f780d323ba1f873b4a7c22b0a2dd768c59409",
-                    "Description": "Enhance obfuscate js"
-                },
-                {
                     "ShortCommit": "dbf26ba",
                     "Commit": "dbf26ba71f82b5de18fe4f72fadce55609735275",
                     "Description": "解决附加脚本缓存问题"
@@ -281,27 +231,7 @@
                 {
                     "ShortCommit": "b5eb091",
                     "Commit": "b5eb091a0bc17eaff3e030b6aa2af82fcb5459ba",
-                    "Description": "Merge pull request #12 from PythonSmall-Q/PythonSmall-Q-patch-3"
-                },
-                {
-                    "ShortCommit": "27e6228",
-                    "Commit": "27e6228b14fc4fcfd7bceda30b0b7187486d8c79",
-                    "Description": "Update issue templates"
-                },
-                {
-                    "ShortCommit": "9315640",
-                    "Commit": "9315640fbc86e803a6c21cbb64192e9bd832befe",
-                    "Description": "Update issue templates"
-                },
-                {
-                    "ShortCommit": "3e371c7",
-                    "Commit": "3e371c765aa41118ab77d1064496e99cb3409f94",
-                    "Description": "Remove useless test dir"
-                },
-                {
-                    "ShortCommit": "16bb986",
-                    "Commit": "16bb986afe934ed2e2f55c2d9448153ef865f4f5",
-                    "Description": "Update version to 0.1.33"
+                    "Description": "增加学生姓名"
                 }
             ]
         }
