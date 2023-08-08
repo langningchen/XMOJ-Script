@@ -2411,5 +2411,18 @@ if (document.querySelector("#navbar") != null) {
                 };
             });
         }
+        let Temp = document.getElementsByClassName("prettyprint");
+        for (let i = 0; i < Temp.length; i++) {
+            let Code = Temp[i].innerText;
+            console.log(Code);
+            Temp[i].outerHTML = `<textarea class="prettyprint">` + Code + `</textarea>`;
+        }
+        for (let i = 0; i < Temp.length; i++) {
+            CodeMirror.fromTextArea(Temp[i], {
+                lineNumbers: true,
+                mode: "text/x-c++src",
+                readOnly: true
+            }).setSize("100%", "auto");
+        }
     }
 }
