@@ -907,42 +907,70 @@ if (document.querySelector("#navbar") != null) {
                 document.querySelector("body > div.container > div > div.input-append").appendChild(ImproveACRateButton);
                 ImproveACRateButton.className = "btn btn-outline-secondary";
                 ImproveACRateButton.innerText = "提高AC率";
+                ImproveACRateButton.disabled = true;
+                let ACProblems = [];
                 await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.getElementById("profile").innerText)
                     .then((Response) => {
                         return Response.text();
                     }).then((Response) => {
                         let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
                         ImproveACRateButton.innerText += "(" + (parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(4) > td:nth-child(2)").innerText) / parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(3) > td:nth-child(2)").innerText) * 100).toFixed(2) + "%)";
+                        let Temp = ParsedDocument.querySelector("#statics > tbody > tr:nth-child(2) > td:nth-child(3) > script").innerText.split("\n")[5].split(";");
+                        for (let i = 0; i < Temp.length; i++) {
+                            ACProblems.push(Number(Temp[i].substring(2, Temp[i].indexOf(","))));
+                        }
+                        ImproveACRateButton.disabled = false;
                     });
                 ImproveACRateButton.onclick = async () => {
                     ImproveACRateButton.disabled = true;
-                    await fetch("http://www.xmoj.tech/csrf.php")
-                        .then((Response) => {
-                            return Response.text();
-                        }).then((Response) => {
-                            CSRF = new DOMParser().parseFromString(Response, "text/html").querySelector("input[name=csrf]").value;
-                        });
-                    let Count = 0;
                     const SubmitTimes = 3;
+                    let Count = 0;
                     let SubmitInterval = setInterval(async () => {
                         if (Count >= SubmitTimes) {
                             clearInterval(SubmitInterval);
                             location.reload();
                             return;
                         }
-                        Count++;
-                        ImproveACRateButton.innerText = "正在提交 (" + Count + "/" + SubmitTimes + ")";
+                        ImproveACRateButton.innerText = "正在提交 (" + (Count + 1) + "/" + SubmitTimes + ")";
+                        let PID = ACProblems[Math.floor(Math.random() * ACProblems.length)];
+                        let SID = 0;
+                        await fetch("http://www.xmoj.tech/status.php?problem_id=" + PID + "&jresult=4")
+                            .then((Result) => {
+                                return Result.text();
+                            }).then((Result) => {
+                                let ParsedDocument = new DOMParser().parseFromString(Result, "text/html");
+                                SID = ParsedDocument.querySelector("#result-tab > tbody > tr:nth-child(1) > td:nth-child(2)").innerText;
+                            });
+                        let Code = "";
+                        await fetch("http://www.xmoj.tech/showsource.php?id=" + SID)
+                            .then((Response) => {
+                                return Response.text();
+                            }).then((Response) => {
+                                let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                                Code = ParsedDocument.querySelector("body > div > div > pre").innerHTML;
+                                Code = Code.replaceAll("&lt;", "<");
+                                Code = Code.replaceAll("&gt;", ">");
+                                Code = Code.replaceAll("&amp;", "&");
+                                Code = Code.substring(0, Code.indexOf("/**************************************************************"));
+                            });
+                        await fetch("http://www.xmoj.tech/csrf.php")
+                            .then((Response) => {
+                                return Response.text();
+                            }).then((Response) => {
+                                CSRF = new DOMParser().parseFromString(Response, "text/html").querySelector("input[name=csrf]").value;
+                            });
                         await fetch("http://www.xmoj.tech/submit.php", {
                             "headers": {
                                 "content-type": "application/x-www-form-urlencoded"
                             },
                             "referrer": "http://www.xmoj.tech/submitpage.php?id=2298",
                             "method": "POST",
-                            "body": "id=2298&" +
+                            "body": "id=" + PID + "&" +
                                 "language=1&" +
-                                "source=%23include+%3Cbits%2Fstdc%2B%2B.h%3E%0D%0Ausing+namespace+std%3B%0D%0Aint+main%28%29%0D%0A%7B%0D%0A++++printf%28%220%5Cn%22%29%3B%0D%0A++++return+0%3B%0D%0A%7D%0D%0A&" +
+                                "source=" + encodeURIComponent(Code) + "&" +
                                 "enable_O2=on"
                         });
+                        Count++;
                     }, 1000);
                 };
                 ImproveACRateButton.style.marginBottom = ImproveACRateButton.style.marginRight = "7px";
