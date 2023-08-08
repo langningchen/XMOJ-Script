@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         XMOJTest
+// @name         XMOJ
 // @version      0.1.34
 // @description  XMOJ增强脚本
-// @author       @langningcheng
+// @author       @langningchen
 // @namespace    https://github/langningchen
 // @match        http://*.xmoj.tech/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
