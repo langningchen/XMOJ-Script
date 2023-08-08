@@ -138,8 +138,8 @@ if (localStorage.getItem("UserScript-Opened") == null) {
 }
 
 if (document.querySelector("#navbar") != null) {
-    if (document.querySelector("body > div > div") != null) {
-        document.querySelector("body > div > div").className = "mt-3";
+    if (document.querySelector("body > div > div.jumbotron") != null) {
+        document.querySelector("body > div > div.jumbotron").className = "mt-3";
     }
 
     if (UtilityEnabled("AutoLogin") &&
@@ -443,7 +443,7 @@ if (document.querySelector("#navbar") != null) {
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>`;
-                document.querySelector("body > div").insertBefore(UpdateDiv, document.querySelector("body > div > div"));
+                document.querySelector("body > div").insertBefore(UpdateDiv, document.querySelector("body > div > div.mt-3"));
             }
             if (localStorage.getItem("UserScript-Update-LastVersion") != GM_info.script.version) {
                 localStorage.setItem("UserScript-Update-LastVersion", GM_info.script.version);
@@ -659,7 +659,7 @@ if (document.querySelector("#navbar") != null) {
             Container.appendChild(FeedbackCard);
         }
         else {
-            let Temp = document.querySelector("body > div > div > div > div.col-md-8").children;
+            let Temp = document.querySelector("body > div > div.mt-3 > div > div.col-md-8").children;
             let NewsData = [];
             for (let i = 0; i < Temp.length; i += 2) {
                 let Title = Temp[i].children[0].innerText;
@@ -667,7 +667,7 @@ if (document.querySelector("#navbar") != null) {
                 let Body = Temp[i + 1].innerHTML;
                 NewsData.push({ "Title": Title, "Time": Time, "Body": Body });
             }
-            document.querySelector("body > div > div > div > div.col-md-8").innerHTML = "";
+            document.querySelector("body > div > div.mt-3 > div > div.col-md-8").innerHTML = "";
             for (let i = 0; i < NewsData.length; i++) {
                 let NewsRow = document.createElement("div");
                 NewsRow.className = "cnt-row";
@@ -679,19 +679,19 @@ if (document.querySelector("#navbar") != null) {
                 NewsRowBody.className = "cnt-row-body";
                 NewsRowBody.innerHTML = NewsData[i].Body;
                 NewsRow.appendChild(NewsRowBody);
-                document.querySelector("body > div > div > div > div.col-md-8").appendChild(NewsRow);
+                document.querySelector("body > div > div.mt-3 > div > div.col-md-8").appendChild(NewsRow);
             }
             let CountDownData = document.querySelector("#countdown_list").innerHTML;
-            document.querySelector("body > div > div > div > div.col-md-4").innerHTML = `<div class="cnt-row">
+            document.querySelector("body > div > div.mt-3 > div > div.col-md-4").innerHTML = `<div class="cnt-row">
                 <div class="cnt-row-head title">倒计时</div>
                 <div class="cnt-row-body">${CountDownData}</div>
             </div>`;
         }
     } else if (location.pathname == "/problemset.php") {
         if (UtilityEnabled("Translate")) {
-            document.querySelector("body > div > div > center > table:nth-child(2) > tbody > tr > td:nth-child(2) > form > input").placeholder = "题目编号";
-            document.querySelector("body > div > div > center > table:nth-child(2) > tbody > tr > td:nth-child(2) > form > button").innerText = "确认";
-            document.querySelector("body > div > div > center > table:nth-child(2) > tbody > tr > td:nth-child(3) > form > input").placeholder = "标题或内容";
+            document.querySelector("body > div > div.mt-3 > center > table:nth-child(2) > tbody > tr > td:nth-child(2) > form > input").placeholder = "题目编号";
+            document.querySelector("body > div > div.mt-3 > center > table:nth-child(2) > tbody > tr > td:nth-child(2) > form > button").innerText = "确认";
+            document.querySelector("body > div > div.mt-3 > center > table:nth-child(2) > tbody > tr > td:nth-child(3) > form > input").placeholder = "标题或内容";
             document.querySelector("#problemset > thead > tr > th:nth-child(1)").innerText = "状态";
         }
         if (UtilityEnabled("ResetType")) {
@@ -701,7 +701,7 @@ if (document.querySelector("#navbar") != null) {
             document.querySelector("#problemset > thead > tr > th:nth-child(4)").style.width = "5%";
             document.querySelector("#problemset > thead > tr > th:nth-child(5)").style.width = "5%";
         }
-        document.querySelector("body > div > div > center > table:nth-child(2)").outerHTML = `
+        document.querySelector("body > div > div.mt-3 > center > table:nth-child(2)").outerHTML = `
         <div class="row">
             <div class="center col-md-3"></div>
             <div class="col-md-2">
@@ -718,7 +718,7 @@ if (document.querySelector("#navbar") != null) {
             </div>
         </div>`;
         if (new URLSearchParams(location.search).get("search") != null) {
-            document.querySelector("body > div > div > center > div > div:nth-child(3) > form > input").value = new URLSearchParams(location.search).get("search");
+            document.querySelector("body > div > div.mt-3 > center > div > div:nth-child(3) > form > input").value = new URLSearchParams(location.search).get("search");
         }
 
         let Temp = document.querySelector("#problemset").rows;
@@ -733,14 +733,14 @@ if (document.querySelector("#navbar") != null) {
                     "-Problem-" + new URLSearchParams(location.search).get("pid") + "-PID") +
                 ")";
         }
-        if (document.querySelector("body > div > div > h2") != null) {
-            document.querySelector("body > div > div").innerHTML = "没有此题目";
+        if (document.querySelector("body > div > div.mt-3 > h2") != null) {
+            document.querySelector("body > div > div.mt-3").innerHTML = "没有此题目";
             setTimeout(() => {
                 location.href = "problemset.php";
             }, 1000);
         }
         else {
-            document.querySelector("body > div > div > center").lastChild.style.marginLeft = "10px";
+            document.querySelector("body > div > div.mt-3 > center").lastChild.style.marginLeft = "10px";
             Temp = document.querySelectorAll(".sampledata");
             for (var i = 0; i < Temp.length; i++) {
                 Temp[i].parentElement.className = "card";
@@ -767,14 +767,14 @@ if (document.querySelector("#navbar") != null) {
                     document.body.removeChild(textarea[0]);
                 });
             }
-            let IOFileElement = document.querySelector("body > div > div > center > h3");
+            let IOFileElement = document.querySelector("body > div > div.mt-3 > center > h3");
             if (IOFileElement != null) {
                 while (IOFileElement.childNodes.length >= 1) {
                     IOFileElement.parentNode.insertBefore(IOFileElement.childNodes[0], IOFileElement);
                 }
                 IOFileElement.parentNode.insertBefore(document.createElement("br"), IOFileElement);
                 IOFileElement.remove();
-                let Temp = document.querySelector("body > div > div > center").childNodes[2].data.trim();
+                let Temp = document.querySelector("body > div > div.mt-3 > center").childNodes[2].data.trim();
                 let IOFilename = Temp.substring(0, Temp.length - 3);
                 let SearchParams = new URLSearchParams(location.search);
                 let PID = 0;
@@ -1053,7 +1053,7 @@ if (document.querySelector("#navbar") != null) {
             }
         }
         else if (UtilityEnabled("GetOthersSample")) {
-            document.querySelector("body > div > div").innerHTML = `<div class="mt-3">
+            document.querySelector("body > div > div.mt-3").innerHTML = `<div class="mt-3">
         <div class="row g-3 align-items-center mb-2">
         <div class="col-auto">
             <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
@@ -1161,11 +1161,11 @@ if (document.querySelector("#navbar") != null) {
         }
         if (location.href.indexOf("?cid=") == -1) {
             if (UtilityEnabled("ResetType")) {
-                document.querySelector("body > div > div > center").innerHTML =
-                    String(document.querySelector("body > div > div > center").innerHTML).replaceAll("ServerTime:", "服务器时间：");
-                document.querySelector("body > div > div > center > table").style.marginTop = "10px";
+                document.querySelector("body > div > div.mt-3 > center").innerHTML =
+                    String(document.querySelector("body > div > div.mt-3 > center").innerHTML).replaceAll("ServerTime:", "服务器时间：");
+                document.querySelector("body > div > div.mt-3 > center > table").style.marginTop = "10px";
 
-                document.querySelector("body > div > div > center > form").outerHTML = `<div class="row">
+                document.querySelector("body > div > div.mt-3 > center > form").outerHTML = `<div class="row">
                     <div class="col-md-4"></div>
                     <form method="post" action="contest.php" class="col-md-4">
                         <div class="input-group">
@@ -1176,13 +1176,13 @@ if (document.querySelector("#navbar") != null) {
                 </div>`;
             }
             if (UtilityEnabled("Translate")) {
-                document.querySelector("body > div > div > center > table > thead > tr").childNodes[0].innerText = "编号";
-                document.querySelector("body > div > div > center > table > thead > tr").childNodes[1].innerText = "标题";
-                document.querySelector("body > div > div > center > table > thead > tr").childNodes[2].innerText = "状态";
-                document.querySelector("body > div > div > center > table > thead > tr").childNodes[3].remove();
-                document.querySelector("body > div > div > center > table > thead > tr").childNodes[3].innerText = "创建者";
+                document.querySelector("body > div > div.mt-3 > center > table > thead > tr").childNodes[0].innerText = "编号";
+                document.querySelector("body > div > div.mt-3 > center > table > thead > tr").childNodes[1].innerText = "标题";
+                document.querySelector("body > div > div.mt-3 > center > table > thead > tr").childNodes[2].innerText = "状态";
+                document.querySelector("body > div > div.mt-3 > center > table > thead > tr").childNodes[3].remove();
+                document.querySelector("body > div > div.mt-3 > center > table > thead > tr").childNodes[3].innerText = "创建者";
             }
-            let Temp = document.querySelector("body > div > div > center > table > tbody").childNodes;
+            let Temp = document.querySelector("body > div > div.mt-3 > center > table > tbody").childNodes;
             for (let i = 1; i < Temp.length; i++) {
                 let CurrentElement = Temp[i].childNodes[2].childNodes;
                 if (CurrentElement[1].childNodes[0].data.indexOf("运行中") != -1) {
@@ -1215,7 +1215,7 @@ if (document.querySelector("#navbar") != null) {
             document.getElementsByTagName("h3")[0].innerHTML =
                 "比赛" + document.getElementsByTagName("h3")[0].innerHTML.substring(7);
             if (document.querySelector("#time_left") != null) {
-                let EndTime = document.querySelector("body > div > div > center").childNodes[3].data;
+                let EndTime = document.querySelector("body > div > div.mt-3 > center").childNodes[3].data;
                 EndTime = EndTime.substring(EndTime.indexOf("结束时间是：") + 6, EndTime.lastIndexOf("。"));
                 EndTime = new Date(EndTime).getTime();
                 if (new Date().getTime() < EndTime) {
@@ -1223,16 +1223,16 @@ if (document.querySelector("#navbar") != null) {
                     document.querySelector("#time_left").setAttribute("EndTime", EndTime);
                 }
             }
-            let HTMLData = document.querySelector("body > div > div > center > div").innerHTML;
+            let HTMLData = document.querySelector("body > div > div.mt-3 > center > div").innerHTML;
             HTMLData = HTMLData.replaceAll("&nbsp;&nbsp;\n&nbsp;&nbsp;", "&nbsp;")
             HTMLData = HTMLData.replaceAll("<br>开始于: ", "开始时间：")
             HTMLData = HTMLData.replaceAll("\n结束于: ", "<br>结束时间：")
             HTMLData = HTMLData.replaceAll("\n订正截止日期: ", "<br>订正截止日期：")
             HTMLData = HTMLData.replaceAll("\n现在时间: ", "当前时间：")
             HTMLData = HTMLData.replaceAll("\n状态:", "<br>状态：")
-            document.querySelector("body > div > div > center > div").innerHTML = HTMLData;
-            if (UtilityEnabled("RemoveAlerts") && document.querySelector("body > div > div > center").innerHTML.indexOf("尚未开始比赛") != -1) {
-                document.querySelector("body > div > div > center > a").setAttribute("href",
+            document.querySelector("body > div > div.mt-3 > center > div").innerHTML = HTMLData;
+            if (UtilityEnabled("RemoveAlerts") && document.querySelector("body > div > div.mt-3 > center").innerHTML.indexOf("尚未开始比赛") != -1) {
+                document.querySelector("body > div > div.mt-3 > center > a").setAttribute("href",
                     "start_contest.php?cid=" + new URLSearchParams(location.search).get("cid"));
             }
             else if (UtilityEnabled("AutoRefresh")) {
@@ -1259,12 +1259,12 @@ if (document.querySelector("#navbar") != null) {
                             }
                         });
                 };
-                document.querySelector("body > div > div > center > br:nth-child(2)").remove();
-                document.querySelector("body > div > div > center > br:nth-child(2)").remove();
-                document.querySelector("body > div > div > center > div > .red").innerHTML =
-                    String(document.querySelector("body > div > div > center > div > .red").innerHTML).replaceAll("<br>", "<br><br>");
+                document.querySelector("body > div > div.mt-3 > center > br:nth-child(2)").remove();
+                document.querySelector("body > div > div.mt-3 > center > br:nth-child(2)").remove();
+                document.querySelector("body > div > div.mt-3 > center > div > .red").innerHTML =
+                    String(document.querySelector("body > div > div.mt-3 > center > div > .red").innerHTML).replaceAll("<br>", "<br><br>");
                 let StaticButton = document.createElement("button");
-                document.querySelectorAll("body > div > div > center > div > .red")[1].appendChild(StaticButton);
+                document.querySelectorAll("body > div > div.mt-3 > center > div > .red")[1].appendChild(StaticButton);
                 StaticButton.className = "btn btn-outline-secondary";
                 StaticButton.innerText = "统计";
                 StaticButton.onclick = () => {
@@ -1321,7 +1321,7 @@ if (document.querySelector("#navbar") != null) {
                     let OpenAllDiv = document.createElement("div");
                     OpenAllDiv.style.marginTop = "20px";
                     OpenAllDiv.style.textAlign = "left";
-                    document.querySelector("body > div > div > center").insertBefore(OpenAllDiv, document.querySelector("#problemset"));
+                    document.querySelector("body > div > div.mt-3 > center").insertBefore(OpenAllDiv, document.querySelector("#problemset"));
                     let OpenAllButton = document.createElement("button");
                     OpenAllButton.className = "btn btn-outline-secondary";
                     OpenAllButton.innerText = "打开全部题目";
@@ -1356,16 +1356,16 @@ if (document.querySelector("#navbar") != null) {
         }
     } else if (location.pathname == "/contestrank-oi.php") {
         if (document.querySelector("#rank") == null) {
-            document.querySelector("body > div > div").innerHTML = "<center><h3>比赛排名</h3><a></a><table id=\"rank\"></table>";
+            document.querySelector("body > div > div.mt-3").innerHTML = "<center><h3>比赛排名</h3><a></a><table id=\"rank\"></table>";
         }
         if (new URL(location.href).searchParams.get("ByUserScript") == null) {
-            if (document.querySelector("body > div > div > center > h3").innerText == "比赛排名") {
+            if (document.querySelector("body > div > div.mt-3 > center > h3").innerText == "比赛排名") {
                 document.querySelector("#rank").innerText = "比赛暂时还没有排名";
             }
             else {
-                document.querySelector("body > div > div > center > h3").innerText =
-                    document.querySelector("body > div > div > center > h3").innerText.substring(
-                        document.querySelector("body > div > div > center > h3").innerText.indexOf(" -- ") + 4)
+                document.querySelector("body > div > div.mt-3 > center > h3").innerText =
+                    document.querySelector("body > div > div.mt-3 > center > h3").innerText.substring(
+                        document.querySelector("body > div > div.mt-3 > center > h3").innerText.indexOf(" -- ") + 4)
                     + "（OI排名）";
                 document.querySelector("#rank > thead > tr > :nth-child(1)").innerText = "排名";
                 document.querySelector("#rank > thead > tr > :nth-child(2)").innerText = "用户";
@@ -1403,10 +1403,10 @@ if (document.querySelector("#navbar") != null) {
             }
         }
         else if (UtilityEnabled("ACMRank")) {
-            if (document.querySelector("body > div > div > center > h3").innerText != "比赛排名") {
-                document.querySelector("body > div > div > center > h3").innerText =
-                    document.querySelector("body > div > div > center > h3").innerText.substring(
-                        document.querySelector("body > div > div > center > h3").innerText.indexOf(" -- ") + 4)
+            if (document.querySelector("body > div > div.mt-3 > center > h3").innerText != "比赛排名") {
+                document.querySelector("body > div > div.mt-3 > center > h3").innerText =
+                    document.querySelector("body > div > div.mt-3 > center > h3").innerText.substring(
+                        document.querySelector("body > div > div.mt-3 > center > h3").innerText.indexOf(" -- ") + 4)
                     + "（ACM排名）";
             }
             let RankData = [];
@@ -1613,18 +1613,18 @@ if (document.querySelector("#navbar") != null) {
         document.querySelector("body > div.container > div > center > a").style.display = "none";
     } else if (location.pathname == "/contestrank-correct.php") {
         if (document.querySelector("#rank") == null) {
-            document.querySelector("body > div > div").innerHTML = "<center><h3>比赛排名</h3><a></a><table id=\"rank\"></table>";
+            document.querySelector("body > div > div.mt-3").innerHTML = "<center><h3>比赛排名</h3><a></a><table id=\"rank\"></table>";
         }
-        if (document.querySelector("body > div > div > center > h3").innerText == "比赛排名") {
+        if (document.querySelector("body > div > div.mt-3 > center > h3").innerText == "比赛排名") {
             document.querySelector("#rank").innerText = "比赛暂时还没有排名";
         }
         else {
             if (UtilityEnabled("ResetType")) {
-                document.querySelector("body > div > div > center > h3").innerText =
-                    document.querySelector("body > div > div > center > h3").innerText.substring(
-                        document.querySelector("body > div > div > center > h3").innerText.indexOf(" -- ") + 4)
+                document.querySelector("body > div > div.mt-3 > center > h3").innerText =
+                    document.querySelector("body > div > div.mt-3 > center > h3").innerText.substring(
+                        document.querySelector("body > div > div.mt-3 > center > h3").innerText.indexOf(" -- ") + 4)
                     + "（订正排名）";
-                document.querySelector("body > div > div > center > a").remove();
+                document.querySelector("body > div > div.mt-3 > center > a").remove();
             }
             document.querySelector("#rank > thead > tr > :nth-child(1)").innerText = "排名";
             document.querySelector("#rank > thead > tr > :nth-child(2)").innerText = "用户";
@@ -1662,7 +1662,7 @@ if (document.querySelector("#navbar") != null) {
         }
     } else if (location.pathname == "/submitpage.php") {
         let SearchParams = new URLSearchParams(location.search);
-        document.querySelector("body > div > div").innerHTML = `<center class="mb-3">` +
+        document.querySelector("body > div > div.mt-3").innerHTML = `<center class="mb-3">` +
             `<h3>提交代码</h3>` +
             (SearchParams.get("id") != null ?
                 `题目<span class="blue">` + SearchParams.get("id") + `</span>` :
@@ -1714,7 +1714,7 @@ if (document.querySelector("#navbar") != null) {
                     (SearchParams.get("id") != null ?
                         "id=" + SearchParams.get("id") :
                         "cid=" + SearchParams.get("cid") + "&pid=" + SearchParams.get("pid")) +
-                    "language=1&" +
+                    "&language=1&" +
                     "source=" + encodeURIComponent(CodeMirrorElement.getValue()) + "&" +
                     "enable_O2=on"
             }).then((Response) => {
@@ -1834,7 +1834,7 @@ if (document.querySelector("#navbar") != null) {
         };
     } else if (location.pathname == "/modifypage.php") {
         if (new URL(location.href).searchParams.get("ByUserScript") != null) {
-            document.querySelector("body > div > div").innerHTML = "";
+            document.querySelector("body > div > div.mt-3").innerHTML = "";
             await fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
                 .then((Response) => {
                     return Response.json();
@@ -1843,7 +1843,7 @@ if (document.querySelector("#navbar") != null) {
                     for (let i = Object.keys(Response["UpdateHistory"]).length - 1; i >= 0; i--) {
                         let Version = Object.keys(Response["UpdateHistory"])[i];
                         let Data = Response["UpdateHistory"][Version];
-                        let UpdateDataCard = document.createElement("div"); document.querySelector("body > div > div").appendChild(UpdateDataCard);
+                        let UpdateDataCard = document.createElement("div"); document.querySelector("body > div > div.mt-3").appendChild(UpdateDataCard);
                         UpdateDataCard.className = "card mb-3";
                         let UpdateDataCardBody = document.createElement("div"); UpdateDataCard.appendChild(UpdateDataCardBody);
                         UpdateDataCardBody.className = "card-body";
@@ -1982,7 +1982,7 @@ if (document.querySelector("#navbar") != null) {
         document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(1)").innerHTML = "用户名：" + UserID;
         document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(2)").innerHTML = "昵称：" + UserName;
     } else if (location.pathname == "/conteststatistics.php") {
-        document.querySelector("body > div > div > center > h3").innerText = "比赛统计";
+        document.querySelector("body > div > div.mt-3 > center > h3").innerText = "比赛统计";
         if (UtilityEnabled("ResetType")) {
             let Temp = document.getElementById("submission").childNodes;
             for (let i = 0; i < Temp.length; i++) {
@@ -2149,7 +2149,7 @@ if (document.querySelector("#navbar") != null) {
         }
     } else if (location.pathname == "/contest_video.php") {
         if (UtilityEnabled("DownloadPlayback")) {
-            let ScriptData = document.querySelector("body > div > div > center > script").innerHTML;
+            let ScriptData = document.querySelector("body > div > div.mt-3 > center > script").innerHTML;
             if (document.getElementById("J_prismPlayer0").innerHTML != "") {
                 document.getElementById("J_prismPlayer0").innerHTML = "";
                 eval(ScriptData);
@@ -2201,7 +2201,7 @@ if (document.querySelector("#navbar") != null) {
                     DownloadButton.innerText = "下载";
                     DownloadButton.href = Response["PlayInfoList"]["PlayInfo"][0]["PlayURL"];
                     DownloadButton.download = Response["VideoBase"]["Title"];
-                    document.querySelector("body > div > div > center").appendChild(DownloadButton);
+                    document.querySelector("body > div > div.mt-3 > center").appendChild(DownloadButton);
                 });
         }
     } else if (location.pathname == "/reinfo.php") {
@@ -2338,10 +2338,10 @@ if (document.querySelector("#navbar") != null) {
             }
         }
     } else if (location.pathname == "/problemstatus.php") {
-        document.querySelector("body > div > div > center").insertBefore(document.querySelector("#statics"), document.querySelector("body > div > div > center > table"));
-        document.querySelector("body > div > div > center").insertBefore(document.querySelector("#problemstatus"), document.querySelector("body > div > div > center > table"));
+        document.querySelector("body > div > div.mt-3 > center").insertBefore(document.querySelector("#statics"), document.querySelector("body > div > div.mt-3 > center > table"));
+        document.querySelector("body > div > div.mt-3 > center").insertBefore(document.querySelector("#problemstatus"), document.querySelector("body > div > div.mt-3 > center > table"));
 
-        document.querySelector("body > div > div > center > table:nth-child(3)").remove();
+        document.querySelector("body > div > div.mt-3 > center > table:nth-child(3)").remove();
         let Temp = document.querySelector("#statics").rows;
         for (let i = 0; i < Temp.length; i++) {
             Temp[i].removeAttribute("class");
@@ -2384,7 +2384,7 @@ if (document.querySelector("#navbar") != null) {
             Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">` + (CurrentPage + 1) + `</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">&gt;&gt;</a></li>`;
         }
         Pagination += `</ul></nav>`;
-        document.querySelector("body > div > div > center").innerHTML += Pagination;
+        document.querySelector("body > div > div.mt-3 > center").innerHTML += Pagination;
     } else if (location.pathname == "/problem_solution.php") {
         if (UtilityEnabled("CopyMD")) {
             await fetch(location.href).then((Response) => {
@@ -2396,9 +2396,9 @@ if (document.querySelector("#navbar") != null) {
                 CopyMDButton.innerText = "复制";
                 CopyMDButton.style.marginLeft = "10px";
                 CopyMDButton.type = "button";
-                document.querySelector("body > div > div > center > h2").appendChild(CopyMDButton);
+                document.querySelector("body > div > div.mt-3 > center > h2").appendChild(CopyMDButton);
                 CopyMDButton.onclick = () => {
-                    CopyToClipboard(ParsedDocument.querySelector("body > div > div > div").innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
+                    CopyToClipboard(ParsedDocument.querySelector("body > div > div.mt-3 > div").innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
                     CopyMDButton.innerText = "复制成功";
                     setTimeout(() => {
                         CopyMDButton.innerText = "复制";
