@@ -658,6 +658,35 @@ if (document.querySelector("#navbar") != null) {
             FeedbackCard.appendChild(FeedbackCardBody);
             Container.appendChild(FeedbackCard);
         }
+        else {
+            let Temp = document.querySelector("body > div > div > div > div.col-md-8").children;
+            let NewsData = [];
+            for (let i = 0; i < Temp.length; i += 2) {
+                let Title = Temp[i].children[0].innerText;
+                let Time = Temp[i].children[1].innerText;
+                let Body = Temp[i + 1].innerHTML;
+                NewsData.push({ "Title": Title, "Time": Time, "Body": Body });
+            }
+            document.querySelector("body > div > div > div > div.col-md-8").innerHTML = "";
+            for (let i = 0; i < NewsData.length; i++) {
+                let NewsRow = document.createElement("div");
+                NewsRow.className = "cnt-row";
+                let NewsRowHead = document.createElement("div");
+                NewsRowHead.className = "cnt-row-head title";
+                NewsRowHead.innerHTML = NewsData[i].Title + "<small class=\"ms-3\">" + NewsData[i].Time + "</small>";
+                NewsRow.appendChild(NewsRowHead);
+                let NewsRowBody = document.createElement("div");
+                NewsRowBody.className = "cnt-row-body";
+                NewsRowBody.innerHTML = NewsData[i].Body;
+                NewsRow.appendChild(NewsRowBody);
+                document.querySelector("body > div > div > div > div.col-md-8").appendChild(NewsRow);
+            }
+            let CountDownData = document.querySelector("#countdown_list").innerHTML;
+            document.querySelector("body > div > div > div > div.col-md-4").innerHTML = `<div class="cnt-row">
+                <div class="cnt-row-head title">倒计时</div>
+                <div class="cnt-row-body">${CountDownData}</div>
+            </div>`;
+        }
     } else if (location.pathname == "/problemset.php") {
         if (UtilityEnabled("Translate")) {
             document.querySelector("body > div > div > center > table:nth-child(2) > tbody > tr > td:nth-child(2) > form > input").placeholder = "题目编号";
