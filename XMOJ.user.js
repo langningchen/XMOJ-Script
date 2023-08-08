@@ -118,6 +118,10 @@ GM_registerMenuCommand("重置数据", () => {
     }
 });
 
+if (location.host != "www.xmoj.tech") {
+    location.host = "www.xmoj.tech";
+}
+
 if (localStorage.getItem("UserScript-Debug") == null) {
     setInterval(() => {
         let StartTime = new Date().getTime();
