@@ -272,7 +272,24 @@ if (document.querySelector("#navbar") != null) {
             .item-txt {
                 color: var(--bs-emphasis-color) !important;
             }
-            `
+            .cnt-row {
+                justify-content: inherit;
+                align-items: stretch;
+                width: 100% !important;
+                padding: 1rem 0;
+            }
+            .cnt-row-head {
+                padding: 0.8em 1em;
+                background-color: var(--bs-secondary-bg);
+                border-radius: 0.3rem 0.3rem 0 0;
+                width: 100%;
+            }
+            .cnt-row-body {
+                padding: 1em;
+                border: 1px solid var(--bs-secondary-bg);
+                border-top: none;
+                border-radius: 0 0 0.3rem 0.3rem;
+            }`;
     if (UtilityEnabled("AddAnimation")) {
         Style.innerHTML += `.status, .test-case {
                 transition: 0.5s !important;
@@ -765,31 +782,14 @@ if (document.querySelector("#navbar") != null) {
                     }
                 });
             }
-        } Style.innerHTML += "code, kbd, pre, samp {";
+        }
+        Style.innerHTML += "code, kbd, pre, samp {";
         Style.innerHTML += "    font-family: monospace, Consolas, 'Courier New';";
         Style.innerHTML += "    font-size: 1rem;";
         Style.innerHTML += "}";
         Style.innerHTML += "pre {";
         Style.innerHTML += "    padding: 0.3em 0.5em;";
         Style.innerHTML += "    margin: 0.5em 0;";
-        Style.innerHTML += "}";
-        Style.innerHTML += ".cnt-row {";
-        Style.innerHTML += "    justify-content: inherit;";
-        Style.innerHTML += "    align-items: stretch;";
-        Style.innerHTML += "    width: 100% !important;";
-        Style.innerHTML += "    padding: 1rem 0;";
-        Style.innerHTML += "}";
-        Style.innerHTML += ".cnt-row-head {";
-        Style.innerHTML += "    padding: 0.8em 1em;";
-        Style.innerHTML += "    background-color: var(--bs-secondary-bg);";
-        Style.innerHTML += "    border-radius: 0.3rem 0.3rem 0 0;";
-        Style.innerHTML += "    width: 100%;";
-        Style.innerHTML += "}";
-        Style.innerHTML += ".cnt-row-body {";
-        Style.innerHTML += "    padding: 1em;";
-        Style.innerHTML += "    border: 1px solid var(--bs-secondary-bg);";
-        Style.innerHTML += "    border-top: none;";
-        Style.innerHTML += "    border-radius: 0 0 0.3rem 0.3rem;";
         Style.innerHTML += "}";
         Style.innerHTML += ".in-out {";
         Style.innerHTML += "    overflow: hidden;";
