@@ -279,6 +279,31 @@
                     "Description": "[#15] 增加深色模式选择"
                 }
             ]
+        },
+        "0.1.36": {
+            "UpdateDate": 1691467800177,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "17c1d79",
+                    "Commit": "17c1d7995589424d63e41e305f172b0269b66e91",
+                    "Description": "解决提交时默认选择C语言而导致CE"
+                },
+                {
+                    "ShortCommit": "2113458",
+                    "Commit": "2113458c582bee20493a4a31ec8123e33b2aa1b6",
+                    "Description": "更改ISSUE模板（测试）"
+                },
+                {
+                    "ShortCommit": "ba1043a",
+                    "Commit": "ba1043a839d395049b1b443fac3feafcf46a6408",
+                    "Description": "修复打开所有页面失效"
+                },
+                {
+                    "ShortCommit": "9e71063",
+                    "Commit": "9e710639406864e4c0b2440b0957757b36cff810",
+                    "Description": "Create CODE_OF_CONDUCT.md"
+                }
+            ]
         }
     }
 }
