@@ -314,6 +314,31 @@
                     "Description": "解决因为比赛题目列表脚本运行失败而导致的ACM排名不显示"
                 }
             ]
+        },
+        "0.1.38": {
+            "UpdateDate": 1691483894439,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "0b5af23",
+                    "Commit": "0b5af23b45d873ba4c28741739a5fcbb42985052",
+                    "Description": "解决不断刷新问题"
+                },
+                {
+                    "ShortCommit": "755b56e",
+                    "Commit": "755b56e9e880116a62a95d3be8f10025c022cfc8",
+                    "Description": "修复复制样例按钮和ACM排名界面颜色问题"
+                },
+                {
+                    "ShortCommit": "87b4ca1",
+                    "Commit": "87b4ca14ccc6d35c8aed6d14e3b8c26ff6fd1022",
+                    "Description": "更新提高AC率为在AC题目中随机挑一题提交防止被发现反复提交2298题"
+                },
+                {
+                    "ShortCommit": "df87425",
+                    "Commit": "df87425505adac29edb30f2cfef8b052c222f668",
+                    "Description": "Remove issue template"
+                }
+            ]
         }
     }
 }
