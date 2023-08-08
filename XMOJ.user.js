@@ -191,7 +191,12 @@ if (document.querySelector("#navbar") != null) {
                 Temp[i].remove();
             }
         }
-        document.querySelector("html").setAttribute("data-bs-theme", "dark");
+        if (UtilityEnabled("DarkMode")) {
+            document.querySelector("html").setAttribute("data-bs-theme", "dark");
+        }
+        else {
+            document.querySelector("html").setAttribute("data-bs-theme", "light");
+        }
 
         let PopperScriptElement = document.createElement("script"); document.head.appendChild(PopperScriptElement);
         PopperScriptElement.type = "module";
@@ -366,6 +371,7 @@ if (document.querySelector("#navbar") != null) {
                         { "ID": "ResetType", "Type": "F", "Name": "重新排版*" },
                         { "ID": "AddColorText", "Type": "A", "Name": "增加彩色文字" },
                         { "ID": "AddUnits", "Type": "A", "Name": "状态界面内存与耗时添加单位" },
+                        { "ID": "DarkMode", "Type": "A", "Name": "使用暗色模式" },
                         { "ID": "AddAnimation", "Type": "A", "Name": "增加动画" },
                         { "ID": "ReplaceYN", "Type": "F", "Name": "题目前对错的Y和N替换为勾和叉" },
                         { "ID": "RemoveAlerts", "Type": "D", "Name": "去除多余反复的提示" },
