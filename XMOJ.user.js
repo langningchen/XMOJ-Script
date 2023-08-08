@@ -839,17 +839,17 @@ if (document.querySelector("#navbar") != null) {
         Style.innerHTML += "a.copy-btn {";
         Style.innerHTML += "    float: right;";
         Style.innerHTML += "    padding: 0 0.4em;";
-        Style.innerHTML += "    border: 1px solid var(--bs-primary-text-emphasis);";
+        Style.innerHTML += "    border: 1px solid var(--bs-primary);";
         Style.innerHTML += "    border-radius: 3px;";
-        Style.innerHTML += "    color: var(--bs-primary-text-emphasis);";
+        Style.innerHTML += "    color: var(--bs-primary);";
         Style.innerHTML += "    cursor: pointer;";
         Style.innerHTML += "}";
         Style.innerHTML += "a.copy-btn:hover {";
         Style.innerHTML += "    background-color: var(--bs-secondary-bg);";
         Style.innerHTML += "}";
         Style.innerHTML += "a.done, a.done:hover {";
-        Style.innerHTML += "    background-color: var(--bs-primary-text-emphasis);";
-        Style.innerHTML += "    color: var(--bs-emphasis-color);";
+        Style.innerHTML += "    background-color: var(--bs-primary);";
+        Style.innerHTML += "    color: white;";
         Style.innerHTML += "}";
     } else if (location.pathname == "/status.php") {
         if (new URL(location.href).searchParams.get("ByUserScript") == null) {
@@ -1590,19 +1590,23 @@ if (document.querySelector("#navbar") != null) {
                                         }
                                     });
                                     if (ProblemData == undefined) {
-                                        Problem.style.backgroundColor = "#eeeeee";
+                                        Problem.style.backgroundColor = "rgba(0, 0, 0, 0)";
                                     }
                                     else if (ProblemData.SolveTime != 0) {
                                         Problem.innerText = SecondsToString(ProblemData.SolveTime) + "(" + ProblemData.Attempts.length + ")";
-                                        let Color = Math.min(ProblemData.Attempts.length * 10, 224);
-                                        Problem.style.backgroundColor = "rgb(" + Color + ", 255, " + Color + ")";
-                                        Problem.style.color = "black";
+                                        let Color = Math.min(ProblemData.Attempts.length / 20, 1);
+                                        Problem.style.backgroundColor = "rgba(0, 255, 0, " + Color + ")";
                                     }
                                     else {
                                         Problem.innerText = "(" + ProblemData.Attempts.length + ")";
-                                        let Color = 255 - Math.min(ProblemData.Attempts.length * 10, 224);
-                                        Problem.style.backgroundColor = "rgb(255, " + Color + ", " + Color + ")";
-                                        Problem.style.color = (Color < 64 ? "white" : "black");
+                                        let Color = Math.min(ProblemData.Attempts.length / 20, 1);
+                                        Problem.style.backgroundColor = "rgba(255, 0, 0, " + Color + ")";
+                                    }
+                                    if (UtilityEnabled("DarkMode")) {
+                                        Problem.style.color = "white";
+                                    }
+                                    else {
+                                        Problem.style.color = "black";
                                     }
                                 }
                             }
