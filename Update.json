@@ -274,6 +274,36 @@
                     "Description": "解决附加脚本缓存问题"
                 }
             ]
+        },
+        "0.1.34": {
+            "UpdateDate": 1691456662406,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "b5eb091",
+                    "Commit": "b5eb091a0bc17eaff3e030b6aa2af82fcb5459ba",
+                    "Description": "Merge pull request #12 from PythonSmall-Q/PythonSmall-Q-patch-3"
+                },
+                {
+                    "ShortCommit": "27e6228",
+                    "Commit": "27e6228b14fc4fcfd7bceda30b0b7187486d8c79",
+                    "Description": "Update issue templates"
+                },
+                {
+                    "ShortCommit": "9315640",
+                    "Commit": "9315640fbc86e803a6c21cbb64192e9bd832befe",
+                    "Description": "Update issue templates"
+                },
+                {
+                    "ShortCommit": "3e371c7",
+                    "Commit": "3e371c765aa41118ab77d1064496e99cb3409f94",
+                    "Description": "Remove useless test dir"
+                },
+                {
+                    "ShortCommit": "16bb986",
+                    "Commit": "16bb986afe934ed2e2f55c2d9448153ef865f4f5",
+                    "Description": "Update version to 0.1.33"
+                }
+            ]
         }
     }
 }
