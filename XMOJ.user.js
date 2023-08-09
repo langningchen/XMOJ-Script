@@ -1731,6 +1731,7 @@ else {
                 })
             })();
             CodeMirrorElement.setSize("100%", "auto");
+            CodeMirrorElement.getWrapperElement().style.border = "1px solid #ddd";
             PassCheck.onclick = async () => {
                 document.querySelector("#Submit").disabled = true;
                 document.querySelector("#Submit").value = "正在提交...";
