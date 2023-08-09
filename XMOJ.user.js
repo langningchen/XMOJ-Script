@@ -1721,7 +1721,7 @@ else {
                     indentWithTabs: true,
                     enterMode: "keep",
                     tabMode: "shift",
-                    theme: "default",
+                    theme: (UtilityEnabled("DarkMode") ? "darcula" : "default"),
                     extraKeys: {
                         "Ctrl-Space": "autocomplete",
                         "Ctrl-Enter": function (instance) {
@@ -2447,7 +2447,8 @@ else {
                 CodeMirror.fromTextArea(Temp[i], {
                     lineNumbers: true,
                     mode: "text/x-c++src",
-                    readOnly: true
+                    readOnly: true,
+                    theme: (UtilityEnabled("DarkMode") ? "darcula" : "default")
                 }).setSize("100%", "auto");
             }
         }
