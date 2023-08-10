@@ -9,6 +9,8 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/hmac-sha1.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/codemirror.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/mode/clike/clike.min.js
+// @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.js
+// @require      https://cdn.bootcdn.net/ajax/libs/diff_match_patch/20121119/diff_match_patch_uncompressed.js
 // @require      https://ghproxy.com/https://raw.githubusercontent.com/drudru/ansi_up/master/ansi_up.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_notification
@@ -213,6 +215,9 @@ else {
             let CodeMirrorThemeStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrorThemeStyleElement);
             CodeMirrorThemeStyleElement.rel = "stylesheet";
             CodeMirrorThemeStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/theme/darcula.min.css";
+            let CodeMirrroMergeStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrroMergeStyleElement);
+            CodeMirrroMergeStyleElement.rel = "stylesheet";
+            CodeMirrroMergeStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.min.css";
             // let SentryScriptElement = document.createElement("script"); document.head.appendChild(SentryScriptElement);
             // SentryScriptElement.src = "https://js.sentry-cdn.com/a4c8d48a19954926bf0d8e3d6d6c3024.min.js";
             Temp = document.querySelectorAll("script");
@@ -845,6 +850,7 @@ else {
             Style.innerHTML += "}";
         } else if (location.pathname == "/status.php") {
             if (new URL(location.href).searchParams.get("ByUserScript") == null) {
+                document.querySelector("body > script:nth-child(5)").remove();
                 if (UtilityEnabled("NewBootstrap")) {
                     document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
                 <input class="form-control" type="text" size="4" name="user_id" value="` + document.getElementById("profile").innerText + `"style="display: none;">
@@ -2053,25 +2059,50 @@ else {
                     let CompareButton = document.createElement("button");
                     document.querySelector("body > div.container > div").appendChild(CompareButton);
                     CompareButton.innerText = "比较";
-                    CompareButton.className = "btn btn-outline-secondary";
+                    CompareButton.className = "btn btn-primary";
                     CompareButton.onclick = () => {
                         location.href = "/comparesource.php?left=" + LeftCode.value + "&right=" + RightCode.value;
                     };
                 }
                 else {
-                    let CheckboxLabel = document.createElement("label");
-                    document.querySelector("body > div.container > div > table:nth-child(2) > tbody > tr > td").appendChild(CheckboxLabel);
-                    CheckboxLabel.innerText = "忽略空白";
-                    CheckboxLabel.setAttribute("for", "ignorews");
-                    document.querySelector("body > div.container > div > table:nth-child(2) > tbody > tr > td").childNodes[1].remove();
-                    document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[0].children[1].innerText = "保存代码";
-                    document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[0].children[1].download = SearchParams.get("left") + ".cpp";
-                    document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[1].children[1].innerText = "保存代码";
-                    document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[1].children[1].download = SearchParams.get("right") + ".cpp";
-                    setInterval(() => {
-                        document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[0].children[0].innerText = "左侧代码" + SearchParams.get("left");
-                        document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[1].children[0].innerText = "右侧代码" + SearchParams.get("right");
-                    }, 500);
+                    document.querySelector("body > div > div.mt-3").innerHTML = `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" checked id="IgnoreWhitespaces">
+                        <label class="form-check-label" for="IgnoreWhitespaces">忽略空白</label>
+                    </div>
+                    <div id="CompareElement"></div>`;
+
+                    let LeftCode = "";
+                    await fetch("/getsource.php?id=" + SearchParams.get("left"))
+                        .then((Response) => {
+                            return Response.text();
+                        }).then((Response) => {
+                            LeftCode = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
+                        });
+                    let RightCode = "";
+                    await fetch("/getsource.php?id=" + SearchParams.get("right"))
+                        .then((Response) => {
+                            return Response.text();
+                        }).then((Response) => {
+                            RightCode = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
+                        });
+
+                    let MergeViewElement = CodeMirror.MergeView(CompareElement, {
+                        value: LeftCode,
+                        origLeft: null,
+                        orig: RightCode,
+                        lineNumbers: true,
+                        mode: "text/x-c++src",
+                        collapseIdentical: "true",
+                        readOnly: true,
+                        theme: (UtilityEnabled("DarkMode") ? "darcula" : "default"),
+                        revertButtons: false,
+                        ignoreWhitespace: true
+                    });
+
+                    IgnoreWhitespaces.onchange = () => {
+                        MergeViewElement.ignoreWhitespace = ignorews.checked;
+                    };
                 }
             }
         } else if (location.pathname == "/loginpage.php") {
