@@ -208,6 +208,9 @@ else {
             let CodeMirrorStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrorStyleElement);
             CodeMirrorStyleElement.rel = "stylesheet";
             CodeMirrorStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/codemirror.min.css";
+            let CodeMirrorThemeStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrorThemeStyleElement);
+            CodeMirrorThemeStyleElement.rel = "stylesheet";
+            CodeMirrorThemeStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/theme/darcula.min.css";
             // let SentryScriptElement = document.createElement("script"); document.head.appendChild(SentryScriptElement);
             // SentryScriptElement.src = "https://js.sentry-cdn.com/a4c8d48a19954926bf0d8e3d6d6c3024.min.js";
             Temp = document.querySelectorAll("script");
@@ -384,22 +387,6 @@ else {
                     SettingsButton.className = "dropdown-item";
                     SettingsButton.innerHTML = `<a href="index.php?ByUserScript=1">插件设置</a>`;
                     document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").appendChild(SettingsButton);
-                }
-            }
-            if (document.querySelector(".syntaxhighlighter > table > tbody > tr > td.code > div") != undefined) {
-                if (document.querySelector(".syntaxhighlighter").children.length == 2) {
-                    let CopyButton = document.createElement("button");
-                    CopyButton.className = "btn btn-outline-secondary";
-                    CopyButton.innerText = "复制代码";
-                    CopyButton.style.marginBottom = "10px";
-                    CopyButton.addEventListener("click", () => {
-                        CopyToClipboard(document.querySelector(".syntaxhighlighter > table > tbody > tr > td.code > div").innerText.replaceAll(" ", " "));
-                        CopyButton.innerText = "复制成功";
-                        setTimeout(() => {
-                            CopyButton.innerText = "复制代码";
-                        }, 1000);
-                    });
-                    document.querySelector(".syntaxhighlighter").insertBefore(CopyButton, document.querySelector(".syntaxhighlighter").firstChild);
                 }
             }
             if (UtilityEnabled("AutoCountdown")) {
@@ -956,6 +943,7 @@ else {
                                     Code = Code.replaceAll("&gt;", ">");
                                     Code = Code.replaceAll("&amp;", "&");
                                     Code = Code.substring(0, Code.indexOf("/**************************************************************"));
+                                    Code = Code.trim();
                                 });
                             await fetch("http://www.xmoj.tech/csrf.php")
                                 .then((Response) => {
@@ -2496,6 +2484,27 @@ else {
                     <div class="cnt-row-head title">倒计时</div>
                     <div class="cnt-row-body">${CountDownData}</div>
                 </div>`;
+        } else if (location.pathname == "/showsource.php") {
+            let Code = "";
+            await fetch("http://www.xmoj.tech/showsource.php?id=" + (new URLSearchParams(location.search)).get("id"))
+                .then((Response) => {
+                    return Response.text();
+                }).then((Response) => {
+                    let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                    Code = ParsedDocument.querySelector("body > div > div > pre").innerHTML;
+                    Code = Code.replaceAll("&lt;", "<");
+                    Code = Code.replaceAll("&gt;", ">");
+                    Code = Code.replaceAll("&amp;", "&");
+                    Code = Code.substring(0, Code.indexOf("/**************************************************************"));
+                    Code = Code.trim();
+                });
+            document.querySelector("body > div > div.mt-3").innerHTML = `<textarea>` + Code + `</textarea>`;
+            CodeMirror.fromTextArea(document.querySelector("body > div > div.mt-3 > textarea"), {
+                lineNumbers: true,
+                mode: "text/x-c++src",
+                readOnly: true,
+                theme: (UtilityEnabled("DarkMode") ? "darcula" : "default")
+            }).setSize("100%", "auto");
         }
     }
 }
