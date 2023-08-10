@@ -13,7 +13,6 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/diff_match_patch/20121119/diff_match_patch_uncompressed.js
 // @require      https://ghproxy.com/https://raw.githubusercontent.com/drudru/ansi_up/master/ansi_up.js
 // @grant        GM_registerMenuCommand
-// @grant        GM_notification
 // ==/UserScript==
 
 /**
