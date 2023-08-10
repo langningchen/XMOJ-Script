@@ -934,17 +934,11 @@ else {
                                     SID = ParsedDocument.querySelector("#result-tab > tbody > tr:nth-child(1) > td:nth-child(2)").innerText;
                                 });
                             let Code = "";
-                            await fetch("http://www.xmoj.tech/showsource.php?id=" + SID)
+                            await fetch("http://www.xmoj.tech/getsource.php?id=" + SID)
                                 .then((Response) => {
                                     return Response.text();
                                 }).then((Response) => {
-                                    let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
-                                    Code = ParsedDocument.querySelector("body > div > div > pre").innerHTML;
-                                    Code = Code.replaceAll("&lt;", "<");
-                                    Code = Code.replaceAll("&gt;", ">");
-                                    Code = Code.replaceAll("&amp;", "&");
-                                    Code = Code.substring(0, Code.indexOf("/**************************************************************"));
-                                    Code = Code.trim();
+                                    Code = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
                                 });
                             await fetch("http://www.xmoj.tech/csrf.php")
                                 .then((Response) => {
@@ -2486,17 +2480,11 @@ else {
                 </div>`;
         } else if (location.pathname == "/showsource.php") {
             let Code = "";
-            await fetch("http://www.xmoj.tech/showsource.php?id=" + SearchParams.get("id"))
+            await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("id"))
                 .then((Response) => {
                     return Response.text();
                 }).then((Response) => {
-                    let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
-                    Code = ParsedDocument.querySelector("body > div > div > pre").innerHTML;
-                    Code = Code.replaceAll("&lt;", "<");
-                    Code = Code.replaceAll("&gt;", ">");
-                    Code = Code.replaceAll("&amp;", "&");
-                    Code = Code.substring(0, Code.indexOf("/**************************************************************"));
-                    Code = Code.trim();
+                    Code = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
                 });
             document.querySelector("body > div > div.mt-3").innerHTML = `<textarea>` + Code + `</textarea>`;
             CodeMirror.fromTextArea(document.querySelector("body > div > div.mt-3 > textarea"), {
