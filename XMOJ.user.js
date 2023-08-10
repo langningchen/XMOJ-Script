@@ -118,6 +118,8 @@ GM_registerMenuCommand("重置数据", () => {
     }
 });
 
+let SearchParams = new URLSearchParams(location.search);
+
 if (location.host != "www.xmoj.tech") {
     location.host = "www.xmoj.tech";
 }
@@ -708,8 +710,8 @@ else {
                 </form>
             </div>
         </div>`;
-            if (new URLSearchParams(location.search).get("search") != null) {
-                document.querySelector("body > div > div.mt-3 > center > div > div:nth-child(3) > form > input").value = new URLSearchParams(location.search).get("search");
+            if (SearchParams.get("search") != null) {
+                document.querySelector("body > div > div.mt-3 > center > div > div:nth-child(3) > form > input").value = SearchParams.get("search");
             }
 
             let Temp = document.querySelector("#problemset").rows;
@@ -718,10 +720,10 @@ else {
                     Temp[i].children[2].innerText);
             }
         } else if (location.pathname == "/problem.php") {
-            if (new URLSearchParams(location.search).get("cid") != null) {
+            if (SearchParams.get("cid") != null) {
                 document.getElementsByTagName("h2")[0].innerHTML += " (" +
-                    localStorage.getItem("UserScript-Contest-" + new URLSearchParams(location.search).get("cid") +
-                        "-Problem-" + new URLSearchParams(location.search).get("pid") + "-PID") +
+                    localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") +
+                        "-Problem-" + SearchParams.get("pid") + "-PID") +
                     ")";
             }
             if (document.querySelector("body > div > div.mt-3 > h2") != null) {
@@ -767,7 +769,6 @@ else {
                     IOFileElement.remove();
                     let Temp = document.querySelector("body > div > div.mt-3 > center").childNodes[2].data.trim();
                     let IOFilename = Temp.substring(0, Temp.length - 3);
-                    let SearchParams = new URLSearchParams(location.search);
                     let PID = 0;
                     if (SearchParams.get("id") != null) {
                         PID = SearchParams.get("id");
@@ -999,13 +1000,13 @@ else {
                         Temp[i].childNodes[8].remove();
                         Temp[i].childNodes[8].remove();
                     }
-                    if (new URLSearchParams(location.search).get("cid") == null) {
+                    if (SearchParams.get("cid") == null) {
                         localStorage.setItem("UserScript-Solution-" + Temp[i].childNodes[0].innerText + "-Problem",
                             Temp[i].childNodes[1].innerText);
                     }
                     else {
                         localStorage.setItem("UserScript-Solution-" + Temp[i].childNodes[0].innerText + "-Contest",
-                            new URLSearchParams(location.search).get("cid"));
+                            SearchParams.get("cid"));
                         localStorage.setItem("UserScript-Solution-" + Temp[i].childNodes[0].innerText + "-PID-Contest",
                             Temp[i].childNodes[1].innerText.charAt(0));
                     }
@@ -1253,7 +1254,7 @@ else {
                 document.querySelector("body > div > div.mt-3 > center > div").innerHTML = HTMLData;
                 if (UtilityEnabled("RemoveAlerts") && document.querySelector("body > div > div.mt-3 > center").innerHTML.indexOf("尚未开始比赛") != -1) {
                     document.querySelector("body > div > div.mt-3 > center > a").setAttribute("href",
-                        "start_contest.php?cid=" + new URLSearchParams(location.search).get("cid"));
+                        "start_contest.php?cid=" + SearchParams.get("cid"));
                 }
                 else if (UtilityEnabled("AutoRefresh")) {
                     onfocus = async () => {
@@ -1288,7 +1289,7 @@ else {
                     StaticButton.className = "btn btn-outline-secondary";
                     StaticButton.innerText = "统计";
                     StaticButton.onclick = () => {
-                        location.href = "/conteststatistics.php?cid=" + new URLSearchParams(location.search).get("cid");
+                        location.href = "/conteststatistics.php?cid=" + SearchParams.get("cid");
                     };
 
                     document.querySelector("#problemset > tbody").innerHTML =
@@ -1317,7 +1318,7 @@ else {
                         document.querySelector("#problemset > thead > tr").innerHTML += "<td width=\"5%\">标程</td>";
                         Temp = document.querySelector("#problemset > tbody").children;
                         for (let i = 0; i < Temp.length; i++) {
-                            Temp[i].innerHTML += "<td><a href=\"problem_std.php?cid=" + new URLSearchParams(location.search).get("cid") + "&pid=" + i + "\" target=\"_blank\">打开</a></td>";
+                            Temp[i].innerHTML += "<td><a href=\"problem_std.php?cid=" + SearchParams.get("cid") + "&pid=" + i + "\" target=\"_blank\">打开</a></td>";
                         }
                     }
 
@@ -1331,7 +1332,7 @@ else {
                             PID = PID.substring(2);
                         }
                         Temp[i].children[2].children[0].target = "_blank";
-                        localStorage.setItem("UserScript-Contest-" + new URLSearchParams(location.search).get("cid") + "-Problem-" + i + "-PID",
+                        localStorage.setItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + i + "-PID",
                             PID.substring(3));
                         localStorage.setItem("UserScript-Problem-" + PID.substring(3) + "-Name",
                             Temp[i].childNodes[2].innerText);
@@ -1370,7 +1371,7 @@ else {
                     if (UtilityEnabled("ResetType")) {
                         document.querySelector("#problemset > thead > tr > th:nth-child(1)").style.width = "5%";
                     }
-                    localStorage.setItem("UserScript-Contest-" + new URLSearchParams(location.search).get("cid") + "-ProblemCount",
+                    localStorage.setItem("UserScript-Contest-" + SearchParams.get("cid") + "-ProblemCount",
                         document.querySelector("#problemset > tbody").rows.length);
                 }
             }
@@ -1514,7 +1515,7 @@ else {
                                 for (let i = 0; i < ProblemCount; i++) {
                                     let ProblemHeader = document.createElement("th"); RowHeader.appendChild(ProblemHeader);
                                     let ProblemLink = document.createElement("a"); ProblemHeader.appendChild(ProblemLink);
-                                    ProblemLink.href = "problem.php?cid=" + new URLSearchParams(location.search).get("cid") + "&pid=" + i; ProblemLink.innerText = String.fromCharCode(65 + i);
+                                    ProblemLink.href = "problem.php?cid=" + SearchParams.get("cid") + "&pid=" + i; ProblemLink.innerText = String.fromCharCode(65 + i);
                                     ProblemHeader.classList.add("header"); ProblemHeader.style.width = (50 / ProblemCount) + "%";
                                 }
 
@@ -1620,9 +1621,9 @@ else {
                 DownloadButton.innerText = "下载排名";
                 DownloadButton.style.marginBottom = "20px";
                 DownloadButton.onclick = () => {
-                    location.href = "/contestrank.xls.php?cid=" + new URLSearchParams(location.search).get("cid");
+                    location.href = "/contestrank.xls.php?cid=" + SearchParams.get("cid");
                 };
-                let ProblemCount = localStorage.getItem("UserScript-Contest-" + new URLSearchParams(location.search).get("cid") + "-ProblemCount");
+                let ProblemCount = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-ProblemCount");
                 ReloadRank(ProblemCount);
                 if (UtilityEnabled("AutoRefresh")) {
                     onfocus = () => {
@@ -1685,7 +1686,6 @@ else {
                 }
             }
         } else if (location.pathname == "/submitpage.php") {
-            let SearchParams = new URLSearchParams(location.search);
             document.querySelector("body > div > div.mt-3").innerHTML = `<center class="mb-3">` +
                 `<h3>提交代码</h3>` +
                 (SearchParams.get("id") != null ?
@@ -2071,12 +2071,12 @@ else {
                     CheckboxLabel.setAttribute("for", "ignorews");
                     document.querySelector("body > div.container > div > table:nth-child(2) > tbody > tr > td").childNodes[1].remove();
                     document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[0].children[1].innerText = "保存代码";
-                    document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[0].children[1].download = new URLSearchParams(location.search).get("left") + ".cpp";
+                    document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[0].children[1].download = SearchParams.get("left") + ".cpp";
                     document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[1].children[1].innerText = "保存代码";
-                    document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[1].children[1].download = new URLSearchParams(location.search).get("right") + ".cpp";
+                    document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[1].children[1].download = SearchParams.get("right") + ".cpp";
                     setInterval(() => {
-                        document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[0].children[0].innerText = "左侧代码" + new URLSearchParams(location.search).get("left");
-                        document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[1].children[0].innerText = "右侧代码" + new URLSearchParams(location.search).get("right");
+                        document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[0].children[0].innerText = "左侧代码" + SearchParams.get("left");
+                        document.querySelector("body > div.container > div > table:nth-child(4) > tbody > tr").children[1].children[0].innerText = "右侧代码" + SearchParams.get("right");
                     }, 500);
                 }
             }
@@ -2260,7 +2260,7 @@ else {
                         Temp[Temp.length - 1].style.display = "none";
                     };
                     CurrentElement.onclick = () => {
-                        let SolutionID = new URLSearchParams(location.search).get("sid");
+                        let SolutionID = SearchParams.get("sid");
                         let ContestID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Contest");
                         if (ContestID == null) {
                             let ProblemID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
@@ -2398,8 +2398,8 @@ else {
             }
 
 
-            let CurrentPage = parseInt(new URLSearchParams(location.search).get("page") || 1);
-            let PID = new URLSearchParams(location.search).get("id");
+            let CurrentPage = parseInt(SearchParams.get("page") || 1);
+            let PID = SearchParams.get("id");
             let Pagination = `<nav class="center"><ul class="pagination justify-content-center">`;
             if (CurrentPage != 1) {
                 Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=1" class="page-link">&lt;&lt;</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1) + `</a></li>`;
@@ -2486,7 +2486,7 @@ else {
                 </div>`;
         } else if (location.pathname == "/showsource.php") {
             let Code = "";
-            await fetch("http://www.xmoj.tech/showsource.php?id=" + (new URLSearchParams(location.search)).get("id"))
+            await fetch("http://www.xmoj.tech/showsource.php?id=" + SearchParams.get("id"))
                 .then((Response) => {
                     return Response.text();
                 }).then((Response) => {
