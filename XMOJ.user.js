@@ -1598,7 +1598,7 @@ else {
                                         }
                                         else if (ProblemData.SolveTime != 0) {
                                             Problem.innerText = SecondsToString(ProblemData.SolveTime) + "(" + ProblemData.Attempts.length + ")";
-                                            let Color = Math.min(ProblemData.Attempts.length / 20, 1);
+                                            let Color = Math.min(1 / ProblemData.Attempts.length, 1);
                                             Problem.style.backgroundColor = "rgba(0, 255, 0, " + Color + ")";
                                         }
                                         else {
