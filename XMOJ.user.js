@@ -11,8 +11,14 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/mode/clike/clike.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.js
 // @require      https://cdn.bootcdn.net/ajax/libs/diff_match_patch/20121119/diff_match_patch_uncompressed.js
+// @require      https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js
+// @require      https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.6/katex.min.js
+// @require      https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.6/contrib/auto-render.min.js
 // @require      https://ghproxy.com/https://raw.githubusercontent.com/drudru/ansi_up/master/ansi_up.js
+// @require      http://xmoj-bbs.infinityfreeapp.com/aes.js
 // @grant        GM_registerMenuCommand
+// @grant        GM_xmlhttpRequest
+// @connect      xmoj-bbs.infinityfreeapp.com
 // ==/UserScript==
 
 /**
@@ -153,11 +159,14 @@ else {
             location.href = "loginpage.php";
         }
 
+        let Discussion = document.createElement("li");
+        document.querySelector("#navbar > ul:nth-child(1)").appendChild(Discussion);
+        Discussion.innerHTML = "<a href=\"/discuss3/discuss.php\">讨论</a>";
 
         if (document.querySelector("#navbar > ul:nth-child(1)").childElementCount > 8 && UtilityEnabled("ACMRank")) {
             let ACMRank = document.createElement("li");
             document.querySelector("#navbar > ul:nth-child(1)").insertBefore(ACMRank, document.querySelector("#navbar > ul:nth-child(1) > li:nth-child(9)"));
-            ACMRank.innerHTML = "<a href=\"./contestrank-oi.php?cid=" + new URLSearchParams(location.search).get("cid") + "&ByUserScript=1\">ACM 排名</a>";
+            ACMRank.innerHTML = "<a href=\"/contestrank-oi.php?cid=" + SearchParams.get("cid") + "&ByUserScript=1\">ACM 排名</a>";
             ACMRank.classList.add("active");
         }
         if (UtilityEnabled("Translate")) {
@@ -176,6 +185,7 @@ else {
             document.body.innerHTML = String(document.body.innerHTML).replaceAll("下海", "上海");
             document.body.innerHTML = String(document.body.innerHTML).replaceAll("海上", "上海");
             document.body.innerHTML = String(document.body.innerHTML).replaceAll("小红", "低老师");
+            document.body.innerHTML = String(document.body.innerHTML).replaceAll("xiaoming", "gaolaoshi");
             document.title = String(document.title).replaceAll("小明", "高老师");
         }
 
@@ -588,7 +598,7 @@ else {
                     { "ID": "AutoRefresh", "Type": "A", "Name": "比赛列表、比赛排名界面自动刷新" },
                     { "ID": "AutoCountdown", "Type": "A", "Name": "比赛列表等界面的时间自动倒计时" },
                     { "ID": "DownloadPlayback", "Type": "A", "Name": "回放视频增加下载功能" },
-                    { "ID": "ImproveACRate", "Type": "A", "Name": "自动提交签到题以提高AC率" },
+                    { "ID": "ImproveACRate", "Type": "A", "Name": "自动提交已AC题目以提高AC率" },
                     { "ID": "AutoO2", "Type": "F", "Name": "代码提交界面自动选择O2优化" },
                     {
                         "ID": "Beautify", "Type": "F", "Name": "美化界面", "Children": [
@@ -603,7 +613,7 @@ else {
                             { "ID": "Translate", "Type": "F", "Name": "统一使用中文，翻译了部分英文*" },
                             { "ID": "ReplaceLinks", "Type": "F", "Name": "将网站中所有以方括号包装的链接替换为按钮" },
                             { "ID": "RemoveUseless", "Type": "D", "Name": "删去无法使用的功能*" },
-                            { "ID": "ReplaceXM", "Type": "F", "Name": "将网站中所有“小明”和“我”关键字替换为“高老师”，所有“小红”关键字替换为“低老师”，所有“下海”、“海上”替换为“上海”" }
+                            { "ID": "ReplaceXM", "Type": "F", "Name": "将网站中所有“小明”和“我”关键字替换为“高老师”，所有“小红”替换为“低老师”，所有“下海”、“海上”替换为“上海”，所有“xiaoming”替换为“gaolaoshi”" }
                         ]
                     },
                     { "ID": "AutoLogin", "Type": "A", "Name": "在需要登录的界面自动跳转到登陆界面" },
@@ -807,6 +817,23 @@ else {
                         }
                     });
                 }
+
+                let DiscussButton = document.createElement("button");
+                DiscussButton.className = "btn btn-outline-secondary";
+                DiscussButton.innerText = "讨论";
+                DiscussButton.style.marginLeft = "10px";
+                DiscussButton.type = "button";
+                DiscussButton.onclick = () => {
+                    if (SearchParams.get("cid") != null) {
+                        window.open("/discuss3/discuss.php?pid=" +
+                            localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") +
+                                "-Problem-" + SearchParams.get("pid") + "-PID"), "_blank");
+                    }
+                    else {
+                        window.open("/discuss3/discuss.php?pid=" + SearchParams.get("id"), "_blank");
+                    }
+                }
+                document.querySelector("body > div > div.mt-3 > center").appendChild(DiscussButton);
             }
             Style.innerHTML += "code, kbd, pre, samp {";
             Style.innerHTML += "    font-family: monospace, Consolas, 'Courier New';";
@@ -2523,6 +2550,402 @@ else {
                 readOnly: true,
                 theme: (UtilityEnabled("DarkMode") ? "darcula" : "default")
             }).setSize("100%", "auto");
+        } else if (location.pathname.indexOf("/discuss3") != -1) {
+            Discussion.classList.add("active");
+            const RequestAPI = (Action, Data, CallBack) => {
+                let UserID = profile.innerText;
+                let Session = "";
+                let Temp = document.cookie.split(";");
+                for (let i = 0; i < Temp.length; i++) {
+                    if (Temp[i].includes("PHPSESSID")) {
+                        Session = Temp[i].split("=")[1];
+                    }
+                }
+                Data["Action"] = Action;
+                Data["UserID"] = UserID;
+                Data["Session"] = Session;
+                let DataString = "";
+                for (let i in Data) {
+                    if (Data[i] != null) {
+                        DataString += i + "=" + encodeURIComponent(Data[i]) + "&";
+                    }
+                }
+                DataString = DataString.substring(0, DataString.length - 1);
+                GM_xmlhttpRequest({
+                    method: "POST",
+                    url: "http://xmoj-bbs.infinityfreeapp.com/bbs.php",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    cookie: "__test=" + localStorage.getItem("UserScript-InfinityFree-Cookie"),
+                    data: DataString,
+                    onload: (Response) => {
+                        if (Response.status != 200) {
+                            CallBack({
+                                "Success": false,
+                                "ErrorMessage": "服务器返回错误码：" + Response.status
+                            });
+                            return;
+                        }
+                        if (Response.responseText.indexOf("aes.js") != -1) {
+                            let ScriptData = Response.responseText.substring(Response.responseText.indexOf("<script>") + 8, Response.responseText.lastIndexOf("</script>"));
+                            let ValueA = ScriptData.substring(ScriptData.indexOf("a=toNumbers(\"") + 13, ScriptData.indexOf("\"),b=toNumbers"));
+                            let ValueB = ScriptData.substring(ScriptData.indexOf("b=toNumbers(\"") + 13, ScriptData.indexOf("\"),c=toNumbers"));
+                            let ValueC = ScriptData.substring(ScriptData.indexOf("c=toNumbers(\"") + 13, ScriptData.indexOf("\");document.cookie"));
+                            function toNumbers(Input) {
+                                var Output = [];
+                                Input.replace(/(..)/g, function (d) {
+                                    Output.push(parseInt(d, 16))
+                                });
+                                return Output;
+                            }
+                            function toHex() {
+                                var Input = [];
+                                Input = (arguments.length == 1 && arguments[0].constructor == Array) ? arguments[0] : arguments;
+                                var Output = "";
+                                for (var i = 0; i < Input.length; i++) {
+                                    Output += (Input[i] < 16 ? "0" : "") + Input[i].toString(16);
+                                }
+                                return Output.toLowerCase();
+                            }
+                            let Cookie = toHex(slowAES.decrypt(toNumbers(ValueC), 2, toNumbers(ValueA), toNumbers(ValueB)));
+                            localStorage.setItem("UserScript-InfinityFree-Cookie", Cookie);
+                            RequestAPI(Action, Data, CallBack);
+                            return;
+                        }
+                        let ResponseData;
+                        try {
+                            ResponseData = JSON.parse(Response.responseText);
+                        } catch (error) {
+                            ResponseData = {
+                                "Success": false,
+                                "ErrorMessage": "JSON解析错误：" + error
+                            };
+                        }
+                        CallBack(ResponseData);
+                    }
+                });
+            };
+            if (location.pathname == "/discuss3/discuss.php") {
+                let ProblemID = SearchParams.get("pid");
+                document.querySelector("body > div > div").innerHTML = `<h3>讨论列表` + (ProblemID == null ? "" : ` - 题目` + ProblemID) + `</h3>
+                <button id="NewPost" type="button" class="btn btn-primary">发布新讨论</button>
+                <table id="PostList" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>标题</th>
+                            <th>作者</th>
+                            <th>发布时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>`;
+                for (let i = 0; i < 10; i++) {
+                    let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
+                    for (let j = 0; j < 3; j++) {
+                        let Cell = document.createElement("td"); Row.appendChild(Cell);
+                        Cell.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>`;
+                    }
+                }
+                NewPost.onclick = () => {
+                    if (ProblemID != null) {
+                        location.href = "/discuss3/newpost.php?pid=" + ProblemID;
+                    }
+                    else {
+                        location.href = "/discuss3/newpost.php";
+                    }
+                };
+                RequestAPI("GetPosts", {
+                    "ProblemID": ProblemID
+                }, (ResponseData) => {
+                    if (ResponseData["Success"] == true) {
+                        let Posts = ResponseData["Data"]["Posts"];
+                        PostList.children[1].innerHTML = "";
+                        if (Posts.length == 0) {
+                            PostList.children[1].innerHTML = `<tr><td colspan="3">暂无讨论</td></tr>`;
+                        }
+                        for (let i = 0; i < Posts.length; i++) {
+                            PostList.children[1].innerHTML += `<tr>
+                                <td><a href="/discuss3/thread.php?tid=${Posts[i]["PostID"]}">${Posts[i]["Title"]}</a></td>
+                                <td><a href="/userinfo.php?user=${Posts[i]["UserID"]}">${Posts[i]["UserID"]}</a></td>
+                                <td>${Posts[i]["PostTime"]}</td>
+                            </tr>`;
+                        }
+                    }
+                    else {
+                        PostList.innerHTML = `<tr><td colspan="3">错误：` + ResponseData["ErrorMessage"] + `</td></tr>`;
+                    }
+                });
+            } else if (location.pathname == "/discuss3/newpost.php") {
+                let ProblemID = SearchParams.get("pid");
+                document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (ProblemID != null ? ` - 题目` + ProblemID : ``) +
+                    `</h3>
+        <div class="form-group mb-3">
+            <label for="Title" class="mb-1">标题</label>
+            <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
+        </div>
+        <div class="form-group mb-3">
+            <label for="ContentElement" class="mb-1">内容</label>
+            <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+        </div>
+        <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
+            发布
+            <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+        </button>
+        <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
+                TitleElement.oninput = () => {
+                    TitleElement.classList.remove("is-invalid");
+                };
+                ContentElement.oninput = () => {
+                    ContentElement.classList.remove("is-invalid");
+                };
+                SubmitElement.onclick = async () => {
+                    ErrorElement.style.display = "none";
+                    let Title = TitleElement.value;
+                    let Content = ContentElement.value;
+                    let ProblemID = SearchParams.get("pid");
+                    if (Title == "") {
+                        TitleElement.classList.add("is-invalid");
+                        return;
+                    }
+                    if (Content == "") {
+                        ContentElement.classList.add("is-invalid");
+                        return;
+                    }
+                    SubmitElement.disabled = true;
+                    SubmitElement.children[0].style.display = "inline-block";
+                    RequestAPI("NewPost", {
+                        Title: Title,
+                        Content: Content,
+                        ProblemID: ProblemID,
+                    }, (ResponseData) => {
+                        SubmitElement.disabled = false;
+                        SubmitElement.children[0].style.display = "none";
+                        if (ResponseData["Success"] == true) {
+                            location.href = "/discuss3/thread.php?tid=" + ResponseData["Data"]["PostID"];
+                        }
+                        else {
+                            ErrorElement.innerText = ResponseData["ErrorMessage"];
+                            ErrorElement.style.display = "block";
+                        }
+                    });
+                }
+            } else if (location.pathname == "/discuss3/thread.php") {
+                if (SearchParams.get("tid") == null) {
+                    location.href = "/discuss3/discuss.php";
+                }
+                else {
+                    document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
+                    <div class="row mb-3">
+                        <span class="col-4 text-muted">作者：<a id="PostAuthor" href=""></a></span>
+                        <span class="col-4 text-muted">发布时间：<span id="PostTime"></span></span>
+                        <span class="col-4">
+                            <button id="Refresh" type="button" class="btn btn-sm btn-info">刷新</button>
+                            <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
+                                删除
+                                <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                            </button>
+                        </span>
+                    </div>
+                    <div id="PostReplies"></div>
+                    <div class="form-group mb-3">
+                        <label for="ContentElement" class="mb-1">回复</label>
+                        <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                    </div>
+                    <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
+                        发布
+                        <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                    </button>
+                    <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
+                    ContentElement.onkeydown = (Event) => {
+                        if (Event.ctrlKey && Event.keyCode == 13) {
+                            SubmitElement.click();
+                        }
+                    };
+                    Refresh.onclick = () => {
+                        PostTitle.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
+                        PostAuthor.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
+                        PostTime.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
+                        PostReplies.innerHTML = "";
+                        for (let i = 0; i < 10; i++) {
+                            PostReplies.innerHTML += `<div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <span class="col-6"><span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span></span>
+                                        <span class="col-6"><span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span></span>
+                                    </div>
+                                    <hr>
+                                    <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
+                                    <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
+                                    <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
+                                </div>
+                            </div>`;
+                        }
+                        RequestAPI("GetPost", {
+                            PostID: SearchParams.get("tid"),
+                        }, (ResponseData) => {
+                            if (ResponseData["Success"] == true) {
+                                if (ResponseData["Data"]["UserID"] == profile.innerText) {
+                                    Delete.style.display = "";
+                                }
+                                PostTitle.innerText = ResponseData["Data"]["Title"];
+                                PostAuthor.innerText = ResponseData["Data"]["UserID"];
+                                PostAuthor.href = "/userinfo.php?user=" + ResponseData["Data"]["UserID"];
+                                PostTime.innerText = ResponseData["Data"]["PostTime"];
+                                let Replies = ResponseData["Data"]["Reply"];
+                                PostReplies.innerHTML = "";
+                                for (let i = 0; i < Replies.length; i++) {
+                                    let CardElement = document.createElement("div");
+                                    CardElement.className = "card mb-3";
+                                    let CardBodyElement = document.createElement("div");
+                                    CardBodyElement.className = "card-body row";
+                                    let CardBodyRowElement = document.createElement("div");
+                                    CardBodyRowElement.className = "row mb-3";
+                                    let CardBodyRowSpan1Element = document.createElement("span");
+                                    CardBodyRowSpan1Element.className = "col-4 text-muted";
+                                    CardBodyRowSpan1Element.innerText = "作者：";
+                                    let CardBodyRowSpan1AElement = document.createElement("a");
+                                    CardBodyRowSpan1AElement.href = "/userinfo.php?user=" + Replies[i]["UserID"];
+                                    CardBodyRowSpan1AElement.innerText = Replies[i]["UserID"];
+                                    CardBodyRowSpan1Element.appendChild(CardBodyRowSpan1AElement);
+                                    let CardBodyRowSpan2Element = document.createElement("span");
+                                    CardBodyRowSpan2Element.className = "col-4 text-muted";
+                                    CardBodyRowSpan2Element.innerText = "发布时间：";
+                                    let CardBodyRowSpan2SpanElement = document.createElement("span");
+                                    CardBodyRowSpan2SpanElement.innerText = Replies[i]["ReplyTime"];
+                                    CardBodyRowSpan2Element.appendChild(CardBodyRowSpan2SpanElement);
+                                    let CardBodyRowSpan3Element = document.createElement("span");
+                                    CardBodyRowSpan3Element.className = "col-4";
+                                    let CardBodyRowSpan3Button1Element = document.createElement("button");
+                                    CardBodyRowSpan3Button1Element.type = "button";
+                                    CardBodyRowSpan3Button1Element.className = "btn btn-sm btn-warning";
+                                    CardBodyRowSpan3Button1Element.innerText = "引用";
+                                    CardBodyRowSpan3Button1Element.onclick = () => {
+                                        ContentElement.value += `@` + Replies[i]["UserID"] + ` `;
+                                        ContentElement.focus();
+                                    }
+                                    CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button1Element);
+                                    let CardBodyRowSpan3Button2Element = document.createElement("button");
+                                    CardBodyRowSpan3Button2Element.type = "button";
+                                    CardBodyRowSpan3Button2Element.className = "btn btn-sm btn-danger ms-1";
+                                    CardBodyRowSpan3Button2Element.innerText = "删除";
+                                    CardBodyRowSpan3Button2Element.style.display = (Replies[i]["UserID"] == profile.innerText ? "" : "none");
+                                    CardBodyRowSpan3Button2Element.onclick = () => {
+                                        CardBodyRowSpan3Button2Element.disabled = true;
+                                        CardBodyRowSpan3Button2Element.lastChild.style.display = "";
+                                        RequestAPI("DeleteReply", {
+                                            ReplyID: Number(Replies[i]["ReplyID"]),
+                                        }, (ResponseData) => {
+                                            if (ResponseData["Success"] == true) {
+                                                Refresh.click();
+                                            }
+                                            else {
+                                                CardBodyRowSpan3Button2Element.disabled = false;
+                                                CardBodyRowSpan3Button2Element.lastChild.style.display = "none";
+                                                ErrorElement.innerText = ResponseData["ErrorMessage"];
+                                                ErrorElement.style.display = "";
+                                            }
+                                        });
+                                    }
+                                    let CardBodyRowSpan3Button2SpinnerElement = document.createElement("div");
+                                    CardBodyRowSpan3Button2SpinnerElement.className = "spinner-border spinner-border-sm";
+                                    CardBodyRowSpan3Button2SpinnerElement.role = "status";
+                                    CardBodyRowSpan3Button2SpinnerElement.style.display = "none";
+                                    CardBodyRowSpan3Button2Element.appendChild(CardBodyRowSpan3Button2SpinnerElement);
+                                    CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button2Element);
+                                    CardBodyRowElement.appendChild(CardBodyRowSpan1Element);
+                                    CardBodyRowElement.appendChild(CardBodyRowSpan2Element);
+                                    CardBodyRowElement.appendChild(CardBodyRowSpan3Element);
+                                    CardBodyElement.appendChild(CardBodyRowElement);
+                                    let CardBodyHRElement = document.createElement("hr");
+                                    CardBodyElement.appendChild(CardBodyHRElement);
+                                    let CardBodyPElement = document.createElement("p");
+                                    CardBodyPElement.innerHTML = marked.parse(Replies[i]["Content"]);
+                                    CardBodyElement.appendChild(CardBodyPElement);
+                                    CardElement.appendChild(CardBodyElement);
+                                    PostReplies.appendChild(CardElement);
+                                }
+                                // pre > code
+                                let CodeElements = document.querySelectorAll("pre > code");
+                                for (let i = 0; i < CodeElements.length; i++) {
+                                    let ModeName = "text/plain";
+                                    if (CodeElements[i].className == "language-c") {
+                                        ModeName = "text/x-csrc";
+                                    }
+                                    else if (CodeElements[i].className == "language-cpp") {
+                                        ModeName = "text/x-c++src";
+                                    }
+                                    CodeMirror(CodeElements[i].parentElement, {
+                                        value: CodeElements[i].innerText,
+                                        mode: ModeName,
+                                        theme: (UtilityEnabled("DarkMode") ? "darcula" : "default"),
+                                        lineNumbers: true,
+                                        readOnly: true,
+                                    }).setSize("100%", "auto");
+                                    CodeElements[i].remove();
+                                }
+
+                                renderMathInElement(document.body, {
+                                    delimiters: [
+                                        { left: '$$', right: '$$', display: true },
+                                        { left: '$', right: '$', display: false }
+                                    ],
+                                    throwOnError: false
+                                });
+                            }
+                            else {
+                                PostTitle.innerText = "错误：" + ResponseData["ErrorMessage"];
+                            }
+                        });
+                    };
+                    Refresh.click();
+                    Delete.onclick = () => {
+                        Delete.disabled = true;
+                        Delete.children[0].style.display = "inline-block";
+                        RequestAPI("DeletePost", {
+                            PostID: SearchParams.get("tid"),
+                        }, (ResponseData) => {
+                            Delete.disabled = false;
+                            Delete.children[0].style.display = "none";
+                            if (ResponseData["Success"] == true) {
+                                location.href = "/discuss3/discuss.php";
+                            }
+                            else {
+                                ErrorElement.innerText = ResponseData["ErrorMessage"];
+                                ErrorElement.style.display = "block";
+                            }
+                        });
+                    };
+                    SubmitElement.onclick = async () => {
+                        ErrorElement.style.display = "none";
+                        SubmitElement.disabled = true;
+                        SubmitElement.children[0].style.display = "inline-block";
+                        RequestAPI("NewReply", {
+                            PostID: SearchParams.get("tid"),
+                            Content: ContentElement.value,
+                        }, async (ResponseData) => {
+                            SubmitElement.disabled = false;
+                            SubmitElement.children[0].style.display = "none";
+                            if (ResponseData["Success"] == true) {
+                                Refresh.click();
+                                ContentElement.value = "";
+                                while (PostReplies.innerHTML.indexOf("placeholder") != -1) {
+                                    await new Promise((resolve) => {
+                                        setTimeout(resolve, 100);
+                                    });
+                                }
+                                ContentElement.focus();
+                                ContentElement.scrollIntoView();
+                            }
+                            else {
+                                ErrorElement.innerText = ResponseData["ErrorMessage"];
+                                ErrorElement.style.display = "block";
+                            }
+                        });
+                    };
+                }
+            }
         }
     }
 }
