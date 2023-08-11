@@ -359,6 +359,81 @@
                     "Description": "Add or update the Azure App Service build and deployment workflow config"
                 }
             ]
+        },
+        "0.1.40": {
+            "UpdateDate": 1691729194086,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "effd5c2",
+                    "Commit": "effd5c21c9a9a086b7ff4fb1729d975bb8c8028d",
+                    "Description": "增加xiaoming替换为gaolaoshi"
+                },
+                {
+                    "ShortCommit": "08c05b8",
+                    "Commit": "08c05b891aac22235a8e6d02e3f1b881880747f9",
+                    "Description": "去除请求但是没有使用的权限"
+                },
+                {
+                    "ShortCommit": "82f1290",
+                    "Commit": "82f12906b6f46406b28d642a6d390474be9d8c94",
+                    "Description": "比较提交记录的功能终于修好了！"
+                },
+                {
+                    "ShortCommit": "1a1a56c",
+                    "Commit": "1a1a56c7d07c1be60146d44d536dab26f042e592",
+                    "Description": "将viewsource替换为getsource减少HTML解析"
+                },
+                {
+                    "ShortCommit": "840ce3c",
+                    "Commit": "840ce3ce607654f056b2162112d4d28f62fb126b",
+                    "Description": "修复标题小明的OJ没有替换为高老师的OJ"
+                },
+                {
+                    "ShortCommit": "56a8a24",
+                    "Commit": "56a8a24e3840bc37d1db0114ca803ae88fa153c3",
+                    "Description": "优化代码：将反复计算的内容作为变量提前存储"
+                },
+                {
+                    "ShortCommit": "b3192c1",
+                    "Commit": "b3192c1f09f2853a54be76498bcff47e31da79e1",
+                    "Description": "解决代码颜色显示问题"
+                },
+                {
+                    "ShortCommit": "931fa40",
+                    "Commit": "931fa406cab3a61a32ec8f8816686ce66225f785",
+                    "Description": "修复ACM排名颜色显示"
+                },
+                {
+                    "ShortCommit": "9c006f0",
+                    "Commit": "9c006f0eab33728db5a733915d1f0ce57344e285",
+                    "Description": "解决月赛界面边框不显示"
+                },
+                {
+                    "ShortCommit": "9326984",
+                    "Commit": "9326984772c19f4abea588d5a48c3200774df28e",
+                    "Description": "代码编辑框适配深色模式"
+                },
+                {
+                    "ShortCommit": "00f296d",
+                    "Commit": "00f296d4cbbd600b726bb0fe7bf2be45aa5986b4",
+                    "Description": "代码编辑框增加边框"
+                },
+                {
+                    "ShortCommit": "3d96854",
+                    "Commit": "3d96854b67d70f2632c2d7a026ef45518cb72af6",
+                    "Description": "Remove azure"
+                },
+                {
+                    "ShortCommit": "962a37a",
+                    "Commit": "962a37ac5cfe1f85c2183a7ce8e104401b9c1bc4",
+                    "Description": "test ci/cd"
+                },
+                {
+                    "ShortCommit": "bb9da2f",
+                    "Commit": "bb9da2fc5e530ed1fbceb406e2c20626a2143f44",
+                    "Description": "Test secrets"
+                }
+            ]
         }
     }
 }
