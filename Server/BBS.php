@@ -175,7 +175,7 @@ function GetPost(int $Page, int $PostID): object
         "PageCount" => ceil(GetTableSize("bbs_reply", array("post_id" => $PostID)) / 10)
     );
 }
-function DeletePost(int $PostID): void
+function DeletePost(int $PostID, bool $CheckUserID = true): void
 {
     global $MYSQLConnection;
     $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT `user_id` FROM `bbs_post` WHERE `post_id` = ?;");
@@ -196,7 +196,7 @@ function DeletePost(int $PostID): void
     if ($MYSQLRow == false) {
         CreateErrorJSON("无法删除数据: " . mysqli_error($MYSQLConnection));
     }
-    if ($MYSQLRow["user_id"] != $_POST["UserID"]) {
+    if ($CheckUserID && $MYSQLRow["user_id"] != $_POST["UserID"]) {
         CreateErrorJSON("无法删除数据: 权限不足");
     }
 
@@ -232,28 +232,30 @@ function DeletePost(int $PostID): void
 function DeleteReply(int $ReplyID, bool $CheckUserID = true): void
 {
     global $MYSQLConnection;
-    if ($CheckUserID) {
-        $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT `user_id` FROM `bbs_reply` WHERE `reply_id` = ?;");
-        if ($MYSQLPrepare == false) {
-            CreateErrorJSON("无法删除数据: " . mysqli_error($MYSQLConnection));
-        }
-        if (!mysqli_stmt_bind_param($MYSQLPrepare, "i", $ReplyID)) {
-            CreateErrorJSON("无法删除数据: " . mysqli_stmt_error($MYSQLPrepare));
-        }
-        if (!mysqli_stmt_execute($MYSQLPrepare)) {
-            CreateErrorJSON("无法删除数据: " . mysqli_stmt_error($MYSQLPrepare));
-        }
-        $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-        if ($MYSQLResult == false) {
-            CreateErrorJSON("无法删除数据: " . mysqli_error($MYSQLConnection));
-        }
-        $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
-        if ($MYSQLRow == false) {
-            CreateErrorJSON("无法删除数据: " . mysqli_error($MYSQLConnection));
-        }
-        if ($MYSQLRow["user_id"] != $_POST["UserID"]) {
-            CreateErrorJSON("无法删除数据: 权限不足");
-        }
+    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT `user_id`, `post_id` FROM `bbs_reply` WHERE `reply_id` = ?;");
+    if ($MYSQLPrepare == false) {
+        CreateErrorJSON("无法删除数据: " . mysqli_error($MYSQLConnection));
+    }
+    if (!mysqli_stmt_bind_param($MYSQLPrepare, "i", $ReplyID)) {
+        CreateErrorJSON("无法删除数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+    if (!mysqli_stmt_execute($MYSQLPrepare)) {
+        CreateErrorJSON("无法删除数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+    $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
+    if ($MYSQLResult == false) {
+        CreateErrorJSON("无法删除数据: " . mysqli_error($MYSQLConnection));
+    }
+    $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
+    if ($MYSQLRow == false) {
+        CreateErrorJSON("无法删除数据: " . mysqli_error($MYSQLConnection));
+    }
+    if ($CheckUserID && $MYSQLRow["user_id"] != $_POST["UserID"]) {
+        CreateErrorJSON("无法删除数据: 权限不足");
+    }
+
+    if (GetTableSize("bbs_reply", array("post_id" => $MYSQLRow["post_id"])) == 1) {
+        DeletePost($MYSQLRow["post_id"], false);
     }
 
     $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "DELETE FROM `bbs_reply` WHERE `reply_id` = ?;");
@@ -270,14 +272,6 @@ function DeleteReply(int $ReplyID, bool $CheckUserID = true): void
 function GetTableSize(string $TableName, array $Where = null): int
 {
     global $MYSQLConnection;
-    // $MYSQLQuery = mysqli_query($MYSQLConnection, "SELECT COUNT(*) FROM `$TableName`;");
-    // if ($MYSQLQuery == false) {
-    //     CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
-    // }
-    // $MYSQLRow = mysqli_fetch_assoc($MYSQLQuery);
-    // if ($MYSQLRow == false) {
-    //     CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
-    // }
     $MYSQLQuery = "SELECT COUNT(*) FROM `$TableName`";
     if ($Where != null) {
         $MYSQLQuery .= " WHERE ";
