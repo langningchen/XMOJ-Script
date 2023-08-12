@@ -23,6 +23,9 @@ header("Content-Type: application/json; charset=utf-8");
 
 require_once("Database.php");
 $MYSQLConnection = mysqli_connect($DatabaseHostname, $DatabaseUsername, $DatabasePassword, $DatabaseName);
+if (mysqli_connect_errno()) {
+    CreateErrorJSON("无法连接到数据库服务器: " . mysqli_connect_error());
+}
 function VerifySession(string $Session, string $UserID): bool
 {
     $Curl = curl_init();
@@ -58,6 +61,12 @@ function NewPost(string $Title, string $UserID, $ProblemID): int
 }
 function NewReply(int $PostID, string $UserID, string $Content): int
 {
+    $MentionPeople = array();
+    $Content = preg_replace_callback("/@([a-zA-Z0-9]+)/", function ($Matches) use (&$MentionPeople) {
+        $MentionPeople[] = $Matches[1];
+        return " <a class=\"link-info\" href=\"http://http://www.xmoj.tech/userinfo.php?user=" . $Matches[1] . "\">@" . $Matches[1] . "</a> ";
+    }, $Content);
+
     global $MYSQLConnection;
     $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "INSERT INTO `bbs_reply` (`post_id`, `user_id`, `content`) VALUES (?, ?, ?);");
     if ($MYSQLPrepare == false) {
@@ -69,7 +78,21 @@ function NewReply(int $PostID, string $UserID, string $Content): int
     if (!mysqli_stmt_execute($MYSQLPrepare)) {
         CreateErrorJSON("无法写入数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
-    return mysqli_insert_id($MYSQLConnection);
+    $ReplyID = mysqli_insert_id($MYSQLConnection);
+
+    for ($i = 0; $i < count($MentionPeople); $i++) {
+        $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "INSERT INTO `bbs_mention` (`user_id`, `reply_id`) VALUES (?, ?);");
+        if ($MYSQLPrepare == false) {
+            CreateErrorJSON("无法写入数据: " . mysqli_error($MYSQLConnection));
+        }
+        if (!mysqli_stmt_bind_param($MYSQLPrepare, "si", $MentionPeople[$i], $ReplyID)) {
+            CreateErrorJSON("无法写入数据: " . mysqli_stmt_error($MYSQLPrepare));
+        }
+        if (!mysqli_stmt_execute($MYSQLPrepare)) {
+            CreateErrorJSON("无法写入数据: " . mysqli_stmt_error($MYSQLPrepare));
+        }
+    }
+    return $ReplyID;
 }
 function GetPosts($Page, $ProblemID): object
 {
@@ -314,8 +337,95 @@ function GetTableSize(string $TableName, array $Where = null): int
     }
     return $MYSQLRow["COUNT(*)"];
 }
-if (mysqli_connect_errno()) {
-    CreateErrorJSON("无法连接到数据库服务器: " . mysqli_connect_error());
+function GetMentionList(string $UserID): object
+{
+    global $MYSQLConnection;
+    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT `mention_id`, `reply_id` FROM `bbs_mention` WHERE `user_id` = ?;");
+    if ($MYSQLPrepare == false) {
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
+    }
+    if (!mysqli_stmt_bind_param($MYSQLPrepare, "s", $UserID)) {
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+    if (!mysqli_stmt_execute($MYSQLPrepare)) {
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+    $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
+    if ($MYSQLResult == false) {
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
+    }
+    $Response = array();
+    while ($MYSQLRow = mysqli_fetch_assoc($MYSQLResult)) {
+        $Response[] = array(
+            "MentionID" => $MYSQLRow["mention_id"],
+            "ReplyID" => $MYSQLRow["reply_id"]
+        );
+    }
+    return (object)array(
+        "MentionList" => $Response
+    );
+}
+function ReadMention(int $MentionID): void
+{
+    global $MYSQLConnection;
+    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "DELETE FROM `bbs_mention` WHERE `mention_id` = ?;");
+    if ($MYSQLPrepare == false) {
+        CreateErrorJSON("无法删除数据: " . mysqli_error($MYSQLConnection));
+    }
+    if (!mysqli_stmt_bind_param($MYSQLPrepare, "i", $MentionID)) {
+        CreateErrorJSON("无法删除数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+    if (!mysqli_stmt_execute($MYSQLPrepare)) {
+        CreateErrorJSON("无法删除数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+}
+function GetThreadIDByReplyID(int $ReplyID): object
+{
+    global $MYSQLConnection;
+    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT `post_id` FROM `bbs_reply` WHERE `reply_id`=?;");
+    if ($MYSQLPrepare == false) {
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
+    }
+    if (!mysqli_stmt_bind_param($MYSQLPrepare, "i", $ReplyID)) {
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+    if (!mysqli_stmt_execute($MYSQLPrepare)) {
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+    $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
+    if ($MYSQLResult == false) {
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
+    }
+    $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
+    if ($MYSQLRow == false) {
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
+    }
+    $PostID = $MYSQLRow["post_id"];
+
+    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT COUNT(*) FROM `bbs_reply` WHERE `post_id`=? AND `reply_id`<?;");
+    if ($MYSQLPrepare == false) {
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
+    }
+    if (!mysqli_stmt_bind_param($MYSQLPrepare, "ii", $PostID, $ReplyID)) {
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+    if (!mysqli_stmt_execute($MYSQLPrepare)) {
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+    $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
+    if ($MYSQLResult == false) {
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
+    }
+    $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
+    if ($MYSQLRow == false) {
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
+    }
+    $Page = ceil($MYSQLRow["COUNT(*)"] / 10);
+
+    return (object)array(
+        "PostID" => $PostID,
+        "Page" => $Page
+    );
 }
 $PostAction = $_POST["Action"];
 if (!is_string($PostAction)) {
@@ -389,6 +499,21 @@ if ($PostAction == "NewPost") {
     }
     DeleteReply($PostReplyID);
     CreateSuccessJSON((object)array());
+} else if ($PostAction == "GetMentionList") {
+    CreateSuccessJSON(GetMentionList($PostUserID));
+} else if ($PostAction == "ReadMention") {
+    $PostMentionID = $_POST["MentionID"];
+    if (!is_numeric($PostMentionID)) {
+        CreateErrorJSON("传入的参数不正确");
+    }
+    ReadMention($PostMentionID);
+    CreateSuccessJSON((object)array());
+} else if ($PostAction == "GetThreadIDByReplyID") {
+    $PostReplyID = $_POST["ReplyID"];
+    if (!is_numeric($PostReplyID)) {
+        CreateErrorJSON("传入的参数不正确");
+    }
+    CreateSuccessJSON(GetThreadIDByReplyID($PostReplyID));
 } else {
     CreateErrorJSON("传入的参数不正确");
 }

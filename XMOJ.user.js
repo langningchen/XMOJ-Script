@@ -18,6 +18,9 @@
 // @require      http://xmoj-bbs.infinityfreeapp.com/aes.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
+// @grant        GM_notification
+// @grant        GM_openInTab
+// @grant        GM_setClipboard
 // @connect      xmoj-bbs.infinityfreeapp.com
 // ==/UserScript==
 
@@ -103,19 +106,92 @@ let TidyTable = (Table) => {
         }
     }
 };
-let CopyToClipboard = (Text) => {
-    let Temp = document.createElement("textarea");
-    Temp.value = Text;
-    document.body.appendChild(Temp);
-    Temp.select();
-    document.execCommand("copy");
-    Temp.remove();
-};
 let UtilityEnabled = (Name) => {
     if (localStorage.getItem("UserScript-Setting-" + Name) == null) {
         localStorage.setItem("UserScript-Setting-" + Name, "true");
     }
     return localStorage.getItem("UserScript-Setting-" + Name) == "true";
+};
+let RequestDiscussAPI = (Action, Data, CallBack) => {
+    let UserID = profile.innerText;
+    let Session = "";
+    let Temp = document.cookie.split(";");
+    for (let i = 0; i < Temp.length; i++) {
+        if (Temp[i].includes("PHPSESSID")) {
+            Session = Temp[i].split("=")[1];
+        }
+    }
+    Data["Action"] = Action;
+    Data["UserID"] = UserID;
+    Data["Session"] = Session;
+    let DataString = "";
+    for (let i in Data) {
+        if (Data[i] != null) {
+            DataString += i + "=" + encodeURIComponent(Data[i]) + "&";
+        }
+    }
+    DataString = DataString.substring(0, DataString.length - 1);
+    GM_xmlhttpRequest({
+        method: "POST",
+        url: (UserScriptDebug ? "http://xmoj-bbs.infinityfreeapp.com/BBS-Debug.php" : "http://xmoj-bbs.infinityfreeapp.com/BBS.php"),
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        cookie: "__test=" + localStorage.getItem("UserScript-InfinityFree-Cookie"),
+        data: DataString,
+        onload: (Response) => {
+            if (Response.status != 200) {
+                CallBack({
+                    "Success": false,
+                    "ErrorMessage": "服务器返回错误码：" + Response.status
+                });
+                return;
+            }
+            let ResponseData;
+            try {
+                ResponseData = JSON.parse(Response.responseText);
+            } catch (error) {
+                if (Response.responseText.indexOf("aes.js") != -1) {
+                    let ScriptData = Response.responseText.substring(Response.responseText.indexOf("<script>") + 8, Response.responseText.lastIndexOf("</script>"));
+                    let ValueA = ScriptData.substring(ScriptData.indexOf("a=toNumbers(\"") + 13, ScriptData.indexOf("\"),b=toNumbers"));
+                    let ValueB = ScriptData.substring(ScriptData.indexOf("b=toNumbers(\"") + 13, ScriptData.indexOf("\"),c=toNumbers"));
+                    let ValueC = ScriptData.substring(ScriptData.indexOf("c=toNumbers(\"") + 13, ScriptData.indexOf("\");document.cookie"));
+                    function toNumbers(Input) {
+                        var Output = [];
+                        Input.replace(/(..)/g, function (d) {
+                            Output.push(parseInt(d, 16))
+                        });
+                        return Output;
+                    }
+                    function toHex() {
+                        var Input = [];
+                        Input = (arguments.length == 1 && arguments[0].constructor == Array) ? arguments[0] : arguments;
+                        var Output = "";
+                        for (var i = 0; i < Input.length; i++) {
+                            Output += (Input[i] < 16 ? "0" : "") + Input[i].toString(16);
+                        }
+                        return Output.toLowerCase();
+                    }
+                    let Cookie = toHex(slowAES.decrypt(toNumbers(ValueC), 2, toNumbers(ValueA), toNumbers(ValueB)));
+                    localStorage.setItem("UserScript-InfinityFree-Cookie", Cookie);
+                    RequestDiscussAPI(Action, Data, CallBack);
+                    return;
+                }
+                if (Response.responseText.indexOf("parking") != -1) {
+                    CallBack({
+                        "Success": false,
+                        "ErrorMessage": "在访问讨论的时候请不要打开VPN"
+                    });
+                    return;
+                }
+                ResponseData = {
+                    "Success": false,
+                    "ErrorMessage": "JSON解析错误：" + error
+                };
+            }
+            CallBack(ResponseData);
+        }
+    });
 };
 
 GM_registerMenuCommand("重置数据", () => {
@@ -126,12 +202,12 @@ GM_registerMenuCommand("重置数据", () => {
 });
 
 let SearchParams = new URLSearchParams(location.search);
+let UserScriptDebug = (localStorage.getItem("UserScript-Debug") != null);
 
 if (location.host != "www.xmoj.tech") {
     location.host = "www.xmoj.tech";
 }
 else {
-    let UserScriptDebug = (localStorage.getItem("UserScript-Debug") != null);
     if (!UserScriptDebug) {
         setInterval(() => {
             let StartTime = new Date().getTime();
@@ -513,6 +589,28 @@ else {
             .then((Response) => {
                 eval(Response);
             });
+        RequestDiscussAPI("GetMentionList", {}, (Response) => {
+            if (Response.Success) {
+                let MentionList = Response.Data["MentionList"];
+                if (MentionList.length != 0) {
+                    GM_notification({
+                        title: "XMOJ",
+                        text: "有人在讨论中提及了你，点击此处查看",
+                        timeout: 10000,
+                        onclick: () => {
+                            RequestDiscussAPI("GetThreadIDByReplyID", {
+                                "ReplyID": MentionList[0].ReplyID
+                            }, (Response) => {
+                                GM_openInTab("http://www.xmoj.tech/discuss3/thread.php?tid=" + Response["Data"]["PostID"] + "&page=" + Response["Data"]["Page"]);
+                            });
+                            RequestDiscussAPI("ReadMention", {
+                                "MentionID": MentionList[0].MentionID
+                            }, () => { });
+                        }
+                    });
+                }
+            }
+        });
 
         if (location.pathname == "/index.php" || location.pathname == "/") {
             if (new URL(location.href).searchParams.get("ByUserScript") != null) {
@@ -536,7 +634,7 @@ else {
                 UtilitiesCard.appendChild(UtilitiesCardHeader);
                 let UtilitiesCardBody = document.createElement("div");
                 UtilitiesCardBody.classList.add("card-body");
-                const CreateList = (Data) => {
+                let CreateList = (Data) => {
                     let List = document.createElement("ul");
                     List.classList.add("list-group");
                     for (let i = 0; i < Data.length; i++) {
@@ -764,7 +862,7 @@ else {
                             }, 1000);
                             return;
                         }
-                        CopyToClipboard(span.text());
+                        GM_setClipboard(span.text());
                         CurrentButton.text("复制成功").addClass("done");
                         setTimeout(() => {
                             $(".copy-btn").text("复制").removeClass("done");
@@ -805,7 +903,7 @@ else {
                                 CopyMDButton.type = "button";
                                 document.querySelectorAll(".cnt-row")[i].children[0].appendChild(CopyMDButton);
                                 CopyMDButton.onclick = () => {
-                                    CopyToClipboard(Temp[i].children[1].children[0].innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
+                                    GM_setClipboard(Temp[i].children[1].children[0].innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
                                     CopyMDButton.innerText = "复制成功";
                                     setTimeout(() => {
                                         CopyMDButton.innerText = "复制";
@@ -823,12 +921,12 @@ else {
                 DiscussButton.type = "button";
                 DiscussButton.onclick = () => {
                     if (SearchParams.get("cid") != null) {
-                        window.open("/discuss3/discuss.php?pid=" +
+                        GM_openInTab("http://www.xmoj.tech/discuss3/discuss.php?pid=" +
                             localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") +
                                 "-Problem-" + SearchParams.get("pid") + "-PID"), "_blank");
                     }
                     else {
-                        window.open("/discuss3/discuss.php?pid=" + SearchParams.get("id"), "_blank");
+                        GM_openInTab("http://www.xmoj.tech/discuss3/discuss.php?pid=" + SearchParams.get("id"));
                     }
                 }
                 document.querySelector("body > div > div.mt-3 > center").appendChild(DiscussButton);
@@ -945,7 +1043,7 @@ else {
                         });
                     ImproveACRateButton.onclick = async () => {
                         ImproveACRateButton.disabled = true;
-                        const SubmitTimes = 3;
+                        let SubmitTimes = 3;
                         let Count = 0;
                         let SubmitInterval = setInterval(async () => {
                             if (Count >= SubmitTimes) {
@@ -1375,7 +1473,7 @@ else {
                         OpenAllButton.onclick = () => {
                             let Rows = document.querySelector("#problemset > tbody").rows;
                             for (let i = 0; i < Rows.length; i++) {
-                                open(Rows[i].children[2].children[0].href, "_blank");
+                                GM_openInTab(Rows[i].children[2].children[0].href);
                             }
                         }
                         let OpenUnsolvedButton = document.createElement("button");
@@ -1386,7 +1484,7 @@ else {
                             let Rows = document.querySelector("#problemset > tbody").rows;
                             for (let i = 0; i < Rows.length; i++) {
                                 if (!Rows[i].children[0].children[0].classList.contains("status_y")) {
-                                    open(Rows[i].children[2].children[0].href, "_blank");
+                                    GM_openInTab(Rows[i].children[2].children[0].href);
                                 }
                             }
                         }
@@ -2314,7 +2412,7 @@ else {
                             let ProblemID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
                             let ProblemName = localStorage.getItem("UserScript-Problem-" + ProblemID + "-Name");
                             let CaseID = CurrentElement.children[1].innerText.substring(1);
-                            CopyToClipboard("高老师，能发给我" +
+                            GM_setClipboard("高老师，能发给我" +
                                 ProblemID + "题：" + ProblemName + "，" +
                                 "提交编号" + SolutionID + "，" +
                                 "#" + CaseID + "测试点" +
@@ -2326,7 +2424,7 @@ else {
                             let ProblemID = localStorage.getItem("UserScript-Contest-" + ContestID + "-Problem-" + (ContestProblemID.charCodeAt(0) - 65) + "-PID");
                             let ProblemName = localStorage.getItem("UserScript-Problem-" + ProblemID + "-Name");
                             let CaseID = CurrentElement.children[1].innerText.substring(1);
-                            CopyToClipboard("高老师，能发给我" +
+                            GM_setClipboard("高老师，能发给我" +
                                 "比赛" + ContestID + "：" +
                                 ContestName + "，" +
                                 ContestProblemID + "题(" + ProblemID + ")：" + ProblemName + "，" +
@@ -2471,7 +2569,7 @@ else {
                     CopyMDButton.type = "button";
                     document.querySelector("body > div > div.mt-3 > center > h2").appendChild(CopyMDButton);
                     CopyMDButton.onclick = () => {
-                        CopyToClipboard(ParsedDocument.querySelector("body > div > div > div").innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
+                        GM_setClipboard(ParsedDocument.querySelector("body > div > div > div").innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
                         CopyMDButton.innerText = "复制成功";
                         setTimeout(() => {
                             CopyMDButton.innerText = "复制";
@@ -2569,87 +2667,6 @@ else {
                 });
         } else if (location.pathname.indexOf("/discuss3") != -1) {
             Discussion.classList.add("active");
-            const RequestAPI = (Action, Data, CallBack) => {
-                let UserID = profile.innerText;
-                let Session = "";
-                let Temp = document.cookie.split(";");
-                for (let i = 0; i < Temp.length; i++) {
-                    if (Temp[i].includes("PHPSESSID")) {
-                        Session = Temp[i].split("=")[1];
-                    }
-                }
-                Data["Action"] = Action;
-                Data["UserID"] = UserID;
-                Data["Session"] = Session;
-                let DataString = "";
-                for (let i in Data) {
-                    if (Data[i] != null) {
-                        DataString += i + "=" + encodeURIComponent(Data[i]) + "&";
-                    }
-                }
-                DataString = DataString.substring(0, DataString.length - 1);
-                GM_xmlhttpRequest({
-                    method: "POST",
-                    url: (UserScriptDebug ? "http://xmoj-bbs.infinityfreeapp.com/BBS-Debug.php" : "http://xmoj-bbs.infinityfreeapp.com/BBS.php"),
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    cookie: "__test=" + localStorage.getItem("UserScript-InfinityFree-Cookie"),
-                    data: DataString,
-                    onload: (Response) => {
-                        if (Response.status != 200) {
-                            CallBack({
-                                "Success": false,
-                                "ErrorMessage": "服务器返回错误码：" + Response.status
-                            });
-                            return;
-                        }
-                        let ResponseData;
-                        try {
-                            ResponseData = JSON.parse(Response.responseText);
-                        } catch (error) {
-                            if (Response.responseText.indexOf("aes.js") != -1) {
-                                let ScriptData = Response.responseText.substring(Response.responseText.indexOf("<script>") + 8, Response.responseText.lastIndexOf("</script>"));
-                                let ValueA = ScriptData.substring(ScriptData.indexOf("a=toNumbers(\"") + 13, ScriptData.indexOf("\"),b=toNumbers"));
-                                let ValueB = ScriptData.substring(ScriptData.indexOf("b=toNumbers(\"") + 13, ScriptData.indexOf("\"),c=toNumbers"));
-                                let ValueC = ScriptData.substring(ScriptData.indexOf("c=toNumbers(\"") + 13, ScriptData.indexOf("\");document.cookie"));
-                                function toNumbers(Input) {
-                                    var Output = [];
-                                    Input.replace(/(..)/g, function (d) {
-                                        Output.push(parseInt(d, 16))
-                                    });
-                                    return Output;
-                                }
-                                function toHex() {
-                                    var Input = [];
-                                    Input = (arguments.length == 1 && arguments[0].constructor == Array) ? arguments[0] : arguments;
-                                    var Output = "";
-                                    for (var i = 0; i < Input.length; i++) {
-                                        Output += (Input[i] < 16 ? "0" : "") + Input[i].toString(16);
-                                    }
-                                    return Output.toLowerCase();
-                                }
-                                let Cookie = toHex(slowAES.decrypt(toNumbers(ValueC), 2, toNumbers(ValueA), toNumbers(ValueB)));
-                                localStorage.setItem("UserScript-InfinityFree-Cookie", Cookie);
-                                RequestAPI(Action, Data, CallBack);
-                                return;
-                            }
-                            if (Response.responseText.indexOf("parking") != -1) {
-                                CallBack({
-                                    "Success": false,
-                                    "ErrorMessage": "因讨论近期无人使用，服务器已自动停止服务以节约资金，请点击 <a href=\"http://xmoj-bbs.infinityfreeapp.com/\">此处</a> 重新激活，激活后可能需要等待1分钟"
-                                });
-                                return;
-                            }
-                            ResponseData = {
-                                "Success": false,
-                                "ErrorMessage": "JSON解析错误：" + error
-                            };
-                        }
-                        CallBack(ResponseData);
-                    }
-                });
-            };
             if (location.pathname == "/discuss3/discuss.php") {
                 let ProblemID = SearchParams.get("pid");
                 let Page = Number(SearchParams.get("page")) || 1;
@@ -2692,7 +2709,7 @@ else {
                         location.href = "/discuss3/newpost.php";
                     }
                 };
-                RequestAPI("GetPosts", {
+                RequestDiscussAPI("GetPosts", {
                     "ProblemID": ProblemID,
                     "Page": Page
                 }, (ResponseData) => {
@@ -2767,7 +2784,7 @@ else {
                     }
                     SubmitElement.disabled = true;
                     SubmitElement.children[0].style.display = "inline-block";
-                    RequestAPI("NewPost", {
+                    RequestDiscussAPI("NewPost", {
                         "Title": Title,
                         "Content": Content,
                         "ProblemID": ProblemID
@@ -2825,7 +2842,7 @@ else {
                             SubmitElement.click();
                         }
                     };
-                    const DoRefresh = (Silent = true) => {
+                    let DoRefresh = (Silent = true) => {
                         if (!Silent) {
                             PostTitle.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
                             PostAuthor.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
@@ -2847,7 +2864,7 @@ else {
                             }
                         }
                         let OldScrollTop = document.documentElement.scrollTop;
-                        RequestAPI("GetPost", {
+                        RequestDiscussAPI("GetPost", {
                             "PostID": ThreadID,
                             "Page": Page
                         }, (ResponseData) => {
@@ -2915,7 +2932,7 @@ else {
                                     CardBodyRowSpan3Button2Element.onclick = () => {
                                         CardBodyRowSpan3Button2Element.disabled = true;
                                         CardBodyRowSpan3Button2Element.lastChild.style.display = "";
-                                        RequestAPI("DeleteReply", {
+                                        RequestDiscussAPI("DeleteReply", {
                                             "ReplyID": Replies[i]["ReplyID"]
                                         }, (ResponseData) => {
                                             if (ResponseData["Success"] == true) {
@@ -2996,7 +3013,7 @@ else {
                     Delete.onclick = () => {
                         Delete.disabled = true;
                         Delete.children[0].style.display = "inline-block";
-                        RequestAPI("DeletePost", {
+                        RequestDiscussAPI("DeletePost", {
                             "PostID": SearchParams.get("tid")
                         }, (ResponseData) => {
                             Delete.disabled = false;
@@ -3014,7 +3031,7 @@ else {
                         ErrorElement.style.display = "none";
                         SubmitElement.disabled = true;
                         SubmitElement.children[0].style.display = "inline-block";
-                        RequestAPI("NewReply", {
+                        RequestDiscussAPI("NewReply", {
                             "PostID": SearchParams.get("tid"),
                             "Content": ContentElement.value
                         }, async (ResponseData) => {
