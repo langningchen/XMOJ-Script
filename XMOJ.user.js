@@ -2590,7 +2590,7 @@ else {
                 DataString = DataString.substring(0, DataString.length - 1);
                 GM_xmlhttpRequest({
                     method: "POST",
-                    url: "http://xmoj-bbs.infinityfreeapp.com/bbs.php",
+                    url: (localStorage.getItem("UserScript-Debug") == null ? "http://xmoj-bbs.infinityfreeapp.com/BBS.php" : "http://xmoj-bbs.infinityfreeapp.com/BBS-Debug.php"),
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
