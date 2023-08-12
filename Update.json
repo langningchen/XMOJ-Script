@@ -539,6 +539,51 @@
                     "Description": "代码编辑框增加边框"
                 }
             ]
+        },
+        "0.1.42": {
+            "UpdateDate": 1691834423239,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "1fc5afe",
+                    "Commit": "1fc5afe21473464875efc99bdff53236bcf72a46",
+                    "Description": "讨论中 @ 对方能收到提示"
+                },
+                {
+                    "ShortCommit": "5653ef6",
+                    "Commit": "5653ef6b84826a11656dfaed5ea9e47c80229fa9",
+                    "Description": "设置服务器为删除最后一个评论后删除讨论"
+                },
+                {
+                    "ShortCommit": "040f88d",
+                    "Commit": "040f88d21527dbd05e01ed311264199db351fb01",
+                    "Description": "减小首页展示图的大小"
+                },
+                {
+                    "ShortCommit": "88fff1c",
+                    "Commit": "88fff1c6679fa9833c51fa9691dae13953c2e8cb",
+                    "Description": "优化代码"
+                },
+                {
+                    "ShortCommit": "26a8b61",
+                    "Commit": "26a8b61cfe4dadb874ce5672f975987ad3a4b1d4",
+                    "Description": "重命名讨论服务并且区分测试和常规发布"
+                },
+                {
+                    "ShortCommit": "e679f33",
+                    "Commit": "e679f33f5123c4d71b42d17b7ebc818495231380",
+                    "Description": "因为有自动刷新，所以去除刷新按钮"
+                },
+                {
+                    "ShortCommit": "5795582",
+                    "Commit": "5795582fef87b184528443f333d22aa23b72cf87",
+                    "Description": "讨论列表增加讨论编号和题目编号列"
+                },
+                {
+                    "ShortCommit": "02df78c",
+                    "Commit": "02df78ca95f94fce71e227fb2a044d0d953e49a8",
+                    "Description": "更改弹出更新日志为只显示最近一次"
+                }
+            ]
         }
     }
 }
