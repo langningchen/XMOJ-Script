@@ -2452,11 +2452,11 @@ else {
             let PID = SearchParams.get("id");
             let Pagination = `<nav class="center"><ul class="pagination justify-content-center">`;
             if (CurrentPage != 1) {
-                Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=1" class="page-link">&lt;&lt;</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1) + `</a></li>`;
+                Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=1" class="page-link">&laquo;</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1) + `</a></li>`;
             }
             Pagination += `<li class="active page-item"><a href="problemstatus.php?id=` + PID + `&page=` + CurrentPage + `" class="page-link">` + CurrentPage + `</a></li>`;
             if (document.querySelector("#problemstatus > tbody").children != null && document.querySelector("#problemstatus > tbody").children.length == 20) {
-                Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">` + (CurrentPage + 1) + `</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">&gt;&gt;</a></li>`;
+                Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">` + (CurrentPage + 1) + `</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">&raquo;</a></li>`;
             }
             Pagination += `</ul></nav>`;
             document.querySelector("body > div > div.mt-3 > center").innerHTML += Pagination;
