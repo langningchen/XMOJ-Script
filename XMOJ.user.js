@@ -2548,6 +2548,27 @@ else {
                 readOnly: true,
                 theme: (UtilityEnabled("DarkMode") ? "darcula" : "default")
             }).setSize("100%", "auto");
+        } else if (location.pathname == "/problem_std.php") {
+            await fetch("http://www.xmoj.tech/problem_std.php?cid=" + SearchParams.get("cid") + "&pid=" + SearchParams.get("pid"))
+                .then((Response) => {
+                    return Response.text();
+                }).then((Response) => {
+                    let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                    let Temp = ParsedDocument.getElementsByTagName("pre");
+                    document.querySelector("body > div > div.mt-3").innerHTML = "";
+                    for (let i = 0; i < Temp.length; i++) {
+                        let CodeElement = document.createElement("div");
+                        CodeElement.className = "mb-3";
+                        document.querySelector("body > div > div.mt-3").appendChild(CodeElement);
+                        CodeMirror(CodeElement, {
+                            value: Temp[i].innerText,
+                            lineNumbers: true,
+                            mode: "text/x-c++src",
+                            readOnly: true,
+                            theme: (UtilityEnabled("DarkMode") ? "darcula" : "default")
+                        }).setSize("100%", "auto");
+                    }
+                });
         } else if (location.pathname.indexOf("/discuss3") != -1) {
             Discussion.classList.add("active");
             const RequestAPI = (Action, Data, CallBack) => {
@@ -2882,7 +2903,7 @@ else {
                                         ModeName = "text/x-c++src";
                                     }
                                     CodeMirror(CodeElements[i].parentElement, {
-                                        value: CodeElements[i].innerText,
+                                        value: Code,
                                         mode: ModeName,
                                         theme: (UtilityEnabled("DarkMode") ? "darcula" : "default"),
                                         lineNumbers: true,
