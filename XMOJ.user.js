@@ -474,37 +474,35 @@ else {
                     UpdateButton.className = "btn btn-secondary";
                     UpdateButton.setAttribute("data-bs-dismiss", "modal");
                     UpdateButton.innerText = "关闭";
-                    for (let i = Object.keys(Response["UpdateHistory"]).length - 1; i >= Math.max(Object.keys(Response["UpdateHistory"]).length - 3, 0); i--) {
-                        let Version = Object.keys(Response["UpdateHistory"])[i];
-                        let Data = Response["UpdateHistory"][Version];
-                        let UpdateDataCard = document.createElement("div"); UpdateBody.appendChild(UpdateDataCard);
-                        UpdateDataCard.className = "card mb-3";
-                        let UpdateDataCardBody = document.createElement("div"); UpdateDataCard.appendChild(UpdateDataCardBody);
-                        UpdateDataCardBody.className = "card-body";
-                        let UpdateDataCardTitle = document.createElement("h5"); UpdateDataCardBody.appendChild(UpdateDataCardTitle);
-                        UpdateDataCardTitle.className = "card-title";
-                        UpdateDataCardTitle.innerText = Version;
-                        let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
-                        UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
-                        UpdateDataCardSubtitle.innerText = new Date(Data["UpdateDate"]).toLocaleString();
-                        let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
-                        UpdateDataCardText.className = "card-text";
-                        let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
-                        UpdateDataCardList.className = "list-group list-group-flush";
-                        for (let j = 0; j < Data["UpdateCommits"].length; j++) {
-                            let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
-                            UpdateDataCardListItem.className = "list-group-item";
-                            UpdateDataCardListItem.innerHTML =
-                                "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data["UpdateCommits"][j]["Commit"] + "\" target=\"_blank\">"
-                                + Data["UpdateCommits"][j]["ShortCommit"] + "</a>) " +
-                                Data["UpdateCommits"][j]["Description"];
-                        }
-                        let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
-                        UpdateDataCardLink.className = "card-link";
-                        UpdateDataCardLink.href = "https://github.com/langningchen/XMOJ-Script/releases/tag/" + Version;
-                        UpdateDataCardLink.target = "_blank";
-                        UpdateDataCardLink.innerText = "查看该版本";
+                    let Version = Object.keys(Response["UpdateHistory"])[Object.keys(Response["UpdateHistory"]).length - 1]
+                    let Data = Response["UpdateHistory"][Version];
+                    let UpdateDataCard = document.createElement("div"); UpdateBody.appendChild(UpdateDataCard);
+                    UpdateDataCard.className = "card mb-3";
+                    let UpdateDataCardBody = document.createElement("div"); UpdateDataCard.appendChild(UpdateDataCardBody);
+                    UpdateDataCardBody.className = "card-body";
+                    let UpdateDataCardTitle = document.createElement("h5"); UpdateDataCardBody.appendChild(UpdateDataCardTitle);
+                    UpdateDataCardTitle.className = "card-title";
+                    UpdateDataCardTitle.innerText = Version;
+                    let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
+                    UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
+                    UpdateDataCardSubtitle.innerText = new Date(Data["UpdateDate"]).toLocaleString();
+                    let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
+                    UpdateDataCardText.className = "card-text";
+                    let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
+                    UpdateDataCardList.className = "list-group list-group-flush";
+                    for (let j = 0; j < Data["UpdateCommits"].length; j++) {
+                        let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
+                        UpdateDataCardListItem.className = "list-group-item";
+                        UpdateDataCardListItem.innerHTML =
+                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data["UpdateCommits"][j]["Commit"] + "\" target=\"_blank\">"
+                            + Data["UpdateCommits"][j]["ShortCommit"] + "</a>) " +
+                            Data["UpdateCommits"][j]["Description"];
                     }
+                    let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
+                    UpdateDataCardLink.className = "card-link";
+                    UpdateDataCardLink.href = "https://github.com/langningchen/XMOJ-Script/releases/tag/" + Version;
+                    UpdateDataCardLink.target = "_blank";
+                    UpdateDataCardLink.innerText = "查看该版本";
                     new bootstrap.Modal(document.getElementById("UpdateModal")).show();
                 }
             });
