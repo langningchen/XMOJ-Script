@@ -2892,7 +2892,6 @@ else {
                                     CardElement.appendChild(CardBodyElement);
                                     PostReplies.appendChild(CardElement);
                                 }
-                                // pre > code
                                 let CodeElements = document.querySelectorAll("pre > code");
                                 for (let i = 0; i < CodeElements.length; i++) {
                                     let ModeName = "text/plain";
@@ -2902,6 +2901,12 @@ else {
                                     else if (CodeElements[i].className == "language-cpp") {
                                         ModeName = "text/x-c++src";
                                     }
+                                    let Code = CodeElements[i].innerText;
+                                    Code = Code.replaceAll("&lt;", "<");
+                                    Code = Code.replaceAll("&gt;", ">");
+                                    Code = Code.replaceAll("&amp;", "&");
+                                    Code = Code.replaceAll("&quot;", "\"");
+                                    Code = Code.replaceAll("&apos;", "'");
                                     CodeMirror(CodeElements[i].parentElement, {
                                         value: Code,
                                         mode: ModeName,
