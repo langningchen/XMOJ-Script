@@ -2795,7 +2795,6 @@ else {
                         <span class="col-4 text-muted">作者：<a id="PostAuthor" href=""></a></span>
                         <span class="col-4 text-muted">发布时间：<span id="PostTime"></span></span>
                         <span class="col-4">
-                            <button id="Refresh" type="button" class="btn btn-sm btn-info">刷新</button>
                             <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
                                 删除
                                 <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
@@ -2826,7 +2825,7 @@ else {
                             SubmitElement.click();
                         }
                     };
-                    const DoRefresh = (Silent = false) => {
+                    const DoRefresh = (Silent = true) => {
                         if (!Silent) {
                             PostTitle.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
                             PostAuthor.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
@@ -2920,7 +2919,7 @@ else {
                                             "ReplyID": Replies[i]["ReplyID"]
                                         }, (ResponseData) => {
                                             if (ResponseData["Success"] == true) {
-                                                Refresh.click();
+                                                DoRefresh();
                                             }
                                             else {
                                                 CardBodyRowSpan3Button2Element.disabled = false;
@@ -2994,11 +2993,6 @@ else {
                             }
                         });
                     };
-                    Refresh.onclick = () => {
-                        Refresh.disabled = true;
-                        DoRefresh();
-                        Refresh.disabled = false;
-                    };
                     Delete.onclick = () => {
                         Delete.disabled = true;
                         Delete.children[0].style.display = "inline-block";
@@ -3027,7 +3021,7 @@ else {
                             SubmitElement.disabled = false;
                             SubmitElement.children[0].style.display = "none";
                             if (ResponseData["Success"] == true) {
-                                Refresh.click();
+                                DoRefresh();
                                 ContentElement.value = "";
                                 while (PostReplies.innerHTML.indexOf("placeholder") != -1) {
                                     await new Promise((resolve) => {
@@ -3043,10 +3037,10 @@ else {
                             }
                         });
                     };
-                    DoRefresh();
+                    DoRefresh(false);
                     setTimeout(() => {
                         setInterval(async () => {
-                            DoRefresh(true);
+                            DoRefresh();
                         }, 5000);
                     }, 5000);
                 }
