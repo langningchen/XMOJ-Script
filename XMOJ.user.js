@@ -2654,8 +2654,18 @@ else {
             };
             if (location.pathname == "/discuss3/discuss.php") {
                 let ProblemID = SearchParams.get("pid");
+                let Page = Number(SearchParams.get("page")) || 1;
                 document.querySelector("body > div > div").innerHTML = `<h3>讨论列表` + (ProblemID == null ? "" : ` - 题目` + ProblemID) + `</h3>
                 <button id="NewPost" type="button" class="btn btn-primary">发布新讨论</button>
+                <nav>
+                    <ul class="pagination justify-content-center" id="DiscussPagination">
+                        <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+                        <li class="page-item"><a class="page-link" href="#">` + (Page - 1) + `</a></li>
+                        <li class="page-item"><a class="page-link active" href="#">` + Page + `</a></li>
+                        <li class="page-item"><a class="page-link" href="#">` + (Page + 1) + `</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+                    </ul>
+                </nav>
                 <table id="PostList" class="table table-hover">
                     <thead>
                         <tr>
@@ -2683,9 +2693,23 @@ else {
                     }
                 };
                 RequestAPI("GetPosts", {
-                    "ProblemID": ProblemID
+                    "ProblemID": ProblemID,
+                    "Page": Page
                 }, (ResponseData) => {
                     if (ResponseData["Success"] == true) {
+                        DiscussPagination.children[0].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
+                        DiscussPagination.children[1].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
+                        DiscussPagination.children[2].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
+                        DiscussPagination.children[3].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
+                        DiscussPagination.children[4].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData["Data"]["PageCount"];
+                        if (Page <= 1) {
+                            DiscussPagination.children[0].classList.add("disabled");
+                            DiscussPagination.children[1].remove();
+                        }
+                        if (Page >= ResponseData["Data"]["PageCount"]) {
+                            DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
+                            DiscussPagination.children[DiscussPagination.children.length - 2].remove();
+                        }
                         let Posts = ResponseData["Data"]["Posts"];
                         PostList.children[1].innerHTML = "";
                         if (Posts.length == 0) {
@@ -2762,6 +2786,8 @@ else {
                     location.href = "/discuss3/discuss.php";
                 }
                 else {
+                    let ThreadID = SearchParams.get("tid");
+                    let Page = Number(SearchParams.get("page")) || 1;
                     document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
                     <div class="row mb-3">
                         <span class="col-4 text-muted">作者：<a id="PostAuthor" href=""></a></span>
@@ -2774,6 +2800,15 @@ else {
                             </button>
                         </span>
                     </div>
+                    <nav>
+                        <ul class="pagination justify-content-center" id="DiscussPagination">
+                            <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+                            <li class="page-item"><a class="page-link" href="#">` + (Page - 1) + `</a></li>
+                            <li class="page-item"><a class="page-link active" href="#">` + Page + `</a></li>
+                            <li class="page-item"><a class="page-link" href="#">` + (Page + 1) + `</a></li>
+                            <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+                        </ul>
+                    </nav>
                     <div id="PostReplies"></div>
                     <div class="form-group mb-3">
                         <label for="ContentElement" class="mb-1">回复</label>
@@ -2789,13 +2824,14 @@ else {
                             SubmitElement.click();
                         }
                     };
-                    Refresh.onclick = () => {
-                        PostTitle.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
-                        PostAuthor.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
-                        PostTime.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
-                        PostReplies.innerHTML = "";
-                        for (let i = 0; i < 10; i++) {
-                            PostReplies.innerHTML += `<div class="card mb-3">
+                    const DoRefresh = (Silent = false) => {
+                        if (!Silent) {
+                            PostTitle.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
+                            PostAuthor.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
+                            PostTime.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
+                            PostReplies.innerHTML = "";
+                            for (let i = 0; i < 10; i++) {
+                                PostReplies.innerHTML += `<div class="card mb-3">
                                 <div class="card-body">
                                     <div class="row mb-3">
                                         <span class="col-6"><span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span></span>
@@ -2807,13 +2843,31 @@ else {
                                     <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
                                 </div>
                             </div>`;
+                            }
                         }
+                        let OldScrollTop = document.documentElement.scrollTop;
                         RequestAPI("GetPost", {
-                            "PostID": SearchParams.get("tid")
+                            "PostID": ThreadID,
+                            "Page": Page
                         }, (ResponseData) => {
                             if (ResponseData["Success"] == true) {
-                                if (ResponseData["Data"]["UserID"] == profile.innerText) {
-                                    Delete.style.display = "";
+                                if (!Silent) {
+                                    DiscussPagination.children[0].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=1";
+                                    DiscussPagination.children[1].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
+                                    DiscussPagination.children[2].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + Page;
+                                    DiscussPagination.children[3].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page + 1);
+                                    DiscussPagination.children[4].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + ResponseData["Data"]["PageCount"];
+                                    if (Page <= 1) {
+                                        DiscussPagination.children[0].classList.add("disabled");
+                                        DiscussPagination.children[1].remove();
+                                    }
+                                    if (Page >= ResponseData["Data"]["PageCount"]) {
+                                        DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
+                                        DiscussPagination.children[DiscussPagination.children.length - 2].remove();
+                                    }
+                                    if (ResponseData["Data"]["UserID"] == profile.innerText) {
+                                        Delete.style.display = "";
+                                    }
                                 }
                                 PostTitle.innerText = ResponseData["Data"]["Title"];
                                 PostAuthor.innerText = ResponseData["Data"]["UserID"];
@@ -2907,12 +2961,13 @@ else {
                                     Code = Code.replaceAll("&amp;", "&");
                                     Code = Code.replaceAll("&quot;", "\"");
                                     Code = Code.replaceAll("&apos;", "'");
+                                    Code = Code.trim();
                                     CodeMirror(CodeElements[i].parentElement, {
                                         value: Code,
                                         mode: ModeName,
                                         theme: (UtilityEnabled("DarkMode") ? "darcula" : "default"),
                                         lineNumbers: true,
-                                        readOnly: true,
+                                        readOnly: true
                                     }).setSize("100%", "auto");
                                     CodeElements[i].remove();
                                 }
@@ -2924,13 +2979,24 @@ else {
                                     ],
                                     throwOnError: false
                                 });
+
+                                if (Silent) {
+                                    scrollTo({
+                                        top: OldScrollTop,
+                                        behavior: "instant"
+                                    });
+                                }
                             }
                             else {
                                 PostTitle.innerText = "错误：" + ResponseData["ErrorMessage"];
                             }
                         });
                     };
-                    Refresh.click();
+                    Refresh.onclick = () => {
+                        Refresh.disabled = true;
+                        DoRefresh();
+                        Refresh.disabled = false;
+                    };
                     Delete.onclick = () => {
                         Delete.disabled = true;
                         Delete.children[0].style.display = "inline-block";
@@ -2975,6 +3041,12 @@ else {
                             }
                         });
                     };
+                    DoRefresh();
+                    setTimeout(() => {
+                        setInterval(async () => {
+                            DoRefresh(true);
+                        }, 5000);
+                    }, 5000);
                 }
             }
         }
