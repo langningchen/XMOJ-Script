@@ -131,8 +131,8 @@ if (location.host != "www.xmoj.tech") {
     location.host = "www.xmoj.tech";
 }
 else {
-
-    if (localStorage.getItem("UserScript-Debug") == null) {
+    let UserScriptDebug = (localStorage.getItem("UserScript-Debug") != null);
+    if (!UserScriptDebug) {
         setInterval(() => {
             let StartTime = new Date().getTime();
             eval("debugger");
@@ -439,7 +439,7 @@ else {
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 <div>
                     XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                    <a href="https://langningchen.github.io/XMOJ-Script/XMOJ.`+ (localStorage.getItem("UserScript-Debug") == null ? "min." : "") + `user.js" target="_blank" class="alert-link">此处</a>
+                    <a href="https://langningchen.github.io/XMOJ-Script/`+ (UserScriptDebug ? "XMOJ.user.js" : "XMOJ.min.user.js") + `" target="_blank" class="alert-link">此处</a>
                     更新
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -2590,7 +2590,7 @@ else {
                 DataString = DataString.substring(0, DataString.length - 1);
                 GM_xmlhttpRequest({
                     method: "POST",
-                    url: (localStorage.getItem("UserScript-Debug") == null ? "http://xmoj-bbs.infinityfreeapp.com/BBS.php" : "http://xmoj-bbs.infinityfreeapp.com/BBS-Debug.php"),
+                    url: (UserScriptDebug ? "http://xmoj-bbs.infinityfreeapp.com/BBS-Debug.php" : "http://xmoj-bbs.infinityfreeapp.com/BBS.php"),
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
