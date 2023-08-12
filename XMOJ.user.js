@@ -739,7 +739,7 @@ else {
                     ")";
             }
             if (document.querySelector("body > div > div.mt-3 > h2") != null) {
-                document.querySelector("body > div > div.mt-3").innerHTML = "没有此题目";
+                document.querySelector("body > div > div.mt-3").innerHTML = "没有此题目或题目对你不可见";
                 setTimeout(() => {
                     location.href = "problemset.php";
                 }, 1000);
@@ -2667,9 +2667,11 @@ else {
                 <table id="PostList" class="table table-hover">
                     <thead>
                         <tr>
-                            <th>标题</th>
-                            <th>作者</th>
-                            <th>发布时间</th>
+                            <th class="col-2">编号</th>
+                            <th class="col-4">标题</th>
+                            <th class="col-2">作者</th>
+                            <th class="col-2">题目编号</th>
+                            <th class="col-2">发布时间</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -2677,7 +2679,7 @@ else {
                 </table>`;
                 for (let i = 0; i < 10; i++) {
                     let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
-                    for (let j = 0; j < 3; j++) {
+                    for (let j = 0; j < 5; j++) {
                         let Cell = document.createElement("td"); Row.appendChild(Cell);
                         Cell.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>`;
                     }
@@ -2715,9 +2717,11 @@ else {
                         }
                         for (let i = 0; i < Posts.length; i++) {
                             PostList.children[1].innerHTML += `<tr>
+                                <td>${Posts[i]["PostID"]}</td>
                                 <td><a href="/discuss3/thread.php?tid=${Posts[i]["PostID"]}">${Posts[i]["Title"]}</a></td>
-                                <td><a href="/userinfo.php?user=${Posts[i]["UserID"]}">${Posts[i]["UserID"]}</a></td>
-                                <td>${Posts[i]["PostTime"]}</td>
+                                <td><a href="/userinfo.php?user=${Posts[i]["UserID"]}">${Posts[i]["UserID"]}</a></td>` +
+                                (Posts[i]["ProblemID"] == null ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i]["ProblemID"]}">${Posts[i]["ProblemID"]}</a></td>`) +
+                                `<td>${Posts[i]["PostTime"]}</td>
                             </tr>`;
                         }
                     }
