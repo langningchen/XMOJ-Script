@@ -426,7 +426,7 @@ else {
             }
         }, 100);
 
-        await fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
+        fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
             .then((Response) => {
                 return Response.json();
             })
@@ -508,7 +508,7 @@ else {
                     new bootstrap.Modal(document.getElementById("UpdateModal")).show();
                 }
             });
-        await fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js", { cache: "no-cache" })
+        fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js", { cache: "no-cache" })
             .then((Response) => {
                 return Response.text();
             })
