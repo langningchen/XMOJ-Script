@@ -1860,7 +1860,6 @@ else {
                                 }
                                 ErrorElement.style.display = "none";
                             }).catch((Error) => {
-                                console.log(Error);
                                 ErrorElement.style.display = "block";
                                 ErrorMessage.style.color = "red";
                                 if (i != 4) {
@@ -2474,7 +2473,7 @@ else {
                     CopyMDButton.type = "button";
                     document.querySelector("body > div > div.mt-3 > center > h2").appendChild(CopyMDButton);
                     CopyMDButton.onclick = () => {
-                        CopyToClipboard(ParsedDocument.querySelector("body > div > div.mt-3 > div").innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
+                        CopyToClipboard(ParsedDocument.querySelector("body > div > div > div").innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
                         CopyMDButton.innerText = "复制成功";
                         setTimeout(() => {
                             CopyMDButton.innerText = "复制";
@@ -2485,7 +2484,6 @@ else {
             let Temp = document.getElementsByClassName("prettyprint");
             for (let i = 0; i < Temp.length; i++) {
                 let Code = Temp[i].innerText;
-                console.log(Code);
                 Temp[i].outerHTML = `<textarea class="prettyprint">` + Code + `</textarea>`;
             }
             for (let i = 0; i < Temp.length; i++) {
@@ -2587,36 +2585,43 @@ else {
                             });
                             return;
                         }
-                        if (Response.responseText.indexOf("aes.js") != -1) {
-                            let ScriptData = Response.responseText.substring(Response.responseText.indexOf("<script>") + 8, Response.responseText.lastIndexOf("</script>"));
-                            let ValueA = ScriptData.substring(ScriptData.indexOf("a=toNumbers(\"") + 13, ScriptData.indexOf("\"),b=toNumbers"));
-                            let ValueB = ScriptData.substring(ScriptData.indexOf("b=toNumbers(\"") + 13, ScriptData.indexOf("\"),c=toNumbers"));
-                            let ValueC = ScriptData.substring(ScriptData.indexOf("c=toNumbers(\"") + 13, ScriptData.indexOf("\");document.cookie"));
-                            function toNumbers(Input) {
-                                var Output = [];
-                                Input.replace(/(..)/g, function (d) {
-                                    Output.push(parseInt(d, 16))
-                                });
-                                return Output;
-                            }
-                            function toHex() {
-                                var Input = [];
-                                Input = (arguments.length == 1 && arguments[0].constructor == Array) ? arguments[0] : arguments;
-                                var Output = "";
-                                for (var i = 0; i < Input.length; i++) {
-                                    Output += (Input[i] < 16 ? "0" : "") + Input[i].toString(16);
-                                }
-                                return Output.toLowerCase();
-                            }
-                            let Cookie = toHex(slowAES.decrypt(toNumbers(ValueC), 2, toNumbers(ValueA), toNumbers(ValueB)));
-                            localStorage.setItem("UserScript-InfinityFree-Cookie", Cookie);
-                            RequestAPI(Action, Data, CallBack);
-                            return;
-                        }
                         let ResponseData;
                         try {
                             ResponseData = JSON.parse(Response.responseText);
                         } catch (error) {
+                            if (Response.responseText.indexOf("aes.js") != -1) {
+                                let ScriptData = Response.responseText.substring(Response.responseText.indexOf("<script>") + 8, Response.responseText.lastIndexOf("</script>"));
+                                let ValueA = ScriptData.substring(ScriptData.indexOf("a=toNumbers(\"") + 13, ScriptData.indexOf("\"),b=toNumbers"));
+                                let ValueB = ScriptData.substring(ScriptData.indexOf("b=toNumbers(\"") + 13, ScriptData.indexOf("\"),c=toNumbers"));
+                                let ValueC = ScriptData.substring(ScriptData.indexOf("c=toNumbers(\"") + 13, ScriptData.indexOf("\");document.cookie"));
+                                function toNumbers(Input) {
+                                    var Output = [];
+                                    Input.replace(/(..)/g, function (d) {
+                                        Output.push(parseInt(d, 16))
+                                    });
+                                    return Output;
+                                }
+                                function toHex() {
+                                    var Input = [];
+                                    Input = (arguments.length == 1 && arguments[0].constructor == Array) ? arguments[0] : arguments;
+                                    var Output = "";
+                                    for (var i = 0; i < Input.length; i++) {
+                                        Output += (Input[i] < 16 ? "0" : "") + Input[i].toString(16);
+                                    }
+                                    return Output.toLowerCase();
+                                }
+                                let Cookie = toHex(slowAES.decrypt(toNumbers(ValueC), 2, toNumbers(ValueA), toNumbers(ValueB)));
+                                localStorage.setItem("UserScript-InfinityFree-Cookie", Cookie);
+                                RequestAPI(Action, Data, CallBack);
+                                return;
+                            }
+                            if (Response.responseText.indexOf("parking") != -1) {
+                                CallBack({
+                                    "Success": false,
+                                    "ErrorMessage": "因讨论近期无人使用，服务器已自动停止服务以节约资金，请点击 <a href=\"http://xmoj-bbs.infinityfreeapp.com/\">此处</a> 重新激活，激活后可能需要等待1分钟"
+                                });
+                                return;
+                            }
                             ResponseData = {
                                 "Success": false,
                                 "ErrorMessage": "JSON解析错误：" + error
