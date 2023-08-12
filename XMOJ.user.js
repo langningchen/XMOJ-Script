@@ -2742,9 +2742,9 @@ else {
                     SubmitElement.disabled = true;
                     SubmitElement.children[0].style.display = "inline-block";
                     RequestAPI("NewPost", {
-                        Title: Title,
-                        Content: Content,
-                        ProblemID: ProblemID,
+                        "Title": Title,
+                        "Content": Content,
+                        "ProblemID": ProblemID
                     }, (ResponseData) => {
                         SubmitElement.disabled = false;
                         SubmitElement.children[0].style.display = "none";
@@ -2809,7 +2809,7 @@ else {
                             </div>`;
                         }
                         RequestAPI("GetPost", {
-                            PostID: SearchParams.get("tid"),
+                            "PostID": SearchParams.get("tid")
                         }, (ResponseData) => {
                             if (ResponseData["Success"] == true) {
                                 if (ResponseData["Data"]["UserID"] == profile.innerText) {
@@ -2861,7 +2861,7 @@ else {
                                         CardBodyRowSpan3Button2Element.disabled = true;
                                         CardBodyRowSpan3Button2Element.lastChild.style.display = "";
                                         RequestAPI("DeleteReply", {
-                                            ReplyID: Number(Replies[i]["ReplyID"]),
+                                            "ReplyID": Replies[i]["ReplyID"]
                                         }, (ResponseData) => {
                                             if (ResponseData["Success"] == true) {
                                                 Refresh.click();
@@ -2935,7 +2935,7 @@ else {
                         Delete.disabled = true;
                         Delete.children[0].style.display = "inline-block";
                         RequestAPI("DeletePost", {
-                            PostID: SearchParams.get("tid"),
+                            "PostID": SearchParams.get("tid")
                         }, (ResponseData) => {
                             Delete.disabled = false;
                             Delete.children[0].style.display = "none";
@@ -2953,8 +2953,8 @@ else {
                         SubmitElement.disabled = true;
                         SubmitElement.children[0].style.display = "inline-block";
                         RequestAPI("NewReply", {
-                            PostID: SearchParams.get("tid"),
-                            Content: ContentElement.value,
+                            "PostID": SearchParams.get("tid"),
+                            "Content": ContentElement.value
                         }, async (ResponseData) => {
                             SubmitElement.disabled = false;
                             SubmitElement.children[0].style.display = "none";
