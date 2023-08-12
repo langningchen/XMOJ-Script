@@ -434,6 +434,111 @@
                     "Description": "Test secrets"
                 }
             ]
+        },
+        "0.1.41": {
+            "UpdateDate": 1691824744981,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "5021480",
+                    "Commit": "5021480afef0b5873a2a34938fe1c3f88f7b66b3",
+                    "Description": "增加分页与自动刷新功能"
+                },
+                {
+                    "ShortCommit": "e69131b",
+                    "Commit": "e69131b1205534847edf389b2ee80482a1ad983b",
+                    "Description": "美化题目列表页导航的图标"
+                },
+                {
+                    "ShortCommit": "68df902",
+                    "Commit": "68df9022cbc877fae399e97d55920ab03641ed3f",
+                    "Description": "使代码更规范"
+                },
+                {
+                    "ShortCommit": "a22e0fd",
+                    "Commit": "a22e0fd53acf06dba2cf35f8e8f00824ced44093",
+                    "Description": "增快加载速度"
+                },
+                {
+                    "ShortCommit": "16020f8",
+                    "Commit": "16020f827e50f59c8fce74681da4bd8c9d25d144",
+                    "Description": "修复讨论代码框显示异常"
+                },
+                {
+                    "ShortCommit": "0e03767",
+                    "Commit": "0e037671aa00e8600bfb0117c8869773eab62ec6",
+                    "Description": "标程适配黑暗模式"
+                },
+                {
+                    "ShortCommit": "d231371",
+                    "Commit": "d231371e52847308765fdd1afdd6d304384f912d",
+                    "Description": "增加Index介绍"
+                },
+                {
+                    "ShortCommit": "51b7a5f",
+                    "Commit": "51b7a5ff63b543b0df3ab2112b63714bcc545338",
+                    "Description": "修复复制题解出错，增加讨论失败提示"
+                },
+                {
+                    "ShortCommit": "319eeaa",
+                    "Commit": "319eeaa5c1c4acf4d8ac68bd501ccd8eeead642c",
+                    "Description": "Update version to 0.1.40"
+                },
+                {
+                    "ShortCommit": "effd5c2",
+                    "Commit": "effd5c21c9a9a086b7ff4fb1729d975bb8c8028d",
+                    "Description": "增加xiaoming替换为gaolaoshi"
+                },
+                {
+                    "ShortCommit": "08c05b8",
+                    "Commit": "08c05b891aac22235a8e6d02e3f1b881880747f9",
+                    "Description": "去除请求但是没有使用的权限"
+                },
+                {
+                    "ShortCommit": "82f1290",
+                    "Commit": "82f12906b6f46406b28d642a6d390474be9d8c94",
+                    "Description": "比较提交记录的功能终于修好了！"
+                },
+                {
+                    "ShortCommit": "1a1a56c",
+                    "Commit": "1a1a56c7d07c1be60146d44d536dab26f042e592",
+                    "Description": "将viewsource替换为getsource减少HTML解析"
+                },
+                {
+                    "ShortCommit": "840ce3c",
+                    "Commit": "840ce3ce607654f056b2162112d4d28f62fb126b",
+                    "Description": "修复标题小明的OJ没有替换为高老师的OJ"
+                },
+                {
+                    "ShortCommit": "56a8a24",
+                    "Commit": "56a8a24e3840bc37d1db0114ca803ae88fa153c3",
+                    "Description": "优化代码：将反复计算的内容作为变量提前存储"
+                },
+                {
+                    "ShortCommit": "b3192c1",
+                    "Commit": "b3192c1f09f2853a54be76498bcff47e31da79e1",
+                    "Description": "解决代码颜色显示问题"
+                },
+                {
+                    "ShortCommit": "931fa40",
+                    "Commit": "931fa406cab3a61a32ec8f8816686ce66225f785",
+                    "Description": "修复ACM排名颜色显示"
+                },
+                {
+                    "ShortCommit": "9c006f0",
+                    "Commit": "9c006f0eab33728db5a733915d1f0ce57344e285",
+                    "Description": "解决月赛界面边框不显示"
+                },
+                {
+                    "ShortCommit": "9326984",
+                    "Commit": "9326984772c19f4abea588d5a48c3200774df28e",
+                    "Description": "代码编辑框适配深色模式"
+                },
+                {
+                    "ShortCommit": "00f296d",
+                    "Commit": "00f296d4cbbd600b726bb0fe7bf2be45aa5986b4",
+                    "Description": "代码编辑框增加边框"
+                }
+            ]
         }
     }
 }
