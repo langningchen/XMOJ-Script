@@ -2892,7 +2892,7 @@ else {
                         let Posts = ResponseData.Data.Posts;
                         PostList.children[1].innerHTML = "";
                         if (Posts.length == 0) {
-                            PostList.children[1].innerHTML = `<tr><td colspan="3">暂无讨论</td></tr>`;
+                            PostList.children[1].innerHTML = `<tr><td colspan="5">暂无讨论</td></tr>`;
                         }
                         for (let i = 0; i < Posts.length; i++) {
                             PostList.children[1].innerHTML += `<tr>
