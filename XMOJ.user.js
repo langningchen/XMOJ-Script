@@ -149,8 +149,8 @@ let RequestAPI = (Item, Action, Data, CallBack) => {
             let ResponseData;
             try {
                 ResponseData = JSON.parse(Response.responseText);
-                if (Response.Success == false && Response.ErrorMessage.indexOf("max_user_connections") != -1) {
-                    Response.ErrorMessage = "服务器连接数过多，请稍后再试";
+                if (ResponseData.Success == false && ResponseData.ErrorMessage.indexOf("max_user_connections") != -1) {
+                    ResponseData.ErrorMessage = "服务器连接数过多，请稍后再试";
                     return;
                 }
             } catch (error) {
