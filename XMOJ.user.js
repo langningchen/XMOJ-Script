@@ -478,11 +478,11 @@ else {
                     }
                     let ShortMessageButton = document.createElement("li");
                     ShortMessageButton.className = "dropdown-item";
-                    ShortMessageButton.innerHTML = `<a href="mail.php">短消息</a>`;
+                    ShortMessageButton.innerHTML = `<a href="/mail.php">短消息</a>`;
                     document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").appendChild(ShortMessageButton);
                     let SettingsButton = document.createElement("li");
                     SettingsButton.className = "dropdown-item";
-                    SettingsButton.innerHTML = `<a href="index.php?ByUserScript=1">插件设置</a>`;
+                    SettingsButton.innerHTML = `<a href="/index.php?ByUserScript=1">插件设置</a>`;
                     document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").appendChild(SettingsButton);
                 }
             }
