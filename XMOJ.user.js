@@ -2752,17 +2752,9 @@ else {
                     });
                 };
                 RefreshMessageList(false);
-                let LastActiveTime = Date.now();
-                onmousemove = () => {
-                    LastActiveTime = Date.now();
+                onfocus = () => {
+                    RefreshMessageList();
                 };
-                setTimeout(() => {
-                    setInterval(async () => {
-                        if (Date.now() - LastActiveTime < 1000 * 60) {
-                            RefreshMessageList();
-                        }
-                    }, 5000);
-                }, 5000);
             }
             else {
                 document.querySelector("body > div > div.mt-3").innerHTML = `<div class="row g-2 mb-3">
@@ -2831,17 +2823,9 @@ else {
                     });
                 };
                 RefreshMessage();
-                let LastActiveTime = Date.now();
-                onmousemove = () => {
-                    LastActiveTime = Date.now();
+                onfocus = () => {
+                    RefreshMessage();
                 };
-                setTimeout(() => {
-                    setInterval(async () => {
-                        if (Date.now() - LastActiveTime < 1000 * 60) {
-                            RefreshMessage();
-                        }
-                    }, 5000);
-                }, 5000);
             }
         } else if (location.pathname.indexOf("/discuss3") != -1) {
             Discussion.classList.add("active");
@@ -3233,17 +3217,9 @@ else {
                         });
                     };
                     RefreshReply(false);
-                    let LastActiveTime = Date.now();
-                    onmousemove = () => {
-                        LastActiveTime = Date.now();
+                    onfocus = () => {
+                        RefreshReply();
                     };
-                    setTimeout(() => {
-                        setInterval(async () => {
-                            if (Date.now() - LastActiveTime < 1000 * 60) {
-                                RefreshReply();
-                            }
-                        }, 5000);
-                    }, 5000);
                 }
             }
         }
