@@ -634,6 +634,51 @@
                     "Description": "紧急修复，服务器因为BUG受到DDOS攻击"
                 }
             ]
+        },
+        "0.1.46": {
+            "UpdateDate": 1691915972040,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "1fa46db",
+                    "Commit": "1fa46dba59de4f785571e2cb6a065e690b534465",
+                    "Description": "修复回复时 @ 用户链接错误"
+                },
+                {
+                    "ShortCommit": "ababcc3",
+                    "Commit": "ababcc3d06af57aa9dfb57da0241cea4ce49edfe",
+                    "Description": "设置不存在用户没有@"
+                },
+                {
+                    "ShortCommit": "370f39d",
+                    "Commit": "370f39d254813a456ca63ff10cdc144b453b69d2",
+                    "Description": "禁止发送内容为空的回复"
+                },
+                {
+                    "ShortCommit": "9e48100",
+                    "Commit": "9e48100f80c4df2748e9248e3cbf5c9d68a97093",
+                    "Description": "设置标题与内容的最大长度"
+                },
+                {
+                    "ShortCommit": "9fa8cb9",
+                    "Commit": "9fa8cb90c384f521a053ad179155eee470207570",
+                    "Description": "设置短消息按回车自动发送"
+                },
+                {
+                    "ShortCommit": "8e688b2",
+                    "Commit": "8e688b231d4f8c6272345ccc0abda99c43c355b1",
+                    "Description": "更新ACM排名颜色"
+                },
+                {
+                    "ShortCommit": "fc55ea4",
+                    "Commit": "fc55ea4246025281e5dcc1f65613219069e48d84",
+                    "Description": "将GM_openInTab更新为系统函数"
+                },
+                {
+                    "ShortCommit": "9c4d7ec",
+                    "Commit": "9c4d7ec8e25ef930b9ea717800a1cb7960af71bf",
+                    "Description": "为服务器连接过多增加解释"
+                }
+            ]
         }
     }
 }
