@@ -1744,12 +1744,12 @@ else {
                                         }
                                         else if (ProblemData.SolveTime != 0) {
                                             Problem.innerText = SecondsToString(ProblemData.SolveTime) + "(" + ProblemData.Attempts.length + ")";
-                                            let Color = Math.min(1 / ProblemData.Attempts.length, 1);
+                                            let Color = Math.max(1 / 10 * (10 - ProblemData.Attempts.length), 0.2);
                                             Problem.style.backgroundColor = "rgba(0, 255, 0, " + Color + ")";
                                         }
                                         else {
                                             Problem.innerText = "(" + ProblemData.Attempts.length + ")";
-                                            let Color = Math.min(ProblemData.Attempts.length / 20, 1);
+                                            let Color = Math.min(ProblemData.Attempts.length / 10 + 0.2, 1);
                                             Problem.style.backgroundColor = "rgba(255, 0, 0, " + Color + ")";
                                         }
                                         if (UtilityEnabled("DarkMode")) {
