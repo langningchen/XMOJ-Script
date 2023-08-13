@@ -2752,9 +2752,15 @@ else {
                     });
                 };
                 RefreshMessageList(false);
+                let LastActiveTime = Date.now();
+                onmousemove = () => {
+                    LastActiveTime = Date.now();
+                };
                 setTimeout(() => {
                     setInterval(async () => {
-                        RefreshMessageList();
+                        if (Date.now() - LastActiveTime < 1000 * 60) {
+                            RefreshMessageList();
+                        }
                     }, 5000);
                 }, 5000);
             }
@@ -2825,9 +2831,15 @@ else {
                     });
                 };
                 RefreshMessage();
+                let LastActiveTime = Date.now();
+                onmousemove = () => {
+                    LastActiveTime = Date.now();
+                };
                 setTimeout(() => {
                     setInterval(async () => {
-                        RefreshMessage();
+                        if (Date.now() - LastActiveTime < 1000 * 60) {
+                            RefreshMessage();
+                        }
                     }, 5000);
                 }, 5000);
             }
@@ -3221,9 +3233,15 @@ else {
                         });
                     };
                     RefreshReply(false);
+                    let LastActiveTime = Date.now();
+                    onmousemove = () => {
+                        LastActiveTime = Date.now();
+                    };
                     setTimeout(() => {
                         setInterval(async () => {
-                            RefreshReply();
+                            if (Date.now() - LastActiveTime < 1000 * 60) {
+                                RefreshReply();
+                            }
                         }, 5000);
                     }, 5000);
                 }
