@@ -150,6 +150,10 @@ let RequestAPI = (Item, Action, Data, CallBack) => {
             let ResponseData;
             try {
                 ResponseData = JSON.parse(Response.responseText);
+                if (Response.Success == false && Response.ErrorMessage.indexOf("max_user_connections") != -1) {
+                    Response.ErrorMessage = "服务器连接数过多，请稍后再试";
+                    return;
+                }
             } catch (error) {
                 if (Response.responseText.indexOf("aes.js") != -1) {
                     let ScriptData = Response.responseText.substring(Response.responseText.indexOf("<script>") + 8, Response.responseText.lastIndexOf("</script>"));
