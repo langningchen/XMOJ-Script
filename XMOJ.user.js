@@ -151,7 +151,6 @@ let RequestAPI = (Item, Action, Data, CallBack) => {
             try {
                 ResponseData = JSON.parse(Response.responseText);
             } catch (error) {
-                debugger
                 if (Response.responseText.indexOf("aes.js") != -1) {
                     let ScriptData = Response.responseText.substring(Response.responseText.indexOf("<script>") + 8, Response.responseText.lastIndexOf("</script>"));
                     let ValueA = ScriptData.substring(ScriptData.indexOf("a=toNumbers(\"") + 13, ScriptData.indexOf("\"),b=toNumbers"));
@@ -516,15 +515,14 @@ else {
                 let LatestVersion = Object.keys(Response.UpdateHistory)[Object.keys(Response.UpdateHistory).length - 1];
                 if (CurrentVersion < LatestVersion) {
                     let UpdateDiv = document.createElement("div");
-                    UpdateDiv.innerHTML = `
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <div>
-                    XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                    <a href="https://langningchen.github.io/XMOJ-Script/`+ (UserScriptDebug ? "XMOJ.user.js" : "XMOJ.min.user.js") + `" target="_blank" class="alert-link">此处</a>
-                    更新
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>`;
+                    UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <div>
+                        XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
+                        <a href="https://langningchen.github.io/XMOJ-Script/`+ (UserScriptDebug ? "XMOJ.user.js" : "XMOJ.min.user.js") + `" target="_blank" class="alert-link">此处</a>
+                        更新
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>`;
                     document.querySelector("body > div").insertBefore(UpdateDiv, document.querySelector("body > div > div.mt-3"));
                 }
                 if (localStorage.getItem("UserScript-Update-LastVersion") != GM_info.script.version) {
@@ -600,14 +598,10 @@ else {
                 if (MentionList.length != 0) {
                     GM_notification({
                         title: "XMOJ",
-                        text: "有人在讨论中提及了你，点击此处查看",
+                        text: "@" + MentionList[0].UserID + " 在讨论 " + MentionList[0].Title + " 中提及了你，点击此处查看",
                         timeout: 10000,
                         onclick: () => {
-                            RequestAPI("BBS", "GetThreadIDByReplyID", {
-                                "ReplyID": MentionList[0].ReplyID
-                            }, (Response) => {
-                                GM_openInTab("http://www.xmoj.tech/discuss3/thread.php?tid=" + Response.Data.PostID + "&page=" + Response.Data.Page);
-                            });
+                            GM_openInTab("http://www.xmoj.tech/discuss3/thread.php?tid=" + MentionList[0].PostID + "&page=" + MentionList[0].Page);
                             RequestAPI("BBS", "ReadMention", {
                                 "MentionID": MentionList[0].MentionID
                             }, () => { });
@@ -616,6 +610,23 @@ else {
                 }
             }
         });
+        if (location.pathname != "/mail.php") {
+            RequestAPI("Mail", "GetUnreadList", {}, (Response) => {
+                if (Response.Success) {
+                    let UnreadList = Response.Data.UnreadList;
+                    if (UnreadList.length != 0) {
+                        GM_notification({
+                            title: "XMOJ",
+                            text: "@" + UnreadList[0].OtherUser + " 给你发了一封短消息，点击此处查看",
+                            timeout: 10000,
+                            onclick: () => {
+                                GM_openInTab("http://www.xmoj.tech/mail.php?other=" + UnreadList[0].OtherUser);
+                            }
+                        });
+                    }
+                }
+            });
+        }
 
         if (location.pathname == "/index.php" || location.pathname == "/") {
             if (new URL(location.href).searchParams.get("ByUserScript") != null) {
@@ -848,6 +859,9 @@ else {
                 }, 1000);
             }
             else {
+                let PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") +
+                    "-Problem-" + SearchParams.get("pid") + "-PID");
+
                 document.querySelector("body > div > div.mt-3 > center").lastChild.style.marginLeft = "10px";
                 Temp = document.querySelectorAll(".sampledata");
                 for (var i = 0; i < Temp.length; i++) {
@@ -884,12 +898,6 @@ else {
                     IOFileElement.remove();
                     let Temp = document.querySelector("body > div > div.mt-3 > center").childNodes[2].data.trim();
                     let IOFilename = Temp.substring(0, Temp.length - 3);
-                    let PID = 0;
-                    if (SearchParams.get("id") != null) {
-                        PID = SearchParams.get("id");
-                    } else if (SearchParams.get("cid") != null && SearchParams.get("pid") != null) {
-                        PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + SearchParams.get("pid") + "-PID");
-                    }
                     localStorage.setItem("UserScript-Problem-" + PID + "-IOFilename", IOFilename);
                 }
 
@@ -920,21 +928,40 @@ else {
                 }
 
                 let DiscussButton = document.createElement("button");
-                DiscussButton.className = "btn btn-outline-secondary";
-                DiscussButton.innerText = "讨论";
+                DiscussButton.className = "btn btn-outline-secondary position-relative";
+                DiscussButton.innerHTML = `讨论`;
                 DiscussButton.style.marginLeft = "10px";
                 DiscussButton.type = "button";
                 DiscussButton.onclick = () => {
                     if (SearchParams.get("cid") != null) {
-                        GM_openInTab("http://www.xmoj.tech/discuss3/discuss.php?pid=" +
-                            localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") +
-                                "-Problem-" + SearchParams.get("pid") + "-PID"), "_blank");
+                        GM_openInTab("http://www.xmoj.tech/discuss3/discuss.php?pid=" + PID);
                     }
                     else {
                         GM_openInTab("http://www.xmoj.tech/discuss3/discuss.php?pid=" + SearchParams.get("id"));
                     }
                 }
                 document.querySelector("body > div > div.mt-3 > center").appendChild(DiscussButton);
+                let UnreadBadge = document.createElement("span");
+                UnreadBadge.className = "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger";
+                UnreadBadge.style.display = "none";
+                DiscussButton.appendChild(UnreadBadge);
+
+                let RefreshCount = () => {
+                    RequestAPI("BBS", "GetPostCount", {
+                        "ProblemID": PID
+                    }, (Response) => {
+                        if (Response.Success) {
+                            if (Response.Data.DiscussCount != 0) {
+                                UnreadBadge.innerText = Response.Data.DiscussCount;
+                                UnreadBadge.style.display = "";
+                            }
+                        }
+                    });
+                };
+                RefreshCount();
+                onfocus = () => {
+                    RefreshCount();
+                };
             }
             Style.innerHTML += "code, kbd, pre, samp {";
             Style.innerHTML += "    font-family: monospace, Consolas, 'Courier New';";
@@ -980,7 +1007,7 @@ else {
                 document.querySelector("body > script:nth-child(5)").remove();
                 if (UtilityEnabled("NewBootstrap")) {
                     document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
-                <input class="form-control" type="text" size="4" name="user_id" value="` + document.getElementById("profile").innerText + `"style="display: none;">
+                <input class="form-control" type="text" size="4" name="user_id" value="${document.getElementById("profile").innerText}"style="display: none;">
             <div class="col-md-1">
                 <label for="problem_id" class="form-label">题目编号</label>
                 <input type="text" class="form-control" id="problem_id" name="problem_id" size="4">
@@ -1207,7 +1234,7 @@ else {
             <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
         </div>
         <div class="col-auto">
-            <input type="text" id="NameInput" class="form-control" value="` + document.getElementById("profile").innerText + `">
+            <input type="text" id="NameInput" class="form-control" value="${document.getElementById("profile").innerText}">
         </div>
         </div>
         <div class="row g-3 align-items-center mb-2">
@@ -1215,7 +1242,7 @@ else {
             <label for="DateInput" class="col-form-label">测试点获取的日期</label>
         </div>
         <div class="col-auto">
-            <input type="date" id="DateInput" class="form-control" value="` + new Date().toISOString().slice(0, 10) + `">
+            <input type="date" id="DateInput" class="form-control" value="${new Date().toISOString().slice(0, 10)}">
         </div>
         </div>
         <div class="row g-3 align-items-center mb-2">
@@ -1816,8 +1843,8 @@ else {
             document.querySelector("body > div > div.mt-3").innerHTML = `<center class="mb-3">` +
                 `<h3>提交代码</h3>` +
                 (SearchParams.get("id") != null ?
-                    `题目<span class="blue">` + SearchParams.get("id") + `</span>` :
-                    `比赛<span class="blue">` + SearchParams.get("cid") + `</span>&emsp;题目<span class="blue">` + String.fromCharCode(65 + parseInt(SearchParams.get("pid"))) + `</span>`) +
+                    `题目<span class="blue">${SearchParams.get("id")}</span>` :
+                    `比赛<span class="blue">${SearchParams.get("cid") + `</span>&emsp;题目<span class="blue">` + String.fromCharCode(65 + parseInt(SearchParams.get("pid")))}</span>`) +
                 `</center>
 <textarea id="CodeInput"></textarea>
 <center class="mt-3">
@@ -2540,7 +2567,7 @@ else {
             Temp = document.querySelector("#problemstatus > tbody").children;
             for (let i = 0; i < Temp.length; i++) {
                 if (Temp[i].children[5].children[0] != null) {
-                    Temp[i].children[1].innerHTML = `<a href="` + Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText + `</a>`;
+                    Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText}</a>`;
                 }
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
@@ -2553,11 +2580,11 @@ else {
             let PID = SearchParams.get("id");
             let Pagination = `<nav class="center"><ul class="pagination justify-content-center">`;
             if (CurrentPage != 1) {
-                Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=1" class="page-link">&laquo;</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1) + `</a></li>`;
+                Pagination += `<li class="page-item"><a href="problemstatus.php?id=${PID + `&page=1" class="page-link">&laquo;</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1)}</a></li>`;
             }
-            Pagination += `<li class="active page-item"><a href="problemstatus.php?id=` + PID + `&page=` + CurrentPage + `" class="page-link">` + CurrentPage + `</a></li>`;
+            Pagination += `<li class="active page-item"><a href="problemstatus.php?id=${PID + `&page=` + CurrentPage + `" class="page-link">` + CurrentPage}</a></li>`;
             if (document.querySelector("#problemstatus > tbody").children != null && document.querySelector("#problemstatus > tbody").children.length == 20) {
-                Pagination += `<li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">` + (CurrentPage + 1) + `</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1) + `" class="page-link">&raquo;</a></li>`;
+                Pagination += `<li class="page-item"><a href="problemstatus.php?id=${PID + `&page=` + (CurrentPage + 1) + `" class="page-link">` + (CurrentPage + 1) + `</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1)}" class="page-link">&raquo;</a></li>`;
             }
             Pagination += `</ul></nav>`;
             document.querySelector("body > div > div.mt-3 > center").innerHTML += Pagination;
@@ -2585,7 +2612,7 @@ else {
             let Temp = document.getElementsByClassName("prettyprint");
             for (let i = 0; i < Temp.length; i++) {
                 let Code = Temp[i].innerText;
-                Temp[i].outerHTML = `<textarea class="prettyprint">` + Code + `</textarea>`;
+                Temp[i].outerHTML = `<textarea class="prettyprint">${Code}</textarea>`;
             }
             for (let i = 0; i < Temp.length; i++) {
                 CodeMirror.fromTextArea(Temp[i], {
@@ -2642,7 +2669,7 @@ else {
                 }).then((Response) => {
                     Code = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
                 });
-            document.querySelector("body > div > div.mt-3").innerHTML = `<textarea>` + Code + `</textarea>`;
+            document.querySelector("body > div > div.mt-3").innerHTML = `<textarea>${Code}</textarea>`;
             CodeMirror.fromTextArea(document.querySelector("body > div > div.mt-3 > textarea"), {
                 lineNumbers: true,
                 mode: "text/x-c++src",
@@ -2703,7 +2730,7 @@ else {
                             let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
                             for (let j = 0; j < 4; j++) {
                                 let Cell = document.createElement("td"); Row.appendChild(Cell);
-                                Cell.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>`;
+                                Cell.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>`;
                             }
                         }
                     }
@@ -2713,10 +2740,10 @@ else {
                             ReceiveTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
-                                Row.innerHTML = `<td><a href="mail.php?other=` + Data[i].OtherUser + `">` + Data[i].OtherUser + `</a></td>
-                                <td>` + Data[i].UnreadCount + `</td>
-                                <td>` + Data[i].LastsMessage + `</td>
-                                <td>` + Data[i].SendTime + `</td>`;
+                                Row.innerHTML = `<td><a href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a></td>
+                                <td>${Data[i].UnreadCount}</td>
+                                <td>${Data[i].LastsMessage}</td>
+                                <td>${Data[i].SendTime}</td>`;
                             }
                         }
                         else {
@@ -2773,14 +2800,25 @@ else {
                     <thead>
                         <tr>
                             <td class="col-2">发送者</td>
-                            <td class="col-8">内容</td>
+                            <td class="col-6">内容</td>
                             <td class="col-2">发送时间</td>
+                            <td class="col-2">阅读状态</td>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
                 `;
-                let RefreshMessage = () => {
+                let RefreshMessage = (Silent = true) => {
+                    if (!Silent) {
+                        MessageTable.children[1].innerHTML = "";
+                        for (let i = 0; i < 10; i++) {
+                            let Row = document.createElement("tr"); MessageTable.children[1].appendChild(Row);
+                            for (let j = 0; j < 3; j++) {
+                                let Cell = document.createElement("td"); Row.appendChild(Cell);
+                                Cell.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>`;
+                            }
+                        }
+                    }
                     RequestAPI("Mail", "GetMail", {
                         "OtherUser": SearchParams.get("other")
                     }, (ResponseData) => {
@@ -2789,9 +2827,13 @@ else {
                             MessageTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); MessageTable.children[1].appendChild(Row);
-                                Row.innerHTML = `<td>` + Data[i].FromUser + `</td>
-                                <td>` + Data[i].Content + `</td>
-                                <td>` + Data[i].SendTime + `</td>`;
+                                if (!Data[i].IsRead) {
+                                    Row.className = "table-info";
+                                }
+                                Row.innerHTML = `<td>${Data[i].FromUser}</td>
+                                <td>${Data[i].Content}</td>
+                                <td>${Data[i].SendTime}</td>
+                                <td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
                             }
                         }
                         else {
@@ -2822,7 +2864,7 @@ else {
                         }
                     });
                 };
-                RefreshMessage();
+                RefreshMessage(false);
                 onfocus = () => {
                     RefreshMessage();
                 };
@@ -2832,25 +2874,28 @@ else {
             if (location.pathname == "/discuss3/discuss.php") {
                 let ProblemID = SearchParams.get("pid");
                 let Page = Number(SearchParams.get("page")) || 1;
-                document.querySelector("body > div > div").innerHTML = `<h3>讨论列表` + (ProblemID == null ? "" : ` - 题目` + ProblemID) + `</h3>
+                document.querySelector("body > div > div").innerHTML = `<h3>讨论列表${(ProblemID == null ? "" : ` - 题目` + ProblemID)}</h3>
                 <button id="NewPost" type="button" class="btn btn-primary">发布新讨论</button>
                 <nav>
                     <ul class="pagination justify-content-center" id="DiscussPagination">
                         <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
-                        <li class="page-item"><a class="page-link" href="#">` + (Page - 1) + `</a></li>
-                        <li class="page-item"><a class="page-link active" href="#">` + Page + `</a></li>
-                        <li class="page-item"><a class="page-link" href="#">` + (Page + 1) + `</a></li>
+                        <li class="page-item"><a class="page-link" href="#">${Page - 1}</a></li>
+                        <li class="page-item"><a class="page-link active" href="#">${Page}</a></li>
+                        <li class="page-item"><a class="page-link" href="#">${Page + 1}</a></li>
                         <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
                     </ul>
                 </nav>
+                <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
                 <table id="PostList" class="table table-hover">
                     <thead>
                         <tr>
-                            <th class="col-2">编号</th>
-                            <th class="col-4">标题</th>
+                            <th class="col-1">编号</th>
+                            <th class="col-2">标题</th>
                             <th class="col-2">作者</th>
-                            <th class="col-2">题目编号</th>
+                            <th class="col-1">题目编号</th>
                             <th class="col-2">发布时间</th>
+                            <th class="col-1">回复数</th>
+                            <th class="col-3">最后回复</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -2858,9 +2903,9 @@ else {
                 </table>`;
                 for (let i = 0; i < 10; i++) {
                     let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
-                    for (let j = 0; j < 5; j++) {
+                    for (let j = 0; j < 7; j++) {
                         let Cell = document.createElement("td"); Row.appendChild(Cell);
-                        Cell.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>`;
+                        Cell.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>`;
                     }
                 }
                 NewPost.onclick = () => {
@@ -2892,7 +2937,7 @@ else {
                         let Posts = ResponseData.Data.Posts;
                         PostList.children[1].innerHTML = "";
                         if (Posts.length == 0) {
-                            PostList.children[1].innerHTML = `<tr><td colspan="5">暂无讨论</td></tr>`;
+                            PostList.children[1].innerHTML = `<tr><td colspan="7">暂无数据</td></tr>`;
                         }
                         for (let i = 0; i < Posts.length; i++) {
                             PostList.children[1].innerHTML += `<tr>
@@ -2901,11 +2946,14 @@ else {
                                 <td><a href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
                                 (Posts[i].ProblemID == null ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
                                 `<td>${Posts[i].PostTime}</td>
+                                <td>${Posts[i].ReplyCount}</td>
+                                <td><a href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
                             </tr>`;
                         }
                     }
                     else {
-                        PostList.innerHTML = `<tr><td colspan="3">错误：` + ResponseData.ErrorMessage + `</td></tr>`;
+                        ErrorElement.innerText = ResponseData.ErrorMessage;
+                        ErrorElement.style.display = "block";
                     }
                 });
             } else if (location.pathname == "/discuss3/newpost.php") {
@@ -2980,16 +3028,16 @@ else {
                             </button>
                         </span>
                     </div>
+                    <div id="PostReplies"></div>
                     <nav>
                         <ul class="pagination justify-content-center" id="DiscussPagination">
                             <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
-                            <li class="page-item"><a class="page-link" href="#">` + (Page - 1) + `</a></li>
-                            <li class="page-item"><a class="page-link active" href="#">` + Page + `</a></li>
-                            <li class="page-item"><a class="page-link" href="#">` + (Page + 1) + `</a></li>
+                            <li class="page-item"><a class="page-link" href="#">${(Page - 1)}</a></li>
+                            <li class="page-item"><a class="page-link active" href="#">${Page}</a></li>
+                            <li class="page-item"><a class="page-link" href="#">${(Page + 1)}</a></li>
                             <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
                         </ul>
                     </nav>
-                    <div id="PostReplies"></div>
                     <div class="form-group mb-3">
                         <label for="ContentElement" class="mb-1">回复</label>
                         <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
@@ -3006,21 +3054,21 @@ else {
                     };
                     let RefreshReply = (Silent = true) => {
                         if (!Silent) {
-                            PostTitle.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
-                            PostAuthor.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
-                            PostTime.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
+                            PostTitle.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
+                            PostAuthor.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
+                            PostTime.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
                             PostReplies.innerHTML = "";
                             for (let i = 0; i < 10; i++) {
                                 PostReplies.innerHTML += `<div class="card mb-3">
                                     <div class="card-body">
                                         <div class="row mb-3">
-                                            <span class="col-6"><span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span></span>
-                                            <span class="col-6"><span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span></span>
+                                            <span class="col-6"><span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span></span>
+                                            <span class="col-6"><span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span></span>
                                         </div>
                                         <hr>
-                                        <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
-                                        <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
-                                        <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
+                                        <span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>
+                                        <span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>
+                                        <span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>
                                     </div>
                                 </div>`;
                             }
@@ -3079,10 +3127,10 @@ else {
                                     CardBodyRowSpan3Element.className = "col-4";
                                     let CardBodyRowSpan3Button1Element = document.createElement("button");
                                     CardBodyRowSpan3Button1Element.type = "button";
-                                    CardBodyRowSpan3Button1Element.className = "btn btn-sm btn-warning";
-                                    CardBodyRowSpan3Button1Element.innerText = "引用";
+                                    CardBodyRowSpan3Button1Element.className = "btn btn-sm btn-info";
+                                    CardBodyRowSpan3Button1Element.innerText = "回复";
                                     CardBodyRowSpan3Button1Element.onclick = () => {
-                                        ContentElement.value += `@` + Replies[i].UserID + ` `;
+                                        ContentElement.value += `@${Replies[i].UserID} `;
                                         ContentElement.focus();
                                     }
                                     CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button1Element);

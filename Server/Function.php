@@ -8,7 +8,7 @@ function CreateSuccessJSON(object $Data): void
 {
     $EncodedData = json_encode($Data);
     if ($EncodedData == false) {
-        CreateErrorJSON("无法编码数据: " . json_last_error_msg());
+        CreateErrorJSON("无法编码数据：" . json_last_error_msg());
     }
     die("{\"Data\": $EncodedData, \"Success\": true}");
 }
@@ -17,13 +17,13 @@ function ErrorHandler(int $ErrorLevel, string $ErrorMessage, string $ErrorFile, 
     if ($ErrorLevel == E_NOTICE) {
         return;
     }
-    CreateErrorJSON("服务器错误: " . $ErrorMessage);
+    CreateErrorJSON("服务器错误：" . $ErrorMessage);
 }
 set_error_handler("ErrorHandler");
 header("Content-Type: application/json; charset=utf-8");
 $MYSQLConnection = mysqli_connect($DatabaseHostname, $DatabaseUsername, $DatabasePassword, $DatabaseName);
 if (mysqli_connect_errno()) {
-    CreateErrorJSON("无法连接到数据库服务器: " . mysqli_connect_error());
+    CreateErrorJSON("无法连接到数据库服务器：" . mysqli_connect_error());
 }
 
 $PostAction = $_POST["Action"];
@@ -58,6 +58,15 @@ function VerifySession(): bool
         return false;
     }
     return true;
+}
+function IfUserExist($UserName): bool
+{
+    $Curl = curl_init();
+    curl_setopt($Curl, CURLOPT_URL, "http://www.xmoj.tech/userinfo.php?user=" . $UserName);
+    curl_setopt($Curl, CURLOPT_RETURNTRANSFER, true);
+    $CurlResult = curl_exec($Curl);
+    curl_close($Curl);
+    return (strpos($CurlResult, "No such User!") === false);
 }
 function SendEmail($EmailContent): string
 {
@@ -94,7 +103,52 @@ function SendEmail($EmailContent): string
     fclose($File);
 
     if ($CurlResult == false) {
-        return "无法发送邮件: " . curl_error($Curl);
+        return "无法发送邮件：" . curl_error($Curl);
     }
     return "";
+}
+function GetTableSize(string $TableName, array $Where = null): int
+{
+    global $MYSQLConnection;
+    $MYSQLQuery = "SELECT COUNT(*) FROM `$TableName`";
+    if ($Where != null) {
+        $MYSQLQuery .= " WHERE ";
+        $First = true;
+        foreach ($Where as $Key => $Value) {
+            if ($First) {
+                $First = false;
+            } else {
+                $MYSQLQuery .= " AND ";
+            }
+            $MYSQLQuery .= "`$Key`=?";
+        }
+    }
+    $MYSQLQuery .= ";";
+    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, $MYSQLQuery);
+    if ($MYSQLPrepare == false) {
+        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+    }
+    if ($Where != null) {
+        $MYSQLBind = array();
+        $MYSQLBind[] = "";
+        foreach ($Where as $Key => $Value) {
+            $MYSQLBind[0] .= "s";
+            $MYSQLBind[] = &$Where[$Key];
+        }
+        if (!call_user_func_array("mysqli_stmt_bind_param", array_merge(array($MYSQLPrepare), $MYSQLBind))) {
+            CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+        }
+    }
+    if (!mysqli_stmt_execute($MYSQLPrepare)) {
+        CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+    }
+    $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
+    if ($MYSQLResult == false) {
+        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+    }
+    $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
+    if ($MYSQLRow == false) {
+        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+    }
+    return $MYSQLRow["COUNT(*)"];
 }
