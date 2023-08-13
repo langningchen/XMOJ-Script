@@ -584,6 +584,26 @@
                     "Description": "更改弹出更新日志为只显示最近一次"
                 }
             ]
+        },
+        "0.1.43": {
+            "UpdateDate": 1691895436904,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "af9afda",
+                    "Commit": "af9afda846367e02d6738ef0ec7ef5883c4c608b",
+                    "Description": "更新为聚焦时自动刷新"
+                },
+                {
+                    "ShortCommit": "896abcd",
+                    "Commit": "896abcda0a63f8903cd30164480434f651151ced",
+                    "Description": "增加1分钟无操作取消自动刷新以减少服务器流量"
+                },
+                {
+                    "ShortCommit": "bc39ce0",
+                    "Commit": "bc39ce0132e38f1ca520059ced6f645387a907f5",
+                    "Description": "短消息功能试上线，可能有BUG"
+                }
+            ]
         }
     }
 }
