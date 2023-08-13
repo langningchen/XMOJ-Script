@@ -19,7 +19,6 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_notification
-// @grant        GM_openInTab
 // @grant        GM_setClipboard
 // @connect      xmoj-bbs.infinityfreeapp.com
 // ==/UserScript==
@@ -605,7 +604,7 @@ else {
                         text: "@" + MentionList[0].UserID + " 在讨论 " + MentionList[0].Title + " 中提及了你，点击此处查看",
                         timeout: 10000,
                         onclick: () => {
-                            GM_openInTab("http://www.xmoj.tech/discuss3/thread.php?tid=" + MentionList[0].PostID + "&page=" + MentionList[0].Page);
+                            open("http://www.xmoj.tech/discuss3/thread.php?tid=" + MentionList[0].PostID + "&page=" + MentionList[0].Page, "_blank");
                             RequestAPI("BBS", "ReadMention", {
                                 "MentionID": MentionList[0].MentionID
                             }, () => { });
@@ -624,7 +623,7 @@ else {
                             text: "@" + UnreadList[0].OtherUser + " 给你发了一封短消息，点击此处查看",
                             timeout: 10000,
                             onclick: () => {
-                                GM_openInTab("http://www.xmoj.tech/mail.php?other=" + UnreadList[0].OtherUser);
+                                open("http://www.xmoj.tech/mail.php?other=" + UnreadList[0].OtherUser, "_blank");
                             }
                         });
                     }
@@ -938,10 +937,10 @@ else {
                 DiscussButton.type = "button";
                 DiscussButton.onclick = () => {
                     if (SearchParams.get("cid") != null) {
-                        GM_openInTab("http://www.xmoj.tech/discuss3/discuss.php?pid=" + PID);
+                        open("http://www.xmoj.tech/discuss3/discuss.php?pid=" + PID, "_blank");
                     }
                     else {
-                        GM_openInTab("http://www.xmoj.tech/discuss3/discuss.php?pid=" + SearchParams.get("id"));
+                        open("http://www.xmoj.tech/discuss3/discuss.php?pid=" + SearchParams.get("id"), "_blank");
                     }
                 }
                 document.querySelector("body > div > div.mt-3 > center").appendChild(DiscussButton);
@@ -1509,7 +1508,7 @@ else {
                         OpenAllButton.onclick = () => {
                             let Rows = document.querySelector("#problemset > tbody").rows;
                             for (let i = 0; i < Rows.length; i++) {
-                                GM_openInTab(Rows[i].children[2].children[0].href);
+                                open(Rows[i].children[2].children[0].href, "_blank");
                             }
                         }
                         let OpenUnsolvedButton = document.createElement("button");
@@ -1520,7 +1519,7 @@ else {
                             let Rows = document.querySelector("#problemset > tbody").rows;
                             for (let i = 0; i < Rows.length; i++) {
                                 if (!Rows[i].children[0].children[0].classList.contains("status_y")) {
-                                    GM_openInTab(Rows[i].children[2].children[0].href);
+                                    open(Rows[i].children[2].children[0].href, "_blank");
                                 }
                             }
                         }
