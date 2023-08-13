@@ -454,7 +454,7 @@ else {
                     (Hours < 10 ? "0" : "") + Hours + ":" +
                     (Minutes < 10 ? "0" : "") + Minutes + ":" +
                     (Seconds < 10 ? "0" : "") + Seconds;
-            } catch (e) { }
+            } catch (Error) { }
 
             if (UtilityEnabled("ResetType")) {
                 if (document.querySelector("#profile") != undefined &&
@@ -2850,6 +2850,11 @@ else {
                 };
                 Content.oninput = () => {
                     Content.classList.remove("is-invalid");
+                };
+                Content.onkeydown = (Event) => {
+                    if (Event.keyCode == 13) {
+                        Send.click();
+                    }
                 };
                 Send.onclick = () => {
                     if (Content.value == "") {
