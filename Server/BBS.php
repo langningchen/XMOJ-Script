@@ -20,8 +20,12 @@ function NewReply(int $PostID, string $Content): int
     global $PostUserID;
     $MentionPeople = array();
     $Content = preg_replace_callback("/@([a-zA-Z0-9]+)/", function ($Matches) use (&$MentionPeople) {
-        $MentionPeople[] = $Matches[1];
-        return " <a class=\"link-info\" href=\"http://http://www.xmoj.tech/userinfo.php?user=" . $Matches[1] . "\">@" . $Matches[1] . "</a> ";
+        if (IfUserExist($Matches[1])) {
+            $MentionPeople[] = $Matches[1];
+            return " <a class=\"link-info\" href=\"http://http://www.xmoj.tech/userinfo.php?user=" . $Matches[1] . "\">@" . $Matches[1] . "</a> ";
+        } else {
+            return "@" . $Matches[1];
+        }
     }, $Content);
 
     global $MYSQLConnection;
