@@ -433,6 +433,10 @@ if ($PostAction == "NewPost") {
     if (!is_string($PostContent) || !is_numeric($PostPostID)) {
         CreateErrorJSON("传入的参数不正确");
     }
+    $PostContent = trim($PostContent);
+    if ($PostContent == "") {
+        CreateErrorJSON("内容不能为空");
+    }
     $PostContent = htmlspecialchars($PostContent);
     if (strlen($PostContent) > 1000) {
         CreateErrorJSON("内容过长");
