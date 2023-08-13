@@ -604,6 +604,26 @@
                     "Description": "短消息功能试上线，可能有BUG"
                 }
             ]
+        },
+        "0.1.44": {
+            "UpdateDate": 1691912695303,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "f109b4e",
+                    "Commit": "f109b4eabecd7cf56b75eeb196499f9977cdc579",
+                    "Description": "更新了许多功能，日志懒得写了"
+                },
+                {
+                    "ShortCommit": "2289968",
+                    "Commit": "228996816c474d063dbc3fefa30e7b5d9a6b2968",
+                    "Description": "解决暂无讨论线较短"
+                },
+                {
+                    "ShortCommit": "96bdeae",
+                    "Commit": "96bdeae924c9417639fb7a04f2fe044952cf33c2",
+                    "Description": "[Mail设定漏洞 #24] 设置为绝对路径"
+                }
+            ]
         }
     }
 }
