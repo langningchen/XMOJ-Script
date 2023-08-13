@@ -6,13 +6,13 @@ function GetMailList(): object
     global $PostUserID;
     $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT `message_from`, `content`, `send_time` FROM `short_message` WHERE `message_to`=?;");
     if ($MYSQLPrepare == false) {
-        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
     }
     if (!mysqli_stmt_bind_param($MYSQLPrepare, "s", $PostUserID)) {
-        CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
     if (!mysqli_stmt_execute($MYSQLPrepare)) {
-        CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
     $Result = mysqli_stmt_get_result($MYSQLPrepare);
     $Return = array();
@@ -26,13 +26,13 @@ function GetMailList(): object
 
     $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT `message_to`, `content`, `send_time` FROM `short_message` WHERE `message_from`=?;");
     if ($MYSQLPrepare == false) {
-        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
     }
     if (!mysqli_stmt_bind_param($MYSQLPrepare, "s", $PostUserID)) {
-        CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
     if (!mysqli_stmt_execute($MYSQLPrepare)) {
-        CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
     $Result = mysqli_stmt_get_result($MYSQLPrepare);
     while ($Row = mysqli_fetch_assoc($Result)) {
@@ -62,13 +62,13 @@ function GetMailList(): object
     for ($i = 0; $i < count($Return); $i++) {
         $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT COUNT(*) FROM `short_message` WHERE `message_from`=? AND `message_to`=? AND `is_read`=0;");
         if ($MYSQLPrepare == false) {
-            CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+            CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
         }
         if (!mysqli_stmt_bind_param($MYSQLPrepare, "ss", $Return[$i]->OtherUser, $PostUserID)) {
-            CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+            CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
         }
         if (!mysqli_stmt_execute($MYSQLPrepare)) {
-            CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+            CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
         }
         $Result = mysqli_stmt_get_result($MYSQLPrepare);
         $Row = mysqli_fetch_assoc($Result);
@@ -81,17 +81,20 @@ function GetMailList(): object
 }
 function SendMail(string $ToUser, string $Content): string
 {
+    if (!IfUserExist($ToUser)) {
+        CreateErrorJSON("没有此用户");
+    }
     global $MYSQLConnection;
     global $PostUserID;
     $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "INSERT INTO `short_message` (`message_from`, `message_to`, `content`) VALUES (?, ?, ?);");
     if ($MYSQLPrepare == false) {
-        CreateErrorJSON("无法写入数据：" . mysqli_error($MYSQLConnection));
+        CreateErrorJSON("无法写入数据: " . mysqli_error($MYSQLConnection));
     }
     if (!mysqli_stmt_bind_param($MYSQLPrepare, "sss", $PostUserID, $ToUser, $Content)) {
-        CreateErrorJSON("无法写入数据：" . mysqli_stmt_error($MYSQLPrepare));
+        CreateErrorJSON("无法写入数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
     if (!mysqli_stmt_execute($MYSQLPrepare)) {
-        CreateErrorJSON("无法写入数据：" . mysqli_stmt_error($MYSQLPrepare));
+        CreateErrorJSON("无法写入数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
     return mysqli_insert_id($MYSQLConnection);
 }
@@ -99,40 +102,70 @@ function GetMail(string $OtherUser): object
 {
     global $MYSQLConnection;
     global $PostUserID;
-    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT `message_from`, `message_to`, `content`, `send_time` FROM `short_message` WHERE (`message_from`=? AND `message_to`=?) OR (`message_from`=? AND `message_to`=?) ORDER BY `send_time` ASC;");
+    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT * FROM `short_message` WHERE (`message_from`=? AND `message_to`=?) OR (`message_from`=? AND `message_to`=?) ORDER BY `send_time` ASC;");
     if ($MYSQLPrepare == false) {
-        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
     }
     if (!mysqli_stmt_bind_param($MYSQLPrepare, "ssss", $PostUserID, $OtherUser, $OtherUser, $PostUserID)) {
-        CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
     if (!mysqli_stmt_execute($MYSQLPrepare)) {
-        CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
     $Result = mysqli_stmt_get_result($MYSQLPrepare);
     $Return = array();
     while ($Row = mysqli_fetch_assoc($Result)) {
         $Return[] = (object)array(
+            "MessageID" => $Row["message_id"],
             "FromUser" => $Row["message_from"],
             "ToUser" => $Row["message_to"],
             "Content" => $Row["content"],
-            "SendTime" => $Row["send_time"]
+            "SendTime" => $Row["send_time"],
+            "IsRead" => $Row["is_read"]
         );
     }
 
     $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "UPDATE `short_message` SET `is_read`=1 WHERE `message_from`=? AND `message_to`=?;");
     if ($MYSQLPrepare == false) {
-        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
     }
     if (!mysqli_stmt_bind_param($MYSQLPrepare, "ss", $OtherUser, $PostUserID)) {
-        CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
     if (!mysqli_stmt_execute($MYSQLPrepare)) {
-        CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
 
     return (object)array(
         "Mail" => $Return
+    );
+}
+function GetUnreadList(): object
+{
+    global $MYSQLConnection;
+    global $PostUserID;
+    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT `message_from` FROM `short_message` WHERE `message_to`=? AND `is_read`=0;");
+    if ($MYSQLPrepare == false) {
+        CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
+    }
+    if (!mysqli_stmt_bind_param($MYSQLPrepare, "s", $PostUserID)) {
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+    if (!mysqli_stmt_execute($MYSQLPrepare)) {
+        CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
+    }
+    $Result = mysqli_stmt_get_result($MYSQLPrepare);
+    $Return = array();
+    while ($Row = mysqli_fetch_assoc($Result)) {
+        $Return[] = (object)array(
+            "OtherUser" => $Row["message_from"]
+        );
+    }
+
+    $Return = array_unique($Return, SORT_REGULAR);
+
+    return (object)array(
+        "UnreadList" => $Return
     );
 }
 if ($PostAction == "GetMailList") {
@@ -157,6 +190,8 @@ if ($PostAction == "GetMailList") {
         CreateErrorJSON("传入的参数不正确");
     }
     CreateSuccessJSON(GetMail($PostOtherUser));
+} else if ($PostAction == "GetUnreadList") {
+    CreateSuccessJSON(GetUnreadList());
 } else {
     CreateErrorJSON("传入的参数不正确");
 }

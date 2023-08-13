@@ -2794,7 +2794,10 @@ else {
                         <label for="Content">内容</label>
                     </div>
                 </div>
-                <button id="Send" type="submit" class="btn btn-primary mb-1">发送</button>
+                <button id="Send" type="submit" class="btn btn-primary mb-1">
+                    发送
+                    <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                </button>
                 <div id="ErrorElement" class="alert alert-danger mb-3" role="alert" style="display: none;"></div>
                 <table class="table mb-3" id="MessageTable">
                     <thead>
@@ -2850,12 +2853,17 @@ else {
                         Content.classList.add("is-invalid");
                         return;
                     }
+                    Send.disabled = true;
+                    Send.children[0].style.display = "";
                     let ContentData = Content.value;
                     RequestAPI("Mail", "SendMail", {
                         "ToUser": SearchParams.get("other"),
                         "Content": ContentData
                     }, (ResponseData) => {
                         if (ResponseData.Success) {
+                            Content.value = "";
+                            Send.disabled = false;
+                            Send.children[0].style.display = "none";
                             RefreshMessage();
                         }
                         else {

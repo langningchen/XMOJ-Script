@@ -102,7 +102,7 @@ function GetMail(string $OtherUser): object
 {
     global $MYSQLConnection;
     global $PostUserID;
-    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT * FROM `short_message` WHERE (`message_from`=? AND `message_to`=?) OR (`message_from`=? AND `message_to`=?) ORDER BY `send_time` ASC;");
+    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT * FROM `short_message` WHERE (`message_from`=? AND `message_to`=?) OR (`message_from`=? AND `message_to`=?) ORDER BY `send_time` DESC;");
     if ($MYSQLPrepare == false) {
         CreateErrorJSON("无法读取数据: " . mysqli_error($MYSQLConnection));
     }
