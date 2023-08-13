@@ -1,49 +1,5 @@
 <?php
-function CreateErrorJSON(string $ErrorMessage): void
-{
-    die("{\"ErrorMessage\": \"" . $ErrorMessage . "\", \"Success\": false}");
-}
-function CreateSuccessJSON(object $Data): void
-{
-    $EncodedData = json_encode($Data);
-    if ($EncodedData == false) {
-        CreateErrorJSON("无法编码数据: " . json_last_error_msg());
-    }
-    die("{\"Data\": $EncodedData, \"Success\": true}");
-}
-function ErrorHandler(int $ErrorLevel, string $ErrorMessage, string $ErrorFile, int $ErrorLine): void
-{
-    if ($ErrorLevel == E_NOTICE) {
-        return;
-    }
-    CreateErrorJSON("服务器错误: " . $ErrorMessage);
-}
-set_error_handler("ErrorHandler");
-header("Content-Type: application/json; charset=utf-8");
-
-require_once("Database.php");
-$MYSQLConnection = mysqli_connect($DatabaseHostname, $DatabaseUsername, $DatabasePassword, $DatabaseName);
-if (mysqli_connect_errno()) {
-    CreateErrorJSON("无法连接到数据库服务器: " . mysqli_connect_error());
-}
-function VerifySession(string $Session, string $UserID): bool
-{
-    $Curl = curl_init();
-    curl_setopt($Curl, CURLOPT_URL, "http://www.xmoj.tech/template/bs3/profile.php");
-    curl_setopt($Curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($Curl, CURLOPT_COOKIE, "PHPSESSID=" . $Session);
-    $CurlResult = curl_exec($Curl);
-    curl_close($Curl);
-    if (strpos($CurlResult, "登录") !== false) {
-        return false;
-    }
-    $SessionUserID = substr($CurlResult, strpos($CurlResult, "user_id=") + strlen("user_id="));
-    $SessionUserID = substr($SessionUserID, 0, strpos($SessionUserID, "'"));
-    if ($SessionUserID !== $UserID) {
-        return false;
-    }
-    return true;
-}
+require_once("Function.php");
 function NewPost(string $Title, string $UserID, $ProblemID): int
 {
     global $MYSQLConnection;
@@ -427,18 +383,6 @@ function GetThreadIDByReplyID(int $ReplyID): object
         "Page" => $Page
     );
 }
-$PostAction = $_POST["Action"];
-if (!is_string($PostAction)) {
-    CreateErrorJSON("传入的参数不正确");
-}
-$PostUserID = $_POST["UserID"];
-$PostSession = $_POST["Session"];
-if (!is_string($PostUserID) || !is_string($PostSession)) {
-    CreateErrorJSON("传入的参数不正确");
-}
-if (!VerifySession($PostSession, $PostUserID)) {
-    CreateErrorJSON("会话验证失败");
-}
 if ($PostAction == "NewPost") {
     $PostTitle = $_POST["Title"];
     $PostContent = $_POST["Content"];
@@ -462,11 +406,8 @@ if ($PostAction == "NewPost") {
 } else if ($PostAction == "NewReply") {
     $PostContent = $_POST["Content"];
     $PostPostID = $_POST["PostID"];
-    if (!is_string($PostContent) || !is_string($PostUserID) || !is_string($PostSession) || !is_numeric($PostPostID)) {
+    if (!is_string($PostContent) || !is_string($PostUserID) || !is_numeric($PostPostID)) {
         CreateErrorJSON("传入的参数不正确");
-    }
-    if (!VerifySession($PostSession, $PostUserID)) {
-        CreateErrorJSON("会话验证失败");
     }
     $PostContent = htmlspecialchars($PostContent);
     $ReplyID = NewReply($PostPostID, $PostUserID, $PostContent);

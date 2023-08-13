@@ -112,7 +112,7 @@ let UtilityEnabled = (Name) => {
     }
     return localStorage.getItem("UserScript-Setting-" + Name) == "true";
 };
-let RequestDiscussAPI = (Action, Data, CallBack) => {
+let RequestAPI = (Item, Action, Data, CallBack) => {
     let UserID = profile.innerText;
     let Session = "";
     let Temp = document.cookie.split(";");
@@ -121,9 +121,9 @@ let RequestDiscussAPI = (Action, Data, CallBack) => {
             Session = Temp[i].split("=")[1];
         }
     }
-    Data["Action"] = Action;
-    Data["UserID"] = UserID;
-    Data["Session"] = Session;
+    Data.Action = Action;
+    Data.UserID = UserID;
+    Data.Session = Session;
     let DataString = "";
     for (let i in Data) {
         if (Data[i] != null) {
@@ -133,7 +133,7 @@ let RequestDiscussAPI = (Action, Data, CallBack) => {
     DataString = DataString.substring(0, DataString.length - 1);
     GM_xmlhttpRequest({
         method: "POST",
-        url: (UserScriptDebug ? "http://xmoj-bbs.infinityfreeapp.com/BBS-Debug.php" : "http://xmoj-bbs.infinityfreeapp.com/BBS.php"),
+        url: "http://xmoj-bbs.infinityfreeapp.com/" + Item + (UserScriptDebug ? "-Debug" : "") + ".php",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
@@ -151,6 +151,7 @@ let RequestDiscussAPI = (Action, Data, CallBack) => {
             try {
                 ResponseData = JSON.parse(Response.responseText);
             } catch (error) {
+                debugger
                 if (Response.responseText.indexOf("aes.js") != -1) {
                     let ScriptData = Response.responseText.substring(Response.responseText.indexOf("<script>") + 8, Response.responseText.lastIndexOf("</script>"));
                     let ValueA = ScriptData.substring(ScriptData.indexOf("a=toNumbers(\"") + 13, ScriptData.indexOf("\"),b=toNumbers"));
@@ -174,13 +175,13 @@ let RequestDiscussAPI = (Action, Data, CallBack) => {
                     }
                     let Cookie = toHex(slowAES.decrypt(toNumbers(ValueC), 2, toNumbers(ValueA), toNumbers(ValueB)));
                     localStorage.setItem("UserScript-InfinityFree-Cookie", Cookie);
-                    RequestDiscussAPI(Action, Data, CallBack);
+                    RequestAPI("BBS", Action, Data, CallBack);
                     return;
                 }
                 if (Response.responseText.indexOf("parking") != -1) {
                     CallBack({
                         "Success": false,
-                        "ErrorMessage": "在访问讨论的时候请不要打开VPN"
+                        "ErrorMessage": "在访问XMOJ的时候请不要打开VPN"
                     });
                     return;
                 }
@@ -475,6 +476,10 @@ else {
                         }
                         Temp[i].classList.add("dropdown-item");
                     }
+                    let ShortMessageButton = document.createElement("li");
+                    ShortMessageButton.className = "dropdown-item";
+                    ShortMessageButton.innerHTML = `<a href="mail.php">短消息</a>`;
+                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").appendChild(ShortMessageButton);
                     let SettingsButton = document.createElement("li");
                     SettingsButton.className = "dropdown-item";
                     SettingsButton.innerHTML = `<a href="index.php?ByUserScript=1">插件设置</a>`;
@@ -508,7 +513,7 @@ else {
             })
             .then((Response) => {
                 let CurrentVersion = GM_info.script.version;
-                let LatestVersion = Object.keys(Response["UpdateHistory"])[Object.keys(Response["UpdateHistory"]).length - 1];
+                let LatestVersion = Object.keys(Response.UpdateHistory)[Object.keys(Response.UpdateHistory).length - 1];
                 if (CurrentVersion < LatestVersion) {
                     let UpdateDiv = document.createElement("div");
                     UpdateDiv.innerHTML = `
@@ -550,8 +555,8 @@ else {
                     UpdateButton.className = "btn btn-secondary";
                     UpdateButton.setAttribute("data-bs-dismiss", "modal");
                     UpdateButton.innerText = "关闭";
-                    let Version = Object.keys(Response["UpdateHistory"])[Object.keys(Response["UpdateHistory"]).length - 1]
-                    let Data = Response["UpdateHistory"][Version];
+                    let Version = Object.keys(Response.UpdateHistory)[Object.keys(Response.UpdateHistory).length - 1]
+                    let Data = Response.UpdateHistory[Version];
                     let UpdateDataCard = document.createElement("div"); UpdateBody.appendChild(UpdateDataCard);
                     UpdateDataCard.className = "card mb-3";
                     let UpdateDataCardBody = document.createElement("div"); UpdateDataCard.appendChild(UpdateDataCardBody);
@@ -561,18 +566,18 @@ else {
                     UpdateDataCardTitle.innerText = Version;
                     let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
                     UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
-                    UpdateDataCardSubtitle.innerText = new Date(Data["UpdateDate"]).toLocaleString();
+                    UpdateDataCardSubtitle.innerText = new Date(Data.UpdateDate).toLocaleString();
                     let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
                     UpdateDataCardText.className = "card-text";
                     let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
                     UpdateDataCardList.className = "list-group list-group-flush";
-                    for (let j = 0; j < Data["UpdateCommits"].length; j++) {
+                    for (let j = 0; j < Data.UpdateCommits.length; j++) {
                         let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                         UpdateDataCardListItem.className = "list-group-item";
                         UpdateDataCardListItem.innerHTML =
-                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data["UpdateCommits"][j]["Commit"] + "\" target=\"_blank\">"
-                            + Data["UpdateCommits"][j]["ShortCommit"] + "</a>) " +
-                            Data["UpdateCommits"][j]["Description"];
+                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data.UpdateCommits[j].Commit + "\" target=\"_blank\">"
+                            + Data.UpdateCommits[j].ShortCommit + "</a>) " +
+                            Data.UpdateCommits[j].Description;
                     }
                     let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                     UpdateDataCardLink.className = "card-link";
@@ -589,21 +594,21 @@ else {
             .then((Response) => {
                 eval(Response);
             });
-        RequestDiscussAPI("GetMentionList", {}, (Response) => {
+        RequestAPI("BBS", "GetMentionList", {}, (Response) => {
             if (Response.Success) {
-                let MentionList = Response.Data["MentionList"];
+                let MentionList = Response.Data.MentionList;
                 if (MentionList.length != 0) {
                     GM_notification({
                         title: "XMOJ",
                         text: "有人在讨论中提及了你，点击此处查看",
                         timeout: 10000,
                         onclick: () => {
-                            RequestDiscussAPI("GetThreadIDByReplyID", {
+                            RequestAPI("BBS", "GetThreadIDByReplyID", {
                                 "ReplyID": MentionList[0].ReplyID
                             }, (Response) => {
-                                GM_openInTab("http://www.xmoj.tech/discuss3/thread.php?tid=" + Response["Data"]["PostID"] + "&page=" + Response["Data"]["Page"]);
+                                GM_openInTab("http://www.xmoj.tech/discuss3/thread.php?tid=" + Response.Data.PostID + "&page=" + Response.Data.Page);
                             });
-                            RequestDiscussAPI("ReadMention", {
+                            RequestAPI("BBS", "ReadMention", {
                                 "MentionID": MentionList[0].MentionID
                             }, () => { });
                         }
@@ -1986,9 +1991,9 @@ else {
                         return Response.json();
                     })
                     .then((Response) => {
-                        for (let i = Object.keys(Response["UpdateHistory"]).length - 1; i >= 0; i--) {
-                            let Version = Object.keys(Response["UpdateHistory"])[i];
-                            let Data = Response["UpdateHistory"][Version];
+                        for (let i = Object.keys(Response.UpdateHistory).length - 1; i >= 0; i--) {
+                            let Version = Object.keys(Response.UpdateHistory)[i];
+                            let Data = Response.UpdateHistory[Version];
                             let UpdateDataCard = document.createElement("div"); document.querySelector("body > div > div.mt-3").appendChild(UpdateDataCard);
                             UpdateDataCard.className = "card mb-3";
                             let UpdateDataCardBody = document.createElement("div"); UpdateDataCard.appendChild(UpdateDataCardBody);
@@ -1998,18 +2003,18 @@ else {
                             UpdateDataCardTitle.innerText = Version;
                             let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
                             UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
-                            UpdateDataCardSubtitle.innerText = new Date(Data["UpdateDate"]).toLocaleString();
+                            UpdateDataCardSubtitle.innerText = new Date(Data.UpdateDate).toLocaleString();
                             let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
                             UpdateDataCardText.className = "card-text";
                             let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
                             UpdateDataCardList.className = "list-group list-group-flush";
-                            for (let j = 0; j < Data["UpdateCommits"].length; j++) {
+                            for (let j = 0; j < Data.UpdateCommits.length; j++) {
                                 let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                                 UpdateDataCardListItem.className = "list-group-item";
                                 UpdateDataCardListItem.innerHTML =
-                                    "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data["UpdateCommits"][j]["Commit"] + "\" target=\"_blank\">"
-                                    + Data["UpdateCommits"][j]["ShortCommit"] + "</a>) " +
-                                    Data["UpdateCommits"][j]["Description"];
+                                    "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data.UpdateCommits[j].Commit + "\" target=\"_blank\">"
+                                    + Data.UpdateCommits[j].ShortCommit + "</a>) " +
+                                    Data.UpdateCommits[j].Description;
                             }
                             let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                             UpdateDataCardLink.className = "card-link";
@@ -2370,8 +2375,8 @@ else {
                         let DownloadButton = document.createElement("a");
                         DownloadButton.className = "btn btn-outline-secondary";
                         DownloadButton.innerText = "下载";
-                        DownloadButton.href = Response["PlayInfoList"]["PlayInfo"][0]["PlayURL"];
-                        DownloadButton.download = Response["VideoBase"]["Title"];
+                        DownloadButton.href = Response.PlayInfoList.PlayInfo[0].PlayURL;
+                        DownloadButton.download = Response.VideoBase.Title;
                         document.querySelector("body > div > div.mt-3 > center").appendChild(DownloadButton);
                     });
             }
@@ -2665,6 +2670,167 @@ else {
                         }).setSize("100%", "auto");
                     }
                 });
+        } else if (location.pathname == "/mail.php") {
+            if (SearchParams.get("other") == null) {
+                document.querySelector("body > div > div.mt-3").innerHTML = `<div class="row g-2 align-items-center">
+                    <div class="col-auto form-floating">
+                        <input class="form-control" id="Username" placeholder=" " spellcheck="false" data-ms-editor="true">
+                        <label for="Username">搜索新用户</label>
+                    </div>
+                    <div class="col-auto form-floating">
+                        <button class="btn btn-outline-secondary" id="AddUser">
+                            添加
+                            <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                        </button>
+                    </div>
+                </div>
+                <table class="table mb-3" id="ReceiveTable">
+                    <thead>
+                        <tr>
+                            <td class="col-2">接收者</td>
+                            <td class="col-2">未读消息</td>
+                            <td class="col-4">最新消息</td>
+                            <td class="col-4">最后联系时间</td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="alert alert-danger mb-3" role="alert" id="ErrorElement" style="display: none;"></div>`;
+                let RefreshMessageList = (Silent = true) => {
+                    if (!Silent) {
+                        ReceiveTable.children[1].innerHTML = "";
+                        for (let i = 0; i < 10; i++) {
+                            let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
+                            for (let j = 0; j < 4; j++) {
+                                let Cell = document.createElement("td"); Row.appendChild(Cell);
+                                Cell.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>`;
+                            }
+                        }
+                    }
+                    RequestAPI("Mail", "GetMailList", {}, (ResponseData) => {
+                        if (ResponseData.Success) {
+                            let Data = ResponseData.Data.MailList;
+                            ReceiveTable.children[1].innerHTML = "";
+                            for (let i = 0; i < Data.length; i++) {
+                                let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
+                                Row.innerHTML = `<td><a href="mail.php?other=` + Data[i].OtherUser + `">` + Data[i].OtherUser + `</a></td>
+                                <td>` + Data[i].UnreadCount + `</td>
+                                <td>` + Data[i].LastsMessage + `</td>
+                                <td>` + Data[i].SendTime + `</td>`;
+                            }
+                        }
+                        else {
+                            ErrorElement.innerText = ResponseData.ErrorMessage;
+                            ErrorElement.style.display = "";
+                        }
+                    });
+                };
+                Username.oninput = () => {
+                    Username.classList.remove("is-invalid");
+                };
+                AddUser.onclick = () => {
+                    let UsernameData = Username.value;
+                    if (UsernameData == "") {
+                        Username.classList.add("is-invalid");
+                        return;
+                    }
+                    AddUser.children[0].style.display = "";
+                    AddUser.disabled = true;
+                    RequestAPI("Mail", "SendMail", {
+                        "ToUser": UsernameData,
+                        "Content": "你好，我是" + localStorage.getItem("UserScript-Username")
+                    }, (ResponseData) => {
+                        AddUser.children[0].style.display = "none";
+                        AddUser.disabled = false;
+                        if (ResponseData.Success) {
+                            RefreshMessageList();
+                        }
+                        else {
+                            ErrorElement.innerText = ResponseData.ErrorMessage;
+                            ErrorElement.style.display = "";
+                        }
+                    });
+                };
+                RefreshMessageList(false);
+                setTimeout(() => {
+                    setInterval(async () => {
+                        RefreshMessageList();
+                    }, 5000);
+                }, 5000);
+            }
+            else {
+                document.querySelector("body > div > div.mt-3").innerHTML = `<div class="row g-2 mb-3">
+                    <div class="col-md form-floating">
+                        <input class="form-control" id="ToUser" value="${SearchParams.get("other")}" readonly>
+                        <label for="ToUser">接收用户</label>
+                    </div>
+                    <div class="col-md form-floating">
+                        <input class="form-control" id="Content" placeholder=" ">
+                        <label for="Content">内容</label>
+                    </div>
+                </div>
+                <button id="Send" type="submit" class="btn btn-primary mb-1">发送</button>
+                <div id="ErrorElement" class="alert alert-danger mb-3" role="alert" style="display: none;"></div>
+                <table class="table mb-3" id="MessageTable">
+                    <thead>
+                        <tr>
+                            <td class="col-2">发送者</td>
+                            <td class="col-8">内容</td>
+                            <td class="col-2">发送时间</td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                `;
+                let RefreshMessage = () => {
+                    RequestAPI("Mail", "GetMail", {
+                        "OtherUser": SearchParams.get("other")
+                    }, (ResponseData) => {
+                        if (ResponseData.Success) {
+                            let Data = ResponseData.Data.Mail;
+                            MessageTable.children[1].innerHTML = "";
+                            for (let i = 0; i < Data.length; i++) {
+                                let Row = document.createElement("tr"); MessageTable.children[1].appendChild(Row);
+                                Row.innerHTML = `<td>` + Data[i].FromUser + `</td>
+                                <td>` + Data[i].Content + `</td>
+                                <td>` + Data[i].SendTime + `</td>`;
+                            }
+                        }
+                        else {
+                            ErrorElement.innerText = ResponseData.ErrorMessage;
+                            ErrorElement.style.display = "";
+                        }
+                    });
+                };
+                Content.oninput = () => {
+                    Content.classList.remove("is-invalid");
+                };
+                Send.onclick = () => {
+                    if (Content.value == "") {
+                        Content.classList.add("is-invalid");
+                        return;
+                    }
+                    let ContentData = Content.value;
+                    RequestAPI("Mail", "SendMail", {
+                        "ToUser": SearchParams.get("other"),
+                        "Content": ContentData
+                    }, (ResponseData) => {
+                        if (ResponseData.Success) {
+                            RefreshMessage();
+                        }
+                        else {
+                            ErrorElement.innerText = ResponseData.ErrorMessage;
+                            ErrorElement.style.display = "";
+                        }
+                    });
+                };
+                RefreshMessage();
+                setTimeout(() => {
+                    setInterval(async () => {
+                        RefreshMessage();
+                    }, 5000);
+                }, 5000);
+            }
         } else if (location.pathname.indexOf("/discuss3") != -1) {
             Discussion.classList.add("active");
             if (location.pathname == "/discuss3/discuss.php") {
@@ -2709,41 +2875,41 @@ else {
                         location.href = "/discuss3/newpost.php";
                     }
                 };
-                RequestDiscussAPI("GetPosts", {
+                RequestAPI("BBS", "GetPosts", {
                     "ProblemID": ProblemID,
                     "Page": Page
                 }, (ResponseData) => {
-                    if (ResponseData["Success"] == true) {
+                    if (ResponseData.Success == true) {
                         DiscussPagination.children[0].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
                         DiscussPagination.children[1].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
                         DiscussPagination.children[2].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
                         DiscussPagination.children[3].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
-                        DiscussPagination.children[4].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData["Data"]["PageCount"];
+                        DiscussPagination.children[4].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
                         if (Page <= 1) {
                             DiscussPagination.children[0].classList.add("disabled");
                             DiscussPagination.children[1].remove();
                         }
-                        if (Page >= ResponseData["Data"]["PageCount"]) {
+                        if (Page >= ResponseData.Data.PageCount) {
                             DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
                             DiscussPagination.children[DiscussPagination.children.length - 2].remove();
                         }
-                        let Posts = ResponseData["Data"]["Posts"];
+                        let Posts = ResponseData.Data.Posts;
                         PostList.children[1].innerHTML = "";
                         if (Posts.length == 0) {
                             PostList.children[1].innerHTML = `<tr><td colspan="3">暂无讨论</td></tr>`;
                         }
                         for (let i = 0; i < Posts.length; i++) {
                             PostList.children[1].innerHTML += `<tr>
-                                <td>${Posts[i]["PostID"]}</td>
-                                <td><a href="/discuss3/thread.php?tid=${Posts[i]["PostID"]}">${Posts[i]["Title"]}</a></td>
-                                <td><a href="/userinfo.php?user=${Posts[i]["UserID"]}">${Posts[i]["UserID"]}</a></td>` +
-                                (Posts[i]["ProblemID"] == null ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i]["ProblemID"]}">${Posts[i]["ProblemID"]}</a></td>`) +
-                                `<td>${Posts[i]["PostTime"]}</td>
+                                <td>${Posts[i].PostID}</td>
+                                <td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>
+                                <td><a href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
+                                (Posts[i].ProblemID == null ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
+                                `<td>${Posts[i].PostTime}</td>
                             </tr>`;
                         }
                     }
                     else {
-                        PostList.innerHTML = `<tr><td colspan="3">错误：` + ResponseData["ErrorMessage"] + `</td></tr>`;
+                        PostList.innerHTML = `<tr><td colspan="3">错误：` + ResponseData.ErrorMessage + `</td></tr>`;
                     }
                 });
             } else if (location.pathname == "/discuss3/newpost.php") {
@@ -2784,18 +2950,18 @@ else {
                     }
                     SubmitElement.disabled = true;
                     SubmitElement.children[0].style.display = "inline-block";
-                    RequestDiscussAPI("NewPost", {
+                    RequestAPI("BBS", "NewPost", {
                         "Title": Title,
                         "Content": Content,
                         "ProblemID": ProblemID
                     }, (ResponseData) => {
                         SubmitElement.disabled = false;
                         SubmitElement.children[0].style.display = "none";
-                        if (ResponseData["Success"] == true) {
-                            location.href = "/discuss3/thread.php?tid=" + ResponseData["Data"]["PostID"];
+                        if (ResponseData.Success == true) {
+                            location.href = "/discuss3/thread.php?tid=" + ResponseData.Data.PostID;
                         }
                         else {
-                            ErrorElement.innerText = ResponseData["ErrorMessage"];
+                            ErrorElement.innerText = ResponseData.ErrorMessage;
                             ErrorElement.style.display = "block";
                         }
                     });
@@ -2842,7 +3008,7 @@ else {
                             SubmitElement.click();
                         }
                     };
-                    let DoRefresh = (Silent = true) => {
+                    let RefreshReply = (Silent = true) => {
                         if (!Silent) {
                             PostTitle.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
                             PostAuthor.innerHTML = `<span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span>`;
@@ -2850,48 +3016,48 @@ else {
                             PostReplies.innerHTML = "";
                             for (let i = 0; i < 10; i++) {
                                 PostReplies.innerHTML += `<div class="card mb-3">
-                                <div class="card-body">
-                                    <div class="row mb-3">
-                                        <span class="col-6"><span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span></span>
-                                        <span class="col-6"><span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span></span>
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            <span class="col-6"><span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span></span>
+                                            <span class="col-6"><span class="placeholder col-` + Math.ceil(Math.random() * 6) + `"></span></span>
+                                        </div>
+                                        <hr>
+                                        <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
+                                        <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
+                                        <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
                                     </div>
-                                    <hr>
-                                    <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
-                                    <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
-                                    <span class="placeholder col-` + Math.ceil(Math.random() * 12) + `"></span>
-                                </div>
-                            </div>`;
+                                </div>`;
                             }
                         }
                         let OldScrollTop = document.documentElement.scrollTop;
-                        RequestDiscussAPI("GetPost", {
+                        RequestAPI("BBS", "GetPost", {
                             "PostID": ThreadID,
                             "Page": Page
                         }, (ResponseData) => {
-                            if (ResponseData["Success"] == true) {
+                            if (ResponseData.Success == true) {
                                 if (!Silent) {
                                     DiscussPagination.children[0].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=1";
                                     DiscussPagination.children[1].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
                                     DiscussPagination.children[2].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + Page;
                                     DiscussPagination.children[3].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page + 1);
-                                    DiscussPagination.children[4].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + ResponseData["Data"]["PageCount"];
+                                    DiscussPagination.children[4].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + ResponseData.Data.PageCount;
                                     if (Page <= 1) {
                                         DiscussPagination.children[0].classList.add("disabled");
                                         DiscussPagination.children[1].remove();
                                     }
-                                    if (Page >= ResponseData["Data"]["PageCount"]) {
+                                    if (Page >= ResponseData.Data.PageCount) {
                                         DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
                                         DiscussPagination.children[DiscussPagination.children.length - 2].remove();
                                     }
-                                    if (ResponseData["Data"]["UserID"] == profile.innerText) {
+                                    if (ResponseData.Data.UserID == profile.innerText) {
                                         Delete.style.display = "";
                                     }
                                 }
-                                PostTitle.innerText = ResponseData["Data"]["Title"];
-                                PostAuthor.innerText = ResponseData["Data"]["UserID"];
-                                PostAuthor.href = "/userinfo.php?user=" + ResponseData["Data"]["UserID"];
-                                PostTime.innerText = ResponseData["Data"]["PostTime"];
-                                let Replies = ResponseData["Data"]["Reply"];
+                                PostTitle.innerText = ResponseData.Data.Title;
+                                PostAuthor.innerText = ResponseData.Data.UserID;
+                                PostAuthor.href = "/userinfo.php?user=" + ResponseData.Data.UserID;
+                                PostTime.innerText = ResponseData.Data.PostTime;
+                                let Replies = ResponseData.Data.Reply;
                                 PostReplies.innerHTML = "";
                                 for (let i = 0; i < Replies.length; i++) {
                                     let CardElement = document.createElement("div");
@@ -2904,14 +3070,14 @@ else {
                                     CardBodyRowSpan1Element.className = "col-4 text-muted";
                                     CardBodyRowSpan1Element.innerText = "作者：";
                                     let CardBodyRowSpan1AElement = document.createElement("a");
-                                    CardBodyRowSpan1AElement.href = "/userinfo.php?user=" + Replies[i]["UserID"];
-                                    CardBodyRowSpan1AElement.innerText = Replies[i]["UserID"];
+                                    CardBodyRowSpan1AElement.href = "/userinfo.php?user=" + Replies[i].UserID;
+                                    CardBodyRowSpan1AElement.innerText = Replies[i].UserID;
                                     CardBodyRowSpan1Element.appendChild(CardBodyRowSpan1AElement);
                                     let CardBodyRowSpan2Element = document.createElement("span");
                                     CardBodyRowSpan2Element.className = "col-4 text-muted";
                                     CardBodyRowSpan2Element.innerText = "发布时间：";
                                     let CardBodyRowSpan2SpanElement = document.createElement("span");
-                                    CardBodyRowSpan2SpanElement.innerText = Replies[i]["ReplyTime"];
+                                    CardBodyRowSpan2SpanElement.innerText = Replies[i].ReplyTime;
                                     CardBodyRowSpan2Element.appendChild(CardBodyRowSpan2SpanElement);
                                     let CardBodyRowSpan3Element = document.createElement("span");
                                     CardBodyRowSpan3Element.className = "col-4";
@@ -2920,7 +3086,7 @@ else {
                                     CardBodyRowSpan3Button1Element.className = "btn btn-sm btn-warning";
                                     CardBodyRowSpan3Button1Element.innerText = "引用";
                                     CardBodyRowSpan3Button1Element.onclick = () => {
-                                        ContentElement.value += `@` + Replies[i]["UserID"] + ` `;
+                                        ContentElement.value += `@` + Replies[i].UserID + ` `;
                                         ContentElement.focus();
                                     }
                                     CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button1Element);
@@ -2928,20 +3094,20 @@ else {
                                     CardBodyRowSpan3Button2Element.type = "button";
                                     CardBodyRowSpan3Button2Element.className = "btn btn-sm btn-danger ms-1";
                                     CardBodyRowSpan3Button2Element.innerText = "删除";
-                                    CardBodyRowSpan3Button2Element.style.display = (Replies[i]["UserID"] == profile.innerText ? "" : "none");
+                                    CardBodyRowSpan3Button2Element.style.display = (Replies[i].UserID == profile.innerText ? "" : "none");
                                     CardBodyRowSpan3Button2Element.onclick = () => {
                                         CardBodyRowSpan3Button2Element.disabled = true;
                                         CardBodyRowSpan3Button2Element.lastChild.style.display = "";
-                                        RequestDiscussAPI("DeleteReply", {
-                                            "ReplyID": Replies[i]["ReplyID"]
+                                        RequestAPI("BBS", "DeleteReply", {
+                                            "ReplyID": Replies[i].ReplyID
                                         }, (ResponseData) => {
-                                            if (ResponseData["Success"] == true) {
-                                                DoRefresh();
+                                            if (ResponseData.Success == true) {
+                                                RefreshReply();
                                             }
                                             else {
                                                 CardBodyRowSpan3Button2Element.disabled = false;
                                                 CardBodyRowSpan3Button2Element.lastChild.style.display = "none";
-                                                ErrorElement.innerText = ResponseData["ErrorMessage"];
+                                                ErrorElement.innerText = ResponseData.ErrorMessage;
                                                 ErrorElement.style.display = "";
                                             }
                                         });
@@ -2959,7 +3125,7 @@ else {
                                     let CardBodyHRElement = document.createElement("hr");
                                     CardBodyElement.appendChild(CardBodyHRElement);
                                     let CardBodyPElement = document.createElement("p");
-                                    CardBodyPElement.innerHTML = marked.parse(Replies[i]["Content"]);
+                                    CardBodyPElement.innerHTML = marked.parse(Replies[i].Content);
                                     CardBodyElement.appendChild(CardBodyPElement);
                                     CardElement.appendChild(CardBodyElement);
                                     PostReplies.appendChild(CardElement);
@@ -3006,23 +3172,23 @@ else {
                                 }
                             }
                             else {
-                                PostTitle.innerText = "错误：" + ResponseData["ErrorMessage"];
+                                PostTitle.innerText = "错误：" + ResponseData.ErrorMessage;
                             }
                         });
                     };
                     Delete.onclick = () => {
                         Delete.disabled = true;
                         Delete.children[0].style.display = "inline-block";
-                        RequestDiscussAPI("DeletePost", {
+                        RequestAPI("BBS", "DeletePost", {
                             "PostID": SearchParams.get("tid")
                         }, (ResponseData) => {
                             Delete.disabled = false;
                             Delete.children[0].style.display = "none";
-                            if (ResponseData["Success"] == true) {
+                            if (ResponseData.Success == true) {
                                 location.href = "/discuss3/discuss.php";
                             }
                             else {
-                                ErrorElement.innerText = ResponseData["ErrorMessage"];
+                                ErrorElement.innerText = ResponseData.ErrorMessage;
                                 ErrorElement.style.display = "block";
                             }
                         });
@@ -3031,14 +3197,14 @@ else {
                         ErrorElement.style.display = "none";
                         SubmitElement.disabled = true;
                         SubmitElement.children[0].style.display = "inline-block";
-                        RequestDiscussAPI("NewReply", {
+                        RequestAPI("BBS", "NewReply", {
                             "PostID": SearchParams.get("tid"),
                             "Content": ContentElement.value
                         }, async (ResponseData) => {
                             SubmitElement.disabled = false;
                             SubmitElement.children[0].style.display = "none";
-                            if (ResponseData["Success"] == true) {
-                                DoRefresh();
+                            if (ResponseData.Success == true) {
+                                RefreshReply();
                                 ContentElement.value = "";
                                 while (PostReplies.innerHTML.indexOf("placeholder") != -1) {
                                     await new Promise((resolve) => {
@@ -3049,15 +3215,15 @@ else {
                                 ContentElement.scrollIntoView();
                             }
                             else {
-                                ErrorElement.innerText = ResponseData["ErrorMessage"];
+                                ErrorElement.innerText = ResponseData.ErrorMessage;
                                 ErrorElement.style.display = "block";
                             }
                         });
                     };
-                    DoRefresh(false);
+                    RefreshReply(false);
                     setTimeout(() => {
                         setInterval(async () => {
-                            DoRefresh();
+                            RefreshReply();
                         }, 5000);
                     }, 5000);
                 }
