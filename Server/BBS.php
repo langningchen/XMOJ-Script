@@ -419,6 +419,12 @@ if ($PostAction == "NewPost") {
     $PostTitle = htmlspecialchars($PostTitle);
     $PostContent = htmlspecialchars($PostContent);
     $PostID = NewPost($PostTitle, $PostProblemID);
+    if (strlen($PostTitle) > 20) {
+        CreateErrorJSON("标题过长");
+    }
+    if (strlen($PostContent) > 1000) {
+        CreateErrorJSON("内容过长");
+    }
     NewReply($PostID, $PostContent);
     CreateSuccessJSON((object)array("PostID" => $PostID));
 } else if ($PostAction == "NewReply") {
@@ -428,6 +434,9 @@ if ($PostAction == "NewPost") {
         CreateErrorJSON("传入的参数不正确");
     }
     $PostContent = htmlspecialchars($PostContent);
+    if (strlen($PostContent) > 1000) {
+        CreateErrorJSON("内容过长");
+    }
     $ReplyID = NewReply($PostPostID, $PostContent);
     CreateSuccessJSON((object)array("ReplyID" => $ReplyID));
 } else if ($PostAction == "GetPostCount") {

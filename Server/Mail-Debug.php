@@ -181,6 +181,9 @@ if ($PostAction == "GetMailList") {
         CreateErrorJSON("内容不能为空");
     }
     $PostContent = htmlspecialchars($PostContent);
+    if (strlen($PostContent) > 1000) {
+        CreateErrorJSON("内容过长");
+    }
     CreateSuccessJSON((object)array(
         "MailID" => SendMail($PostToUser, $PostContent)
     ));
