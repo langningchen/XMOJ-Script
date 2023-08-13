@@ -624,6 +624,16 @@
                     "Description": "[Mail设定漏洞 #24] 设置为绝对路径"
                 }
             ]
+        },
+        "0.1.45": {
+            "UpdateDate": 1691913494029,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "0544775",
+                    "Commit": "0544775647d77c296a9ec3e239e118914e9aa226",
+                    "Description": "紧急修复，服务器因为BUG受到DDOS攻击"
+                }
+            ]
         }
     }
 }
