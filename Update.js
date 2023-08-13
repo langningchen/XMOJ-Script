@@ -37,10 +37,6 @@ for (var i = 0; i < Commits.length; i++) {
     if (CommitDescription.indexOf("Merge branch") != -1) {
         continue;
     }
-    var CommitFiles = execSync("git diff-tree --no-commit-id --name-only -r " + LongCommitHash).toString().split("\n");
-    if (CommitFiles.indexOf("AddonScript.js") != -1) {
-        continue;
-    }
     JSONObject.UpdateHistory[LatestVersion].UpdateCommits.push({
         "ShortCommit": ShortCommitHash,
         "Commit": LongCommitHash,
@@ -48,7 +44,7 @@ for (var i = 0; i < Commits.length; i++) {
     });
     console.log("    Commit " + i + "(" + ShortCommitHash + "): " + CommitDescription);
 }
-writeFileSync(JSONFileName, JSON.stringify(JSONObject, null, 4), "utf8");
+writeFileSync(JSONFileName, JSON.stringify(JSONObject), "utf8");
 
 var NewJSFileContent = JSFileContent.replace(/@version(\s+)\d+\.\d+\.\d+/, "@version$1" + LatestVersion);
 writeFileSync(JSFileName, NewJSFileContent, "utf8");
