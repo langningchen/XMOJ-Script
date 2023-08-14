@@ -143,9 +143,6 @@ function GetTableSize(string $TableName, array $Where = null): int
         CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
     }
     $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-    if ($MYSQLResult == false) {
-        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
-    }
     $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
     if ($MYSQLRow == false) {
         CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));

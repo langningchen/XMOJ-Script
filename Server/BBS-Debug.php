@@ -81,9 +81,6 @@ function GetPosts($Page, $ProblemID): object
         CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
     }
     $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-    if ($MYSQLResult == false) {
-        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
-    }
     $Response = array();
     while ($MYSQLRow = mysqli_fetch_assoc($MYSQLResult)) {
         $Response[] = array(
@@ -107,9 +104,6 @@ function GetPosts($Page, $ProblemID): object
             CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
         }
         $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-        if ($MYSQLResult == false) {
-            CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
-        }
         $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
         if ($MYSQLRow == false) {
             CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
@@ -127,12 +121,10 @@ function GetPosts($Page, $ProblemID): object
             CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
         }
         $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-        if ($MYSQLResult == false) {
-            CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
-        }
         $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
         if ($MYSQLRow == false) {
-            CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+            DeletePost($Response[$i]["PostID"], false);
+            continue;
         }
         $Response[$i]["LastReplyUserID"] = $MYSQLRow["user_id"];
         $Response[$i]["LastReplyTime"] = $MYSQLRow["reply_time"];
@@ -158,12 +150,9 @@ function GetPost(int $Page, int $PostID): object
         CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
     }
     $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-    if ($MYSQLResult == false) {
-        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
-    }
     $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
     if ($MYSQLRow == false) {
-        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+        CreateErrorJSON("没有此讨论");
     }
     $ResponseUserID = $MYSQLRow["user_id"];
     $ResponseProblemID = $MYSQLRow["problem_id"];
@@ -181,9 +170,6 @@ function GetPost(int $Page, int $PostID): object
         CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
     }
     $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-    if ($MYSQLResult == false) {
-        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
-    }
     $ResponseReply = array();
     while ($MYSQLRow = mysqli_fetch_assoc($MYSQLResult)) {
         $ResponseReply[] = array(
@@ -217,12 +203,9 @@ function DeletePost(int $PostID, bool $CheckUserID = true): void
         CreateErrorJSON("无法删除数据：" . mysqli_stmt_error($MYSQLPrepare));
     }
     $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-    if ($MYSQLResult == false) {
-        CreateErrorJSON("无法删除数据：" . mysqli_error($MYSQLConnection));
-    }
     $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
     if ($MYSQLRow == false) {
-        CreateErrorJSON("无法删除数据：" . mysqli_error($MYSQLConnection));
+        CreateErrorJSON("没有此讨论");
     }
     if ($CheckUserID && $MYSQLRow["user_id"] != $_POST["UserID"]) {
         CreateErrorJSON("无法删除数据: 权限不足");
@@ -239,9 +222,6 @@ function DeletePost(int $PostID, bool $CheckUserID = true): void
         CreateErrorJSON("无法删除数据：" . mysqli_stmt_error($MYSQLPrepare));
     }
     $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-    if ($MYSQLResult == false) {
-        CreateErrorJSON("无法删除数据：" . mysqli_error($MYSQLConnection));
-    }
     while ($MYSQLRow = mysqli_fetch_assoc($MYSQLResult)) {
         DeleteReply($MYSQLRow["reply_id"], false);
     }
@@ -271,12 +251,9 @@ function DeleteReply(int $ReplyID, bool $CheckUserID = true): void
         CreateErrorJSON("无法删除数据：" . mysqli_stmt_error($MYSQLPrepare));
     }
     $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-    if ($MYSQLResult == false) {
-        CreateErrorJSON("无法删除数据：" . mysqli_error($MYSQLConnection));
-    }
     $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
     if ($MYSQLRow == false) {
-        CreateErrorJSON("无法删除数据：" . mysqli_error($MYSQLConnection));
+        CreateErrorJSON("没有此回复");
     }
     if ($CheckUserID && $MYSQLRow["user_id"] != $_POST["UserID"]) {
         CreateErrorJSON("无法删除数据: 权限不足");
@@ -311,9 +288,6 @@ function GetMentionList(): object
         CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
     }
     $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-    if ($MYSQLResult == false) {
-        CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
-    }
     $Response = array();
     while ($MYSQLRow = mysqli_fetch_assoc($MYSQLResult)) {
         $Response[] = array(
@@ -334,12 +308,10 @@ function GetMentionList(): object
             CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
         }
         $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-        if ($MYSQLResult == false) {
-            CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
-        }
         $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
         if ($MYSQLRow == false) {
-            CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+            ReadMention($Response[$i]["MentionID"]);
+            continue;
         }
         $Response[$i]["PostID"] = $MYSQLRow["post_id"];
         $Response[$i]["UserID"] = $MYSQLRow["user_id"];
@@ -355,9 +327,6 @@ function GetMentionList(): object
             CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
         }
         $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-        if ($MYSQLResult == false) {
-            CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
-        }
         $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
         if ($MYSQLRow == false) {
             CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
@@ -377,12 +346,10 @@ function GetMentionList(): object
             CreateErrorJSON("无法读取数据：" . mysqli_stmt_error($MYSQLPrepare));
         }
         $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
-        if ($MYSQLResult == false) {
-            CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
-        }
         $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
         if ($MYSQLRow == false) {
-            CreateErrorJSON("无法读取数据：" . mysqli_error($MYSQLConnection));
+            ReadMention($Response[$i]["MentionID"]);
+            continue;
         }
         $Response[$i]["Title"] = $MYSQLRow["title"];
     }
