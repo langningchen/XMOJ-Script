@@ -2176,9 +2176,9 @@ else {
             [UserID, UserName] = document.querySelector("#statics > caption").childNodes[0].data.trim().split("--");
             document.querySelector("#statics > caption").remove();
             document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(1)").innerHTML = "用户名：" + UserID;
-            document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(2)").innerHTML = "昵称：" + UserName + " ";
+            document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(2)").innerHTML = "昵称：" + UserName;
             if (UtilityEnabled("Rating")) {
-                document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(2)").innerHTML += "rating：" + (await getRating(UserID).then());
+                document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(1)").innerHTML += " rating：" + (await getRating(UserID).then());
             }
         } else if (location.pathname == "/conteststatistics.php") {
             document.querySelector("body > div > div.mt-3 > center > h3").innerText = "比赛统计";
