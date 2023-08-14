@@ -217,18 +217,6 @@ if (location.host != "www.xmoj.tech") {
     location.host = "www.xmoj.tech";
 }
 else {
-    if (!UserScriptDebug) {
-        setInterval(() => {
-            let StartTime = new Date().getTime();
-            eval("debugger");
-            let EndTime = new Date().getTime();
-            if (EndTime - StartTime > 100) {
-                document.body.innerHTML = "";
-                location.href = "about:blank";
-            }
-        }, 100);
-    }
-
     if (document.querySelector("#navbar") != null) {
         if (document.querySelector("body > div > div.jumbotron") != null) {
             document.querySelector("body > div > div.jumbotron").className = "mt-3";
@@ -527,7 +515,7 @@ else {
                     UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <div>
                             XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                            <a href="https://langningchen.github.io/XMOJ-Script/`+ (UserScriptDebug ? "XMOJ.user.js" : "XMOJ.min.user.js") + `" target="_blank" class="alert-link">此处</a>
+                            <a href="https://langningchen.github.io/XMOJ-Script/XMOJ.user.js target="_blank" class="alert-link">此处</a>
                             更新
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
