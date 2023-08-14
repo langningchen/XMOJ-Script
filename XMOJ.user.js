@@ -677,9 +677,9 @@ else {
                             else {
                                 CheckBox.checked = true;
                             }
-                            CheckBox.onchange = () => {
+                            CheckBox.addEventListener("change", () => {
                                 localStorage.setItem("UserScript-Setting-" + Data[i].ID, CheckBox.checked);
-                            };
+                            });
 
                             Row.appendChild(CheckBox);
                             let Label = document.createElement("label");
@@ -912,13 +912,13 @@ else {
                                 CopyMDButton.style.marginLeft = "10px";
                                 CopyMDButton.type = "button";
                                 document.querySelectorAll(".cnt-row")[i].children[0].appendChild(CopyMDButton);
-                                CopyMDButton.onclick = () => {
+                                CopyMDButton.addEventListener("click", () => {
                                     GM_setClipboard(Temp[i].children[1].children[0].innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
                                     CopyMDButton.innerText = "复制成功";
                                     setTimeout(() => {
                                         CopyMDButton.innerText = "复制";
                                     }, 1000);
-                                };
+                                });
                             }
                         }
                     });
@@ -929,14 +929,14 @@ else {
                 DiscussButton.innerHTML = `讨论`;
                 DiscussButton.style.marginLeft = "10px";
                 DiscussButton.type = "button";
-                DiscussButton.onclick = () => {
+                DiscussButton.addEventListener("click", () => {
                     if (SearchParams.get("cid") != null) {
                         open("http://www.xmoj.tech/discuss3/discuss.php?pid=" + PID, "_blank");
                     }
                     else {
                         open("http://www.xmoj.tech/discuss3/discuss.php?pid=" + SearchParams.get("id"), "_blank");
                     }
-                }
+                });
                 document.querySelector("body > div > div.mt-3 > center").appendChild(DiscussButton);
                 let UnreadBadge = document.createElement("span");
                 UnreadBadge.className = "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger";
@@ -956,9 +956,7 @@ else {
                     });
                 };
                 RefreshCount();
-                onfocus = () => {
-                    RefreshCount();
-                };
+                addEventListener("focus", RefreshCount);
             }
             Style.innerHTML += "code, kbd, pre, samp {";
             Style.innerHTML += "    font-family: monospace, Consolas, 'Courier New';";
@@ -1045,9 +1043,9 @@ else {
                     document.querySelector("body > div.container > div > div.input-append").appendChild(GetOthersSampleButton);
                     GetOthersSampleButton.className = "btn btn-outline-secondary";
                     GetOthersSampleButton.innerText = "获取他人样例";
-                    GetOthersSampleButton.onclick = () => {
+                    GetOthersSampleButton.addEventListener("click", () => {
                         location.href = "status.php?ByUserScript=1";
-                    };
+                    });
                     GetOthersSampleButton.style.marginBottom = GetOthersSampleButton.style.marginRight = "7px";
                     GetOthersSampleButton.style.marginRight = "7px";
                 }
@@ -1070,7 +1068,7 @@ else {
                             }
                             ImproveACRateButton.disabled = false;
                         });
-                    ImproveACRateButton.onclick = async () => {
+                    ImproveACRateButton.addEventListener("click", async () => {
                         ImproveACRateButton.disabled = true;
                         let SubmitTimes = 3;
                         let Count = 0;
@@ -1116,7 +1114,7 @@ else {
                             });
                             Count++;
                         }, 1000);
-                    };
+                    });
                     ImproveACRateButton.style.marginBottom = ImproveACRateButton.style.marginRight = "7px";
                     ImproveACRateButton.style.marginRight = "7px";
                 }
@@ -1125,9 +1123,9 @@ else {
                     document.querySelector("body > div.container > div > div.input-append").appendChild(CompareButton);
                     CompareButton.className = "btn btn-outline-secondary";
                     CompareButton.innerText = "比较提交记录";
-                    CompareButton.onclick = () => {
+                    CompareButton.addEventListener("click", () => {
                         location.href = "comparesource.php";
-                    };
+                    });
                     CompareButton.style.marginBottom = "7px";
                 }
 
@@ -1269,7 +1267,7 @@ else {
             <button type="submit" class="btn btn-primary mb-3" id="GetSample">获取</button>
             <div role="alert" id="GetSampleAlert" style="display: none"></div>
         </div>`;
-                document.getElementById("GetSample").onclick = async () => {
+                GetSample.addEventListener("click", async () => {
                     document.getElementById("GetSampleAlert").style.display = "none";
                     let Name = document.getElementById("NameInput").value;
                     let DateInput = document.getElementById("DateInput").value.replaceAll("-", "");
@@ -1325,7 +1323,7 @@ else {
                                     a.click();
                                 });
                         });
-                };
+                });
             }
         } else if (location.pathname == "/contest.php") {
             if (UtilityEnabled("AutoCountdown")) {
@@ -1408,7 +1406,7 @@ else {
                         "start_contest.php?cid=" + SearchParams.get("cid"));
                 }
                 else if (UtilityEnabled("AutoRefresh")) {
-                    onfocus = async () => {
+                    addEventListener("focus", async () => {
                         await fetch(location.href)
                             .then((Response) => {
                                 return Response.text();
@@ -1430,7 +1428,7 @@ else {
                                     }
                                 }
                             });
-                    };
+                    });
                     document.querySelector("body > div > div.mt-3 > center > br:nth-child(2)").remove();
                     document.querySelector("body > div > div.mt-3 > center > br:nth-child(2)").remove();
                     document.querySelector("body > div > div.mt-3 > center > div > .red").innerHTML =
@@ -1439,9 +1437,9 @@ else {
                     document.querySelectorAll("body > div > div.mt-3 > center > div > .red")[1].appendChild(StaticButton);
                     StaticButton.className = "btn btn-outline-secondary";
                     StaticButton.innerText = "统计";
-                    StaticButton.onclick = () => {
+                    StaticButton.addEventListener("click", () => {
                         location.href = "/conteststatistics.php?cid=" + SearchParams.get("cid");
-                    };
+                    });
 
                     document.querySelector("#problemset > tbody").innerHTML =
                         String(document.querySelector("#problemset > tbody").innerHTML).replaceAll(
@@ -1499,24 +1497,24 @@ else {
                         OpenAllButton.innerText = "打开全部题目";
                         OpenAllButton.style.marginRight = "5px";
                         OpenAllDiv.appendChild(OpenAllButton);
-                        OpenAllButton.onclick = () => {
+                        OpenAllButton.addEventListener("click", () => {
                             let Rows = document.querySelector("#problemset > tbody").rows;
                             for (let i = 0; i < Rows.length; i++) {
                                 open(Rows[i].children[2].children[0].href, "_blank");
                             }
-                        }
+                        });
                         let OpenUnsolvedButton = document.createElement("button");
                         OpenUnsolvedButton.className = "btn btn-outline-secondary";
                         OpenUnsolvedButton.innerText = "打开未解决题目";
                         OpenAllDiv.appendChild(OpenUnsolvedButton);
-                        OpenUnsolvedButton.onclick = () => {
+                        OpenUnsolvedButton.addEventListener("click", () => {
                             let Rows = document.querySelector("#problemset > tbody").rows;
                             for (let i = 0; i < Rows.length; i++) {
                                 if (!Rows[i].children[0].children[0].classList.contains("status_y")) {
                                     open(Rows[i].children[2].children[0].href, "_blank");
                                 }
                             }
-                        }
+                        });
                     }
 
                     if (UtilityEnabled("ResetType")) {
@@ -1544,7 +1542,7 @@ else {
                     document.querySelector("#rank > thead > tr > :nth-child(3)").innerText = "昵称";
                     document.querySelector("#rank > thead > tr > :nth-child(4)").innerText = "AC数";
                     document.querySelector("#rank > thead > tr > :nth-child(5)").innerText = "得分";
-                    onfocus = async () => {
+                    let RefreshOIRank = async () => {
                         await fetch(location.href)
                             .then((Response) => {
                                 return Response.text()
@@ -1567,10 +1565,10 @@ else {
                                 }
                                 document.querySelector("#rank > tbody").innerHTML = ParsedDocument.querySelector("#rank > tbody").innerHTML;
                             });
-                    }
-                    onfocus();
-                    if (!UtilityEnabled("AutoRefresh")) {
-                        onfocus = null;
+                    };
+                    RefreshOIRank();
+                    if (UtilityEnabled("AutoRefresh")) {
+                        addEventListener("focus", RefreshOIRank);
                     }
                 }
             }
@@ -1582,7 +1580,7 @@ else {
                         + "（ACM排名）";
                 }
                 let RankData = [];
-                let ReloadRank = async (ProblemCount) => {
+                let RefreshACMRank = async (ProblemCount) => {
                     let LastPositionX = scrollX;
                     let LastPositionY = scrollY;
                     let NewURL = new URL(location.href);
@@ -1771,15 +1769,15 @@ else {
                 DownloadButton.className = "btn btn-outline-secondary";
                 DownloadButton.innerText = "下载排名";
                 DownloadButton.style.marginBottom = "20px";
-                DownloadButton.onclick = () => {
+                DownloadButton.addEventListener("click", () => {
                     location.href = "/contestrank.xls.php?cid=" + SearchParams.get("cid");
-                };
+                });
                 let ProblemCount = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-ProblemCount");
-                ReloadRank(ProblemCount);
+                RefreshACMRank(ProblemCount);
                 if (UtilityEnabled("AutoRefresh")) {
-                    onfocus = () => {
-                        ReloadRank(ProblemCount);
-                    };
+                    addEventListener("focus", () => {
+                        RefreshACMRank(ProblemCount);
+                    });
                 }
             }
             Style.innerHTML += "td {";
@@ -1807,7 +1805,7 @@ else {
                 document.querySelector("#rank > thead > tr > :nth-child(3)").innerText = "昵称";
                 document.querySelector("#rank > thead > tr > :nth-child(4)").innerText = "AC数";
                 document.querySelector("#rank > thead > tr > :nth-child(5)").innerText = "得分";
-                onfocus = async () => {
+                let RefreshCorrectRank = async () => {
                     await fetch(location.href)
                         .then((Response) => {
                             return Response.text()
@@ -1830,10 +1828,10 @@ else {
                             }
                             document.querySelector("#rank > tbody").innerHTML = ParsedDocument.querySelector("#rank > tbody").innerHTML;
                         });
-                }
-                onfocus();
-                if (!UtilityEnabled("AutoRefresh")) {
-                    onfocus = null;
+                };
+                RefreshCorrectRank();
+                if (UtilityEnabled("AutoRefresh")) {
+                    addEventListener("focus", RefreshCorrectRank);
                 }
             }
         } else if (location.pathname == "/submitpage.php") {
@@ -1877,7 +1875,7 @@ else {
             })();
             CodeMirrorElement.setSize("100%", "auto");
             CodeMirrorElement.getWrapperElement().style.border = "1px solid #ddd";
-            PassCheck.onclick = async () => {
+            PassCheck.addEventListener("click", async () => {
                 document.querySelector("#Submit").disabled = true;
                 document.querySelector("#Submit").value = "正在提交...";
                 await fetch("http://www.xmoj.tech/submit.php", {
@@ -1905,9 +1903,9 @@ else {
                         Submit.value = "提交";
                     }
                 })
-            }
+            });
 
-            Submit.onclick = async () => {
+            Submit.addEventListener("click", async () => {
                 PassCheck.style.display = "none";
                 ErrorElement.style.display = "none";
                 document.querySelector("#Submit").disabled = true;
@@ -2006,7 +2004,7 @@ else {
                 else {
                     PassCheck.click();
                 }
-            };
+            });
         } else if (location.pathname == "/modifypage.php") {
             if (new URL(location.href).searchParams.get("ByUserScript") != null) {
                 document.querySelector("body > div > div.mt-3").innerHTML = "";
@@ -2074,7 +2072,7 @@ else {
                     document.querySelector("body > div.container > div").appendChild(ExportACCode);
                     ExportACCode.innerText = "导出AC代码";
                     ExportACCode.className = "btn btn-outline-secondary";
-                    ExportACCode.onclick = () => {
+                    ExportACCode.addEventListener("click", () => {
                         ExportACCode.disabled = true;
                         let ExportProgressBar = document.getElementsByTagName("progress")[0] || document.createElement("progress");
                         ExportProgressBar.removeAttribute("value");
@@ -2082,7 +2080,7 @@ else {
                         document.querySelector("body > div.container > div").appendChild(ExportProgressBar);
                         ExportACCode.innerText = "正在导出...";
                         let Request = new XMLHttpRequest();
-                        Request.onreadystatechange = () => {
+                        Request.addEventListener("readystatechange", () => {
                             if (Request.readyState == 4) {
                                 if (Request.status == 200) {
                                     let Response = Request.responseText;
@@ -2121,10 +2119,10 @@ else {
                                     }, 1000);
                                 }
                             }
-                        }
+                        });
                         Request.open("GET", "http://www.xmoj.tech/export_ac_code.php", true);
                         Request.send();
-                    }
+                    });
                 }
             }
         } else if (location.pathname == "/userinfo.php") {
@@ -2210,9 +2208,9 @@ else {
                     document.querySelector("body > div.container > div").appendChild(CompareButton);
                     CompareButton.innerText = "比较";
                     CompareButton.className = "btn btn-primary";
-                    CompareButton.onclick = () => {
+                    CompareButton.addEventListener("click", () => {
                         location.href = "/comparesource.php?left=" + LeftCode.value + "&right=" + RightCode.value;
-                    };
+                    });
                 }
                 else {
                     document.querySelector("body > div > div.mt-3").innerHTML = `
@@ -2250,9 +2248,9 @@ else {
                         ignoreWhitespace: true
                     });
 
-                    IgnoreWhitespaces.onchange = () => {
+                    IgnoreWhitespaces.addEventListener("change", () => {
                         MergeViewElement.ignoreWhitespace = ignorews.checked;
-                    };
+                    });
                 }
             }
         } else if (location.pathname == "/loginpage.php") {
@@ -2289,7 +2287,7 @@ else {
             ErrorText.style.marginBottom = "5px";
             document.querySelector("#login").appendChild(ErrorText);
             let LoginButton = document.getElementsByName("submit")[0];
-            LoginButton.onclick = async () => {
+            LoginButton.addEventListener("click", async () => {
                 let Username = document.getElementsByName("user_id")[0].value;
                 let Password = document.getElementsByName("password")[0].value;
                 if (Username == "" ||
@@ -2339,7 +2337,7 @@ else {
                             }
                         });
                 }
-            };
+            });
             if (UtilityEnabled("SavePassword") &&
                 localStorage.getItem("UserScript-Username") != null &&
                 localStorage.getItem("UserScript-Password") != null) {
@@ -2420,21 +2418,21 @@ else {
                     CopyButton.style.fontSize = "12px";
                     CopyButton.style.margin = "6px";
                     CopyButton.innerText = "点此复制获取数据的语句";
-                    CurrentElement.onmouseover = () => {
+                    CurrentElement.addEventListener("mouseover", () => {
                         let Temp = CurrentElement.children;
                         for (let j = 0; j < Temp.length; j++) {
                             Temp[j].style.display = "none";
                         }
                         Temp[Temp.length - 1].style.display = "";
-                    };
-                    CurrentElement.onmouseout = () => {
+                    });
+                    CurrentElement.addEventListener("mouseout", () => {
                         let Temp = CurrentElement.children;
                         for (let j = 0; j < Temp.length; j++) {
                             Temp[j].style.display = "";
                         }
                         Temp[Temp.length - 1].style.display = "none";
-                    };
-                    CurrentElement.onclick = () => {
+                    });
+                    CurrentElement.addEventListener("click", () => {
                         let SolutionID = SearchParams.get("sid");
                         let ContestID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Contest");
                         if (ContestID == null) {
@@ -2465,7 +2463,7 @@ else {
                         setTimeout(() => {
                             CopyButton.innerText = "点此复制获取数据的语句";
                         }, 1000);
-                    };
+                    });
                     CurrentElement.onmouseout();
                 }
             }
@@ -2597,13 +2595,13 @@ else {
                     CopyMDButton.style.marginLeft = "10px";
                     CopyMDButton.type = "button";
                     document.querySelector("body > div > div.mt-3 > center > h2").appendChild(CopyMDButton);
-                    CopyMDButton.onclick = () => {
+                    CopyMDButton.addEventListener("click", () => {
                         GM_setClipboard(ParsedDocument.querySelector("body > div > div > div").innerText.trim().replaceAll("\n\t", "\n").replaceAll("\n\n", "\n").replaceAll("\n\n", "\n"));
                         CopyMDButton.innerText = "复制成功";
                         setTimeout(() => {
                             CopyMDButton.innerText = "复制";
                         }, 1000);
-                    };
+                    });
                 });
             }
             let Temp = document.getElementsByClassName("prettyprint");
@@ -2749,10 +2747,10 @@ else {
                         }
                     });
                 };
-                Username.oninput = () => {
+                Username.addEventListener("input", () => {
                     Username.classList.remove("is-invalid");
-                };
-                AddUser.onclick = () => {
+                });
+                AddUser.addEventListener("click", () => {
                     let UsernameData = Username.value;
                     if (UsernameData == "") {
                         Username.classList.add("is-invalid");
@@ -2774,11 +2772,9 @@ else {
                             ErrorElement.style.display = "";
                         }
                     });
-                };
+                });
                 RefreshMessageList(false);
-                onfocus = () => {
-                    RefreshMessageList();
-                };
+                addEventListener("focus", RefreshMessageList);
             }
             else {
                 document.querySelector("body > div > div.mt-3").innerHTML = `<div class="row g-2 mb-3">
@@ -2842,15 +2838,15 @@ else {
                         }
                     });
                 };
-                Content.oninput = () => {
+                Content.addEventListener("input", () => {
                     Content.classList.remove("is-invalid");
-                };
-                Content.onkeydown = (Event) => {
+                });
+                Content.addEventListener("keydown", (Event) => {
                     if (Event.keyCode == 13) {
                         Send.click();
                     }
-                };
-                Send.onclick = () => {
+                });
+                Send.addEventListener("click", () => {
                     if (Content.value == "") {
                         Content.classList.add("is-invalid");
                         return;
@@ -2873,11 +2869,9 @@ else {
                             ErrorElement.style.display = "";
                         }
                     });
-                };
+                });
                 RefreshMessage(false);
-                onfocus = () => {
-                    RefreshMessage();
-                };
+                addEventListener("focus", RefreshMessage);
             }
         } else if (location.pathname.indexOf("/discuss3") != -1) {
             Discussion.classList.add("active");
@@ -2918,14 +2912,14 @@ else {
                         Cell.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>`;
                     }
                 }
-                NewPost.onclick = () => {
+                NewPost.addEventListener("click", () => {
                     if (ProblemID != null) {
                         location.href = "/discuss3/newpost.php?pid=" + ProblemID;
                     }
                     else {
                         location.href = "/discuss3/newpost.php";
                     }
-                };
+                });
                 RequestAPI("BBS", "GetPosts", {
                     "ProblemID": ProblemID,
                     "Page": Page
@@ -2983,13 +2977,13 @@ else {
                 <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
             </button>
             <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
-                TitleElement.oninput = () => {
+                TitleElement.addEventListener("input", () => {
                     TitleElement.classList.remove("is-invalid");
-                };
-                ContentElement.oninput = () => {
+                });
+                ContentElement.addEventListener("input", () => {
                     ContentElement.classList.remove("is-invalid");
-                };
-                SubmitElement.onclick = async () => {
+                });
+                SubmitElement.addEventListener("click", async () => {
                     ErrorElement.style.display = "none";
                     let Title = TitleElement.value;
                     let Content = ContentElement.value;
@@ -3019,7 +3013,7 @@ else {
                             ErrorElement.style.display = "block";
                         }
                     });
-                }
+                });
             } else if (location.pathname == "/discuss3/thread.php") {
                 if (SearchParams.get("tid") == null) {
                     location.href = "/discuss3/discuss.php";
@@ -3057,11 +3051,11 @@ else {
                             <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                         </button>
                         <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
-                    ContentElement.onkeydown = (Event) => {
+                    ContentElement.addEventListener("keydown", (Event) => {
                         if (Event.ctrlKey && Event.keyCode == 13) {
                             SubmitElement.click();
                         }
-                    };
+                    });
                     let RefreshReply = (Silent = true) => {
                         if (!Silent) {
                             PostTitle.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
@@ -3139,17 +3133,17 @@ else {
                                     CardBodyRowSpan3Button1Element.type = "button";
                                     CardBodyRowSpan3Button1Element.className = "btn btn-sm btn-info";
                                     CardBodyRowSpan3Button1Element.innerText = "回复";
-                                    CardBodyRowSpan3Button1Element.onclick = () => {
+                                    CardBodyRowSpan3Button1Element.addEventListener("click", () => {
                                         ContentElement.value += `@${Replies[i].UserID} `;
                                         ContentElement.focus();
-                                    }
+                                    });
                                     CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button1Element);
                                     let CardBodyRowSpan3Button2Element = document.createElement("button");
                                     CardBodyRowSpan3Button2Element.type = "button";
                                     CardBodyRowSpan3Button2Element.className = "btn btn-sm btn-danger ms-1";
                                     CardBodyRowSpan3Button2Element.innerText = "删除";
                                     CardBodyRowSpan3Button2Element.style.display = (Replies[i].UserID == profile.innerText ? "" : "none");
-                                    CardBodyRowSpan3Button2Element.onclick = () => {
+                                    CardBodyRowSpan3Button2Element.addEventListener("click", () => {
                                         CardBodyRowSpan3Button2Element.disabled = true;
                                         CardBodyRowSpan3Button2Element.lastChild.style.display = "";
                                         RequestAPI("BBS", "DeleteReply", {
@@ -3165,7 +3159,7 @@ else {
                                                 ErrorElement.style.display = "";
                                             }
                                         });
-                                    }
+                                    });
                                     let CardBodyRowSpan3Button2SpinnerElement = document.createElement("div");
                                     CardBodyRowSpan3Button2SpinnerElement.className = "spinner-border spinner-border-sm";
                                     CardBodyRowSpan3Button2SpinnerElement.role = "status";
@@ -3230,7 +3224,7 @@ else {
                             }
                         });
                     };
-                    Delete.onclick = () => {
+                    Delete.addEventListener("click", () => {
                         Delete.disabled = true;
                         Delete.children[0].style.display = "inline-block";
                         RequestAPI("BBS", "DeletePost", {
@@ -3246,8 +3240,8 @@ else {
                                 ErrorElement.style.display = "block";
                             }
                         });
-                    };
-                    SubmitElement.onclick = async () => {
+                    });
+                    SubmitElement.addEventListener("click", async () => {
                         ErrorElement.style.display = "none";
                         SubmitElement.disabled = true;
                         SubmitElement.children[0].style.display = "inline-block";
@@ -3273,11 +3267,9 @@ else {
                                 ErrorElement.style.display = "block";
                             }
                         });
-                    };
+                    });
                     RefreshReply(false);
-                    onfocus = () => {
-                        RefreshReply();
-                    };
+                    addEventListener("focus", RefreshReply);
                 }
             }
         }
