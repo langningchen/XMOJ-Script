@@ -233,9 +233,11 @@ else {
             location.href = "loginpage.php";
         }
 
-        let Discussion = document.createElement("li");
-        document.querySelector("#navbar > ul:nth-child(1)").appendChild(Discussion);
-        Discussion.innerHTML = "<a href=\"/discuss3/discuss.php\">讨论</a>";
+        if (UtilityEnabled("Discussion")) {
+            let Discussion = document.createElement("li");
+            document.querySelector("#navbar > ul:nth-child(1)").appendChild(Discussion);
+            Discussion.innerHTML = "<a href=\"/discuss3/discuss.php\">讨论</a>";
+        }
 
         if (document.querySelector("#navbar > ul:nth-child(1)").childElementCount > 8 && UtilityEnabled("ACMRank")) {
             let ACMRank = document.createElement("li");
@@ -706,6 +708,7 @@ else {
                 };
                 UtilitiesCardBody.appendChild(CreateList([
                     { "ID": "ACMRank", "Type": "A", "Name": "比赛ACM排名，并且能下载ACM排名" },
+                    { "ID": "Discussion", "Type": "F", "Name": "恢复讨论功能" },
                     { "ID": "MoreSTD", "Type": "F", "Name": "查看到更多标程" },
                     { "ID": "GetOthersSample", "Type": "A", "Name": "获取到别人的测试点数据" },
                     { "ID": "AutoRefresh", "Type": "A", "Name": "比赛列表、比赛排名界面自动刷新" },
@@ -928,39 +931,41 @@ else {
                     });
                 }
 
-                let DiscussButton = document.createElement("button");
-                DiscussButton.className = "btn btn-outline-secondary position-relative";
-                DiscussButton.innerHTML = `讨论`;
-                DiscussButton.style.marginLeft = "10px";
-                DiscussButton.type = "button";
-                DiscussButton.addEventListener("click", () => {
-                    if (SearchParams.get("cid") != null) {
-                        open("http://www.xmoj.tech/discuss3/discuss.php?pid=" + PID, "_blank");
-                    }
-                    else {
-                        open("http://www.xmoj.tech/discuss3/discuss.php?pid=" + SearchParams.get("id"), "_blank");
-                    }
-                });
-                document.querySelector("body > div > div.mt-3 > center").appendChild(DiscussButton);
-                let UnreadBadge = document.createElement("span");
-                UnreadBadge.className = "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger";
-                UnreadBadge.style.display = "none";
-                DiscussButton.appendChild(UnreadBadge);
-
-                let RefreshCount = () => {
-                    RequestAPI("BBS", "GetPostCount", {
-                        "ProblemID": PID
-                    }, (Response) => {
-                        if (Response.Success) {
-                            if (Response.Data.DiscussCount != 0) {
-                                UnreadBadge.innerText = Response.Data.DiscussCount;
-                                UnreadBadge.style.display = "";
-                            }
+                if (UtilityEnabled("Discussion")) {
+                    let DiscussButton = document.createElement("button");
+                    DiscussButton.className = "btn btn-outline-secondary position-relative";
+                    DiscussButton.innerHTML = `讨论`;
+                    DiscussButton.style.marginLeft = "10px";
+                    DiscussButton.type = "button";
+                    DiscussButton.addEventListener("click", () => {
+                        if (SearchParams.get("cid") != null) {
+                            open("http://www.xmoj.tech/discuss3/discuss.php?pid=" + PID, "_blank");
+                        }
+                        else {
+                            open("http://www.xmoj.tech/discuss3/discuss.php?pid=" + SearchParams.get("id"), "_blank");
                         }
                     });
-                };
-                RefreshCount();
-                addEventListener("focus", RefreshCount);
+                    document.querySelector("body > div > div.mt-3 > center").appendChild(DiscussButton);
+                    let UnreadBadge = document.createElement("span");
+                    UnreadBadge.className = "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger";
+                    UnreadBadge.style.display = "none";
+                    DiscussButton.appendChild(UnreadBadge);
+
+                    let RefreshCount = () => {
+                        RequestAPI("BBS", "GetPostCount", {
+                            "ProblemID": PID
+                        }, (Response) => {
+                            if (Response.Success) {
+                                if (Response.Data.DiscussCount != 0) {
+                                    UnreadBadge.innerText = Response.Data.DiscussCount;
+                                    UnreadBadge.style.display = "";
+                                }
+                            }
+                        });
+                    };
+                    RefreshCount();
+                    addEventListener("focus", RefreshCount);
+                }
             }
             Style.innerHTML += "code, kbd, pre, samp {";
             Style.innerHTML += "    font-family: monospace, Consolas, 'Courier New';";
@@ -2882,11 +2887,12 @@ else {
                 addEventListener("focus", RefreshMessage);
             }
         } else if (location.pathname.indexOf("/discuss3") != -1) {
-            Discussion.classList.add("active");
-            if (location.pathname == "/discuss3/discuss.php") {
-                let ProblemID = SearchParams.get("pid");
-                let Page = Number(SearchParams.get("page")) || 1;
-                document.querySelector("body > div > div").innerHTML = `<h3>讨论列表${(ProblemID == null ? "" : ` - 题目` + ProblemID)}</h3>
+            if (UtilityEnabled("Discussion")) {
+                Discussion.classList.add("active");
+                if (location.pathname == "/discuss3/discuss.php") {
+                    let ProblemID = SearchParams.get("pid");
+                    let Page = Number(SearchParams.get("page")) || 1;
+                    document.querySelector("body > div > div").innerHTML = `<h3>讨论列表${(ProblemID == null ? "" : ` - 题目` + ProblemID)}</h3>
                     <button id="NewPost" type="button" class="btn btn-primary">发布新讨论</button>
                     <nav>
                         <ul class="pagination justify-content-center" id="DiscussPagination">
@@ -2913,66 +2919,66 @@ else {
                         <tbody>
                         </tbody>
                     </table>`;
-                for (let i = 0; i < 10; i++) {
-                    let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
-                    for (let j = 0; j < 7; j++) {
-                        let Cell = document.createElement("td"); Row.appendChild(Cell);
-                        Cell.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>`;
-                    }
-                }
-                NewPost.addEventListener("click", () => {
-                    if (ProblemID != null) {
-                        location.href = "/discuss3/newpost.php?pid=" + ProblemID;
-                    }
-                    else {
-                        location.href = "/discuss3/newpost.php";
-                    }
-                });
-                RequestAPI("BBS", "GetPosts", {
-                    "ProblemID": ProblemID,
-                    "Page": Page
-                }, (ResponseData) => {
-                    if (ResponseData.Success == true) {
-                        ErrorElement.style.display = "none";
-                        DiscussPagination.children[0].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
-                        DiscussPagination.children[1].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
-                        DiscussPagination.children[2].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
-                        DiscussPagination.children[3].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
-                        DiscussPagination.children[4].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
-                        if (Page <= 1) {
-                            DiscussPagination.children[0].classList.add("disabled");
-                            DiscussPagination.children[1].remove();
+                    for (let i = 0; i < 10; i++) {
+                        let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
+                        for (let j = 0; j < 7; j++) {
+                            let Cell = document.createElement("td"); Row.appendChild(Cell);
+                            Cell.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>`;
                         }
-                        if (Page >= ResponseData.Data.PageCount) {
-                            DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
-                            DiscussPagination.children[DiscussPagination.children.length - 2].remove();
+                    }
+                    NewPost.addEventListener("click", () => {
+                        if (ProblemID != null) {
+                            location.href = "/discuss3/newpost.php?pid=" + ProblemID;
                         }
-                        let Posts = ResponseData.Data.Posts;
-                        PostList.children[1].innerHTML = "";
-                        if (Posts.length == 0) {
-                            PostList.children[1].innerHTML = `<tr><td colspan="7">暂无数据</td></tr>`;
+                        else {
+                            location.href = "/discuss3/newpost.php";
                         }
-                        for (let i = 0; i < Posts.length; i++) {
-                            PostList.children[1].innerHTML += `<tr>
+                    });
+                    RequestAPI("BBS", "GetPosts", {
+                        "ProblemID": ProblemID,
+                        "Page": Page
+                    }, (ResponseData) => {
+                        if (ResponseData.Success == true) {
+                            ErrorElement.style.display = "none";
+                            DiscussPagination.children[0].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
+                            DiscussPagination.children[1].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
+                            DiscussPagination.children[2].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
+                            DiscussPagination.children[3].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
+                            DiscussPagination.children[4].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
+                            if (Page <= 1) {
+                                DiscussPagination.children[0].classList.add("disabled");
+                                DiscussPagination.children[1].remove();
+                            }
+                            if (Page >= ResponseData.Data.PageCount) {
+                                DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
+                                DiscussPagination.children[DiscussPagination.children.length - 2].remove();
+                            }
+                            let Posts = ResponseData.Data.Posts;
+                            PostList.children[1].innerHTML = "";
+                            if (Posts.length == 0) {
+                                PostList.children[1].innerHTML = `<tr><td colspan="7">暂无数据</td></tr>`;
+                            }
+                            for (let i = 0; i < Posts.length; i++) {
+                                PostList.children[1].innerHTML += `<tr>
                                     <td>${Posts[i].PostID}</td>
                                     <td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>
                                     <td><a href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
-                                (Posts[i].ProblemID == null ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
-                                `<td>${Posts[i].PostTime}</td>
+                                    (Posts[i].ProblemID == null ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
+                                    `<td>${Posts[i].PostTime}</td>
                                     <td>${Posts[i].ReplyCount}</td>
                                     <td><a href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
                                 </tr>`;
+                            }
                         }
-                    }
-                    else {
-                        ErrorElement.innerText = ResponseData.ErrorMessage;
-                        ErrorElement.style.display = "block";
-                    }
-                });
-            } else if (location.pathname == "/discuss3/newpost.php") {
-                let ProblemID = SearchParams.get("pid");
-                document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (ProblemID != null ? ` - 题目` + ProblemID : ``) +
-                    `</h3>
+                        else {
+                            ErrorElement.innerText = ResponseData.ErrorMessage;
+                            ErrorElement.style.display = "block";
+                        }
+                    });
+                } else if (location.pathname == "/discuss3/newpost.php") {
+                    let ProblemID = SearchParams.get("pid");
+                    document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (ProblemID != null ? ` - 题目` + ProblemID : ``) +
+                        `</h3>
             <div class="form-group mb-3">
                 <label for="Title" class="mb-1">标题</label>
                 <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
@@ -2986,51 +2992,51 @@ else {
                 <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
             </button>
             <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
-                TitleElement.addEventListener("input", () => {
-                    TitleElement.classList.remove("is-invalid");
-                });
-                ContentElement.addEventListener("input", () => {
-                    ContentElement.classList.remove("is-invalid");
-                });
-                SubmitElement.addEventListener("click", async () => {
-                    ErrorElement.style.display = "none";
-                    let Title = TitleElement.value;
-                    let Content = ContentElement.value;
-                    let ProblemID = SearchParams.get("pid");
-                    if (Title == "") {
-                        TitleElement.classList.add("is-invalid");
-                        return;
-                    }
-                    if (Content == "") {
-                        ContentElement.classList.add("is-invalid");
-                        return;
-                    }
-                    SubmitElement.disabled = true;
-                    SubmitElement.children[0].style.display = "inline-block";
-                    RequestAPI("BBS", "NewPost", {
-                        "Title": Title,
-                        "Content": Content,
-                        "ProblemID": ProblemID
-                    }, (ResponseData) => {
-                        SubmitElement.disabled = false;
-                        SubmitElement.children[0].style.display = "none";
-                        if (ResponseData.Success == true) {
-                            location.href = "/discuss3/thread.php?tid=" + ResponseData.Data.PostID;
-                        }
-                        else {
-                            ErrorElement.innerText = ResponseData.ErrorMessage;
-                            ErrorElement.style.display = "block";
-                        }
+                    TitleElement.addEventListener("input", () => {
+                        TitleElement.classList.remove("is-invalid");
                     });
-                });
-            } else if (location.pathname == "/discuss3/thread.php") {
-                if (SearchParams.get("tid") == null) {
-                    location.href = "/discuss3/discuss.php";
-                }
-                else {
-                    let ThreadID = SearchParams.get("tid");
-                    let Page = Number(SearchParams.get("page")) || 1;
-                    document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
+                    ContentElement.addEventListener("input", () => {
+                        ContentElement.classList.remove("is-invalid");
+                    });
+                    SubmitElement.addEventListener("click", async () => {
+                        ErrorElement.style.display = "none";
+                        let Title = TitleElement.value;
+                        let Content = ContentElement.value;
+                        let ProblemID = SearchParams.get("pid");
+                        if (Title == "") {
+                            TitleElement.classList.add("is-invalid");
+                            return;
+                        }
+                        if (Content == "") {
+                            ContentElement.classList.add("is-invalid");
+                            return;
+                        }
+                        SubmitElement.disabled = true;
+                        SubmitElement.children[0].style.display = "inline-block";
+                        RequestAPI("BBS", "NewPost", {
+                            "Title": Title,
+                            "Content": Content,
+                            "ProblemID": ProblemID
+                        }, (ResponseData) => {
+                            SubmitElement.disabled = false;
+                            SubmitElement.children[0].style.display = "none";
+                            if (ResponseData.Success == true) {
+                                location.href = "/discuss3/thread.php?tid=" + ResponseData.Data.PostID;
+                            }
+                            else {
+                                ErrorElement.innerText = ResponseData.ErrorMessage;
+                                ErrorElement.style.display = "block";
+                            }
+                        });
+                    });
+                } else if (location.pathname == "/discuss3/thread.php") {
+                    if (SearchParams.get("tid") == null) {
+                        location.href = "/discuss3/discuss.php";
+                    }
+                    else {
+                        let ThreadID = SearchParams.get("tid");
+                        let Page = Number(SearchParams.get("page")) || 1;
+                        document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
                         <div class="row mb-3">
                             <span class="col-4 text-muted">作者：<a id="PostAuthor" href=""></a></span>
                             <span class="col-4 text-muted">发布时间：<span id="PostTime"></span></span>
@@ -3060,19 +3066,19 @@ else {
                             <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                         </button>
                         <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
-                    ContentElement.addEventListener("keydown", (Event) => {
-                        if (Event.ctrlKey && Event.keyCode == 13) {
-                            SubmitElement.click();
-                        }
-                    });
-                    let RefreshReply = (Silent = true) => {
-                        if (!Silent) {
-                            PostTitle.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
-                            PostAuthor.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
-                            PostTime.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
-                            PostReplies.innerHTML = "";
-                            for (let i = 0; i < 10; i++) {
-                                PostReplies.innerHTML += `<div class="card mb-3">
+                        ContentElement.addEventListener("keydown", (Event) => {
+                            if (Event.ctrlKey && Event.keyCode == 13) {
+                                SubmitElement.click();
+                            }
+                        });
+                        let RefreshReply = (Silent = true) => {
+                            if (!Silent) {
+                                PostTitle.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
+                                PostAuthor.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
+                                PostTime.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
+                                PostReplies.innerHTML = "";
+                                for (let i = 0; i < 10; i++) {
+                                    PostReplies.innerHTML += `<div class="card mb-3">
                                         <div class="card-body">
                                             <div class="row mb-3">
                                                 <span class="col-6"><span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span></span>
@@ -3084,201 +3090,202 @@ else {
                                             <span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>
                                         </div>
                                     </div>`;
-                            }
-                        }
-                        let OldScrollTop = document.documentElement.scrollTop;
-                        RequestAPI("BBS", "GetPost", {
-                            "PostID": ThreadID,
-                            "Page": Page
-                        }, (ResponseData) => {
-                            if (ResponseData.Success == true) {
-                                if (!Silent) {
-                                    DiscussPagination.children[0].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=1";
-                                    DiscussPagination.children[1].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
-                                    DiscussPagination.children[2].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + Page;
-                                    DiscussPagination.children[3].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page + 1);
-                                    DiscussPagination.children[4].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + ResponseData.Data.PageCount;
-                                    if (Page <= 1) {
-                                        DiscussPagination.children[0].classList.add("disabled");
-                                        DiscussPagination.children[1].remove();
-                                    }
-                                    if (Page >= ResponseData.Data.PageCount) {
-                                        DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
-                                        DiscussPagination.children[DiscussPagination.children.length - 2].remove();
-                                    }
-                                    if (ResponseData.Data.UserID == profile.innerText) {
-                                        Delete.style.display = "";
-                                    }
                                 }
-                                PostTitle.innerText = ResponseData.Data.Title;
-                                PostAuthor.innerText = ResponseData.Data.UserID;
-                                PostAuthor.href = "/userinfo.php?user=" + ResponseData.Data.UserID;
-                                PostTime.innerText = ResponseData.Data.PostTime;
-                                let Replies = ResponseData.Data.Reply;
-                                PostReplies.innerHTML = "";
-                                for (let i = 0; i < Replies.length; i++) {
-                                    let CardElement = document.createElement("div");
-                                    CardElement.className = "card mb-3";
-                                    let CardBodyElement = document.createElement("div");
-                                    CardBodyElement.className = "card-body row";
-                                    let CardBodyRowElement = document.createElement("div");
-                                    CardBodyRowElement.className = "row mb-3";
-                                    let CardBodyRowSpan1Element = document.createElement("span");
-                                    CardBodyRowSpan1Element.className = "col-4 text-muted";
-                                    CardBodyRowSpan1Element.innerText = "作者：";
-                                    let CardBodyRowSpan1AElement = document.createElement("a");
-                                    CardBodyRowSpan1AElement.href = "/userinfo.php?user=" + Replies[i].UserID;
-                                    CardBodyRowSpan1AElement.innerText = Replies[i].UserID;
-                                    CardBodyRowSpan1Element.appendChild(CardBodyRowSpan1AElement);
-                                    let CardBodyRowSpan2Element = document.createElement("span");
-                                    CardBodyRowSpan2Element.className = "col-4 text-muted";
-                                    CardBodyRowSpan2Element.innerText = "发布时间：";
-                                    let CardBodyRowSpan2SpanElement = document.createElement("span");
-                                    CardBodyRowSpan2SpanElement.innerText = Replies[i].ReplyTime;
-                                    CardBodyRowSpan2Element.appendChild(CardBodyRowSpan2SpanElement);
-                                    let CardBodyRowSpan3Element = document.createElement("span");
-                                    CardBodyRowSpan3Element.className = "col-4";
-                                    let CardBodyRowSpan3Button1Element = document.createElement("button");
-                                    CardBodyRowSpan3Button1Element.type = "button";
-                                    CardBodyRowSpan3Button1Element.className = "btn btn-sm btn-info";
-                                    CardBodyRowSpan3Button1Element.innerText = "回复";
-                                    CardBodyRowSpan3Button1Element.addEventListener("click", () => {
-                                        ContentElement.value += `@${Replies[i].UserID} `;
-                                        ContentElement.focus();
-                                    });
-                                    CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button1Element);
-                                    let CardBodyRowSpan3Button2Element = document.createElement("button");
-                                    CardBodyRowSpan3Button2Element.type = "button";
-                                    CardBodyRowSpan3Button2Element.className = "btn btn-sm btn-danger ms-1";
-                                    CardBodyRowSpan3Button2Element.innerText = "删除";
-                                    CardBodyRowSpan3Button2Element.style.display = (Replies[i].UserID == profile.innerText ? "" : "none");
-                                    CardBodyRowSpan3Button2Element.addEventListener("click", () => {
-                                        CardBodyRowSpan3Button2Element.disabled = true;
-                                        CardBodyRowSpan3Button2Element.lastChild.style.display = "";
-                                        RequestAPI("BBS", "DeleteReply", {
-                                            "ReplyID": Replies[i].ReplyID
-                                        }, (ResponseData) => {
-                                            if (ResponseData.Success == true) {
-                                                RefreshReply();
-                                            }
-                                            else {
-                                                CardBodyRowSpan3Button2Element.disabled = false;
-                                                CardBodyRowSpan3Button2Element.lastChild.style.display = "none";
-                                                ErrorElement.innerText = ResponseData.ErrorMessage;
-                                                ErrorElement.style.display = "";
-                                            }
+                            }
+                            let OldScrollTop = document.documentElement.scrollTop;
+                            RequestAPI("BBS", "GetPost", {
+                                "PostID": ThreadID,
+                                "Page": Page
+                            }, (ResponseData) => {
+                                if (ResponseData.Success == true) {
+                                    if (!Silent) {
+                                        DiscussPagination.children[0].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=1";
+                                        DiscussPagination.children[1].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
+                                        DiscussPagination.children[2].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + Page;
+                                        DiscussPagination.children[3].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page + 1);
+                                        DiscussPagination.children[4].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + ResponseData.Data.PageCount;
+                                        if (Page <= 1) {
+                                            DiscussPagination.children[0].classList.add("disabled");
+                                            DiscussPagination.children[1].remove();
+                                        }
+                                        if (Page >= ResponseData.Data.PageCount) {
+                                            DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
+                                            DiscussPagination.children[DiscussPagination.children.length - 2].remove();
+                                        }
+                                        if (ResponseData.Data.UserID == profile.innerText) {
+                                            Delete.style.display = "";
+                                        }
+                                    }
+                                    PostTitle.innerText = ResponseData.Data.Title;
+                                    PostAuthor.innerText = ResponseData.Data.UserID;
+                                    PostAuthor.href = "/userinfo.php?user=" + ResponseData.Data.UserID;
+                                    PostTime.innerText = ResponseData.Data.PostTime;
+                                    let Replies = ResponseData.Data.Reply;
+                                    PostReplies.innerHTML = "";
+                                    for (let i = 0; i < Replies.length; i++) {
+                                        let CardElement = document.createElement("div");
+                                        CardElement.className = "card mb-3";
+                                        let CardBodyElement = document.createElement("div");
+                                        CardBodyElement.className = "card-body row";
+                                        let CardBodyRowElement = document.createElement("div");
+                                        CardBodyRowElement.className = "row mb-3";
+                                        let CardBodyRowSpan1Element = document.createElement("span");
+                                        CardBodyRowSpan1Element.className = "col-4 text-muted";
+                                        CardBodyRowSpan1Element.innerText = "作者：";
+                                        let CardBodyRowSpan1AElement = document.createElement("a");
+                                        CardBodyRowSpan1AElement.href = "/userinfo.php?user=" + Replies[i].UserID;
+                                        CardBodyRowSpan1AElement.innerText = Replies[i].UserID;
+                                        CardBodyRowSpan1Element.appendChild(CardBodyRowSpan1AElement);
+                                        let CardBodyRowSpan2Element = document.createElement("span");
+                                        CardBodyRowSpan2Element.className = "col-4 text-muted";
+                                        CardBodyRowSpan2Element.innerText = "发布时间：";
+                                        let CardBodyRowSpan2SpanElement = document.createElement("span");
+                                        CardBodyRowSpan2SpanElement.innerText = Replies[i].ReplyTime;
+                                        CardBodyRowSpan2Element.appendChild(CardBodyRowSpan2SpanElement);
+                                        let CardBodyRowSpan3Element = document.createElement("span");
+                                        CardBodyRowSpan3Element.className = "col-4";
+                                        let CardBodyRowSpan3Button1Element = document.createElement("button");
+                                        CardBodyRowSpan3Button1Element.type = "button";
+                                        CardBodyRowSpan3Button1Element.className = "btn btn-sm btn-info";
+                                        CardBodyRowSpan3Button1Element.innerText = "回复";
+                                        CardBodyRowSpan3Button1Element.addEventListener("click", () => {
+                                            ContentElement.value += `@${Replies[i].UserID} `;
+                                            ContentElement.focus();
                                         });
-                                    });
-                                    let CardBodyRowSpan3Button2SpinnerElement = document.createElement("div");
-                                    CardBodyRowSpan3Button2SpinnerElement.className = "spinner-border spinner-border-sm";
-                                    CardBodyRowSpan3Button2SpinnerElement.role = "status";
-                                    CardBodyRowSpan3Button2SpinnerElement.style.display = "none";
-                                    CardBodyRowSpan3Button2Element.appendChild(CardBodyRowSpan3Button2SpinnerElement);
-                                    CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button2Element);
-                                    CardBodyRowElement.appendChild(CardBodyRowSpan1Element);
-                                    CardBodyRowElement.appendChild(CardBodyRowSpan2Element);
-                                    CardBodyRowElement.appendChild(CardBodyRowSpan3Element);
-                                    CardBodyElement.appendChild(CardBodyRowElement);
-                                    let CardBodyHRElement = document.createElement("hr");
-                                    CardBodyElement.appendChild(CardBodyHRElement);
-                                    let CardBodyPElement = document.createElement("p");
-                                    CardBodyPElement.innerHTML = marked.parse(Replies[i].Content);
-                                    CardBodyElement.appendChild(CardBodyPElement);
-                                    CardElement.appendChild(CardBodyElement);
-                                    PostReplies.appendChild(CardElement);
-                                }
-                                let CodeElements = document.querySelectorAll("pre > code");
-                                for (let i = 0; i < CodeElements.length; i++) {
-                                    let ModeName = "text/plain";
-                                    if (CodeElements[i].className == "language-c") {
-                                        ModeName = "text/x-csrc";
+                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button1Element);
+                                        let CardBodyRowSpan3Button2Element = document.createElement("button");
+                                        CardBodyRowSpan3Button2Element.type = "button";
+                                        CardBodyRowSpan3Button2Element.className = "btn btn-sm btn-danger ms-1";
+                                        CardBodyRowSpan3Button2Element.innerText = "删除";
+                                        CardBodyRowSpan3Button2Element.style.display = (Replies[i].UserID == profile.innerText ? "" : "none");
+                                        CardBodyRowSpan3Button2Element.addEventListener("click", () => {
+                                            CardBodyRowSpan3Button2Element.disabled = true;
+                                            CardBodyRowSpan3Button2Element.lastChild.style.display = "";
+                                            RequestAPI("BBS", "DeleteReply", {
+                                                "ReplyID": Replies[i].ReplyID
+                                            }, (ResponseData) => {
+                                                if (ResponseData.Success == true) {
+                                                    RefreshReply();
+                                                }
+                                                else {
+                                                    CardBodyRowSpan3Button2Element.disabled = false;
+                                                    CardBodyRowSpan3Button2Element.lastChild.style.display = "none";
+                                                    ErrorElement.innerText = ResponseData.ErrorMessage;
+                                                    ErrorElement.style.display = "";
+                                                }
+                                            });
+                                        });
+                                        let CardBodyRowSpan3Button2SpinnerElement = document.createElement("div");
+                                        CardBodyRowSpan3Button2SpinnerElement.className = "spinner-border spinner-border-sm";
+                                        CardBodyRowSpan3Button2SpinnerElement.role = "status";
+                                        CardBodyRowSpan3Button2SpinnerElement.style.display = "none";
+                                        CardBodyRowSpan3Button2Element.appendChild(CardBodyRowSpan3Button2SpinnerElement);
+                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button2Element);
+                                        CardBodyRowElement.appendChild(CardBodyRowSpan1Element);
+                                        CardBodyRowElement.appendChild(CardBodyRowSpan2Element);
+                                        CardBodyRowElement.appendChild(CardBodyRowSpan3Element);
+                                        CardBodyElement.appendChild(CardBodyRowElement);
+                                        let CardBodyHRElement = document.createElement("hr");
+                                        CardBodyElement.appendChild(CardBodyHRElement);
+                                        let CardBodyPElement = document.createElement("p");
+                                        CardBodyPElement.innerHTML = marked.parse(Replies[i].Content);
+                                        CardBodyElement.appendChild(CardBodyPElement);
+                                        CardElement.appendChild(CardBodyElement);
+                                        PostReplies.appendChild(CardElement);
                                     }
-                                    else if (CodeElements[i].className == "language-cpp") {
-                                        ModeName = "text/x-c++src";
+                                    let CodeElements = document.querySelectorAll("pre > code");
+                                    for (let i = 0; i < CodeElements.length; i++) {
+                                        let ModeName = "text/plain";
+                                        if (CodeElements[i].className == "language-c") {
+                                            ModeName = "text/x-csrc";
+                                        }
+                                        else if (CodeElements[i].className == "language-cpp") {
+                                            ModeName = "text/x-c++src";
+                                        }
+                                        let Code = CodeElements[i].innerText;
+                                        Code = Code.replaceAll("&lt;", "<");
+                                        Code = Code.replaceAll("&gt;", ">");
+                                        Code = Code.replaceAll("&amp;", "&");
+                                        Code = Code.replaceAll("&quot;", "\"");
+                                        Code = Code.replaceAll("&apos;", "'");
+                                        Code = Code.trim();
+                                        CodeMirror(CodeElements[i].parentElement, {
+                                            value: Code,
+                                            mode: ModeName,
+                                            theme: (UtilityEnabled("DarkMode") ? "darcula" : "default"),
+                                            lineNumbers: true,
+                                            readOnly: true
+                                        }).setSize("100%", "auto");
+                                        CodeElements[i].remove();
                                     }
-                                    let Code = CodeElements[i].innerText;
-                                    Code = Code.replaceAll("&lt;", "<");
-                                    Code = Code.replaceAll("&gt;", ">");
-                                    Code = Code.replaceAll("&amp;", "&");
-                                    Code = Code.replaceAll("&quot;", "\"");
-                                    Code = Code.replaceAll("&apos;", "'");
-                                    Code = Code.trim();
-                                    CodeMirror(CodeElements[i].parentElement, {
-                                        value: Code,
-                                        mode: ModeName,
-                                        theme: (UtilityEnabled("DarkMode") ? "darcula" : "default"),
-                                        lineNumbers: true,
-                                        readOnly: true
-                                    }).setSize("100%", "auto");
-                                    CodeElements[i].remove();
-                                }
 
-                                renderMathInElement(document.body, {
-                                    delimiters: [
-                                        { left: '$$', right: '$$', display: true },
-                                        { left: '$', right: '$', display: false }
-                                    ],
-                                    throwOnError: false
-                                });
+                                    renderMathInElement(document.body, {
+                                        delimiters: [
+                                            { left: '$$', right: '$$', display: true },
+                                            { left: '$', right: '$', display: false }
+                                        ],
+                                        throwOnError: false
+                                    });
 
-                                if (Silent) {
-                                    scrollTo({
-                                        top: OldScrollTop,
-                                        behavior: "instant"
-                                    });
+                                    if (Silent) {
+                                        scrollTo({
+                                            top: OldScrollTop,
+                                            behavior: "instant"
+                                        });
+                                    }
                                 }
-                            }
-                            else {
-                                PostTitle.innerText = "错误：" + ResponseData.ErrorMessage;
-                            }
-                        });
-                    };
-                    Delete.addEventListener("click", () => {
-                        Delete.disabled = true;
-                        Delete.children[0].style.display = "inline-block";
-                        RequestAPI("BBS", "DeletePost", {
-                            "PostID": SearchParams.get("tid")
-                        }, (ResponseData) => {
-                            Delete.disabled = false;
-                            Delete.children[0].style.display = "none";
-                            if (ResponseData.Success == true) {
-                                location.href = "/discuss3/discuss.php";
-                            }
-                            else {
-                                ErrorElement.innerText = ResponseData.ErrorMessage;
-                                ErrorElement.style.display = "block";
-                            }
-                        });
-                    });
-                    SubmitElement.addEventListener("click", async () => {
-                        ErrorElement.style.display = "none";
-                        SubmitElement.disabled = true;
-                        SubmitElement.children[0].style.display = "inline-block";
-                        RequestAPI("BBS", "NewReply", {
-                            "PostID": SearchParams.get("tid"),
-                            "Content": ContentElement.value
-                        }, async (ResponseData) => {
-                            SubmitElement.disabled = false;
-                            SubmitElement.children[0].style.display = "none";
-                            if (ResponseData.Success == true) {
-                                RefreshReply();
-                                ContentElement.value = "";
-                                while (PostReplies.innerHTML.indexOf("placeholder") != -1) {
-                                    await new Promise((resolve) => {
-                                        setTimeout(resolve, 100);
-                                    });
+                                else {
+                                    PostTitle.innerText = "错误：" + ResponseData.ErrorMessage;
                                 }
-                                ContentElement.focus();
-                                ContentElement.scrollIntoView();
-                            }
-                            else {
-                                ErrorElement.innerText = ResponseData.ErrorMessage;
-                                ErrorElement.style.display = "block";
-                            }
+                            });
+                        };
+                        Delete.addEventListener("click", () => {
+                            Delete.disabled = true;
+                            Delete.children[0].style.display = "inline-block";
+                            RequestAPI("BBS", "DeletePost", {
+                                "PostID": SearchParams.get("tid")
+                            }, (ResponseData) => {
+                                Delete.disabled = false;
+                                Delete.children[0].style.display = "none";
+                                if (ResponseData.Success == true) {
+                                    location.href = "/discuss3/discuss.php";
+                                }
+                                else {
+                                    ErrorElement.innerText = ResponseData.ErrorMessage;
+                                    ErrorElement.style.display = "block";
+                                }
+                            });
                         });
-                    });
-                    RefreshReply(false);
-                    addEventListener("focus", RefreshReply);
+                        SubmitElement.addEventListener("click", async () => {
+                            ErrorElement.style.display = "none";
+                            SubmitElement.disabled = true;
+                            SubmitElement.children[0].style.display = "inline-block";
+                            RequestAPI("BBS", "NewReply", {
+                                "PostID": SearchParams.get("tid"),
+                                "Content": ContentElement.value
+                            }, async (ResponseData) => {
+                                SubmitElement.disabled = false;
+                                SubmitElement.children[0].style.display = "none";
+                                if (ResponseData.Success == true) {
+                                    RefreshReply();
+                                    ContentElement.value = "";
+                                    while (PostReplies.innerHTML.indexOf("placeholder") != -1) {
+                                        await new Promise((resolve) => {
+                                            setTimeout(resolve, 100);
+                                        });
+                                    }
+                                    ContentElement.focus();
+                                    ContentElement.scrollIntoView();
+                                }
+                                else {
+                                    ErrorElement.innerText = ResponseData.ErrorMessage;
+                                    ErrorElement.style.display = "block";
+                                }
+                            });
+                        });
+                        RefreshReply(false);
+                        addEventListener("focus", RefreshReply);
+                    }
                 }
             }
         }
