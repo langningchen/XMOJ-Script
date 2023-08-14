@@ -589,41 +589,45 @@ else {
             .then((Response) => {
                 eval(Response);
             });
-        RequestAPI("BBS", "GetMentionList", {}, (Response) => {
-            if (Response.Success) {
-                let MentionList = Response.Data.MentionList;
-                if (MentionList.length != 0) {
-                    GM_notification({
-                        title: "XMOJ",
-                        text: "@" + MentionList[0].UserID + " 在讨论 " + MentionList[0].Title + " 中提及了你，点击此处查看",
-                        timeout: 10000,
-                        onclick: () => {
-                            open("http://www.xmoj.tech/discuss3/thread.php?tid=" + MentionList[0].PostID + "&page=" + MentionList[0].Page, "_blank");
-                            RequestAPI("BBS", "ReadMention", {
-                                "MentionID": MentionList[0].MentionID
-                            }, () => { });
-                        }
-                    });
-                }
-            }
-        });
-        if (location.pathname != "/mail.php") {
-            RequestAPI("Mail", "GetUnreadList", {}, (Response) => {
+
+        addEventListener("focus", () => {
+            debugger
+            RequestAPI("BBS", "GetMentionList", {}, (Response) => {
                 if (Response.Success) {
-                    let UnreadList = Response.Data.UnreadList;
-                    if (UnreadList.length != 0) {
+                    let MentionList = Response.Data.MentionList;
+                    for (let i = 0; i < MentionList.length; i++) {
                         GM_notification({
                             title: "XMOJ",
-                            text: "@" + UnreadList[0].OtherUser + " 给你发了一封短消息，点击此处查看",
+                            text: "@" + MentionList[i].UserID + " 在讨论 " + MentionList[i].Title + " 中提及了你，点击此处查看",
                             timeout: 10000,
                             onclick: () => {
-                                open("http://www.xmoj.tech/mail.php?other=" + UnreadList[0].OtherUser, "_blank");
+                                open("http://www.xmoj.tech/discuss3/thread.php?tid=" + MentionList[i].PostID + "&page=" + MentionList[i].Page, "_blank");
+                                RequestAPI("BBS", "ReadMention", {
+                                    "MentionID": MentionList[i].MentionID
+                                }, () => { });
                             }
                         });
                     }
                 }
             });
-        }
+            if (location.pathname != "/mail.php") {
+                RequestAPI("Mail", "GetUnreadList", {}, (Response) => {
+                    if (Response.Success) {
+                        let UnreadList = Response.Data.UnreadList;
+                        for (let i = 0; i < UnreadList.length; i++) {
+                            GM_notification({
+                                title: "XMOJ",
+                                text: "@" + UnreadList[i].OtherUser + " 给你发了一封短消息，点击此处查看",
+                                timeout: 10000,
+                                onclick: () => {
+                                    open("http://www.xmoj.tech/mail.php?other=" + UnreadList[i].OtherUser, "_blank");
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
 
         if (location.pathname == "/index.php" || location.pathname == "/") {
             if (new URL(location.href).searchParams.get("ByUserScript") != null) {
