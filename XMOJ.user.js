@@ -2716,8 +2716,7 @@ else {
                         <thead>
                             <tr>
                                 <td class="col-2">接收者</td>
-                                <td class="col-1">未读消息</td>
-                                <td class="col-6">最新消息</td>
+                                <td class="col-7">最新消息</td>
                                 <td class="col-3">最后联系时间</td>
                             </tr>
                         </thead>
@@ -2729,7 +2728,7 @@ else {
                         ReceiveTable.children[1].innerHTML = "";
                         for (let i = 0; i < 10; i++) {
                             let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
-                            for (let j = 0; j < 4; j++) {
+                            for (let j = 0; j < 3; j++) {
                                 let Cell = document.createElement("td"); Row.appendChild(Cell);
                                 Cell.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>`;
                             }
@@ -2742,8 +2741,8 @@ else {
                             ReceiveTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
-                                Row.innerHTML = `<td><a href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a></td>
-                                    <td>${Data[i].UnreadCount}</td>
+                                Row.innerHTML = `<td><a href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a>` +
+                                    (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`) + `</td>
                                     <td>${Data[i].LastsMessage}</td>
                                     <td>${Data[i].SendTime}</td>`;
                             }
