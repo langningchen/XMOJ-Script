@@ -342,65 +342,65 @@ else {
         let Style = document.createElement("style");
         document.body.appendChild(Style);
         Style.innerHTML = `
-            nav {
-                border-bottom-left-radius: 5px;
-                border-bottom-right-radius: 5px;
-            }
-            .status_y:hover {
-                box-shadow: #52c41a 1px 1px 10px 0px !important;
-            }
-            .status_n:hover {
-                box-shadow: #fe4c61 1px 1px 10px 0px !important;
-            }
-            .test-case {
-                border-radius: 5px !important;
-            }
-            .test-case:hover {
-                box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 20px 3px !important;
-            }
-            .software_list {
-                width: unset !important;
-            }
-            .software_item {
-                margin: 5px 10px !important;
-                background-color: var(--bs-secondary-bg) !important;
-            }
-            .item-txt {
-                color: var(--bs-emphasis-color) !important;
-            }
-            .cnt-row {
-                justify-content: inherit;
-                align-items: stretch;
-                width: 100% !important;
-                padding: 1rem 0;
-            }
-            .cnt-row-head {
-                padding: 0.8em 1em;
-                background-color: var(--bs-secondary-bg);
-                border-radius: 0.3rem 0.3rem 0 0;
-                width: 100%;
-            }
-            .cnt-row-body {
-                padding: 1em;
-                border: 1px solid var(--bs-secondary-bg);
-                border-top: none;
-                border-radius: 0 0 0.3rem 0.3rem;
-            }`;
+                nav {
+                    border-bottom-left-radius: 5px;
+                    border-bottom-right-radius: 5px;
+                }
+                .status_y:hover {
+                    box-shadow: #52c41a 1px 1px 10px 0px !important;
+                }
+                .status_n:hover {
+                    box-shadow: #fe4c61 1px 1px 10px 0px !important;
+                }
+                .test-case {
+                    border-radius: 5px !important;
+                }
+                .test-case:hover {
+                    box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 20px 3px !important;
+                }
+                .software_list {
+                    width: unset !important;
+                }
+                .software_item {
+                    margin: 5px 10px !important;
+                    background-color: var(--bs-secondary-bg) !important;
+                }
+                .item-txt {
+                    color: var(--bs-emphasis-color) !important;
+                }
+                .cnt-row {
+                    justify-content: inherit;
+                    align-items: stretch;
+                    width: 100% !important;
+                    padding: 1rem 0;
+                }
+                .cnt-row-head {
+                    padding: 0.8em 1em;
+                    background-color: var(--bs-secondary-bg);
+                    border-radius: 0.3rem 0.3rem 0 0;
+                    width: 100%;
+                }
+                .cnt-row-body {
+                    padding: 1em;
+                    border: 1px solid var(--bs-secondary-bg);
+                    border-top: none;
+                    border-radius: 0 0 0.3rem 0.3rem;
+                }`;
         if (UtilityEnabled("AddAnimation")) {
             Style.innerHTML += `.status, .test-case {
-                transition: 0.5s !important;
-            }`;
+                    transition: 0.5s !important;
+                }`;
         }
         if (UtilityEnabled("AddColorText")) {
             Style.innerHTML += `.red {
-                color: red !important;
-            }
-            .green {
-                color: green !important;
-            }
-            .blue {
-                color: blue !important;
-            }`;
+                    color: red !important;
+                }
+                .green {
+                    color: green !important;
+                }
+                .blue {
+                    color: blue !important;
+                }`;
         }
 
         if (UtilityEnabled("RemoveUseless")) {
@@ -519,13 +519,13 @@ else {
                 if (CurrentVersion < LatestVersion) {
                     let UpdateDiv = document.createElement("div");
                     UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <div>
-                        XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                        <a href="https://langningchen.github.io/XMOJ-Script/`+ (UserScriptDebug ? "XMOJ.user.js" : "XMOJ.min.user.js") + `" target="_blank" class="alert-link">此处</a>
-                        更新
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>`;
+                        <div>
+                            XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
+                            <a href="https://langningchen.github.io/XMOJ-Script/`+ (UserScriptDebug ? "XMOJ.user.js" : "XMOJ.min.user.js") + `" target="_blank" class="alert-link">此处</a>
+                            更新
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`;
                     document.querySelector("body > div").insertBefore(UpdateDiv, document.querySelector("body > div > div.mt-3"));
                 }
                 if (localStorage.getItem("UserScript-Update-LastVersion") != GM_info.script.version) {
@@ -641,8 +641,8 @@ else {
                 Alert.classList.add("alert-primary");
                 Alert.role = "alert";
                 Alert.innerHTML = `欢迎使用XMOJ增强脚本！点击
-            <a class="alert-link" href="modifypage.php?ByUserScript=1" target="_blank">此处</a>
-            查看更新日志。`;
+                <a class="alert-link" href="modifypage.php?ByUserScript=1" target="_blank">此处</a>
+                查看更新日志。`;
                 Container.appendChild(Alert);
                 let UtilitiesCard = document.createElement("div");
                 UtilitiesCard.classList.add("card");
@@ -805,9 +805,9 @@ else {
                 }
                 let CountDownData = document.querySelector("#countdown_list").innerHTML;
                 document.querySelector("body > div > div.mt-3 > div > div.col-md-4").innerHTML = `<div class="cnt-row">
-                    <div class="cnt-row-head title">倒计时</div>
-                    <div class="cnt-row-body">${CountDownData}</div>
-                </div>`;
+                        <div class="cnt-row-head title">倒计时</div>
+                        <div class="cnt-row-body">${CountDownData}</div>
+                    </div>`;
             }
         } else if (location.pathname == "/problemset.php") {
             if (UtilityEnabled("Translate")) {
@@ -824,21 +824,21 @@ else {
                 document.querySelector("#problemset > thead > tr > th:nth-child(5)").style.width = "5%";
             }
             document.querySelector("body > div > div.mt-3 > center > table:nth-child(2)").outerHTML = `
-        <div class="row">
-            <div class="center col-md-3"></div>
-            <div class="col-md-2">
-                <form action="problem.php" class="input-group">
-                    <input class="form-control" type="number" name="id" placeholder="题目编号" min="0">
-                    <button class="btn btn-outline-secondary" type="submit">跳转</button>
-                </form>
-            </div>
-            <div class="col-md-4">
-                <form action="problemset.php" class="input-group">
-                    <input class="form-control" type="text" name="search" placeholder="标题或内容">
-                    <button class="btn btn-outline-secondary" type="submit">查找</button>
-                </form>
-            </div>
-        </div>`;
+            <div class="row">
+                <div class="center col-md-3"></div>
+                <div class="col-md-2">
+                    <form action="problem.php" class="input-group">
+                        <input class="form-control" type="number" name="id" placeholder="题目编号" min="0">
+                        <button class="btn btn-outline-secondary" type="submit">跳转</button>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                    <form action="problemset.php" class="input-group">
+                        <input class="form-control" type="text" name="search" placeholder="标题或内容">
+                        <button class="btn btn-outline-secondary" type="submit">查找</button>
+                    </form>
+                </div>
+            </div>`;
             if (SearchParams.get("search") != null) {
                 document.querySelector("body > div > div.mt-3 > center > div > div:nth-child(3) > form > input").value = SearchParams.get("search");
             }
@@ -1010,40 +1010,40 @@ else {
                 document.querySelector("body > script:nth-child(5)").remove();
                 if (UtilityEnabled("NewBootstrap")) {
                     document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
-                <input class="form-control" type="text" size="4" name="user_id" value="${document.getElementById("profile").innerText}"style="display: none;">
-            <div class="col-md-1">
-                <label for="problem_id" class="form-label">题目编号</label>
-                <input type="text" class="form-control" id="problem_id" name="problem_id" size="4">
-            </div>
-            <div class="col-md-1">
-                <label for="language" class="form-label">语言</label>
-                <select id="language" name="language" class="form-select">
-                    <option value="-1" selected="">全部</option>
-                    <option value="0">C</option>
-                    <option value="1">C++</option>
-                    <option value="2">Pascal</option>
-                </select>
-            </div><div class="col-md-1">
-                <label for="jresult" class="form-label">结果</label>
-                <select id="jresult" name="jresult" class="form-select">
-                    <option value="-1" selected="">全部</option>
-                    <option value="4">正确</option>
-                    <option value="5">格式错误</option>
-                    <option value="6">答案错误</option>
-                    <option value="7">时间超限</option>
-                    <option value="8">内存超限</option>
-                    <option value="9">输出超限</option>
-                    <option value="10">运行错误</option>
-                    <option value="11">编译错误</option>
-                    <option value="0">等待</option>
-                    <option value="1">等待重判</option>
-                    <option value="2">编译中</option>
-                    <option value="3">运行并评判</option>
-                </select>
-            </div>
-            <div class="col-md-1">
-                <button type="submit" class="btn btn-primary">查找</button>
-            </div><div id="csrf"></div></form>`;
+                    <input class="form-control" type="text" size="4" name="user_id" value="${document.getElementById("profile").innerText}"style="display: none;">
+                <div class="col-md-1">
+                    <label for="problem_id" class="form-label">题目编号</label>
+                    <input type="text" class="form-control" id="problem_id" name="problem_id" size="4">
+                </div>
+                <div class="col-md-1">
+                    <label for="language" class="form-label">语言</label>
+                    <select id="language" name="language" class="form-select">
+                        <option value="-1" selected="">全部</option>
+                        <option value="0">C</option>
+                        <option value="1">C++</option>
+                        <option value="2">Pascal</option>
+                    </select>
+                </div><div class="col-md-1">
+                    <label for="jresult" class="form-label">结果</label>
+                    <select id="jresult" name="jresult" class="form-select">
+                        <option value="-1" selected="">全部</option>
+                        <option value="4">正确</option>
+                        <option value="5">格式错误</option>
+                        <option value="6">答案错误</option>
+                        <option value="7">时间超限</option>
+                        <option value="8">内存超限</option>
+                        <option value="9">输出超限</option>
+                        <option value="10">运行错误</option>
+                        <option value="11">编译错误</option>
+                        <option value="0">等待</option>
+                        <option value="1">等待重判</option>
+                        <option value="2">编译中</option>
+                        <option value="3">运行并评判</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary">查找</button>
+                </div><div id="csrf"></div></form>`;
                 }
 
                 if (UtilityEnabled("GetOthersSample")) {
@@ -1232,49 +1232,49 @@ else {
             }
             else if (UtilityEnabled("GetOthersSample")) {
                 document.querySelector("body > div > div.mt-3").innerHTML = `<div class="mt-3">
-        <div class="row g-3 align-items-center mb-2">
-        <div class="col-auto">
-            <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
-        </div>
-        <div class="col-auto">
-            <input type="text" id="NameInput" class="form-control" value="${document.getElementById("profile").innerText}">
-        </div>
-        </div>
-        <div class="row g-3 align-items-center mb-2">
-        <div class="col-auto">
-            <label for="DateInput" class="col-form-label">测试点获取的日期</label>
-        </div>
-        <div class="col-auto">
-            <input type="date" id="DateInput" class="form-control" value="${new Date().toISOString().slice(0, 10)}">
-        </div>
-        </div>
-        <div class="row g-3 align-items-center mb-2">
-        <div class="col-auto">
-            <label for="ProblemInput" class="col-form-label">获取测试点的题目ID</label>
-        </div>
-        <div class="col-auto">
-            <input type="number" id="ProblemInput" class="form-control">
-        </div>
-        </div>
-        <div class="row g-3 align-items-center mb-2">
-        <div class="col-auto">
-            <label for="SID" class="col-form-label">获取测试点的提交ID</label>
-        </div>
-        <div class="col-auto">
-            <input type="number" id="SID" class="form-control">
-        </div>
-        </div>
-        <div class="row g-3 align-items-center mb-2">
-        <div class="col-auto">
-            <label for="SampleInput" class="col-form-label">获取的测试点编号</label>
-        </div>
-        <div class="col-auto">
-            <input type="number" id="SampleInput" class="form-control">
-        </div>
-        </div>
-        <button type="submit" class="btn btn-primary mb-3" id="GetSample">获取</button>
-        <div role="alert" id="GetSampleAlert" style="display: none"></div>
-    </div>`;
+            <div class="row g-3 align-items-center mb-2">
+            <div class="col-auto">
+                <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" id="NameInput" class="form-control" value="${document.getElementById("profile").innerText}">
+            </div>
+            </div>
+            <div class="row g-3 align-items-center mb-2">
+            <div class="col-auto">
+                <label for="DateInput" class="col-form-label">测试点获取的日期</label>
+            </div>
+            <div class="col-auto">
+                <input type="date" id="DateInput" class="form-control" value="${new Date().toISOString().slice(0, 10)}">
+            </div>
+            </div>
+            <div class="row g-3 align-items-center mb-2">
+            <div class="col-auto">
+                <label for="ProblemInput" class="col-form-label">获取测试点的题目ID</label>
+            </div>
+            <div class="col-auto">
+                <input type="number" id="ProblemInput" class="form-control">
+            </div>
+            </div>
+            <div class="row g-3 align-items-center mb-2">
+            <div class="col-auto">
+                <label for="SID" class="col-form-label">获取测试点的提交ID</label>
+            </div>
+            <div class="col-auto">
+                <input type="number" id="SID" class="form-control">
+            </div>
+            </div>
+            <div class="row g-3 align-items-center mb-2">
+            <div class="col-auto">
+                <label for="SampleInput" class="col-form-label">获取的测试点编号</label>
+            </div>
+            <div class="col-auto">
+                <input type="number" id="SampleInput" class="form-control">
+            </div>
+            </div>
+            <button type="submit" class="btn btn-primary mb-3" id="GetSample">获取</button>
+            <div role="alert" id="GetSampleAlert" style="display: none"></div>
+        </div>`;
                 document.getElementById("GetSample").onclick = async () => {
                     document.getElementById("GetSampleAlert").style.display = "none";
                     let Name = document.getElementById("NameInput").value;
@@ -1344,14 +1344,14 @@ else {
                     document.querySelector("body > div > div.mt-3 > center > table").style.marginTop = "10px";
 
                     document.querySelector("body > div > div.mt-3 > center > form").outerHTML = `<div class="row">
-                    <div class="col-md-4"></div>
-                    <form method="post" action="contest.php" class="col-md-4">
-                        <div class="input-group">
-                            <input name="keyword" type="text" class="form-control" spellcheck="false" data-ms-editor="true">
-                            <input type="submit" value="搜索" class="btn btn-outline-secondary">
-                        </div>
-                    </form>
-                </div>`;
+                        <div class="col-md-4"></div>
+                        <form method="post" action="contest.php" class="col-md-4">
+                            <div class="input-group">
+                                <input name="keyword" type="text" class="form-control" spellcheck="false" data-ms-editor="true">
+                                <input type="submit" value="搜索" class="btn btn-outline-secondary">
+                            </div>
+                        </form>
+                    </div>`;
                 }
                 if (UtilityEnabled("Translate")) {
                     document.querySelector("body > div > div.mt-3 > center > table > thead > tr").childNodes[0].innerText = "编号";
@@ -1849,16 +1849,16 @@ else {
                     `题目<span class="blue">${SearchParams.get("id")}</span>` :
                     `比赛<span class="blue">${SearchParams.get("cid") + `</span>&emsp;题目<span class="blue">` + String.fromCharCode(65 + parseInt(SearchParams.get("pid")))}</span>`) +
                 `</center>
-<textarea id="CodeInput"></textarea>
-<center class="mt-3">
-    <input id="enable_O2" name="enable_O2" type="checkbox"><label for="enable_O2">打开O2开关</label>
-    <br>
-    <input id="Submit" class="btn btn-info mt-2" type="button" value="提交">
-    <div id="ErrorElement" class="mt-2" style="display: none; text-align: left; padding: 10px;">
-        <div id="ErrorMessage" style="white-space: pre; background-color: rgba(0, 0, 0, 0.1); padding: 10px; border-radius: 5px;"></div>
-        <button id="PassCheck" class="btn btn-outline-secondary mt-2" style="display: none">强制提交</button>
-    </div>
-</center>`;
+    <textarea id="CodeInput"></textarea>
+    <center class="mt-3">
+        <input id="enable_O2" name="enable_O2" type="checkbox"><label for="enable_O2">打开O2开关</label>
+        <br>
+        <input id="Submit" class="btn btn-info mt-2" type="button" value="提交">
+        <div id="ErrorElement" class="mt-2" style="display: none; text-align: left; padding: 10px;">
+            <div id="ErrorMessage" style="white-space: pre; background-color: rgba(0, 0, 0, 0.1); padding: 10px; border-radius: 5px;"></div>
+            <button id="PassCheck" class="btn btn-outline-secondary mt-2" style="display: none">强制提交</button>
+        </div>
+    </center>`;
             if (UtilityEnabled("AutoO2")) {
                 document.querySelector("#enable_O2").checked = true;
             }
@@ -2222,11 +2222,11 @@ else {
                 }
                 else {
                     document.querySelector("body > div > div.mt-3").innerHTML = `
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" checked id="IgnoreWhitespaces">
-                        <label class="form-check-label" for="IgnoreWhitespaces">忽略空白</label>
-                    </div>
-                    <div id="CompareElement"></div>`;
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" checked id="IgnoreWhitespaces">
+                            <label class="form-check-label" for="IgnoreWhitespaces">忽略空白</label>
+                        </div>
+                        <div id="CompareElement"></div>`;
 
                     let LeftCode = "";
                     await fetch("/getsource.php?id=" + SearchParams.get("left"))
@@ -2264,31 +2264,31 @@ else {
         } else if (location.pathname == "/loginpage.php") {
             if (UtilityEnabled("NewBootstrap")) {
                 document.querySelector("#login").innerHTML = `<form id="login" action="login.php" method="post">
-        <div class="row g-3 align-items-center mb-3">
-            <div class="col-auto">
-            <label for="user_id" class="col-form-label">用户名（学号）</label>
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-auto">
+                <label for="user_id" class="col-form-label">用户名（学号）</label>
+                </div>
+                <div class="col-auto">
+                <input type="text" id="user_id" name="user_id" class="form-control">
+                </div>
             </div>
-            <div class="col-auto">
-            <input type="text" id="user_id" name="user_id" class="form-control">
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-auto">
+                <label for="password" class="col-form-label">密码</label>
+                </div>
+                <div class="col-auto">
+                <input type="password" id="password" name="password" class="form-control">
+                </div>
             </div>
-        </div>
-        <div class="row g-3 align-items-center mb-3">
-            <div class="col-auto">
-            <label for="password" class="col-form-label">密码</label>
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-auto">
+                <button name="submit" type="button" class="btn btn-primary">登录</button>
+                </div>
+                <div class="col-auto">
+                <a class="btn btn-warning" href="lostpassword.php">忘记密码</a>
+                </div>
             </div>
-            <div class="col-auto">
-            <input type="password" id="password" name="password" class="form-control">
-            </div>
-        </div>
-        <div class="row g-3 align-items-center mb-3">
-            <div class="col-auto">
-            <button name="submit" type="button" class="btn btn-primary">登录</button>
-            </div>
-            <div class="col-auto">
-            <a class="btn btn-warning" href="lostpassword.php">忘记密码</a>
-            </div>
-        </div>
-        </form>`;
+            </form>`;
             }
             let ErrorText = document.createElement("div");
             ErrorText.style.color = "red";
@@ -2657,13 +2657,13 @@ else {
             let MyContestData = document.querySelector("body > div > div.mt-3 > div > div.col-md-4 > div:nth-child(2)").innerHTML;
             let CountDownData = document.querySelector("#countdown_list").innerHTML;
             document.querySelector("body > div > div.mt-3 > div > div.col-md-4").innerHTML = `<div class="cnt-row">
-                    <div class="cnt-row-head title">我的月赛</div>
-                    <div class="cnt-row-body">${MyContestData}</div>
-                </div>
-                <div class="cnt-row">
-                    <div class="cnt-row-head title">倒计时</div>
-                    <div class="cnt-row-body">${CountDownData}</div>
-                </div>`;
+                        <div class="cnt-row-head title">我的月赛</div>
+                        <div class="cnt-row-body">${MyContestData}</div>
+                    </div>
+                    <div class="cnt-row">
+                        <div class="cnt-row-head title">倒计时</div>
+                        <div class="cnt-row-body">${CountDownData}</div>
+                    </div>`;
         } else if (location.pathname == "/showsource.php") {
             let Code = "";
             await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("id"))
@@ -2703,29 +2703,29 @@ else {
         } else if (location.pathname == "/mail.php") {
             if (SearchParams.get("other") == null) {
                 document.querySelector("body > div > div.mt-3").innerHTML = `<div class="row g-2 align-items-center">
-                    <div class="col-auto form-floating">
-                        <input class="form-control" id="Username" placeholder=" " spellcheck="false" data-ms-editor="true">
-                        <label for="Username">搜索新用户</label>
+                        <div class="col-auto form-floating">
+                            <input class="form-control" id="Username" placeholder=" " spellcheck="false" data-ms-editor="true">
+                            <label for="Username">搜索新用户</label>
+                        </div>
+                        <div class="col-auto form-floating">
+                            <button class="btn btn-outline-secondary" id="AddUser">
+                                添加
+                                <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                            </button>
+                        </div>
                     </div>
-                    <div class="col-auto form-floating">
-                        <button class="btn btn-outline-secondary" id="AddUser">
-                            添加
-                            <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
-                        </button>
-                    </div>
-                </div>
-                <table class="table mb-3" id="ReceiveTable">
-                    <thead>
-                        <tr>
-                            <td class="col-2">接收者</td>
-                            <td class="col-2">未读消息</td>
-                            <td class="col-4">最新消息</td>
-                            <td class="col-4">最后联系时间</td>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <div class="alert alert-danger mb-3" role="alert" id="ErrorElement" style="display: none;"></div>`;
+                    <table class="table mb-3" id="ReceiveTable">
+                        <thead>
+                            <tr>
+                                <td class="col-2">接收者</td>
+                                <td class="col-2">未读消息</td>
+                                <td class="col-4">最新消息</td>
+                                <td class="col-4">最后联系时间</td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="alert alert-danger mb-3" role="alert" id="ErrorElement" style="display: none;"></div>`;
                 let RefreshMessageList = (Silent = true) => {
                     if (!Silent) {
                         ReceiveTable.children[1].innerHTML = "";
@@ -2744,9 +2744,9 @@ else {
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
                                 Row.innerHTML = `<td><a href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a></td>
-                                <td>${Data[i].UnreadCount}</td>
-                                <td>${Data[i].LastsMessage}</td>
-                                <td>${Data[i].SendTime}</td>`;
+                                    <td>${Data[i].UnreadCount}</td>
+                                    <td>${Data[i].LastsMessage}</td>
+                                    <td>${Data[i].SendTime}</td>`;
                             }
                         }
                         else {
@@ -2788,32 +2788,32 @@ else {
             }
             else {
                 document.querySelector("body > div > div.mt-3").innerHTML = `<div class="row g-2 mb-3">
-                    <div class="col-md form-floating">
-                        <input class="form-control" id="ToUser" value="${SearchParams.get("other")}" readonly>
-                        <label for="ToUser">接收用户</label>
+                        <div class="col-md form-floating">
+                            <input class="form-control" id="ToUser" value="${SearchParams.get("other")}" readonly>
+                            <label for="ToUser">接收用户</label>
+                        </div>
+                        <div class="col-md form-floating">
+                            <input class="form-control" id="Content" placeholder=" ">
+                            <label for="Content">内容</label>
+                        </div>
                     </div>
-                    <div class="col-md form-floating">
-                        <input class="form-control" id="Content" placeholder=" ">
-                        <label for="Content">内容</label>
-                    </div>
-                </div>
-                <button id="Send" type="submit" class="btn btn-primary mb-1">
-                    发送
-                    <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
-                </button>
-                <div id="ErrorElement" class="alert alert-danger mb-3" role="alert" style="display: none;"></div>
-                <table class="table mb-3" id="MessageTable">
-                    <thead>
-                        <tr>
-                            <td class="col-2">发送者</td>
-                            <td class="col-6">内容</td>
-                            <td class="col-2">发送时间</td>
-                            <td class="col-2">阅读状态</td>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                `;
+                    <button id="Send" type="submit" class="btn btn-primary mb-1">
+                        发送
+                        <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                    </button>
+                    <div id="ErrorElement" class="alert alert-danger mb-3" role="alert" style="display: none;"></div>
+                    <table class="table mb-3" id="MessageTable">
+                        <thead>
+                            <tr>
+                                <td class="col-2">发送者</td>
+                                <td class="col-6">内容</td>
+                                <td class="col-2">发送时间</td>
+                                <td class="col-2">阅读状态</td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    `;
                 let RefreshMessage = (Silent = true) => {
                     if (!Silent) {
                         MessageTable.children[1].innerHTML = "";
@@ -2833,13 +2833,13 @@ else {
                             MessageTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); MessageTable.children[1].appendChild(Row);
-                                if (!Data[i].IsRead) {
+                                if (!Data[i].IsRead && Data[i].FromUser != document.querySelector("#profile").innerText) {
                                     Row.className = "table-info";
                                 }
                                 Row.innerHTML = `<td>${Data[i].FromUser}</td>
-                                <td>${Data[i].Content}</td>
-                                <td>${Data[i].SendTime}</td>
-                                <td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
+                                    <td>${Data[i].Content}</td>
+                                    <td>${Data[i].SendTime}</td>
+                                    <td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
                             }
                         }
                         else {
@@ -2891,32 +2891,32 @@ else {
                 let ProblemID = SearchParams.get("pid");
                 let Page = Number(SearchParams.get("page")) || 1;
                 document.querySelector("body > div > div").innerHTML = `<h3>讨论列表${(ProblemID == null ? "" : ` - 题目` + ProblemID)}</h3>
-                <button id="NewPost" type="button" class="btn btn-primary">发布新讨论</button>
-                <nav>
-                    <ul class="pagination justify-content-center" id="DiscussPagination">
-                        <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
-                        <li class="page-item"><a class="page-link" href="#">${Page - 1}</a></li>
-                        <li class="page-item"><a class="page-link active" href="#">${Page}</a></li>
-                        <li class="page-item"><a class="page-link" href="#">${Page + 1}</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
-                    </ul>
-                </nav>
-                <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
-                <table id="PostList" class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th class="col-1">编号</th>
-                            <th class="col-2">标题</th>
-                            <th class="col-2">作者</th>
-                            <th class="col-1">题目编号</th>
-                            <th class="col-2">发布时间</th>
-                            <th class="col-1">回复数</th>
-                            <th class="col-3">最后回复</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>`;
+                    <button id="NewPost" type="button" class="btn btn-primary">发布新讨论</button>
+                    <nav>
+                        <ul class="pagination justify-content-center" id="DiscussPagination">
+                            <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+                            <li class="page-item"><a class="page-link" href="#">${Page - 1}</a></li>
+                            <li class="page-item"><a class="page-link active" href="#">${Page}</a></li>
+                            <li class="page-item"><a class="page-link" href="#">${Page + 1}</a></li>
+                            <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+                        </ul>
+                    </nav>
+                    <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
+                    <table id="PostList" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="col-1">编号</th>
+                                <th class="col-2">标题</th>
+                                <th class="col-2">作者</th>
+                                <th class="col-1">题目编号</th>
+                                <th class="col-2">发布时间</th>
+                                <th class="col-1">回复数</th>
+                                <th class="col-3">最后回复</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>`;
                 for (let i = 0; i < 10; i++) {
                     let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
                     for (let j = 0; j < 7; j++) {
@@ -2957,14 +2957,14 @@ else {
                         }
                         for (let i = 0; i < Posts.length; i++) {
                             PostList.children[1].innerHTML += `<tr>
-                                <td>${Posts[i].PostID}</td>
-                                <td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>
-                                <td><a href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
+                                    <td>${Posts[i].PostID}</td>
+                                    <td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>
+                                    <td><a href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
                                 (Posts[i].ProblemID == null ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
                                 `<td>${Posts[i].PostTime}</td>
-                                <td>${Posts[i].ReplyCount}</td>
-                                <td><a href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
-                            </tr>`;
+                                    <td>${Posts[i].ReplyCount}</td>
+                                    <td><a href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
+                                </tr>`;
                         }
                     }
                     else {
@@ -2976,19 +2976,19 @@ else {
                 let ProblemID = SearchParams.get("pid");
                 document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (ProblemID != null ? ` - 题目` + ProblemID : ``) +
                     `</h3>
-        <div class="form-group mb-3">
-            <label for="Title" class="mb-1">标题</label>
-            <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
-        </div>
-        <div class="form-group mb-3">
-            <label for="ContentElement" class="mb-1">内容</label>
-            <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
-        </div>
-        <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
-            发布
-            <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
-        </button>
-        <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
+            <div class="form-group mb-3">
+                <label for="Title" class="mb-1">标题</label>
+                <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
+            </div>
+            <div class="form-group mb-3">
+                <label for="ContentElement" class="mb-1">内容</label>
+                <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+            </div>
+            <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
+                发布
+                <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+            </button>
+            <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
                 TitleElement.oninput = () => {
                     TitleElement.classList.remove("is-invalid");
                 };
@@ -3034,35 +3034,35 @@ else {
                     let ThreadID = SearchParams.get("tid");
                     let Page = Number(SearchParams.get("page")) || 1;
                     document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
-                    <div class="row mb-3">
-                        <span class="col-4 text-muted">作者：<a id="PostAuthor" href=""></a></span>
-                        <span class="col-4 text-muted">发布时间：<span id="PostTime"></span></span>
-                        <span class="col-4">
-                            <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
-                                删除
-                                <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
-                            </button>
-                        </span>
-                    </div>
-                    <div id="PostReplies"></div>
-                    <nav>
-                        <ul class="pagination justify-content-center" id="DiscussPagination">
-                            <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
-                            <li class="page-item"><a class="page-link" href="#">${(Page - 1)}</a></li>
-                            <li class="page-item"><a class="page-link active" href="#">${Page}</a></li>
-                            <li class="page-item"><a class="page-link" href="#">${(Page + 1)}</a></li>
-                            <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
-                        </ul>
-                    </nav>
-                    <div class="form-group mb-3">
-                        <label for="ContentElement" class="mb-1">回复</label>
-                        <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
-                    </div>
-                    <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
-                        发布
-                        <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
-                    </button>
-                    <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
+                        <div class="row mb-3">
+                            <span class="col-4 text-muted">作者：<a id="PostAuthor" href=""></a></span>
+                            <span class="col-4 text-muted">发布时间：<span id="PostTime"></span></span>
+                            <span class="col-4">
+                                <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
+                                    删除
+                                    <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                                </button>
+                            </span>
+                        </div>
+                        <div id="PostReplies"></div>
+                        <nav>
+                            <ul class="pagination justify-content-center" id="DiscussPagination">
+                                <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+                                <li class="page-item"><a class="page-link" href="#">${(Page - 1)}</a></li>
+                                <li class="page-item"><a class="page-link active" href="#">${Page}</a></li>
+                                <li class="page-item"><a class="page-link" href="#">${(Page + 1)}</a></li>
+                                <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+                            </ul>
+                        </nav>
+                        <div class="form-group mb-3">
+                            <label for="ContentElement" class="mb-1">回复</label>
+                            <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                        </div>
+                        <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
+                            发布
+                            <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                        </button>
+                        <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
                     ContentElement.onkeydown = (Event) => {
                         if (Event.ctrlKey && Event.keyCode == 13) {
                             SubmitElement.click();
@@ -3076,17 +3076,17 @@ else {
                             PostReplies.innerHTML = "";
                             for (let i = 0; i < 10; i++) {
                                 PostReplies.innerHTML += `<div class="card mb-3">
-                                    <div class="card-body">
-                                        <div class="row mb-3">
-                                            <span class="col-6"><span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span></span>
-                                            <span class="col-6"><span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span></span>
+                                        <div class="card-body">
+                                            <div class="row mb-3">
+                                                <span class="col-6"><span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span></span>
+                                                <span class="col-6"><span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span></span>
+                                            </div>
+                                            <hr>
+                                            <span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>
+                                            <span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>
+                                            <span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>
                                         </div>
-                                        <hr>
-                                        <span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>
-                                        <span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>
-                                        <span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>
-                                    </div>
-                                </div>`;
+                                    </div>`;
                             }
                         }
                         let OldScrollTop = document.documentElement.scrollTop;
