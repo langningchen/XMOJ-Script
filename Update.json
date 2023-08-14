@@ -679,6 +679,96 @@
                     "Description": "为服务器连接过多增加解释"
                 }
             ]
+        },
+        "0.1.47": {
+            "UpdateDate": 1691996770037,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "3a86e35",
+                    "Commit": "3a86e3552ef2e9b0f4947be50bac312fa8bd69ea",
+                    "Description": "[#27] 讨论删除功能终于修好了！"
+                },
+                {
+                    "ShortCommit": "90a8fa8",
+                    "Commit": "90a8fa85d549f0c8d35e594278e574a901a52bba",
+                    "Description": "删除调试语句"
+                },
+                {
+                    "ShortCommit": "d671999",
+                    "Commit": "d6719998350925c358ec819840833c1bb0766080",
+                    "Description": "将短消息列表中的未读消息列合并"
+                },
+                {
+                    "ShortCommit": "6bac86f",
+                    "Commit": "6bac86f099db401ad9c6e25e118b9f85d0858f7a",
+                    "Description": "解决刚才提交中的手误"
+                },
+                {
+                    "ShortCommit": "5c020e8",
+                    "Commit": "5c020e807256fd5d606681600fc97daf569efbe5",
+                    "Description": "修复错误恢复后错误框还显示的问题以及发生错误后发送按钮无法点击的问题"
+                },
+                {
+                    "ShortCommit": "f7b6dc9",
+                    "Commit": "f7b6dc9552351c4480004f879ad45f4a24a5c6b2",
+                    "Description": "使错误提示更友好"
+                },
+                {
+                    "ShortCommit": "bfa0e64",
+                    "Commit": "bfa0e64919391288d3fd2370364f0a7624b4b6f3",
+                    "Description": "修复508无法显示"
+                },
+                {
+                    "ShortCommit": "1b506d6",
+                    "Commit": "1b506d63336002ba7bfc10c232528cc912a72637",
+                    "Description": "更新提示多条消息"
+                },
+                {
+                    "ShortCommit": "1b50578",
+                    "Commit": "1b50578c6f35ca3031c80d22f0662ffbd6564bed",
+                    "Description": "优化代码：将on事件替换为addEventListener"
+                },
+                {
+                    "ShortCommit": "09e331e",
+                    "Commit": "09e331e7c6edd7e07d99a66f962220dc0394ffe9",
+                    "Description": "去除禁止调试，为去除JS压缩做准备"
+                },
+                {
+                    "ShortCommit": "779f743",
+                    "Commit": "779f7431e5aafee3d8854d55952be5f08cb37b9e",
+                    "Description": "设置标题最长长度为50个字符以适应中文"
+                },
+                {
+                    "ShortCommit": "b0ddc1a",
+                    "Commit": "b0ddc1af11f89160984f42828d926887a5b06c0f",
+                    "Description": "为508增加解释"
+                },
+                {
+                    "ShortCommit": "3174e76",
+                    "Commit": "3174e76e459c59e3dab722f187bedfed96701f05",
+                    "Description": "修复加载动画不全"
+                },
+                {
+                    "ShortCommit": "de7e098",
+                    "Commit": "de7e098345bd037fb7f678fff10b81383835dc9e",
+                    "Description": "短消息界面增宽最新消息列"
+                },
+                {
+                    "ShortCommit": "8338671",
+                    "Commit": "8338671a618a72ec93c2998c119ddede694064aa",
+                    "Description": "更改为在短消息内只有自己未读的项目列为亮色"
+                },
+                {
+                    "ShortCommit": "b23d141",
+                    "Commit": "b23d1412f10d37a33a6ea8dd149b9deda43213d1",
+                    "Description": "解决连接数过多的BUG"
+                },
+                {
+                    "ShortCommit": "96069dc",
+                    "Commit": "96069dc4dcd2a5fd3b8825837b2842a82b7936ea",
+                    "Description": "减小更新日志大小以为用户节省流量"
+                }
+            ]
         }
     }
 }
