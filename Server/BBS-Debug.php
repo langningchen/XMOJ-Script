@@ -423,7 +423,7 @@ if ($PostAction == "NewPost") {
     $PostTitle = htmlspecialchars($PostTitle);
     $PostContent = htmlspecialchars($PostContent);
     $PostID = NewPost($PostTitle, $PostProblemID);
-    if (strlen($PostTitle) > 20) {
+    if (strlen($PostTitle) > 50) {
         CreateErrorJSON("标题过长");
     }
     if (strlen($PostContent) > 1000) {
