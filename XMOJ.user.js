@@ -2718,9 +2718,9 @@ else {
                         <thead>
                             <tr>
                                 <td class="col-2">接收者</td>
-                                <td class="col-2">未读消息</td>
-                                <td class="col-4">最新消息</td>
-                                <td class="col-4">最后联系时间</td>
+                                <td class="col-1">未读消息</td>
+                                <td class="col-6">最新消息</td>
+                                <td class="col-3">最后联系时间</td>
                             </tr>
                         </thead>
                         <tbody></tbody>
