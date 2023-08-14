@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.1.48
+// @version      0.1.49
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -262,6 +262,8 @@ else {
             document.body.innerHTML = String(document.body.innerHTML).replaceAll("海上", "上海");
             document.body.innerHTML = String(document.body.innerHTML).replaceAll("小红", "低老师");
             document.body.innerHTML = String(document.body.innerHTML).replaceAll("xiaoming", "gaolaoshi");
+            document.body.innerHTML = String(document.body.innerHTML).replaceAll("高老师们", "我们");
+            document.body.innerHTML = String(document.body.innerHTML).replaceAll("自高老师", "自我");
             document.title = String(document.title).replaceAll("小明", "高老师");
         }
 
