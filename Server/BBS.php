@@ -29,6 +29,23 @@ function NewReply(int $PostID, string $Content): int
     }, $Content);
 
     global $MYSQLConnection;
+    $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "SELECT `user_id` FROM `bbs_post` WHERE `post_id`=?;");
+    if ($MYSQLPrepare == false) {
+        CreateErrorJSON("无法写入数据：" . mysqli_error($MYSQLConnection));
+    }
+    if (!mysqli_stmt_bind_param($MYSQLPrepare, "i", $PostID)) {
+        CreateErrorJSON("无法写入数据：" . mysqli_stmt_error($MYSQLPrepare));
+    }
+    if (!mysqli_stmt_execute($MYSQLPrepare)) {
+        CreateErrorJSON("无法写入数据：" . mysqli_stmt_error($MYSQLPrepare));
+    }
+    $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
+    $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
+    if ($MYSQLRow == false) {
+        CreateErrorJSON("没有此讨论");
+    }
+    $CreateUserID = $MYSQLRow["user_id"];
+
     $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "INSERT INTO `bbs_reply` (`post_id`, `user_id`, `content`) VALUES (?, ?, ?);");
     if ($MYSQLPrepare == false) {
         CreateErrorJSON("无法写入数据：" . mysqli_error($MYSQLConnection));
@@ -47,6 +64,19 @@ function NewReply(int $PostID, string $Content): int
             CreateErrorJSON("无法写入数据：" . mysqli_error($MYSQLConnection));
         }
         if (!mysqli_stmt_bind_param($MYSQLPrepare, "si", $MentionPeople[$i], $ReplyID)) {
+            CreateErrorJSON("无法写入数据：" . mysqli_stmt_error($MYSQLPrepare));
+        }
+        if (!mysqli_stmt_execute($MYSQLPrepare)) {
+            CreateErrorJSON("无法写入数据：" . mysqli_stmt_error($MYSQLPrepare));
+        }
+    }
+
+    if ($CreateUserID != $PostUserID) {
+        $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "INSERT INTO `bbs_mention` (`user_id`, `reply_id`) VALUES (?, ?);");
+        if ($MYSQLPrepare == false) {
+            CreateErrorJSON("无法写入数据：" . mysqli_error($MYSQLConnection));
+        }
+        if (!mysqli_stmt_bind_param($MYSQLPrepare, "si", $CreateUserID, $ReplyID)) {
             CreateErrorJSON("无法写入数据：" . mysqli_stmt_error($MYSQLPrepare));
         }
         if (!mysqli_stmt_execute($MYSQLPrepare)) {
@@ -222,8 +252,22 @@ function DeletePost(int $PostID, bool $CheckUserID = true): void
         CreateErrorJSON("无法删除数据：" . mysqli_stmt_error($MYSQLPrepare));
     }
     $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
+    $Replies = array();
     while ($MYSQLRow = mysqli_fetch_assoc($MYSQLResult)) {
-        DeleteReply($MYSQLRow["reply_id"], false);
+        $Replies[] = $MYSQLRow["reply_id"];
+    }
+
+    for ($i = 0; $i < count($Replies); $i++) {
+        $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "DELETE FROM `bbs_reply` WHERE `reply_id`=?;");
+        if ($MYSQLPrepare == false) {
+            CreateErrorJSON("无法删除数据：" . mysqli_error($MYSQLConnection));
+        }
+        if (!mysqli_stmt_bind_param($MYSQLPrepare, "i", $Replies[$i])) {
+            CreateErrorJSON("无法删除数据：" . mysqli_stmt_error($MYSQLPrepare));
+        }
+        if (!mysqli_stmt_execute($MYSQLPrepare)) {
+            CreateErrorJSON("无法删除数据：" . mysqli_stmt_error($MYSQLPrepare));
+        }
     }
 
     $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "DELETE FROM `bbs_post` WHERE `post_id`=?;");
