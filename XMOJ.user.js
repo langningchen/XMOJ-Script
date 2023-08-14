@@ -763,7 +763,7 @@ if (location.host != "www.xmoj.tech") {
                                 "ID": "ReplaceXM",
                                 "Type": "F",
                                 "Name": "将网站中所有“小明”和“我”关键字替换为“高老师”，所有“小红”替换为“低老师”，所有“下海”、“海上”替换为“上海”，所有“xiaoming”替换为“gaolaoshi”"
-                            }
+                            }, {"ID": "Rating", "Type": "A", "Name": "添加 Rating 和用户名颜色"}
                         ]
                     },
                     {"ID": "AutoLogin", "Type": "A", "Name": "在需要登录的界面自动跳转到登陆界面"},
@@ -781,7 +781,8 @@ if (location.host != "www.xmoj.tech") {
                     {"ID": "ExportACCode", "Type": "F", "Name": "导出AC代码每一道题目一个文件"},
                     {"ID": "LoginFailed", "Type": "F", "Name": "登录后跳转失败*"},
                     {"ID": "NewDownload", "Type": "A", "Name": "下载页面增加下载内容"},
-                    {"ID": "CompareSource", "Type": "A", "Name": "比较代码"}
+                    {"ID": "CompareSource", "Type": "A", "Name": "比较代码"},
+                    {"ID": "Rating", "Type": "A", "Name": "添加 Rating 和用户名颜色"}
                 ]));
                 let UtilitiesCardFooter = document.createElement("div");
                 UtilitiesCardFooter.className = "card-footer text-muted";
@@ -1765,6 +1766,7 @@ if (location.host != "www.xmoj.tech") {
                                     let rating = await getRating(RowData.Username).then();
                                     UsernameLink.innerText = RowData.Username;
                                     UsernameLink.className = "link-primary link-offset-2 link-underline-opacity-50";
+
                                     if (rating > 500) {
                                         UsernameLink.className += " link-danger";
                                     } else if (rating >= 300) {
