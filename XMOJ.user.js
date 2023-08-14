@@ -139,6 +139,12 @@ let RequestAPI = (Item, Action, Data, CallBack) => {
         cookie: "__test=" + localStorage.getItem("UserScript-InfinityFree-Cookie"),
         data: DataString,
         onload: (Response) => {
+            if (Response.status == 508) {
+                CallBack({
+                    "Success": false,
+                    "ErrorMessage": "服务器连接数过多，请稍后再试"
+                });
+            }
             if (Response.status != 200) {
                 CallBack({
                     "Success": false,
