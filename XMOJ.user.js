@@ -30,6 +30,22 @@
  */
 
 // Program Start
+let getRating = async (user) => {
+    if (UtilityEnabled("Rating")) {
+        try {
+            const response = await fetch("http://www.xmoj.tech/userinfo.php?user=" + user);
+            const textResponse = await response.text();
+            const ParsedDocument = new DOMParser().parseFromString(textResponse, "text/html");
+            return (parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(2) > td:nth-child(2)").innerText) / parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(3) > td:nth-child(2)").innerText)).toFixed(3) * 1000;
+        } catch (error) {
+            console.error("Error fetching user rating:", error);
+            return -1;
+        }
+    } else {
+        return -1;
+    }
+};
+
 let SecondsToString = (InputSeconds) => {
     let Hours = Math.floor(InputSeconds / 3600);
     let Minutes = Math.floor((InputSeconds % 3600) / 60);
@@ -2161,6 +2177,9 @@ else {
             document.querySelector("#statics > caption").remove();
             document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(1)").innerHTML = "用户名：" + UserID;
             document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(2)").innerHTML = "昵称：" + UserName;
+            if (UtilityEnabled("Rating")) {
+                document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(2)").innerHTML += "rating：" + (await getRating(UserID).then());
+            }
         } else if (location.pathname == "/conteststatistics.php") {
             document.querySelector("body > div > div.mt-3 > center > h3").innerText = "比赛统计";
             if (UtilityEnabled("ResetType")) {
