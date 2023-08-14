@@ -222,8 +222,22 @@ function DeletePost(int $PostID, bool $CheckUserID = true): void
         CreateErrorJSON("无法删除数据：" . mysqli_stmt_error($MYSQLPrepare));
     }
     $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
+    $Replies = array();
     while ($MYSQLRow = mysqli_fetch_assoc($MYSQLResult)) {
-        DeleteReply($MYSQLRow["reply_id"], false);
+        $Replies[] = $MYSQLRow["reply_id"];
+    }
+
+    for ($i = 0; $i < count($Replies); $i++) {
+        $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "DELETE FROM `bbs_reply` WHERE `reply_id`=?;");
+        if ($MYSQLPrepare == false) {
+            CreateErrorJSON("无法删除数据：" . mysqli_error($MYSQLConnection));
+        }
+        if (!mysqli_stmt_bind_param($MYSQLPrepare, "i", $Replies[$i])) {
+            CreateErrorJSON("无法删除数据：" . mysqli_stmt_error($MYSQLPrepare));
+        }
+        if (!mysqli_stmt_execute($MYSQLPrepare)) {
+            CreateErrorJSON("无法删除数据：" . mysqli_stmt_error($MYSQLPrepare));
+        }
     }
 
     $MYSQLPrepare = mysqli_prepare($MYSQLConnection, "DELETE FROM `bbs_post` WHERE `post_id`=?;");
