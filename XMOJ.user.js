@@ -144,6 +144,7 @@ let RequestAPI = (Item, Action, Data, CallBack) => {
                     "Success": false,
                     "ErrorMessage": "服务器连接数过多，请稍后再试"
                 });
+                return
             }
             if (Response.status != 200) {
                 CallBack({
