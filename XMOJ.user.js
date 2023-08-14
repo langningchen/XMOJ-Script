@@ -2819,7 +2819,7 @@ else {
                         MessageTable.children[1].innerHTML = "";
                         for (let i = 0; i < 10; i++) {
                             let Row = document.createElement("tr"); MessageTable.children[1].appendChild(Row);
-                            for (let j = 0; j < 3; j++) {
+                            for (let j = 0; j < 4; j++) {
                                 let Cell = document.createElement("td"); Row.appendChild(Cell);
                                 Cell.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>`;
                             }
