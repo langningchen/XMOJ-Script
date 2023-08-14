@@ -592,7 +592,6 @@ else {
             });
 
         addEventListener("focus", () => {
-            debugger
             RequestAPI("BBS", "GetMentionList", {}, (Response) => {
                 if (Response.Success) {
                     let MentionList = Response.Data.MentionList;
