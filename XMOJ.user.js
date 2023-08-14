@@ -1881,7 +1881,7 @@ else {
             CodeMirrorElement.setSize("100%", "auto");
             CodeMirrorElement.getWrapperElement().style.border = "1px solid #ddd";
             PassCheck.addEventListener("click", async () => {
-                ErrorElement.display = "none";
+                ErrorElement.style.display = "none";
                 document.querySelector("#Submit").disabled = true;
                 document.querySelector("#Submit").value = "正在提交...";
                 await fetch("http://www.xmoj.tech/submit.php", {
@@ -2737,7 +2737,7 @@ else {
                     }
                     RequestAPI("Mail", "GetMailList", {}, (ResponseData) => {
                         if (ResponseData.Success) {
-                            ErrorElement.display = "none";
+                            ErrorElement.style.display = "none";
                             let Data = ResponseData.Data.MailList;
                             ReceiveTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
@@ -2772,7 +2772,7 @@ else {
                         AddUser.children[0].style.display = "none";
                         AddUser.disabled = false;
                         if (ResponseData.Success) {
-                            ErrorElement.display = "none";
+                            ErrorElement.style.display = "none";
                             RefreshMessageList();
                         }
                         else {
@@ -2827,7 +2827,7 @@ else {
                         "OtherUser": SearchParams.get("other")
                     }, (ResponseData) => {
                         if (ResponseData.Success) {
-                            ErrorElement.display = "none";
+                            ErrorElement.style.display = "none";
                             let Data = ResponseData.Data.Mail;
                             MessageTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
@@ -2870,7 +2870,7 @@ else {
                         Send.disabled = false;
                         Send.children[0].style.display = "none";
                         if (ResponseData.Success) {
-                            ErrorElement.display = "none";
+                            ErrorElement.style.display = "none";
                             Content.value = "";
                             RefreshMessage();
                         }
@@ -2935,7 +2935,7 @@ else {
                     "Page": Page
                 }, (ResponseData) => {
                     if (ResponseData.Success == true) {
-                        ErrorElement.display = "none";
+                        ErrorElement.style.display = "none";
                         DiscussPagination.children[0].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
                         DiscussPagination.children[1].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
                         DiscussPagination.children[2].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
