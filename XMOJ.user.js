@@ -248,8 +248,9 @@ else {
             location.href = "loginpage.php";
         }
 
+        let Discussion = null;
         if (UtilityEnabled("Discussion")) {
-            let Discussion = document.createElement("li");
+            Discussion = document.createElement("li");
             document.querySelector("#navbar > ul:nth-child(1)").appendChild(Discussion);
             Discussion.innerHTML = "<a href=\"/discuss3/discuss.php\">讨论</a>";
         }
