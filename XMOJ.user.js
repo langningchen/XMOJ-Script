@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.1.49
+// @version      0.1.50
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -14,7 +14,6 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.6/katex.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.6/contrib/auto-render.min.js
-// @require      https://ghproxy.com/https://raw.githubusercontent.com/drudru/ansi_up/master/ansi_up.js
 // @require      http://xmoj-bbs.infinityfreeapp.com/aes.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
@@ -30,6 +29,22 @@
  */
 
 // Program Start
+let GetRating = async (Username) => {
+    if (localStorage.getItem("UserScript-UserRating-" + Username) != null &&
+        new Date().getTime() - parseInt(localStorage.getItem("UserScript-UserRating-" + Username + "-Time")) < 1000 * 60 * 60 * 24) {
+        return localStorage.getItem("UserScript-UserRating-" + Username);
+    }
+    let Rating = await fetch("http://www.xmoj.tech/userinfo.php?user=" + Username).then((Response) => {
+        return Response.text();
+    }).then((Response) => {
+        const ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+        return (parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(4) > td:nth-child(2)").innerText.trim()) /
+            parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(3) > td:nth-child(2)").innerText.trim())).toFixed(3) * 1000;
+    });
+    localStorage.setItem("UserScript-UserRating-" + Username, Rating);
+    localStorage.setItem("UserScript-UserRating-" + Username + "-Time", new Date().getTime());
+    return Rating;
+};
 let SecondsToString = (InputSeconds) => {
     let Hours = Math.floor(InputSeconds / 3600);
     let Minutes = Math.floor((InputSeconds % 3600) / 60);
@@ -749,7 +764,8 @@ else {
                     { "ID": "ExportACCode", "Type": "F", "Name": "导出AC代码每一道题目一个文件" },
                     { "ID": "LoginFailed", "Type": "F", "Name": "登录后跳转失败*" },
                     { "ID": "NewDownload", "Type": "A", "Name": "下载页面增加下载内容" },
-                    { "ID": "CompareSource", "Type": "A", "Name": "比较代码" }
+                    { "ID": "CompareSource", "Type": "A", "Name": "比较代码" },
+                    { "ID": "Rating", "Type": "A", "Name": "添加 Rating 和用户名颜色" }
                 ]));
                 let UtilitiesCardFooter = document.createElement("div");
                 UtilitiesCardFooter.className = "card-footer text-muted";
@@ -1600,7 +1616,7 @@ else {
                         .then((Response) => {
                             return Response.text()
                         })
-                        .then((Response) => {
+                        .then(async (Response) => {
                             RankData = [];
 
                             let Table = document.querySelector("#rank"); Table.innerHTML = "";
@@ -1721,6 +1737,18 @@ else {
                                     let UsernameLink = document.createElement("a"); UsernameCell.appendChild(UsernameLink);
                                     UsernameLink.href = "userinfo.php?user=" + RowData.Username; UsernameLink.innerText = RowData.Username;
                                     UsernameLink.className = "link-primary link-offset-2 link-underline-opacity-50";
+                                    if (UtilityEnabled("Rating")) {
+                                        let rating = await GetRating(RowData.Username).then();
+                                        if (rating > 500) {
+                                            UsernameLink.className += " link-danger";
+                                        } else if (rating >= 400) {
+                                            UsernameLink.className += " link-warning";
+                                        } else if (rating >= 300) {
+                                            UsernameLink.className += " link-success"
+                                        } else {
+                                            UsernameLink.className += " link-info"
+                                        }
+                                    }
                                     if (RowData.Username == document.getElementById("profile").innerText) {
                                         Row.classList.add("table-primary");
                                     }
@@ -2160,7 +2188,7 @@ else {
                 }
             }
             eval(document.querySelector("body > script:nth-child(5)").innerHTML);
-            document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").innerText = "AC题目列表";
+            document.querySelector("#statics > tbody > tr:nth-child(1)").remove();
 
             let Temp = document.querySelector("#statics > tbody").children;
             for (let i = 0; i < Temp.length; i++) {
@@ -2174,13 +2202,41 @@ else {
                     else {
                         Temp[i].children[1].innerText = Temp[i].children[1].innerText;
                     }
+                    Temp[i].children[1].removeAttribute("align");
                 }
             }
+
+            Temp = document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").childNodes;
+            let ACProblems = [];
+            for (let i = 0; i < Temp.length; i++) {
+                if (Temp[i].tagName == "A" && Temp[i].href.indexOf("problem.php?id=") != -1) {
+                    ACProblems.push(Number(Temp[i].innerText.trim()));
+                }
+            }
+            document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").remove();
+
+
+            let UserInfo = document.createElement("div");
             let UserID, UserName;
             [UserID, UserName] = document.querySelector("#statics > caption").childNodes[0].data.trim().split("--");
             document.querySelector("#statics > caption").remove();
-            document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(1)").innerHTML = "用户名：" + UserID;
-            document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(2)").innerHTML = "昵称：" + UserName;
+            UserInfo.innerHTML = "用户名：" + UserID + "&emsp;昵称：" + UserName;
+            if (UtilityEnabled("Rating")) {
+                UserInfo.innerHTML += "&emsp;评分：" + (await GetRating(UserID));
+            }
+
+            let Row = document.createElement("div"); Row.className = "row";
+            let LeftDiv = document.createElement("div"); LeftDiv.className = "col-md-6"; Row.appendChild(LeftDiv);
+            let LeftTable = document.querySelector("body > div > div > center > table"); LeftDiv.appendChild(LeftTable);
+            let RightDiv = document.createElement("div"); RightDiv.className = "col-md-6"; Row.appendChild(RightDiv);
+            RightDiv.innerHTML = "<h5>已解决题目</h5>";
+            for (let i = 0; i < ACProblems.length; i++) {
+                RightDiv.innerHTML += "<a href=\"/problem.php?id=" + ACProblems[i] + "\" target=\"_blank\">" + ACProblems[i] + "</a> ";
+            }
+
+            document.querySelector("body > div > div").innerHTML = "";
+            document.querySelector("body > div > div").appendChild(UserInfo);
+            document.querySelector("body > div > div").appendChild(Row);
         } else if (location.pathname == "/conteststatistics.php") {
             document.querySelector("body > div > div.mt-3 > center > h3").innerText = "比赛统计";
             if (UtilityEnabled("ResetType")) {
