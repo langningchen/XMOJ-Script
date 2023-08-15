@@ -14,6 +14,7 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.6/katex.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.6/contrib/auto-render.min.js
+// @require      https://ghproxy.com/https://github.com/drudru/ansi_up/blob/v5.2.1/ansi_up.js
 // @require      http://xmoj-bbs.infinityfreeapp.com/aes.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
