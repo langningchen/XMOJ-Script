@@ -1625,7 +1625,8 @@ else {
                                             Nickname: CurrentSubmission.nick,
                                             Solved: 0,
                                             Penalty: 0,
-                                            Problem: []
+                                            Problem: [],
+                                            QuickSubmitCount: 0
                                         };
                                         RankData.push(CurrentRow);
                                     }
@@ -1653,6 +1654,16 @@ else {
                                     });
                                 }
 
+                                for (let i = 0; i < RankData.length; i++) {
+                                    for (let j = 0; j < RankData[i].Problem.length; j++) {
+                                        for (let k = 0; k < RankData[i].Problem.length; k++) {
+                                            if (j != k && RankData[i].Problem[j].SolveTime != 0 && RankData[i].Problem[k].SolveTime != 0 &&
+                                                Math.abs(RankData[i].Problem[j].SolveTime - RankData[i].Problem[k].SolveTime) < 60) {
+                                                RankData[i].QuickSubmitCount++;
+                                            }
+                                        }
+                                    }
+                                }
 
                                 RankData.sort((a, b) => {
                                     if (a.Solved != b.Solved) {
@@ -1713,7 +1724,11 @@ else {
                                     if (RowData.Username == document.getElementById("profile").innerText) {
                                         Row.classList.add("table-primary");
                                     }
-
+                                    if (RowData.QuickSubmitCount >= 2) {
+                                        let QuickSubmitBadge = document.createElement("span"); UsernameCell.appendChild(QuickSubmitBadge);
+                                        QuickSubmitBadge.innerText = "疑似抄当年代码";
+                                        QuickSubmitBadge.className = "badge text-bg-warning ms-2";
+                                    }
 
                                     NicknameCell.innerText = (RowData.Nickname.length < 16 ? RowData.Nickname : RowData.Nickname.substring(0, 15) + "...");
 
