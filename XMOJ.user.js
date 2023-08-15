@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.1.51
+// @version      0.1.52
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
