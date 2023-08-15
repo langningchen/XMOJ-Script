@@ -14,13 +14,13 @@ function GetMailList(): object
     if (!mysqli_stmt_execute($MYSQLPrepare)) {
         CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
-    $Result = mysqli_stmt_get_result($MYSQLPrepare);
+    $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
     $Return = array();
-    while ($Row = mysqli_fetch_assoc($Result)) {
+    while ($MYSQLRow = mysqli_fetch_assoc($MYSQLResult)) {
         $Return[] = (object)array(
-            "OtherUser" => $Row["message_from"],
-            "LastsMessage" => $Row["content"],
-            "SendTime" => $Row["send_time"]
+            "OtherUser" => $MYSQLRow["message_from"],
+            "LastsMessage" => $MYSQLRow["content"],
+            "SendTime" => $MYSQLRow["send_time"]
         );
     }
 
@@ -34,12 +34,12 @@ function GetMailList(): object
     if (!mysqli_stmt_execute($MYSQLPrepare)) {
         CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
-    $Result = mysqli_stmt_get_result($MYSQLPrepare);
-    while ($Row = mysqli_fetch_assoc($Result)) {
+    $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
+    while ($MYSQLRow = mysqli_fetch_assoc($MYSQLResult)) {
         $Return[] = (object)array(
-            "OtherUser" => $Row["message_to"],
-            "LastsMessage" => $Row["content"],
-            "SendTime" => $Row["send_time"]
+            "OtherUser" => $MYSQLRow["message_to"],
+            "LastsMessage" => $MYSQLRow["content"],
+            "SendTime" => $MYSQLRow["send_time"]
         );
     }
 
@@ -70,9 +70,9 @@ function GetMailList(): object
         if (!mysqli_stmt_execute($MYSQLPrepare)) {
             CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
         }
-        $Result = mysqli_stmt_get_result($MYSQLPrepare);
-        $Row = mysqli_fetch_assoc($Result);
-        $Return[$i]->UnreadCount = $Row["COUNT(*)"];
+        $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
+        $MYSQLRow = mysqli_fetch_assoc($MYSQLResult);
+        $Return[$i]->UnreadCount = $MYSQLRow["COUNT(*)"];
     }
 
     return (object)array(
@@ -112,16 +112,16 @@ function GetMail(string $OtherUser): object
     if (!mysqli_stmt_execute($MYSQLPrepare)) {
         CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
-    $Result = mysqli_stmt_get_result($MYSQLPrepare);
+    $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
     $Return = array();
-    while ($Row = mysqli_fetch_assoc($Result)) {
+    while ($MYSQLRow = mysqli_fetch_assoc($MYSQLResult)) {
         $Return[] = (object)array(
-            "MessageID" => $Row["message_id"],
-            "FromUser" => $Row["message_from"],
-            "ToUser" => $Row["message_to"],
-            "Content" => $Row["content"],
-            "SendTime" => $Row["send_time"],
-            "IsRead" => $Row["is_read"]
+            "MessageID" => $MYSQLRow["message_id"],
+            "FromUser" => $MYSQLRow["message_from"],
+            "ToUser" => $MYSQLRow["message_to"],
+            "Content" => $MYSQLRow["content"],
+            "SendTime" => $MYSQLRow["send_time"],
+            "IsRead" => $MYSQLRow["is_read"]
         );
     }
 
@@ -154,11 +154,11 @@ function GetUnreadList(): object
     if (!mysqli_stmt_execute($MYSQLPrepare)) {
         CreateErrorJSON("无法读取数据: " . mysqli_stmt_error($MYSQLPrepare));
     }
-    $Result = mysqli_stmt_get_result($MYSQLPrepare);
+    $MYSQLResult = mysqli_stmt_get_result($MYSQLPrepare);
     $Return = array();
-    while ($Row = mysqli_fetch_assoc($Result)) {
+    while ($MYSQLRow = mysqli_fetch_assoc($MYSQLResult)) {
         $Return[] = (object)array(
-            "OtherUser" => $Row["message_from"]
+            "OtherUser" => $MYSQLRow["message_from"]
         );
     }
 
