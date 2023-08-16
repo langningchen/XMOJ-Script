@@ -767,7 +767,7 @@ else {
                     { "ID": "LoginFailed", "Type": "F", "Name": "登录后跳转失败*" },
                     { "ID": "NewDownload", "Type": "A", "Name": "下载页面增加下载内容" },
                     { "ID": "CompareSource", "Type": "A", "Name": "比较代码" },
-                    { "ID": "Rating", "Type": "A", "Name": "添加 Rating 和用户名颜色" }
+                    { "ID": "Rating", "Type": "A", "Name": "添加用户评分和用户名颜色" }
                 ]));
                 let UtilitiesCardFooter = document.createElement("div");
                 UtilitiesCardFooter.className = "card-footer text-muted";
