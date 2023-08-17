@@ -1741,14 +1741,16 @@ else {
                                     UsernameLink.className = "link-primary link-offset-2 link-underline-opacity-50";
                                     if (UtilityEnabled("Rating")) {
                                         let rating = await GetRating(RowData.Username).then();
-                                        if (rating > 500) {
+                                        if (RowData.QuickSubmitCount >= 2) {
+                                            UsernameLink.className += " link-info";
+                                        } else if (rating > 500) {
                                             UsernameLink.className += " link-danger";
                                         } else if (rating >= 400) {
                                             UsernameLink.className += " link-warning";
                                         } else if (rating >= 300) {
-                                            UsernameLink.className += " link-success"
+                                            UsernameLink.className += " link-success";
                                         } else {
-                                            UsernameLink.className += " link-info"
+                                            UsernameLink.className += " link-info";
                                         }
                                     }
                                     if (RowData.Username == document.getElementById("profile").innerText) {
