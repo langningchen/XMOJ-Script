@@ -277,6 +277,21 @@ export class Process {
                     UnreadCount: UnreadCount["TableSize"]
                 });
             }
+            Mails = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", ["message_to", "content", "send_time"], { message_from: this.SecurityChecker.GetUsername() }));
+            for (let i in Mails) {
+                let Mail = Mails[i];
+                let UnreadCount = ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("short_message", {
+                    message_from: Mail["message_to"],
+                    message_to: this.SecurityChecker.GetUsername(),
+                    is_read: 0
+                }));
+                ResponseData.MailList.push({
+                    OtherUser: Mail["message_to"],
+                    LastsMessage: Mail["content"],
+                    SendTime: Mail["send_time"],
+                    UnreadCount: UnreadCount["TableSize"]
+                });
+            }
             for (let i = 0; i < ResponseData.MailList.length; i++) {
                 for (let j = i + 1; j < ResponseData.MailList.length; j++) {
                     if (ResponseData.MailList[i]["OtherUser"] === ResponseData.MailList[j]["OtherUser"]) {
@@ -327,7 +342,7 @@ export class Process {
             let ResponseData = {
                 Mail: new Array<Object>()
             };
-            let Mails = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", ["message_id", "message_from", "message_to", "content", "send_time", "is_read"], {
+            let Mails = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", [], {
                 message_from: Data["OtherUser"],
                 message_to: this.SecurityChecker.GetUsername()
             }, {
@@ -345,6 +360,27 @@ export class Process {
                     IsRead: Mail["is_read"]
                 });
             }
+            Mails = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", [], {
+                message_from: this.SecurityChecker.GetUsername(),
+                message_to: Data["OtherUser"]
+            }, {
+                Order: "send_time",
+                OrderIncreasing: false
+            }));
+            for (let i in Mails) {
+                let Mail = Mails[i];
+                ResponseData.Mail.push({
+                    MessageID: Mail["message_id"],
+                    FromUser: Mail["message_from"],
+                    ToUser: Mail["message_to"],
+                    Content: Mail["content"],
+                    SendTime: Mail["send_time"],
+                    IsRead: Mail["is_read"]
+                });
+            }
+            ResponseData.Mail.sort((a, b) => {
+                return a["SendTime"] < b["SendTime"] ? 1 : -1;
+            });
             await this.XMOJDatabase.Update("short_message", {
                 is_read: 1
             }, {
