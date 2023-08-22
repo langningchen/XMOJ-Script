@@ -3194,15 +3194,79 @@ else {
                                         CardBodyRowSpan3Button2SpinnerElement.style.display = "none";
                                         CardBodyRowSpan3Button2Element.appendChild(CardBodyRowSpan3Button2SpinnerElement);
                                         CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button2Element);
+                                        let CardBodyRowSpan3Button3Element = document.createElement("button");
+                                        CardBodyRowSpan3Button3Element.type = "button";
+                                        CardBodyRowSpan3Button3Element.className = "btn btn-sm btn-warning ms-1";
+                                        CardBodyRowSpan3Button3Element.innerText = "编辑";
+                                        CardBodyRowSpan3Button3Element.style.display = (Replies[i].UserID == profile.innerText ? "" : "none");
+                                        CardBodyRowSpan3Button3Element.addEventListener("click", () => {
+                                            CardBodyRowSpan3Button3Element.disabled = true;
+                                            let CardBodyRowSpan3Button4Element = document.createElement("button");
+                                            CardBodyRowSpan3Button4Element.type = "button";
+                                            CardBodyRowSpan3Button4Element.className = "btn btn-sm btn-success ms-1";
+                                            CardBodyRowSpan3Button4Element.innerText = "确认";
+                                            let CardBodyRowSpan3Button4SpinnerElement = document.createElement("div");
+                                            CardBodyRowSpan3Button4SpinnerElement.className = "spinner-border spinner-border-sm";
+                                            CardBodyRowSpan3Button4SpinnerElement.role = "status";
+                                            CardBodyRowSpan3Button4SpinnerElement.style.display = "none";
+                                            CardBodyRowSpan3Button4Element.appendChild(CardBodyRowSpan3Button4SpinnerElement);
+                                            CardBodyRowSpan3Button4Element.addEventListener("click", () => {
+                                                CardBodyRowSpan3Button4Element.disabled = true;
+                                                CardBodyRowSpan3Button4Element.lastChild.style.display = "";
+                                                RequestAPI("EditReply", {
+                                                    ReplyID: Number(Replies[i].ReplyID),
+                                                    Content: String(CardBodyEditTextareaElement.value)
+                                                }, (ResponseData) => {
+                                                    if (ResponseData.Success == true) {
+                                                        RefreshReply();
+                                                    }
+                                                    else {
+                                                        CardBodyRowSpan3Button3Element.disabled = false;
+                                                        CardBodyRowSpan3Button4Element.disabled = false;
+                                                        CardBodyRowSpan3Button4Element.lastChild.style.display = "none";
+                                                        ErrorElement.innerText = ResponseData.Message;
+                                                        ErrorElement.style.display = "";
+                                                    }
+                                                });
+                                            });
+                                            CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button4Element);
+                                            let CardBodyRowSpan3Button5Element = document.createElement("button");
+                                            CardBodyRowSpan3Button5Element.type = "button";
+                                            CardBodyRowSpan3Button5Element.className = "btn btn-sm btn-secondary ms-1";
+                                            CardBodyRowSpan3Button5Element.innerText = "取消";
+                                            CardBodyRowSpan3Button5Element.addEventListener("click", () => {
+                                                CardBodyRowSpan3Button3Element.disabled = false;
+                                                CardBodyRowSpan3Button4Element.remove();
+                                                CardBodyRowSpan3Button5Element.remove();
+                                                CardBodyElement.children[2].style.display = "";
+                                                CardBodyElement.children[3].style.display = "none";
+                                            });
+                                            CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button5Element);
+
+                                            CardBodyElement.children[2].style.display = "none";
+                                            CardBodyElement.children[3].style.display = "";
+                                        });
+                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button3Element);
                                         CardBodyRowElement.appendChild(CardBodyRowSpan1Element);
                                         CardBodyRowElement.appendChild(CardBodyRowSpan2Element);
                                         CardBodyRowElement.appendChild(CardBodyRowSpan3Element);
                                         CardBodyElement.appendChild(CardBodyRowElement);
                                         let CardBodyHRElement = document.createElement("hr");
                                         CardBodyElement.appendChild(CardBodyHRElement);
-                                        let CardBodyPElement = document.createElement("p");
-                                        CardBodyPElement.innerHTML = marked.parse(Replies[i].Content);
-                                        CardBodyElement.appendChild(CardBodyPElement);
+                                        let CardBodyDisplayElement = document.createElement("div");
+                                        CardBodyDisplayElement.innerHTML = marked.parse(Replies[i].Content);
+                                        CardBodyElement.appendChild(CardBodyDisplayElement);
+                                        let CardBodyEditElement = document.createElement("div");
+                                        CardBodyEditElement.style.display = "none";
+                                        let CardBodyEditTextareaElement = document.createElement("textarea");
+                                        CardBodyEditTextareaElement.className = "form-control";
+                                        CardBodyEditTextareaElement.value = Replies[i].Content;
+                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replaceAll(/ <a class="link-info" href="http:\/\/www.xmoj.tech\/userinfo.php\?user=(.*?)">@\1<\/a> /g, "@$1");
+                                        if (CardBodyEditTextareaElement.value.indexOf("<br>") != -1) {
+                                            CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.substring(0, CardBodyEditTextareaElement.value.indexOf("<br>"));
+                                        }
+                                        CardBodyEditElement.appendChild(CardBodyEditTextareaElement);
+                                        CardBodyElement.appendChild(CardBodyEditElement);
                                         CardElement.appendChild(CardBodyElement);
                                         PostReplies.appendChild(CardElement);
                                     }

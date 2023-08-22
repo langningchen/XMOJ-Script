@@ -34,6 +34,10 @@ export class Process {
                 "Content": "string"
             }));
             Data["Content"] = this.SecurityChecker.HTMLEscape(Data["Content"]);
+            Data["Content"] = Data["Content"].trim();
+            if (Data["Content"] === "") {
+                return new Result(false, "Content cannot be empty");
+            }
             let MentionPeople = new Array<String>();
             let StringToReplace = new Array<string>();
             for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
@@ -155,6 +159,54 @@ export class Process {
                 });
             }
             return new Result(true, "Success", ResponseData);
+        },
+        EditReply: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "ReplyID": "number",
+                "Content": "string"
+            }));
+            let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["user_id"], { reply_id: Data["ReplyID"] }));
+            if (Reply.toString() == "") {
+                return new Result(false, "Reply not found");
+            }
+            if (Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+                return new Result(false, "Permission denied");
+            }
+            Data["Content"] = this.SecurityChecker.HTMLEscape(Data["Content"]);
+            Data["Content"] = Data["Content"].trim();
+            if (Data["Content"] === "") {
+                return new Result(false, "Content cannot be empty");
+            }
+            let MentionPeople = new Array<String>();
+            let StringToReplace = new Array<string>();
+            for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
+                if (ThrowErrorIfFailed(await this.SecurityChecker.IfUserExist(Match[1]))["Exist"]) {
+                    MentionPeople.push(Match[1]);
+                    StringToReplace.push(" <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=" + Match[1] + "\">@" + Match[1] + "</a> ");
+                }
+                else {
+                    StringToReplace.push("@" + Match[1]);
+                }
+            }
+            Data["Content"] = String(Data["Content"]).replace(/@([a-zA-Z0-9]+)/g, (Match) => {
+                return StringToReplace.shift() || "";
+            });
+            Data["Content"] = Data["Content"] + "<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 " + new Date().toLocaleString() + " 编辑 </span>";
+            await this.XMOJDatabase.Update("bbs_reply", {
+                content: Data["Content"]
+            }, {
+                reply_id: Data["ReplyID"]
+            });
+            await this.XMOJDatabase.Delete("bbs_mention", {
+                reply_id: Data["ReplyID"]
+            });
+            for (let i in MentionPeople) {
+                await this.XMOJDatabase.Insert("bbs_mention", {
+                    user_id: MentionPeople[i],
+                    reply_id: Data["ReplyID"]
+                });
+            }
+            return new Result(true, "Success");
         },
         DeletePost: async (Data: object, CheckUserID: boolean = true): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
