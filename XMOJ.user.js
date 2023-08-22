@@ -3270,7 +3270,17 @@ else {
                                         CardElement.appendChild(CardBodyElement);
                                         PostReplies.appendChild(CardElement);
                                     }
-                                    let CodeElements = document.querySelectorAll("pre > code");
+                                    let InlineCodeElements = document.querySelectorAll("#PostReplies > div > div > div:nth-child(3) > p > code");
+                                    for (let i = 0; i < InlineCodeElements.length; i++) {
+                                        let Code = InlineCodeElements[i].innerText;
+                                        Code = Code.replaceAll("&lt;", "<");
+                                        Code = Code.replaceAll("&gt;", ">");
+                                        Code = Code.replaceAll("&amp;", "&");
+                                        Code = Code.replaceAll("&quot;", "\"");
+                                        Code = Code.replaceAll("&apos;", "'");
+                                        InlineCodeElements[i].innerText = Code.trim();
+                                    }
+                                    let CodeElements = document.querySelectorAll("#PostReplies > div > div > div:nth-child(3) > pre > code");
                                     for (let i = 0; i < CodeElements.length; i++) {
                                         let ModeName = "text/plain";
                                         if (CodeElements[i].className == "language-c") {
