@@ -1094,25 +1094,25 @@ else {
                     CompareButton.style.marginBottom = "7px";
                 }
 
+                debugger
                 if (UtilityEnabled("ResetType")) {
                     document.querySelector("#result-tab > thead > tr > th:nth-child(1)").remove();
                     document.querySelector("#result-tab > thead > tr > th:nth-child(2)").remove();
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(9)").remove();
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(9)").remove();
+                    document.querySelector("#result-tab > thead > tr > th:nth-child(10)").innerText = "开启O2";
                 }
                 let Temp = document.querySelector("#result-tab > tbody").childNodes;
                 for (let i = 1; i < Temp.length; i += 2) {
                     if (UtilityEnabled("ResetType")) {
                         Temp[i].childNodes[0].remove();
-                        Temp[i].childNodes[0].innerHTML = "<a href=\"showsource.php?id=" + Temp[i].childNodes[0].innerText + "\">" + Temp[i].childNodes[0].innerText + "</a>";
+                        Temp[i].childNodes[0].innerHTML = "<a href=\"showsource.php?id=" + Temp[i].childNodes[0].innerText + "\">" + Temp[i].childNodes[0].innerText + "</a> " +
+                            "<a href=\"" + Temp[i].childNodes[6].children[1].href + "\">重交</a>";
                         Temp[i].childNodes[1].remove();
                         Temp[i].childNodes[1].children[0].removeAttribute("class");
                         Temp[i].childNodes[3].childNodes[0].innerText = SizeToStringSize(Temp[i].childNodes[3].childNodes[0].innerText);
                         Temp[i].childNodes[4].childNodes[0].innerText = TimeToStringTime(Temp[i].childNodes[4].childNodes[0].innerText);
                         Temp[i].childNodes[5].innerText = Temp[i].childNodes[5].childNodes[0].innerText;
                         Temp[i].childNodes[6].innerText = SizeToStringSize(Temp[i].childNodes[6].innerText.substring(0, Temp[i].childNodes[6].innerText.length - 1));
-                        Temp[i].childNodes[8].remove();
-                        Temp[i].childNodes[8].remove();
+                        Temp[i].childNodes[9].innerText = (Temp[i].childNodes[9].innerText == "" ? "否" : "是");
                     }
                     if (SearchParams.get("cid") == null) {
                         localStorage.setItem("UserScript-Solution-" + Temp[i].childNodes[0].innerText + "-Problem",
@@ -1124,17 +1124,6 @@ else {
                         localStorage.setItem("UserScript-Solution-" + Temp[i].childNodes[0].innerText + "-PID-Contest",
                             Temp[i].childNodes[1].innerText.charAt(0));
                     }
-                }
-
-                if (UtilityEnabled("ResetType")) {
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(1)").style.width = "10%";
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(2)").style.width = "10%";
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(3)").style.width = "20%";
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(4)").style.width = "10%";
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(5)").style.width = "10%";
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(6)").style.width = "10%";
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(7)").style.width = "10%";
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(8)").style.width = "20%";
                 }
 
                 if (UtilityEnabled("RefreshSolution")) {
@@ -1869,6 +1858,17 @@ else {
             })();
             CodeMirrorElement.setSize("100%", "auto");
             CodeMirrorElement.getWrapperElement().style.border = "1px solid #ddd";
+
+            if (SearchParams.get("sid") !== null) {
+                await fetch("/getsource.php?id=" + SearchParams.get("sid"))
+                    .then((Response) => {
+                        return Response.text()
+                    })
+                    .then((Response) => {
+                        CodeMirrorElement.setValue(Response.substring(0, Response.indexOf("/**************************************************************")).trim());
+                    });
+            }
+
             PassCheck.addEventListener("click", async () => {
                 ErrorElement.style.display = "none";
                 document.querySelector("#Submit").disabled = true;
