@@ -1,1 +1,4 @@
 Server/Database.php
+Server/node_modules
+Server/.wrangler
+Server-Old/

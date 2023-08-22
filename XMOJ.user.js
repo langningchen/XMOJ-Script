@@ -15,12 +15,12 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.6/katex.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.6/contrib/auto-render.min.js
 // @require      https://ghproxy.com/https://github.com/drudru/ansi_up/blob/v5.2.1/ansi_up.js
-// @require      http://xmoj-bbs.infinityfreeapp.com/aes.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_notification
 // @grant        GM_setClipboard
-// @connect      xmoj-bbs.infinityfreeapp.com
+// @connect      www.xmoj-bbs.tech
+// @license      GPL
 // ==/UserScript==
 
 /**
@@ -127,7 +127,7 @@ let UtilityEnabled = (Name) => {
     }
     return localStorage.getItem("UserScript-Setting-" + Name) == "true";
 };
-let RequestAPI = (Item, Action, Data, CallBack) => {
+let RequestAPI = (Action, Data, CallBack) => {
     let UserID = profile.innerText;
     let Session = "";
     let Temp = document.cookie.split(";");
@@ -136,86 +136,23 @@ let RequestAPI = (Item, Action, Data, CallBack) => {
             Session = Temp[i].split("=")[1];
         }
     }
-    Data.Action = Action;
-    Data.UserID = UserID;
-    Data.Session = Session;
-    let DataString = "";
-    for (let i in Data) {
-        if (Data[i] != null) {
-            DataString += i + "=" + encodeURIComponent(Data[i]) + "&";
-        }
-    }
-    DataString = DataString.substring(0, DataString.length - 1);
+    let PostData = {
+        "Authentication": {
+            "SessionID": Session,
+            "Username": UserID
+        },
+        "Data": Data
+    };
+    let DataString = JSON.stringify(PostData);
     GM_xmlhttpRequest({
         method: "POST",
-        url: "http://xmoj-bbs.infinityfreeapp.com/" + Item + (UserScriptDebug ? "-Debug" : "") + ".php",
+        url: "https://www.xmoj-bbs.tech/" + Action,
         headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/json"
         },
-        cookie: "__test=" + localStorage.getItem("UserScript-InfinityFree-Cookie"),
         data: DataString,
         onload: (Response) => {
-            if (Response.status == 508) {
-                CallBack({
-                    "Success": false,
-                    "ErrorMessage": "服务器连接数过多，请稍后再试"
-                });
-                return
-            }
-            if (Response.status != 200) {
-                CallBack({
-                    "Success": false,
-                    "ErrorMessage": "服务器返回错误码：" + Response.status
-                });
-                return;
-            }
-            let ResponseData;
-            try {
-                ResponseData = JSON.parse(Response.responseText);
-                if (ResponseData.Success == false && ResponseData.ErrorMessage.indexOf("max_user_connections") != -1) {
-                    ResponseData.ErrorMessage = "服务器连接数过多，请稍后再试";
-                    return;
-                }
-            } catch (error) {
-                if (Response.responseText.indexOf("aes.js") != -1) {
-                    let ScriptData = Response.responseText.substring(Response.responseText.indexOf("<script>") + 8, Response.responseText.lastIndexOf("</script>"));
-                    let ValueA = ScriptData.substring(ScriptData.indexOf("a=toNumbers(\"") + 13, ScriptData.indexOf("\"),b=toNumbers"));
-                    let ValueB = ScriptData.substring(ScriptData.indexOf("b=toNumbers(\"") + 13, ScriptData.indexOf("\"),c=toNumbers"));
-                    let ValueC = ScriptData.substring(ScriptData.indexOf("c=toNumbers(\"") + 13, ScriptData.indexOf("\");document.cookie"));
-                    function toNumbers(Input) {
-                        var Output = [];
-                        Input.replace(/(..)/g, function (d) {
-                            Output.push(parseInt(d, 16))
-                        });
-                        return Output;
-                    }
-                    function toHex() {
-                        var Input = [];
-                        Input = (arguments.length == 1 && arguments[0].constructor == Array) ? arguments[0] : arguments;
-                        var Output = "";
-                        for (var i = 0; i < Input.length; i++) {
-                            Output += (Input[i] < 16 ? "0" : "") + Input[i].toString(16);
-                        }
-                        return Output.toLowerCase();
-                    }
-                    let Cookie = toHex(slowAES.decrypt(toNumbers(ValueC), 2, toNumbers(ValueA), toNumbers(ValueB)));
-                    localStorage.setItem("UserScript-InfinityFree-Cookie", Cookie);
-                    RequestAPI("BBS", Action, Data, CallBack);
-                    return;
-                }
-                if (Response.responseText.indexOf("parking") != -1) {
-                    CallBack({
-                        "Success": false,
-                        "ErrorMessage": "在访问XMOJ的时候请不要打开VPN"
-                    });
-                    return;
-                }
-                ResponseData = {
-                    "Success": false,
-                    "ErrorMessage": "JSON解析错误：" + error
-                };
-            }
-            CallBack(ResponseData);
+            CallBack(JSON.parse(Response.responseText));
         }
     });
 };
@@ -228,7 +165,6 @@ GM_registerMenuCommand("重置数据", () => {
 });
 
 let SearchParams = new URLSearchParams(location.search);
-let UserScriptDebug = (localStorage.getItem("UserScript-Debug") != null);
 
 if (location.host != "www.xmoj.tech") {
     location.host = "www.xmoj.tech";
@@ -613,7 +549,7 @@ else {
             });
 
         addEventListener("focus", () => {
-            RequestAPI("BBS", "GetMentionList", {}, (Response) => {
+            RequestAPI("GetMentionList", {}, (Response) => {
                 if (Response.Success) {
                     let MentionList = Response.Data.MentionList;
                     for (let i = 0; i < MentionList.length; i++) {
@@ -623,8 +559,8 @@ else {
                             timeout: 10000,
                             onclick: () => {
                                 open("http://www.xmoj.tech/discuss3/thread.php?tid=" + MentionList[i].PostID + "&page=" + MentionList[i].Page, "_blank");
-                                RequestAPI("BBS", "ReadMention", {
-                                    "MentionID": MentionList[i].MentionID
+                                RequestAPI("ReadMention", {
+                                    "MentionID": Number(MentionList[i].MentionID)
                                 }, () => { });
                             }
                         });
@@ -632,7 +568,7 @@ else {
                 }
             });
             if (location.pathname != "/mail.php") {
-                RequestAPI("Mail", "GetUnreadList", {}, (Response) => {
+                RequestAPI("GetUnreadList", {}, (Response) => {
                     if (Response.Success) {
                         let UnreadList = Response.Data.UnreadList;
                         for (let i = 0; i < UnreadList.length; i++) {
@@ -972,8 +908,8 @@ else {
                     DiscussButton.appendChild(UnreadBadge);
 
                     let RefreshCount = () => {
-                        RequestAPI("BBS", "GetPostCount", {
-                            "ProblemID": PID
+                        RequestAPI("GetPostCount", {
+                            "ProblemID": Number(PID)
                         }, (Response) => {
                             if (Response.Success) {
                                 if (Response.Data.DiscussCount != 0) {
@@ -2815,7 +2751,7 @@ else {
                             }
                         }
                     }
-                    RequestAPI("Mail", "GetMailList", {}, (ResponseData) => {
+                    RequestAPI("GetMailList", {}, (ResponseData) => {
                         if (ResponseData.Success) {
                             ErrorElement.style.display = "none";
                             let Data = ResponseData.Data.MailList;
@@ -2829,7 +2765,7 @@ else {
                             }
                         }
                         else {
-                            ErrorElement.innerText = ResponseData.ErrorMessage;
+                            ErrorElement.innerText = ResponseData.Message;
                             ErrorElement.style.display = "";
                         }
                     });
@@ -2845,9 +2781,9 @@ else {
                     }
                     AddUser.children[0].style.display = "";
                     AddUser.disabled = true;
-                    RequestAPI("Mail", "SendMail", {
-                        "ToUser": UsernameData,
-                        "Content": "你好，我是" + localStorage.getItem("UserScript-Username")
+                    RequestAPI("SendMail", {
+                        "ToUser": String(UsernameData),
+                        "Content": String("你好，我是" + localStorage.getItem("UserScript-Username"))
                     }, (ResponseData) => {
                         AddUser.children[0].style.display = "none";
                         AddUser.disabled = false;
@@ -2856,7 +2792,7 @@ else {
                             RefreshMessageList();
                         }
                         else {
-                            ErrorElement.innerText = ResponseData.ErrorMessage;
+                            ErrorElement.innerText = ResponseData.Message;
                             ErrorElement.style.display = "";
                         }
                     });
@@ -2903,8 +2839,8 @@ else {
                             }
                         }
                     }
-                    RequestAPI("Mail", "GetMail", {
-                        "OtherUser": SearchParams.get("other")
+                    RequestAPI("GetMail", {
+                        "OtherUser": String(SearchParams.get("other"))
                     }, (ResponseData) => {
                         if (ResponseData.Success) {
                             ErrorElement.style.display = "none";
@@ -2922,7 +2858,7 @@ else {
                             }
                         }
                         else {
-                            ErrorElement.innerText = ResponseData.ErrorMessage;
+                            ErrorElement.innerText = ResponseData.Message;
                             ErrorElement.style.display = "";
                         }
                     });
@@ -2943,9 +2879,9 @@ else {
                     Send.disabled = true;
                     Send.children[0].style.display = "";
                     let ContentData = Content.value;
-                    RequestAPI("Mail", "SendMail", {
-                        "ToUser": SearchParams.get("other"),
-                        "Content": ContentData
+                    RequestAPI("SendMail", {
+                        "ToUser": String(SearchParams.get("other")),
+                        "Content": String(ContentData)
                     }, (ResponseData) => {
                         Send.disabled = false;
                         Send.children[0].style.display = "none";
@@ -2955,7 +2891,7 @@ else {
                             RefreshMessage();
                         }
                         else {
-                            ErrorElement.innerText = ResponseData.ErrorMessage;
+                            ErrorElement.innerText = ResponseData.Message;
                             ErrorElement.style.display = "";
                         }
                     });
@@ -3011,9 +2947,9 @@ else {
                             location.href = "/discuss3/newpost.php";
                         }
                     });
-                    RequestAPI("BBS", "GetPosts", {
-                        "ProblemID": ProblemID,
-                        "Page": Page
+                    RequestAPI("GetPosts", {
+                        "ProblemID": Number(ProblemID || 0),
+                        "Page": Number(Page)
                     }, (ResponseData) => {
                         if (ResponseData.Success == true) {
                             ErrorElement.style.display = "none";
@@ -3040,7 +2976,7 @@ else {
                                     <td>${Posts[i].PostID}</td>
                                     <td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>
                                     <td><a href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
-                                    (Posts[i].ProblemID == null ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
+                                    (Posts[i].ProblemID == 0 ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
                                     `<td>${Posts[i].PostTime}</td>
                                     <td>${Posts[i].ReplyCount}</td>
                                     <td><a href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
@@ -3048,7 +2984,7 @@ else {
                             }
                         }
                         else {
-                            ErrorElement.innerText = ResponseData.ErrorMessage;
+                            ErrorElement.innerText = ResponseData.Message;
                             ErrorElement.style.display = "block";
                         }
                     });
@@ -3090,10 +3026,10 @@ else {
                         }
                         SubmitElement.disabled = true;
                         SubmitElement.children[0].style.display = "inline-block";
-                        RequestAPI("BBS", "NewPost", {
-                            "Title": Title,
-                            "Content": Content,
-                            "ProblemID": ProblemID
+                        RequestAPI("NewPost", {
+                            "Title": String(Title),
+                            "Content": String(Content),
+                            "ProblemID": Number(ProblemID == null ? 0 : ProblemID)
                         }, (ResponseData) => {
                             SubmitElement.disabled = false;
                             SubmitElement.children[0].style.display = "none";
@@ -3101,7 +3037,7 @@ else {
                                 location.href = "/discuss3/thread.php?tid=" + ResponseData.Data.PostID;
                             }
                             else {
-                                ErrorElement.innerText = ResponseData.ErrorMessage;
+                                ErrorElement.innerText = ResponseData.Message;
                                 ErrorElement.style.display = "block";
                             }
                         });
@@ -3170,9 +3106,9 @@ else {
                                 }
                             }
                             let OldScrollTop = document.documentElement.scrollTop;
-                            RequestAPI("BBS", "GetPost", {
-                                "PostID": ThreadID,
-                                "Page": Page
+                            RequestAPI("GetPost", {
+                                "PostID": Number(ThreadID),
+                                "Page": Number(Page)
                             }, (ResponseData) => {
                                 if (ResponseData.Success == true) {
                                     if (!Silent) {
@@ -3238,8 +3174,8 @@ else {
                                         CardBodyRowSpan3Button2Element.addEventListener("click", () => {
                                             CardBodyRowSpan3Button2Element.disabled = true;
                                             CardBodyRowSpan3Button2Element.lastChild.style.display = "";
-                                            RequestAPI("BBS", "DeleteReply", {
-                                                "ReplyID": Replies[i].ReplyID
+                                            RequestAPI("DeleteReply", {
+                                                "ReplyID": Number(Replies[i].ReplyID)
                                             }, (ResponseData) => {
                                                 if (ResponseData.Success == true) {
                                                     RefreshReply();
@@ -3247,7 +3183,7 @@ else {
                                                 else {
                                                     CardBodyRowSpan3Button2Element.disabled = false;
                                                     CardBodyRowSpan3Button2Element.lastChild.style.display = "none";
-                                                    ErrorElement.innerText = ResponseData.ErrorMessage;
+                                                    ErrorElement.innerText = ResponseData.Message;
                                                     ErrorElement.style.display = "";
                                                 }
                                             });
@@ -3312,15 +3248,15 @@ else {
                                     }
                                 }
                                 else {
-                                    PostTitle.innerText = "错误：" + ResponseData.ErrorMessage;
+                                    PostTitle.innerText = "错误：" + ResponseData.Message;
                                 }
                             });
                         };
                         Delete.addEventListener("click", () => {
                             Delete.disabled = true;
                             Delete.children[0].style.display = "inline-block";
-                            RequestAPI("BBS", "DeletePost", {
-                                "PostID": SearchParams.get("tid")
+                            RequestAPI("DeletePost", {
+                                "PostID": Number(SearchParams.get("tid"))
                             }, (ResponseData) => {
                                 Delete.disabled = false;
                                 Delete.children[0].style.display = "none";
@@ -3328,7 +3264,7 @@ else {
                                     location.href = "/discuss3/discuss.php";
                                 }
                                 else {
-                                    ErrorElement.innerText = ResponseData.ErrorMessage;
+                                    ErrorElement.innerText = ResponseData.Message;
                                     ErrorElement.style.display = "block";
                                 }
                             });
@@ -3337,9 +3273,9 @@ else {
                             ErrorElement.style.display = "none";
                             SubmitElement.disabled = true;
                             SubmitElement.children[0].style.display = "inline-block";
-                            RequestAPI("BBS", "NewReply", {
-                                "PostID": SearchParams.get("tid"),
-                                "Content": ContentElement.value
+                            RequestAPI("NewReply", {
+                                "PostID": Number(SearchParams.get("tid")),
+                                "Content": String(ContentElement.value)
                             }, async (ResponseData) => {
                                 SubmitElement.disabled = false;
                                 SubmitElement.children[0].style.display = "none";
@@ -3355,7 +3291,7 @@ else {
                                     ContentElement.scrollIntoView();
                                 }
                                 else {
-                                    ErrorElement.innerText = ResponseData.ErrorMessage;
+                                    ErrorElement.innerText = ResponseData.Message;
                                     ErrorElement.style.display = "block";
                                 }
                             });

@@ -1,0 +1,13 @@
+name = "xmoj-bbs"
+main = "Source/index.ts"
+compatibility_date = "2023-08-17"
+usage_model = "bundled"
+env = { }
+
+[triggers]
+crons = [ ]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "xmoj-bbs"
+database_id = "f70729f0-6ac4-4c31-8bf4-0e1ce18d1fd6"
