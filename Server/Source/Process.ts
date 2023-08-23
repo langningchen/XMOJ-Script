@@ -1,6 +1,7 @@
 import { Result, ThrowErrorIfFailed } from "./Result";
 import { Database } from "./Database";
 import { Security } from "./Security";
+import { Output } from "./Output";
 
 export class Process {
     private XMOJDatabase: Database;
@@ -74,7 +75,7 @@ export class Process {
                 "ProblemID": "number",
                 "Page": "number"
             }));
-            var ResponseData = {
+            let ResponseData = {
                 Posts: new Array<Object>,
                 PageCount: Math.ceil(ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_post"))["TableSize"] / 10)
             };
@@ -84,16 +85,16 @@ export class Process {
             if (Data["Page"] < 1 || Data["Page"] > ResponseData.PageCount) {
                 return new Result(false, "Param \"Page\" does not in range 1~" + ResponseData.PageCount);
             }
-            var Posts = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", [], (Data["ProblemID"] === 0 ? undefined : { problem_id: Data["ProblemID"] }), {
+            let Posts = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", [], (Data["ProblemID"] === 0 ? undefined : { problem_id: Data["ProblemID"] }), {
                 Order: "post_id",
                 OrderIncreasing: false,
                 Limit: 10,
                 Offset: (Data["Page"] - 1) * 10
             }));
-            for (var i in Posts) {
-                var Post = Posts[i];
-                var ReplyCount: number = ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_reply", { post_id: Post["post_id"] }))["TableSize"];
-                var LastReply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["user_id", "reply_time"], { post_id: Post["post_id"] }, {
+            for (let i in Posts) {
+                let Post = Posts[i];
+                let ReplyCount: number = ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_reply", { post_id: Post["post_id"] }))["TableSize"];
+                let LastReply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["user_id", "reply_time"], { post_id: Post["post_id"] }, {
                     Order: "reply_time",
                     OrderIncreasing: false,
                     Limit: 1
@@ -120,7 +121,7 @@ export class Process {
                 "PostID": "number",
                 "Page": "number"
             }));
-            var ResponseData = {
+            let ResponseData = {
                 UserID: "",
                 ProblemID: 0,
                 Title: "",
@@ -128,7 +129,7 @@ export class Process {
                 Reply: new Array<Object>(),
                 PageCount: 0
             };
-            var Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", [], { post_id: Data["PostID"] }));
+            let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", [], { post_id: Data["PostID"] }));
             if (Post.toString() == "") {
                 return new Result(false, "Post not found");
             }
@@ -143,14 +144,14 @@ export class Process {
             ResponseData.ProblemID = Post[0]["problem_id"];
             ResponseData.Title = Post[0]["title"];
             ResponseData.PostTime = Post[0]["post_time"];
-            var Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", [], { post_id: Data["PostID"] }, {
+            let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", [], { post_id: Data["PostID"] }, {
                 Order: "reply_time",
-                OrderIncreasing: false,
+                OrderIncreasing: true,
                 Limit: 10,
                 Offset: (Data["Page"] - 1) * 10
             }));
-            for (var i in Reply) {
-                var ReplyItem = Reply[i];
+            for (let i in Reply) {
+                let ReplyItem = Reply[i];
                 ResponseData.Reply.push({
                     ReplyID: ReplyItem["reply_id"],
                     UserID: ReplyItem["user_id"],
@@ -216,7 +217,7 @@ export class Process {
             if (Post.toString() == "") {
                 return new Result(false, "Post not found");
             }
-            if (CheckUserID && Post[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1 && CheckUserID && Post[0]["user_id"] != this.SecurityChecker.GetUsername()) {
                 return new Result(false, "Permission denied");
             }
             let Replies = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["reply_id"], { post_id: Data["PostID"] }));
@@ -274,7 +275,7 @@ export class Process {
                 let Page = ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_reply", {
                     post_id: Reply[0]["post_id"],
                     reply_time: {
-                        Operator: "<=",
+                        Operator: "<",
                         Value: Reply[0]["reply_time"]
                     }
                 }));
@@ -466,7 +467,7 @@ export class Process {
     }
     public async Process(): Promise<Result> {
         try {
-            var PathName = new URL(this.RequestData.url).pathname;
+            let PathName = new URL(this.RequestData.url).pathname;
             PathName = PathName === "/" ? "/index" : PathName;
             PathName = PathName.substring(1);
             if (this.ProcessFunctions[PathName] === undefined) {
@@ -478,7 +479,7 @@ export class Process {
             if (this.RequestData.headers.get("content-type") !== "application/json") {
                 throw new Result(false, "Unsupported Media Type \"" + this.RequestData.headers.get("content-type") + "\"");
             }
-            var RequestJSON: object;
+            let RequestJSON: object;
             try {
                 RequestJSON = await this.RequestData.json();
             }
@@ -494,7 +495,7 @@ export class Process {
         }
         catch (ResponseData) {
             if (!(ResponseData instanceof Result)) {
-                console.error(ResponseData);
+                Output.Error(ResponseData);
                 ResponseData = new Result(false, "Internal Server Error: " + String(ResponseData).split("\n")[0]);
             }
             return ResponseData;
