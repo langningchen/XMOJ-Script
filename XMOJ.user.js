@@ -1098,8 +1098,6 @@ else {
                     });
                     CompareButton.style.marginBottom = "7px";
                 }
-
-                debugger
                 if (UtilityEnabled("ResetType")) {
                     document.querySelector("#result-tab > thead > tr > th:nth-child(1)").remove();
                     document.querySelector("#result-tab > thead > tr > th:nth-child(2)").remove();
@@ -2937,13 +2935,6 @@ else {
                         <tbody>
                         </tbody>
                     </table>`;
-                    for (let i = 0; i < 10; i++) {
-                        let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
-                        for (let j = 0; j < 7; j++) {
-                            let Cell = document.createElement("td"); Row.appendChild(Cell);
-                            Cell.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>`;
-                        }
-                    }
                     NewPost.addEventListener("click", () => {
                         if (ProblemID != null) {
                             location.href = "/discuss3/newpost.php?pid=" + ProblemID;
@@ -2952,47 +2943,63 @@ else {
                             location.href = "/discuss3/newpost.php";
                         }
                     });
-                    RequestAPI("GetPosts", {
-                        "ProblemID": Number(ProblemID || 0),
-                        "Page": Number(Page)
-                    }, (ResponseData) => {
-                        if (ResponseData.Success == true) {
-                            ErrorElement.style.display = "none";
-                            DiscussPagination.children[0].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
-                            DiscussPagination.children[1].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
-                            DiscussPagination.children[2].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
-                            DiscussPagination.children[3].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
-                            DiscussPagination.children[4].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
-                            if (Page <= 1) {
-                                DiscussPagination.children[0].classList.add("disabled");
-                                DiscussPagination.children[1].remove();
-                            }
-                            if (Page >= ResponseData.Data.PageCount) {
-                                DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
-                                DiscussPagination.children[DiscussPagination.children.length - 2].remove();
-                            }
-                            let Posts = ResponseData.Data.Posts;
+                    const RefreshPostList = (Silent = true) => {
+                        if (!Silent) {
                             PostList.children[1].innerHTML = "";
-                            if (Posts.length == 0) {
-                                PostList.children[1].innerHTML = `<tr><td colspan="7">暂无数据</td></tr>`;
+                            for (let i = 0; i < 10; i++) {
+                                let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
+                                for (let j = 0; j < 7; j++) {
+                                    let Cell = document.createElement("td"); Row.appendChild(Cell);
+                                    Cell.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>`;
+                                }
                             }
-                            for (let i = 0; i < Posts.length; i++) {
-                                PostList.children[1].innerHTML += `<tr>
+                        }
+                        RequestAPI("GetPosts", {
+                            "ProblemID": Number(ProblemID || 0),
+                            "Page": Number(Page)
+                        }, (ResponseData) => {
+                            if (ResponseData.Success == true) {
+                                ErrorElement.style.display = "none";
+                                if (!Silent) {
+                                    DiscussPagination.children[0].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
+                                    DiscussPagination.children[1].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
+                                    DiscussPagination.children[2].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
+                                    DiscussPagination.children[3].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
+                                    DiscussPagination.children[4].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
+                                    if (Page <= 1) {
+                                        DiscussPagination.children[0].classList.add("disabled");
+                                        DiscussPagination.children[1].remove();
+                                    }
+                                    if (Page >= ResponseData.Data.PageCount) {
+                                        DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
+                                        DiscussPagination.children[DiscussPagination.children.length - 2].remove();
+                                    }
+                                }
+                                let Posts = ResponseData.Data.Posts;
+                                PostList.children[1].innerHTML = "";
+                                if (Posts.length == 0) {
+                                    PostList.children[1].innerHTML = `<tr><td colspan="7">暂无数据</td></tr>`;
+                                }
+                                for (let i = 0; i < Posts.length; i++) {
+                                    PostList.children[1].innerHTML += `<tr>
                                     <td>${Posts[i].PostID}</td>
                                     <td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>
                                     <td><a href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
-                                    (Posts[i].ProblemID == 0 ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
-                                    `<td>${Posts[i].PostTime}</td>
+                                        (Posts[i].ProblemID == 0 ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
+                                        `<td>${Posts[i].PostTime}</td>
                                     <td>${Posts[i].ReplyCount}</td>
                                     <td><a href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
                                 </tr>`;
+                                }
                             }
-                        }
-                        else {
-                            ErrorElement.innerText = ResponseData.Message;
-                            ErrorElement.style.display = "block";
-                        }
-                    });
+                            else {
+                                ErrorElement.innerText = ResponseData.Message;
+                                ErrorElement.style.display = "block";
+                            }
+                        });
+                    };
+                    RefreshPostList(false);
+                    addEventListener("focus", RefreshPostList);
                 } else if (location.pathname == "/discuss3/newpost.php") {
                     let ProblemID = SearchParams.get("pid");
                     document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (ProblemID != null ? ` - 题目` + ProblemID : ``) + `</h3>
@@ -3386,7 +3393,6 @@ else {
                             ErrorElement.style.display = "none";
                             SubmitElement.disabled = true;
                             SubmitElement.children[0].style.display = "inline-block";
-                            debugger
                             RequestAPI("NewReply", {
                                 "PostID": Number(SearchParams.get("tid")),
                                 "Content": String(ContentElement.value),
