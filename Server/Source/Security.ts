@@ -1,9 +1,11 @@
 import { Result, ThrowErrorIfFailed } from "./Result";
+import { CaptchaSecretKey } from "./Secret"
 import { Output } from "./Output";
 
 export class Security {
     private Username: string;
     private SessionID: string;
+    private RemoteIP: string;
     private Fetch = async (RequestURL: URL): Promise<Response> => {
         let Abort = new AbortController();
         setTimeout(() => {
@@ -90,5 +92,51 @@ export class Security {
     }
     public GetUsername = (): string => {
         return this.Username;
+    }
+    public SetRemoteIP = (RemoteIP: string): void => {
+        this.RemoteIP = RemoteIP;
+    }
+    public VerifyCaptcha = async (CaptchaToken: string): Promise<Result> => {
+        const ErrorDescriptions: Object = {
+            "missing-input-secret": "The secret parameter was not passed.",
+            "invalid-input-secret": "The secret parameter was invalid or did not exist.",
+            "missing-input-response": "The response parameter was not passed.",
+            "invalid-input-response": "The response parameter is invalid or has expired.",
+            "invalid-widget-id": "The widget ID extracted from the parsed site secret key was invalid or did not exist.",
+            "invalid-parsed-secret": "The secret extracted from the parsed site secret key was invalid.",
+            "bad-request": "The request was rejected because it was malformed.",
+            "timeout-or-duplicate": "The response parameter has already been validated before.",
+            "internal-error": "An internal error happened while validating the response. The request can be retried."
+        };
+        if (CaptchaToken === "") {
+            return new Result(false, "Please solve the captcha");
+        }
+        let VerifyFormData = new FormData();
+        VerifyFormData.append("secret", CaptchaSecretKey);
+        VerifyFormData.append("response", CaptchaToken);
+        VerifyFormData.append("remoteip", this.RemoteIP);
+        const VerifyResult = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+            body: JSON.stringify({
+                secret: CaptchaSecretKey,
+                response: CaptchaToken,
+                remoteip: this.RemoteIP
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            },
+            method: 'POST',
+        }).then((Response) => {
+            return Response.json();
+        });
+        if (VerifyResult["success"]) {
+            return new Result(true, "Captcha check success");
+        }
+        else {
+            let ErrorString: string = "";
+            for (let i = 0; i < VerifyResult["error-codes"].length; i++) {
+                ErrorString += (ErrorDescriptions[VerifyResult["error-codes"][i]] == null ? VerifyResult["error-codes"][i] : ErrorDescriptions[VerifyResult["error-codes"][i]]);
+            }
+            return new Result(false, ErrorString);
+        }
     }
 };

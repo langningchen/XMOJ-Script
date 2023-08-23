@@ -14,8 +14,10 @@ export class Process {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
                 "ProblemID": "number",
                 "Title": "string",
-                "Content": "string"
+                "Content": "string",
+                "CaptchaSecretKey": "string"
             }));
+            ThrowErrorIfFailed(await this.SecurityChecker.VerifyCaptcha(Data["CaptchaSecretKey"]));
             let PostID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_post", {
                 user_id: this.SecurityChecker.GetUsername(),
                 problem_id: Data["ProblemID"],
@@ -34,8 +36,10 @@ export class Process {
         NewReply: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
                 "PostID": "number",
-                "Content": "string"
+                "Content": "string",
+                "CaptchaSecretKey": "string"
             }));
+            ThrowErrorIfFailed(await this.SecurityChecker.VerifyCaptcha(Data["CaptchaSecretKey"]));
             Data["Content"] = this.SecurityChecker.HTMLEscape(Data["Content"]);
             Data["Content"] = Data["Content"].trim();
             if (Data["Content"] === "") {
@@ -466,6 +470,7 @@ export class Process {
     constructor(RequestData: Request, Environment) {
         this.XMOJDatabase = new Database(Environment.DB);
         this.RequestData = RequestData;
+        this.SecurityChecker.SetRemoteIP(RequestData.headers.get("CF-Connecting-IP") || "");
     }
     public async Process(): Promise<Result> {
         try {

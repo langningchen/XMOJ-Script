@@ -20,6 +20,8 @@
 // @grant        GM_notification
 // @grant        GM_setClipboard
 // @connect      www.xmoj-bbs.tech
+// @connect      challenges.cloudflare.com
+// @connect      127.0.0.1
 // @license      GPL
 // ==/UserScript==
 
@@ -29,6 +31,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
 const AdminUserList = ["chenlangning", "zhuchenrui2"];
 
 let GetRating = async (Username) => {
@@ -140,7 +143,7 @@ let RequestAPI = (Action, Data, CallBack) => {
     let PostData = {
         "Authentication": {
             "SessionID": Session,
-            "Username": UserID
+            "Username": UserID,
         },
         "Data": Data
     };
@@ -148,6 +151,7 @@ let RequestAPI = (Action, Data, CallBack) => {
     GM_xmlhttpRequest({
         method: "POST",
         url: "https://www.xmoj-bbs.tech/" + Action,
+        // url: "http://127.0.0.1:8787/" + Action,
         headers: {
             "Content-Type": "application/json"
         },
@@ -3046,7 +3050,8 @@ else {
                         RequestAPI("NewPost", {
                             "Title": String(Title),
                             "Content": String(Content),
-                            "ProblemID": Number(ProblemID == null ? 0 : ProblemID)
+                            "ProblemID": Number(ProblemID == null ? 0 : ProblemID),
+                            "CaptchaSecretKey": String(CaptchaSecretKey.value)
                         }, (ResponseData) => {
                             SubmitElement.disabled = false;
                             SubmitElement.children[0].style.display = "none";
@@ -3091,11 +3096,28 @@ else {
                             <label for="ContentElement" class="mb-1">回复</label>
                             <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
                         </div>
-                                                <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
+                        <div class="cf-turnstile" id="CaptchaContainer"></div>
+                        <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
                             发布
                             <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                         </button>
-                        <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
+                        <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
+                        <input type="hidden" id="CaptchaSecretKey">
+                        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback"></script>`;
+                        window.CaptchaLoadedCallback = () => {
+                            turnstile.render("#CaptchaContainer", {
+                                sitekey: CaptchaSiteKey,
+                                callback: function (CaptchaSecretKeyValue) {
+                                    CaptchaSecretKey.value = CaptchaSecretKeyValue;
+                                },
+                            });
+                        };
+                        GM_xmlhttpRequest({
+                            url: "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback",
+                            onload: (Response) => {
+                                eval(Response.responseText);
+                            }
+                        });
                         ContentElement.addEventListener("keydown", (Event) => {
                             if (Event.ctrlKey && Event.keyCode == 13) {
                                 SubmitElement.click();
@@ -3364,9 +3386,11 @@ else {
                             ErrorElement.style.display = "none";
                             SubmitElement.disabled = true;
                             SubmitElement.children[0].style.display = "inline-block";
+                            debugger
                             RequestAPI("NewReply", {
                                 "PostID": Number(SearchParams.get("tid")),
-                                "Content": String(ContentElement.value)
+                                "Content": String(ContentElement.value),
+                                "CaptchaSecretKey": String(CaptchaSecretKey.value)
                             }, async (ResponseData) => {
                                 SubmitElement.disabled = false;
                                 SubmitElement.children[0].style.display = "none";
