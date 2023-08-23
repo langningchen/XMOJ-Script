@@ -22,22 +22,22 @@ export class Security {
     public CheckParams = (Data: object, Checklist: object): Result => {
         for (let i in Data) {
             if (Checklist[i] === undefined) {
-                return new Result(false, "Unknown param \"" + i + "\"");
+                return new Result(false, "参数" + i + "未知");
             }
             const AvailableTypes = ["string", "number", "bigint", "boolean", "symbol", "undefined", "object", "function"];
             if (AvailableTypes.indexOf(Checklist[i]) === -1) {
-                return new Result(false, "Unknown except value type \"" + Checklist[i] + "\"");
+                return new Result(false, "参数类型" + Checklist[i] + "未知");
             }
             if (typeof Data[i] !== Checklist[i]) {
-                return new Result(false, "Param \"" + i + "\" except value type \"" + Checklist[i] + "\" but got value type \"" + typeof Data[i] + "\"");
+                return new Result(false, "参数" + i + "期望类型" + Checklist[i] + "实际类型" + typeof Data[i]);
             }
         }
         for (let i in Checklist) {
             if (Data[i] === undefined) {
-                return new Result(false, "Param \"" + i + "\" not found");
+                return new Result(false, "参数" + i + "未找到");
             }
         }
-        return new Result(true, "Check passed");
+        return new Result(true, "参数检测通过");
     }
     public CheckToken = async (Data: object): Promise<Result> => {
         ThrowErrorIfFailed(this.CheckParams(Data, {
@@ -62,29 +62,29 @@ export class Security {
         if (SessionUsername == "") {
             Output.Debug("Check token failed: Session invalid\n" +
                 "PHPSessionID: \"" + this.SessionID + "\"\n");
-            return new Result(false, "Session invalid");
+            return new Result(false, "令牌不合法");
         }
         if (SessionUsername != this.Username) {
             Output.Debug("Check token failed: Session and username not match \n" +
                 "PHPSessionID   : \"" + this.SessionID + "\"\n" +
                 "SessionUsername: \"" + SessionUsername + "\"\n" +
                 "Username       : \"" + this.Username + "\"\n");
-            return new Result(false, "Session and username not match");
+            return new Result(false, "令牌不匹配");
         }
-        return new Result(true, "Session valid");
+        return new Result(true, "令牌匹配");
     }
     public IfUserExist = async (Username: string): Promise<Result> => {
         return await this.Fetch(new URL("http://www.xmoj.tech/userinfo.php?user=" + Username))
             .then((Response) => {
                 return Response.text();
             }).then((Response) => {
-                return new Result(true, "Check user exist success", {
+                return new Result(true, "用户检查成功", {
                     "Exist": Response.indexOf("No such User!") === -1
                 });
             }).catch((Error) => {
                 Output.Error("Check user exist failed: " + Error + "\n" +
                     "Username: \"" + Username + "\"\n");
-                return new Result(false, "Check user exist failed");
+                return new Result(false, "用户检查失败");
             });
     }
     public HTMLEscape = (HTML: string): string => {
@@ -98,18 +98,18 @@ export class Security {
     }
     public VerifyCaptcha = async (CaptchaToken: string): Promise<Result> => {
         const ErrorDescriptions: Object = {
-            "missing-input-secret": "The secret parameter was not passed.",
-            "invalid-input-secret": "The secret parameter was invalid or did not exist.",
-            "missing-input-response": "The response parameter was not passed.",
-            "invalid-input-response": "The response parameter is invalid or has expired.",
-            "invalid-widget-id": "The widget ID extracted from the parsed site secret key was invalid or did not exist.",
-            "invalid-parsed-secret": "The secret extracted from the parsed site secret key was invalid.",
-            "bad-request": "The request was rejected because it was malformed.",
-            "timeout-or-duplicate": "The response parameter has already been validated before.",
-            "internal-error": "An internal error happened while validating the response. The request can be retried."
+            "missing-input-secret": "密钥为空",
+            "invalid-input-secret": "密钥不正确",
+            "missing-input-response": "验证码令牌为空",
+            "invalid-input-response": "验证码令牌不正确或已过期",
+            "invalid-widget-id": "解析出的组件编号不正确",
+            "invalid-parsed-secret": "解析出的密钥不正确",
+            "bad-request": "请求格式错误",
+            "timeout-or-duplicate": "相同验证码已经校验过",
+            "internal-error": "服务器错误"
         };
         if (CaptchaToken === "") {
-            return new Result(false, "Please solve the captcha");
+            return new Result(false, "验证码没有完成");
         }
         let VerifyFormData = new FormData();
         VerifyFormData.append("secret", CaptchaSecretKey);
@@ -129,13 +129,14 @@ export class Security {
             return Response.json();
         });
         if (VerifyResult["success"]) {
-            return new Result(true, "Captcha check success");
+            return new Result(true, "验证码通过");
         }
         else {
-            let ErrorString: string = "";
+            let ErrorString: string = "验证没有通过：";
             for (let i = 0; i < VerifyResult["error-codes"].length; i++) {
-                ErrorString += (ErrorDescriptions[VerifyResult["error-codes"][i]] == null ? VerifyResult["error-codes"][i] : ErrorDescriptions[VerifyResult["error-codes"][i]]);
+                ErrorString += (ErrorDescriptions[VerifyResult["error-codes"][i]] == null ? VerifyResult["error-codes"][i] : ErrorDescriptions[VerifyResult["error-codes"][i]]) + " ";
             }
+            ErrorString = ErrorString.trimEnd();
             return new Result(false, ErrorString);
         }
     }

@@ -28,7 +28,7 @@ export class Process {
                 post_id: PostID,
                 content: this.SecurityChecker.HTMLEscape(Data["Content"])
             }))["InsertID"];
-            return new Result(true, "Success", {
+            return new Result(true, "创建讨论成功", {
                 PostID: PostID,
                 ReplyID: ReplyID
             });
@@ -43,7 +43,7 @@ export class Process {
             Data["Content"] = this.SecurityChecker.HTMLEscape(Data["Content"]);
             Data["Content"] = Data["Content"].trim();
             if (Data["Content"] === "") {
-                return new Result(false, "Content cannot be empty");
+                return new Result(false, "内容不能为空");
             }
             let MentionPeople = new Array<String>();
             let StringToReplace = new Array<string>();
@@ -72,7 +72,7 @@ export class Process {
                 });
             }
 
-            return new Result(true, "Success", {
+            return new Result(true, "创建回复成功", {
                 ReplyID: ReplyID
             });
         },
@@ -86,10 +86,10 @@ export class Process {
                 PageCount: Math.ceil(ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_post"))["TableSize"] / 10)
             };
             if (ResponseData.PageCount === 0) {
-                return new Result(true, "Success", ResponseData);
+                return new Result(true, "获得讨论列表成功", ResponseData);
             }
             if (Data["Page"] < 1 || Data["Page"] > ResponseData.PageCount) {
-                return new Result(false, "Param \"Page\" does not in range 1~" + ResponseData.PageCount);
+                return new Result(false, "参数页数不在范围1~" + ResponseData.PageCount + "内");
             }
             let Posts = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", [], (Data["ProblemID"] === 0 ? undefined : { problem_id: Data["ProblemID"] }), {
                 Order: "post_id",
@@ -120,7 +120,7 @@ export class Process {
                     LastReplyTime: LastReply[0]["reply_time"]
                 });
             }
-            return new Result(true, "Success", ResponseData);
+            return new Result(true, "获得讨论列表成功", ResponseData);
         },
         GetPost: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
@@ -137,14 +137,14 @@ export class Process {
             };
             let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", [], { post_id: Data["PostID"] }));
             if (Post.toString() == "") {
-                return new Result(false, "Post not found");
+                return new Result(false, "未找到讨论");
             }
             ResponseData.PageCount = Math.ceil(ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_reply", { post_id: Data["PostID"] }))["TableSize"] / 10);
             if (ResponseData.PageCount === 0) {
-                return new Result(true, "Success", ResponseData);
+                return new Result(true, "获得讨论成功", ResponseData);
             }
             if (Data["Page"] < 1 || Data["Page"] > ResponseData.PageCount) {
-                return new Result(false, "Param \"Page\" does not in range 1~" + ResponseData.PageCount);
+                return new Result(false, "参数页数不在范围1~" + ResponseData.PageCount + "内");
             }
             ResponseData.UserID = Post[0]["user_id"];
             ResponseData.ProblemID = Post[0]["problem_id"];
@@ -165,7 +165,7 @@ export class Process {
                     ReplyTime: ReplyItem["reply_time"]
                 });
             }
-            return new Result(true, "Success", ResponseData);
+            return new Result(true, "获得讨论成功", ResponseData);
         },
         EditReply: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
@@ -174,15 +174,15 @@ export class Process {
             }));
             let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["user_id"], { reply_id: Data["ReplyID"] }));
             if (Reply.toString() == "") {
-                return new Result(false, "Reply not found");
+                return new Result(false, "未找到回复");
             }
             if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1 && Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
-                return new Result(false, "Permission denied");
+                return new Result(false, "没有权限编辑此回复");
             }
             Data["Content"] = this.SecurityChecker.HTMLEscape(Data["Content"]);
             Data["Content"] = Data["Content"].trim();
             if (Data["Content"] === "") {
-                return new Result(false, "Content cannot be empty");
+                return new Result(false, "内容不能为空");
             }
             let MentionPeople = new Array<String>();
             let StringToReplace = new Array<string>();
@@ -213,7 +213,7 @@ export class Process {
                     reply_id: Data["ReplyID"]
                 });
             }
-            return new Result(true, "Success");
+            return new Result(true, "编辑回复成功");
         },
         DeletePost: async (Data: object, CheckUserID: boolean = true): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
@@ -221,17 +221,17 @@ export class Process {
             }));
             let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", ["user_id"], { post_id: Data["PostID"] }));
             if (Post.toString() == "") {
-                return new Result(false, "Post not found");
+                return new Result(false, "未找到讨论");
             }
             if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1 && CheckUserID && Post[0]["user_id"] != this.SecurityChecker.GetUsername()) {
-                return new Result(false, "Permission denied");
+                return new Result(false, "没有权限删除此讨论");
             }
             let Replies = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["reply_id"], { post_id: Data["PostID"] }));
             for (let i in Replies) {
                 await this.XMOJDatabase.Delete("bbs_reply", { reply_id: Replies[i]["reply_id"] });
             }
             await this.XMOJDatabase.Delete("bbs_post", { post_id: Data["PostID"] });
-            return new Result(true, "Success");
+            return new Result(true, "删除讨论成功");
         },
         DeleteReply: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
@@ -239,16 +239,16 @@ export class Process {
             }));
             let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["user_id", "post_id"], { reply_id: Data["ReplyID"] }));
             if (Reply.toString() == "") {
-                return new Result(false, "Reply not found");
+                return new Result(false, "未找到回复");
             }
             if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1 && Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
-                return new Result(false, "Permission denied");
+                return new Result(false, "没有权限删除此回复");
             }
             if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_reply", { post_id: Reply[0]["post_id"] }))["TableSize"] === 1) {
                 await this.ProcessFunctions.DeletePost({ PostID: Reply[0]["post_id"] }, false);
             }
             await this.XMOJDatabase.Delete("bbs_reply", { reply_id: Data["ReplyID"] });
-            return new Result(true, "Success");
+            return new Result(true, "删除回复成功");
         },
         GetMentionList: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {}));
@@ -300,7 +300,7 @@ export class Process {
                     Page: Math.ceil(Page["TableSize"] / 10),
                 });
             }
-            return new Result(true, "Success", ResponseData);
+            return new Result(true, "获得提及列表成功", ResponseData);
         },
         ReadMention: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
@@ -309,12 +309,12 @@ export class Process {
             if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_mention", {
                 mention_id: Data["MentionID"]
             }))["TableSize"] === 0) {
-                return new Result(false, "Mention not found");
+                return new Result(false, "未找到提及");
             }
             ThrowErrorIfFailed(await this.XMOJDatabase.Delete("bbs_mention", {
                 mention_id: Data["MentionID"]
             }));
-            return new Result(true, "Success");
+            return new Result(true, "阅读提及成功");
         },
         GetMailList: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {}));
@@ -372,7 +372,7 @@ export class Process {
                     is_read: 0
                 }))["TableSize"];
             }
-            return new Result(true, "Success", ResponseData);
+            return new Result(true, "获得短消息列表成功", ResponseData);
         },
         SendMail: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
@@ -380,17 +380,17 @@ export class Process {
                 "Content": "string"
             }));
             if (ThrowErrorIfFailed(await this.SecurityChecker.IfUserExist(Data["ToUser"]))["Exist"] === false) {
-                return new Result(false, "User not found");
+                return new Result(false, "未找到用户");
             }
             if (Data["ToUser"] === this.SecurityChecker.GetUsername()) {
-                return new Result(false, "Cannot send mail to yourself");
+                return new Result(false, "无法给自己发送短消息");
             }
             let MessageID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("short_message", {
                 message_from: this.SecurityChecker.GetUsername(),
                 message_to: Data["ToUser"],
                 content: Data["Content"]
             }))["InsertID"];
-            return new Result(true, "Success", {
+            return new Result(true, "发送短消息成功", {
                 MessageID: MessageID
             });
         },
@@ -446,7 +446,7 @@ export class Process {
                 message_from: Data["OtherUser"],
                 message_to: this.SecurityChecker.GetUsername()
             });
-            return new Result(true, "Success", ResponseData);
+            return new Result(true, "获得短消息成功", ResponseData);
         },
         GetUnreadList: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {}));
@@ -464,7 +464,7 @@ export class Process {
                 });
             }
             ResponseData.UnreadList = Array.from(new Set(ResponseData.UnreadList));
-            return new Result(true, "Success", ResponseData);
+            return new Result(true, "阅读短消息成功", ResponseData);
         }
     };
     constructor(RequestData: Request, Environment) {
@@ -478,20 +478,20 @@ export class Process {
             PathName = PathName === "/" ? "/index" : PathName;
             PathName = PathName.substring(1);
             if (this.ProcessFunctions[PathName] === undefined) {
-                throw new Result(false, "Not Found");
+                throw new Result(false, "访问的页面不存在");
             }
             if (this.RequestData.method !== "POST") {
-                throw new Result(false, "Method Not Allowed: " + this.RequestData.method);
+                throw new Result(false, "不允许此请求方式");
             }
             if (this.RequestData.headers.get("content-type") !== "application/json") {
-                throw new Result(false, "Unsupported Media Type \"" + this.RequestData.headers.get("content-type") + "\"");
+                throw new Result(false, "不允许此资源类型");
             }
             let RequestJSON: object;
             try {
                 RequestJSON = await this.RequestData.json();
             }
             catch (Error) {
-                throw new Result(false, "Bad Request");
+                throw new Result(false, "请求格式有误");
             }
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(RequestJSON, {
                 "Authentication": "object",
@@ -513,7 +513,7 @@ export class Process {
         catch (ResponseData) {
             if (!(ResponseData instanceof Result)) {
                 Output.Error(ResponseData);
-                ResponseData = new Result(false, "Internal Server Error: " + String(ResponseData).split("\n")[0]);
+                ResponseData = new Result(false, "服务器运行错误：" + String(ResponseData).split("\n")[0]);
             }
             return ResponseData;
         }

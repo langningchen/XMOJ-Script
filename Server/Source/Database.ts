@@ -14,13 +14,13 @@ export class Database {
             let SQLResult = await this.RawDatabase.prepare(QueryString).bind(...BindData).all()
             Output.Debug("SQL query returned with result: \n" +
                 "    Result: \"" + JSON.stringify(SQLResult) + "\"\n");
-            return new Result(true, "SQL query success", SQLResult);
+            return new Result(true, "数据库查询成功", SQLResult);
         } catch (ErrorDetail) {
             Output.Warn("Error while executing SQL query: \n" +
                 "    Query    : \"" + QueryString + "\"\n" +
                 "    Arguments: " + JSON.stringify(BindData) + "\n" +
                 "    Error    : \"" + ErrorDetail) + "\"\n";
-            return new Result(false, String(ErrorDetail));
+            return new Result(false, "数据库查询失败：" + String(ErrorDetail));
         }
     }
     public async Insert(Table: string, Data: object): Promise<Result> {
@@ -39,7 +39,7 @@ export class Database {
         for (let i in Data) {
             BindData.push(Data[i]);
         }
-        return new Result(true, "SQL insert success", {
+        return new Result(true, "数据库插入成功", {
             "InsertID": ThrowErrorIfFailed(await this.Query(QueryString, BindData))["meta"]["last_row_id"]
         });
     }
@@ -70,7 +70,7 @@ export class Database {
         if (Other !== undefined) {
             if ((Other["Order"] !== undefined && Other["OrderIncreasing"] === undefined) ||
                 (Other["Order"] === undefined && Other["OrderIncreasing"] !== undefined)) {
-                return new Result(false, "Order and OrderIncreasing must be both defined or undefined");
+                return new Result(false, "排序关键字和排序顺序必须同时定义或非定义");
             }
             if (Other["Order"] !== undefined && Other["OrderIncreasing"] !== undefined) {
                 QueryString += " ORDER BY `" + Other["Order"] + "` " + (Other["OrderIncreasing"] ? "ASC" : "DESC");
@@ -92,7 +92,7 @@ export class Database {
                 BindData.push(Condition[i]["Value"]);
             }
         }
-        return new Result(true, "SQL select success", ThrowErrorIfFailed(await this.Query(QueryString, BindData))["results"]);
+        return new Result(true, "数据库查找成功", ThrowErrorIfFailed(await this.Query(QueryString, BindData))["results"]);
     }
     public async Update(Table: string, Data: object, Condition?: object): Promise<Result> {
         let QueryString = "UPDATE `" + Table + "` SET ";
@@ -125,7 +125,7 @@ export class Database {
                 BindData.push(Condition[i]["Value"]);
             }
         }
-        return new Result(true, "SQL update success", ThrowErrorIfFailed(await this.Query(QueryString, BindData))["results"]);
+        return new Result(true, "数据库更新成功", ThrowErrorIfFailed(await this.Query(QueryString, BindData))["results"]);
     }
     public async GetTableSize(Table: string, Condition?: object): Promise<Result> {
         let QueryString = "SELECT COUNT(*) FROM `" + Table + "`";
@@ -151,7 +151,7 @@ export class Database {
                 BindData.push(Condition[i]["Value"]);
             }
         }
-        return new Result(true, "SQL get size success", {
+        return new Result(true, "数据库获得大小成功", {
             "TableSize": ThrowErrorIfFailed(await this.Query(QueryString, BindData))["results"][0]["COUNT(*)"]
         });
     }
@@ -179,6 +179,6 @@ export class Database {
                 BindData.push(Condition[i]["Value"]);
             }
         }
-        return new Result(true, "SQL delete success", ThrowErrorIfFailed(await this.Query(QueryString, BindData))["results"]);
+        return new Result(true, "数据库删除成功", ThrowErrorIfFailed(await this.Query(QueryString, BindData))["results"]);
     }
 }
