@@ -2377,12 +2377,12 @@ else {
                 LoginButton.click();
             }
         } else if (location.pathname == "/contest_video.php") {
+            let ScriptData = document.querySelector("body > div > div.mt-3 > center > script").innerHTML;
+            if (document.getElementById("J_prismPlayer0").innerHTML != "") {
+                document.getElementById("J_prismPlayer0").innerHTML = "";
+                eval(ScriptData);
+            }
             if (UtilityEnabled("DownloadPlayback")) {
-                let ScriptData = document.querySelector("body > div > div.mt-3 > center > script").innerHTML;
-                if (document.getElementById("J_prismPlayer0").innerHTML != "") {
-                    document.getElementById("J_prismPlayer0").innerHTML = "";
-                    eval(ScriptData);
-                }
                 ScriptData = ScriptData.substring(ScriptData.indexOf("{"));
                 ScriptData = ScriptData.substring(0, ScriptData.indexOf("}") + 1);
                 ScriptData = ScriptData.replace(/([a-zA-Z0-9]+) ?:/g, "\"$1\":");
