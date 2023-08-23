@@ -2524,6 +2524,10 @@ else {
                     "Image": "https://a.fsdn.com/allura/p/redpanda-cpp/icon",
                     "URL": "https://sourceforge.net/projects/redpanda-cpp/"
                 }, {
+                    "Name": "CP Editor",
+                    "Image": "https://a.fsdn.com/allura/mirror/cp-editor/icon",
+                    "URL": "https://sourceforge.net/projects/cp-editor.mirror/"
+                }, {
                     "Name": "Code::Blocks",
                     "Image": "https://a.fsdn.com/allura/p/codeblocks/icon",
                     "URL": "https://sourceforge.net/projects/codeblocks/"
