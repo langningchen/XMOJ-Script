@@ -198,7 +198,7 @@ export class Process {
             Data["Content"] = String(Data["Content"]).replace(/@([a-zA-Z0-9]+)/g, (Match) => {
                 return StringToReplace.shift() || "";
             });
-            Data["Content"] = Data["Content"] + "<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 " + new Date().toLocaleString() + " 编辑 </span>";
+            Data["Content"] = Data["Content"] + "\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 " + new Date().toLocaleString() + " 编辑 </span>";
             await this.XMOJDatabase.Update("bbs_reply", {
                 content: Data["Content"]
             }, {
