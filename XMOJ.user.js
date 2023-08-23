@@ -3415,6 +3415,7 @@ else {
                                     }
                                     ContentElement.focus();
                                     ContentElement.scrollIntoView();
+                                    turnstile.reset();
                                 }
                                 else {
                                     ErrorElement.innerText = ResponseData.Message;
