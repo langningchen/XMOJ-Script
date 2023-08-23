@@ -29,7 +29,8 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Program Start
+const AdminUserList = ["chenlangning", "zhuchenrui2"];
+
 let GetRating = async (Username) => {
     if (localStorage.getItem("UserScript-UserRating-" + Username) != null &&
         new Date().getTime() - parseInt(localStorage.getItem("UserScript-UserRating-" + Username + "-Time")) < 1000 * 60 * 60 * 24) {
@@ -2990,21 +2991,37 @@ else {
                     });
                 } else if (location.pathname == "/discuss3/newpost.php") {
                     let ProblemID = SearchParams.get("pid");
-                    document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (ProblemID != null ? ` - 题目` + ProblemID : ``) +
-                        `</h3>
-            <div class="form-group mb-3">
-                <label for="Title" class="mb-1">标题</label>
-                <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
-            </div>
-            <div class="form-group mb-3">
-                <label for="ContentElement" class="mb-1">内容</label>
-                <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
-            </div>
-            <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
-                发布
-                <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
-            </button>
-            <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
+                    document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (ProblemID != null ? ` - 题目` + ProblemID : ``) + `</h3>
+                    <div class="form-group mb-3">
+                        <label for="Title" class="mb-1">标题</label>
+                        <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="ContentElement" class="mb-1">内容</label>
+                        <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                    </div>
+                    <div class="cf-turnstile" id="CaptchaContainer"></div>
+                    <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
+                        发布
+                        <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                    </button>
+                    <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
+                    <input type="hidden" id="CaptchaSecretKey">
+                    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback"></script>`;
+                    window.CaptchaLoadedCallback = () => {
+                        turnstile.render("#CaptchaContainer", {
+                            sitekey: CaptchaSiteKey,
+                            callback: function (CaptchaSecretKeyValue) {
+                                CaptchaSecretKey.value = CaptchaSecretKeyValue;
+                            },
+                        });
+                    };
+                    GM_xmlhttpRequest({
+                        url: "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback",
+                        onload: (Response) => {
+                            eval(Response.responseText);
+                        }
+                    });
                     TitleElement.addEventListener("input", () => {
                         TitleElement.classList.remove("is-invalid");
                     });
@@ -3074,7 +3091,7 @@ else {
                             <label for="ContentElement" class="mb-1">回复</label>
                             <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
                         </div>
-                        <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
+                                                <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
                             发布
                             <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                         </button>
@@ -3125,7 +3142,7 @@ else {
                                             DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
                                             DiscussPagination.children[DiscussPagination.children.length - 2].remove();
                                         }
-                                        if (ResponseData.Data.UserID == profile.innerText) {
+                                        if (AdminUserList.indexOf(profile.innerText) !== -1 || ResponseData.Data.UserID == profile.innerText) {
                                             Delete.style.display = "";
                                         }
                                     }
@@ -3170,7 +3187,7 @@ else {
                                         CardBodyRowSpan3Button2Element.type = "button";
                                         CardBodyRowSpan3Button2Element.className = "btn btn-sm btn-danger ms-1";
                                         CardBodyRowSpan3Button2Element.innerText = "删除";
-                                        CardBodyRowSpan3Button2Element.style.display = (Replies[i].UserID == profile.innerText ? "" : "none");
+                                        CardBodyRowSpan3Button2Element.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
                                         CardBodyRowSpan3Button2Element.addEventListener("click", () => {
                                             CardBodyRowSpan3Button2Element.disabled = true;
                                             CardBodyRowSpan3Button2Element.lastChild.style.display = "";
@@ -3198,7 +3215,7 @@ else {
                                         CardBodyRowSpan3Button3Element.type = "button";
                                         CardBodyRowSpan3Button3Element.className = "btn btn-sm btn-warning ms-1";
                                         CardBodyRowSpan3Button3Element.innerText = "编辑";
-                                        CardBodyRowSpan3Button3Element.style.display = (Replies[i].UserID == profile.innerText ? "" : "none");
+                                        CardBodyRowSpan3Button3Element.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
                                         CardBodyRowSpan3Button3Element.addEventListener("click", () => {
                                             CardBodyRowSpan3Button3Element.disabled = true;
                                             let CardBodyRowSpan3Button4Element = document.createElement("button");

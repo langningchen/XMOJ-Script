@@ -3,6 +3,8 @@ import { Database } from "./Database";
 import { Security } from "./Security";
 import { Output } from "./Output";
 
+const AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2"];
+
 export class Process {
     private XMOJDatabase: Database;
     private RequestData: Request;
@@ -170,7 +172,7 @@ export class Process {
             if (Reply.toString() == "") {
                 return new Result(false, "Reply not found");
             }
-            if (Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1 && Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
                 return new Result(false, "Permission denied");
             }
             Data["Content"] = this.SecurityChecker.HTMLEscape(Data["Content"]);
@@ -235,7 +237,7 @@ export class Process {
             if (Reply.toString() == "") {
                 return new Result(false, "Reply not found");
             }
-            if (Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1 && Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
                 return new Result(false, "Permission denied");
             }
             if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_reply", { post_id: Reply[0]["post_id"] }))["TableSize"] === 1) {
