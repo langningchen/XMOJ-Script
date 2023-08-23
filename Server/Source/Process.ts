@@ -497,7 +497,17 @@ export class Process {
                 "Authentication": "object",
                 "Data": "object"
             }));
-            ThrowErrorIfFailed(await this.SecurityChecker.CheckToken(RequestJSON["Authentication"]));
+            var TokenFailedCount = 0;
+            while (true) {
+                if ((await this.SecurityChecker.CheckToken(RequestJSON["Authentication"])).Data["Success"]) {
+                    break;
+                }
+                TokenFailedCount++;
+                if (TokenFailedCount >= 2) {
+                    ThrowErrorIfFailed(await this.SecurityChecker.CheckToken(RequestJSON["Authentication"]));
+                    break;
+                }
+            }
             throw await this.ProcessFunctions[PathName](RequestJSON["Data"]);
         }
         catch (ResponseData) {
