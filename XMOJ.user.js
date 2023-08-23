@@ -422,27 +422,32 @@ else {
                 }
                 else if (document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(3) > a > span") != undefined &&
                     document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(3) > a > span").innerText != "个人中心") {
-                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(3) > a > span").innerText = "个人中心";
-                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(4)").remove();
-                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(4)").remove();
-                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(4)").remove();
-                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").innerHTML =
-                        String(document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").innerHTML).replaceAll("&nbsp;", "");
-                    let Temp = document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").children;
-                    for (var i = 0; i < Temp.length; i++) {
-                        if (Temp[i].tagName.toLowerCase() != "li") {
-                            Temp[i].remove();
-                        }
-                        Temp[i].classList.add("dropdown-item");
-                    }
-                    let ShortMessageButton = document.createElement("li");
-                    ShortMessageButton.className = "dropdown-item";
-                    ShortMessageButton.innerHTML = `<a href="/mail.php">短消息</a>`;
-                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").appendChild(ShortMessageButton);
-                    let SettingsButton = document.createElement("li");
-                    SettingsButton.className = "dropdown-item";
-                    SettingsButton.innerHTML = `<a href="/index.php?ByUserScript=1">插件设置</a>`;
-                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").appendChild(SettingsButton);
+                    let PopupUL = document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul");
+                    PopupUL.innerHTML = `<li class="dropdown-item">修改帐号</li>
+                    <li class="dropdown-item">个人中心</li>
+                    <li class="dropdown-item">短消息</li>
+                    <li class="dropdown-item">插件设置</li>
+                    <li class="dropdown-item">注销</li>`
+                    PopupUL.children[0].addEventListener("click", () => {
+                        location.href = "/modifypage.php";
+                    });
+                    PopupUL.children[1].addEventListener("click", () => {
+                        location.href = "/userinfo.php?user=" + document.querySelector("#profile").innerText;
+                    });
+                    PopupUL.children[2].addEventListener("click", () => {
+                        location.href = "/mail.php";
+                    });
+                    PopupUL.children[3].addEventListener("click", () => {
+                        location.href = "/index.php?ByUserScript=1";
+                    });
+                    PopupUL.children[4].addEventListener("click", () => {
+                        localStorage.removeItem("UserScript-Username");
+                        localStorage.removeItem("UserScript-Password");
+                        location.href = "/logout.php";
+                    });
+                    Style.innerHTML += ".dropdown-item {";
+                    Style.innerHTML += "    cursor: pointer;";
+                    Style.innerHTML += "}";
                 }
             }
             if (UtilityEnabled("AutoCountdown")) {
