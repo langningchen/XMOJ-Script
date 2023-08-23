@@ -2378,7 +2378,7 @@ else {
                 let ScriptData = document.querySelector("body > div > div.mt-3 > center > script").innerHTML;
                 if (document.getElementById("J_prismPlayer0").innerHTML != "") {
                     document.getElementById("J_prismPlayer0").innerHTML = "";
-                    eval(ScriptData);
+                    //eval(ScriptData);
                 }
                 ScriptData = ScriptData.substring(ScriptData.indexOf("{"));
                 ScriptData = ScriptData.substring(0, ScriptData.indexOf("}") + 1);
@@ -2427,6 +2427,14 @@ else {
                         DownloadButton.innerText = "下载";
                         DownloadButton.href = Response.PlayInfoList.PlayInfo[0].PlayURL;
                         DownloadButton.download = Response.VideoBase.Title;
+                        document.querySelector("body > div > div.mt-3").innerHTML="<center><iframe\n" +
+                            "  id=\"video\"\n" +
+                            "  title=\"Inline Frame Example\"\n" +
+                            "  width=\"900\"\n" +
+                            "  height=\"506\"\n" +
+                            "  src=\""+ Response.PlayInfoList.PlayInfo[0].PlayURL +"\"\n" +
+                            ">\n" +
+                            "</iframe><p> </p></center>\n"
                         document.querySelector("body > div > div.mt-3 > center").appendChild(DownloadButton);
                     });
             }
