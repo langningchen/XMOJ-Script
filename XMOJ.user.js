@@ -3184,7 +3184,7 @@ else {
                                             Delete.style.display = "";
                                         }
                                     }
-                                    PostTitle.innerText = ResponseData.Data.Title;
+                                    PostTitle.innerText = ResponseData.Data.Title + (ResponseData.Data.ProblemID == 0 ? "" : ` - 题目` + ResponseData.Data.ProblemID);
                                     PostAuthor.innerText = ResponseData.Data.UserID;
                                     PostAuthor.href = "/userinfo.php?user=" + ResponseData.Data.UserID;
                                     PostTime.innerText = ResponseData.Data.PostTime;
