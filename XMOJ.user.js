@@ -2440,9 +2440,6 @@ else {
                     });
             }
         } else if (location.pathname == "/reinfo.php") {
-            if (document.querySelector("#results > div") == undefined) {
-                document.querySelector("#results").parentElement.innerHTML = "没有测试点信息";
-            }
         } else if (location.pathname == "/downloads.php") {
             let SoftwareList = document.querySelector("body > div > ul");
             SoftwareList.remove();
