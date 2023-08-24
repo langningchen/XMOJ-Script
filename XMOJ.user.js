@@ -2443,67 +2443,6 @@ else {
             if (document.querySelector("#results > div") == undefined) {
                 document.querySelector("#results").parentElement.innerHTML = "没有测试点信息";
             }
-            else {
-                for (let i = 0; i < document.querySelector("#results > div").children.length; i++) {
-                    let CurrentElement = document.querySelector("#results > div").children[i].children[0].children[0].children[0];
-                    let Temp = CurrentElement.innerText.substring(0, CurrentElement.innerText.length - 2).split("/");
-                    CurrentElement.innerText = TimeToStringTime(Temp[0]) + "/" + SizeToStringSize(Temp[1]);
-                    CurrentElement = CurrentElement.parentNode.parentNode;
-                    let CopyButton = document.createElement("div"); CurrentElement.appendChild(CopyButton);
-                    CopyButton.style.display = "none";
-                    CopyButton.style.position = "absolute";
-                    CopyButton.style.fontSize = "12px";
-                    CopyButton.style.margin = "6px";
-                    CopyButton.innerText = "点此复制获取数据的语句";
-                    CurrentElement.addEventListener("mouseover", () => {
-                        let Temp = CurrentElement.children;
-                        for (let j = 0; j < Temp.length; j++) {
-                            Temp[j].style.display = "none";
-                        }
-                        Temp[Temp.length - 1].style.display = "";
-                    });
-                    CurrentElement.addEventListener("mouseout", () => {
-                        let Temp = CurrentElement.children;
-                        for (let j = 0; j < Temp.length; j++) {
-                            Temp[j].style.display = "";
-                        }
-                        Temp[Temp.length - 1].style.display = "none";
-                    });
-                    CurrentElement.addEventListener("click", () => {
-                        let SolutionID = SearchParams.get("sid");
-                        let ContestID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Contest");
-                        if (ContestID == null) {
-                            let ProblemID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
-                            let ProblemName = localStorage.getItem("UserScript-Problem-" + ProblemID + "-Name");
-                            let CaseID = CurrentElement.children[1].innerText.substring(1);
-                            GM_setClipboard("高老师，能发给我" +
-                                ProblemID + "题：" + ProblemName + "，" +
-                                "提交编号" + SolutionID + "，" +
-                                "#" + CaseID + "测试点" +
-                                "的数据吗？谢谢");
-                        }
-                        else {
-                            let ContestName = localStorage.getItem("UserScript-Contest-" + ContestID + "-Name");
-                            let ContestProblemID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-PID-Contest");
-                            let ProblemID = localStorage.getItem("UserScript-Contest-" + ContestID + "-Problem-" + (ContestProblemID.charCodeAt(0) - 65) + "-PID");
-                            let ProblemName = localStorage.getItem("UserScript-Problem-" + ProblemID + "-Name");
-                            let CaseID = CurrentElement.children[1].innerText.substring(1);
-                            GM_setClipboard("高老师，能发给我" +
-                                "比赛" + ContestID + "：" +
-                                ContestName + "，" +
-                                ContestProblemID + "题(" + ProblemID + ")：" + ProblemName + "，" +
-                                "提交编号" + SolutionID + "，" +
-                                "#" + CaseID + "测试点" +
-                                "的数据吗？谢谢");
-                        }
-                        CopyButton.innerText = "已复制";
-                        setTimeout(() => {
-                            CopyButton.innerText = "点此复制获取数据的语句";
-                        }, 1000);
-                    });
-                    CurrentElement.onmouseout();
-                }
-            }
         } else if (location.pathname == "/downloads.php") {
             let SoftwareList = document.querySelector("body > div > ul");
             SoftwareList.remove();
