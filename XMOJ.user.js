@@ -4344,7 +4344,7 @@ if (location.host != "www.xmoj.tech") {
                       `<td>${Posts[i].PostTime}</td>
                                     <td>${Posts[i].ReplyCount}</td>
                                     <td><a class="` +
-                      UserColor +
+                      LastReplyUserColor +
                       `" href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
                                 </tr>`;
                   }
