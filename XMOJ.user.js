@@ -481,7 +481,7 @@ else {
             }
         }, 100);
 
-        fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
+        fetch("https://web.xmoj-bbs.tech/Update.json", { cache: "no-cache" })
             .then((Response) => {
                 return Response.json();
             })
@@ -493,7 +493,7 @@ else {
                     UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <div>
                             XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                            <a href="https://langningchen.github.io/XMOJ-Script/XMOJ.user.js" target="_blank" class="alert-link">此处</a>
+                            <a href="https://web.xmoj-bbs.tech/XMOJ.user.js" target="_blank" class="alert-link">此处</a>
                             更新
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -560,7 +560,7 @@ else {
                     new bootstrap.Modal(document.getElementById("UpdateModal")).show();
                 }
             });
-        fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js", { cache: "no-cache" })
+        fetch("https://web.xmoj-bbs.tech/AddonScript.js", { cache: "no-cache" })
             .then((Response) => {
                 return Response.text();
             })
@@ -2015,7 +2015,7 @@ else {
         } else if (location.pathname == "/modifypage.php") {
             if (new URL(location.href).searchParams.get("ByUserScript") != null) {
                 document.querySelector("body > div > div.mt-3").innerHTML = "";
-                await fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
+                await fetch("https://web.xmoj-bbs.tech/Update.json", { cache: "no-cache" })
                     .then((Response) => {
                         return Response.json();
                     })
