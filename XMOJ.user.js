@@ -3361,6 +3361,10 @@ else {
                                         CodeElements[i].remove();
                                     }
 
+                                    Style.innerHTML += "img {";
+                                    Style.innerHTML += "    width: 50%;";
+                                    Style.innerHTML += "}";
+
                                     renderMathInElement(document.body, {
                                         delimiters: [
                                             { left: '$$', right: '$$', display: true },
