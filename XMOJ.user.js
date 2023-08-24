@@ -48,6 +48,18 @@ let GetRating = async (Username) => {
     localStorage.setItem("UserScript-UserRating-" + Username + "-Time", new Date().getTime());
     return Rating;
 };
+let GetUsernameColorClass = async (Username) => {
+    let Rating = await GetRating(Username);
+    if (Rating > 500) {
+        return "link-danger";
+    } else if (Rating >= 400) {
+        return "link-warning";
+    } else if (Rating >= 300) {
+        return "link-success";
+    } else {
+        return "link-info";
+    }
+}
 let SecondsToString = (InputSeconds) => {
     let Hours = Math.floor(InputSeconds / 3600);
     let Minutes = Math.floor((InputSeconds % 3600) / 60);
@@ -1671,17 +1683,11 @@ else {
                                     UsernameLink.href = "userinfo.php?user=" + RowData.Username; UsernameLink.innerText = RowData.Username;
                                     UsernameLink.className = "link-primary link-offset-2 link-underline-opacity-50";
                                     if (UtilityEnabled("Rating")) {
-                                        let rating = await GetRating(RowData.Username).then();
                                         if (RowData.QuickSubmitCount >= 2) {
                                             UsernameLink.className += " link-info";
-                                        } else if (rating > 500) {
-                                            UsernameLink.className += " link-danger";
-                                        } else if (rating >= 400) {
-                                            UsernameLink.className += " link-warning";
-                                        } else if (rating >= 300) {
-                                            UsernameLink.className += " link-success";
                                         } else {
-                                            UsernameLink.className += " link-info";
+                                            debugger
+                                            UsernameLink.className += " " + (await GetUsernameColorClass(RowData.Username));
                                         }
                                     }
                                     if (RowData.Username == document.getElementById("profile").innerText) {
@@ -2967,7 +2973,7 @@ else {
                         RequestAPI("GetPosts", {
                             "ProblemID": Number(ProblemID || 0),
                             "Page": Number(Page)
-                        }, (ResponseData) => {
+                        }, async (ResponseData) => {
                             if (ResponseData.Success == true) {
                                 ErrorElement.style.display = "none";
                                 if (!Silent) {
@@ -2994,11 +3000,11 @@ else {
                                     PostList.children[1].innerHTML += `<tr>
                                     <td>${Posts[i].PostID}</td>
                                     <td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>
-                                    <td><a href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
+                                    <td><a class="${await GetUsernameColorClass(Posts[i].UserID)}" href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
                                         (Posts[i].ProblemID == 0 ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
                                         `<td>${Posts[i].PostTime}</td>
                                     <td>${Posts[i].ReplyCount}</td>
-                                    <td><a href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
+                                    <td><a class="${await GetUsernameColorClass(Posts[i].LastReplyUserID)}" href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
                                 </tr>`;
                                 }
                             }
