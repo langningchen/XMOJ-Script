@@ -12,8 +12,6 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.js
 // @require      https://cdn.bootcdn.net/ajax/libs/diff_match_patch/20121119/diff_match_patch_uncompressed.js
 // @require      https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js
-// @require      https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.6/katex.min.js
-// @require      https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.6/contrib/auto-render.min.js
 // @require      https://ghproxy.com/https://github.com/drudru/ansi_up/blob/v5.2.1/ansi_up.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
@@ -3365,13 +3363,16 @@ else {
                                     Style.innerHTML += "    width: 50%;";
                                     Style.innerHTML += "}";
 
-                                    renderMathInElement(document.body, {
-                                        delimiters: [
-                                            { left: '$$', right: '$$', display: true },
-                                            { left: '$', right: '$', display: false }
-                                        ],
-                                        throwOnError: false
-                                    });
+                                    var ScriptElement = document.createElement("script");
+                                    ScriptElement.id = "MathJax-script";
+                                    ScriptElement.type = "text/javascript";
+                                    ScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/mathjax/3.0.5/es5/tex-chtml.js";
+                                    document.body.appendChild(ScriptElement);
+                                    ScriptElement.onload = () => {
+                                        MathJax.startup.input[0].findTeX.options.inlineMath.push(["$", "$"]);
+                                        MathJax.startup.input[0].findTeX.getPatterns();
+                                        MathJax.typeset();
+                                    };
 
                                     if (Silent) {
                                         scrollTo({
