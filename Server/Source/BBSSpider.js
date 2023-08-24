@@ -45,8 +45,6 @@ const GetPost = async (i) => {
                 });
             }
         });
-    setTimeout(async () => {
-        await GetPost(i + 1);
-    }, 0);
+    await GetPost(i + 1);
 };
 GetPost(1);
