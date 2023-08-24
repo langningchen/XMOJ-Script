@@ -3028,7 +3028,7 @@ else {
                         <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
                     </div>
                     <div class="cf-turnstile" id="CaptchaContainer"></div>
-                    <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
+                    <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
                         发布
                         <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                     </button>
@@ -3040,6 +3040,7 @@ else {
                             sitekey: CaptchaSiteKey,
                             callback: function (CaptchaSecretKeyValue) {
                                 CaptchaSecretKey.value = CaptchaSecretKeyValue;
+                                SubmitElement.disabled = false;
                             },
                         });
                     };
@@ -3120,7 +3121,7 @@ else {
                             <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
                         </div>
                         <div class="cf-turnstile" id="CaptchaContainer"></div>
-                        <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
+                        <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
                             发布
                             <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                         </button>
@@ -3132,6 +3133,7 @@ else {
                                 sitekey: CaptchaSiteKey,
                                 callback: function (CaptchaSecretKeyValue) {
                                     CaptchaSecretKey.value = CaptchaSecretKeyValue;
+                                    SubmitElement.disabled = false;
                                 },
                             });
                         };
