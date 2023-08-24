@@ -4543,7 +4543,7 @@ if (location.host != "www.xmoj.tech") {
                   PostID: Number(ThreadID),
                   Page: Number(Page),
                 },
-                (ResponseData) => {
+                async (ResponseData) => {
                   if (ResponseData.Success == true) {
                     if (!Silent) {
                       DiscussPagination.children[0].children[0].href =
@@ -4587,6 +4587,19 @@ if (location.host != "www.xmoj.tech") {
                         Delete.style.display = "";
                       }
                     }
+                    let rating = await GetRating(
+                      ResponseData.Data.UserID
+                    ).then();
+                    let PostUserColor;
+                    if (rating > 500) {
+                      PostUserColor = `link-danger`;
+                    } else if (rating >= 400) {
+                      PostUserColor = `link-warning`;
+                    } else if (rating >= 300) {
+                      PostUserColor = `link-success`;
+                    } else {
+                      PostUserColor = `link-info`;
+                    }
                     PostTitle.innerText =
                       ResponseData.Data.Title +
                       (ResponseData.Data.ProblemID == 0
@@ -4595,6 +4608,7 @@ if (location.host != "www.xmoj.tech") {
                     PostAuthor.innerText = ResponseData.Data.UserID;
                     PostAuthor.href =
                       "/userinfo.php?user=" + ResponseData.Data.UserID;
+                    PostAuthor.className = PostUserColor;
                     PostTime.innerText = ResponseData.Data.PostTime;
                     let Replies = ResponseData.Data.Reply;
                     PostReplies.innerHTML = "";
@@ -4613,6 +4627,17 @@ if (location.host != "www.xmoj.tech") {
                         document.createElement("a");
                       CardBodyRowSpan1AElement.href =
                         "/userinfo.php?user=" + Replies[i].UserID;
+                      rating = await GetRating(Replies[i].UserID).then();
+                      if (rating > 500) {
+                        PostUserColor = `link-danger`;
+                      } else if (rating >= 400) {
+                        PostUserColor = `link-warning`;
+                      } else if (rating >= 300) {
+                        PostUserColor = `link-success`;
+                      } else {
+                        PostUserColor = `link-info`;
+                      }
+                      CardBodyRowSpan1AElement.className = PostUserColor;
                       CardBodyRowSpan1AElement.innerText = Replies[i].UserID;
                       CardBodyRowSpan1Element.appendChild(
                         CardBodyRowSpan1AElement
