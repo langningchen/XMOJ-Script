@@ -1,0 +1,41 @@
+name: PreRelease only
+on:
+  workflow_dispatch:
+permissions:
+    id-token: write
+    contents: write
+    pages: write
+    deployments: write
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Update Version
+        id: get_version
+        run: |
+          node ./Update.js
+      - name: Create Prerelease
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: ${{ steps.get_version.outputs.version }}
+          draft: false
+          prerelease: true
+          body: ${{ steps.get_version.outputs.version }}
+      - name: Upload Prerelease Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./XMOJ.user.js
+          asset_name: XMOJ.user.js
+          asset_content_type: text/plain
