@@ -19,7 +19,6 @@
 // @grant        GM_setClipboard
 // @connect      www.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
-// @connect      127.0.0.1
 // @license      GPL
 // ==/UserScript==
 
