@@ -1,20 +1,13 @@
-name: Release and Deploy
+name: Release
 on:
   push:
-    branches: ["master"]
+    branches:
+      - master
     paths:
       - "XMOJ.user.js"
   workflow_dispatch:
-permissions:
-    id-token: write
-    contents: write
-    pages: write
-    deployments: write
 jobs:
   release:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     name: Release
     runs-on: ubuntu-latest
     steps:
@@ -46,19 +39,3 @@ jobs:
           asset_path: ./XMOJ.user.js
           asset_name: XMOJ.user.js
           asset_content_type: text/plain
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
-      - name: Push new version
-        run: |
-          git config --global user.name "langningchen"
-          git config --global user.email "jpxx_chenlangning@outlook.com"
-          git add .
-          git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
-          git push

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.1.58
+// @version      0.2.58
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -15,7 +15,6 @@
 // @require      https://ghproxy.com/https://github.com/drudru/ansi_up/blob/v5.2.1/ansi_up.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
-// @grant        GM_notification
 // @grant        GM_setClipboard
 // @connect      www.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
@@ -48,6 +47,18 @@ let GetRating = async (Username) => {
     localStorage.setItem("UserScript-UserRating-" + Username + "-Time", new Date().getTime());
     return Rating;
 };
+let GetUsernameColorClass = async (Username) => {
+    let Rating = await GetRating(Username);
+    if (Rating > 500) {
+        return "link-danger";
+    } else if (Rating >= 400) {
+        return "link-warning";
+    } else if (Rating >= 300) {
+        return "link-success";
+    } else {
+        return "link-info";
+    }
+}
 let SecondsToString = (InputSeconds) => {
     let Hours = Math.floor(InputSeconds / 3600);
     let Minutes = Math.floor((InputSeconds % 3600) / 60);
@@ -173,6 +184,7 @@ if (location.host != "www.xmoj.tech") {
     location.host = "www.xmoj.tech";
 }
 else {
+    document.body.classList.add("placeholder-glow");
     if (document.querySelector("#navbar") != null) {
         if (document.querySelector("body > div > div.jumbotron") != null) {
             document.querySelector("body > div > div.jumbotron").className = "mt-3";
@@ -312,6 +324,10 @@ else {
                 }
                 .test-case:hover {
                     box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 20px 3px !important;
+                }
+                .data[result-item] {
+                    border-bottom-left-radius: 5px;
+                    border-bottom-right-radius: 5px;
                 }
                 .software_list {
                     width: unset !important;
@@ -469,7 +485,7 @@ else {
             }
         }, 100);
 
-        fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
+        fetch("https://web.xmoj-bbs.tech/Update.json", { cache: "no-cache" })
             .then((Response) => {
                 return Response.json();
             })
@@ -481,7 +497,7 @@ else {
                     UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <div>
                             XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                            <a href="https://langningchen.github.io/XMOJ-Script/XMOJ.user.js" target="_blank" class="alert-link">此处</a>
+                            <a href="https://web.xmoj-bbs.tech/XMOJ.user.js" target="_blank" class="alert-link">此处</a>
                             更新
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -548,7 +564,7 @@ else {
                     new bootstrap.Modal(document.getElementById("UpdateModal")).show();
                 }
             });
-        fetch("https://langningchen.github.io/XMOJ-Script/AddonScript.js", { cache: "no-cache" })
+        fetch("https://web.xmoj-bbs.tech/AddonScript.js", { cache: "no-cache" })
             .then((Response) => {
                 return Response.text();
             })
@@ -556,42 +572,57 @@ else {
                 eval(Response);
             });
 
+        let ToastContainer = document.createElement("div");
+        ToastContainer.classList.add("toast-container", "position-fixed", "bottom-0", "end-0", "p-3");
+        document.body.appendChild(ToastContainer);
         addEventListener("focus", () => {
             RequestAPI("GetMentionList", {}, (Response) => {
                 if (Response.Success) {
+                    debugger
                     let MentionList = Response.Data.MentionList;
                     for (let i = 0; i < MentionList.length; i++) {
-                        GM_notification({
-                            title: "XMOJ",
-                            text: "@" + MentionList[i].UserID + " 在讨论 " + MentionList[i].Title + " 中提及了你，点击此处查看",
-                            timeout: 10000,
-                            onclick: () => {
-                                open("http://www.xmoj.tech/discuss3/thread.php?tid=" + MentionList[i].PostID + "&page=" + MentionList[i].Page, "_blank");
-                                RequestAPI("ReadMention", {
-                                    "MentionID": Number(MentionList[i].MentionID)
-                                }, () => { });
-                            }
+                        let Toast = document.createElement("div");
+                        Toast.classList.add("toast");
+                        Toast.setAttribute("role", "alert");
+                        let ToastHeader = document.createElement("div");
+                        ToastHeader.classList.add("toast-header");
+                        let ToastTitle = document.createElement("strong");
+                        ToastTitle.classList.add("me-auto");
+                        ToastTitle.innerText = MentionList[i].FromUserID;
+                        ToastHeader.appendChild(ToastTitle);
+                        let ToastTime = document.createElement("small");
+                        ToastTime.classList.add("text-body-secondary");
+                        ToastTime.innerText = new Date(MentionList[i].MentionTime).toLocaleString();
+                        ToastHeader.appendChild(ToastTime);
+                        let ToastCloseButton = document.createElement("button");
+                        ToastCloseButton.type = "button";
+                        ToastCloseButton.classList.add("btn-close");
+                        ToastCloseButton.setAttribute("data-bs-dismiss", "toast");
+                        ToastHeader.appendChild(ToastCloseButton);
+                        Toast.appendChild(ToastHeader);
+                        let ToastBody = document.createElement("div");
+                        ToastBody.classList.add("toast-body");
+                        ToastBody.innerText = MentionList[i].Content;
+                        let ToastFooter = document.createElement("div");
+                        ToastFooter.classList.add("mt-2", "pt-2", "border-top");
+                        let ToastButton = document.createElement("button");
+                        ToastButton.type = "button";
+                        ToastButton.classList.add("btn", "btn-primary", "btn-sm");
+                        ToastButton.innerText = "查看";
+                        ToastButton.addEventListener("click", () => {
+                            open(MentionList[i].MentionURL, "_blank");
+                            RequestAPI("ReadMention", {
+                                "MentionID": Number(MentionList[i].MentionID)
+                            }, () => { });
                         });
+                        ToastFooter.appendChild(ToastButton);
+                        ToastBody.appendChild(ToastFooter);
+                        Toast.appendChild(ToastBody);
+                        ToastContainer.appendChild(Toast);
+                        new bootstrap.Toast(Toast).show();
                     }
                 }
             });
-            if (location.pathname != "/mail.php") {
-                RequestAPI("GetUnreadList", {}, (Response) => {
-                    if (Response.Success) {
-                        let UnreadList = Response.Data.UnreadList;
-                        for (let i = 0; i < UnreadList.length; i++) {
-                            GM_notification({
-                                title: "XMOJ",
-                                text: "@" + UnreadList[i].OtherUser + " 给你发了一封短消息，点击此处查看",
-                                timeout: 10000,
-                                onclick: () => {
-                                    open("http://www.xmoj.tech/mail.php?other=" + UnreadList[i].OtherUser, "_blank");
-                                }
-                            });
-                        }
-                    }
-                });
-            }
         });
 
         if (location.pathname == "/index.php" || location.pathname == "/") {
@@ -971,7 +1002,7 @@ else {
             Style.innerHTML += "    color: white;";
             Style.innerHTML += "}";
         } else if (location.pathname == "/status.php") {
-            if (new URL(location.href).searchParams.get("ByUserScript") == null) {
+            if (SearchParams.get("ByUserScript") == null) {
                 document.querySelector("body > script:nth-child(5)").remove();
                 if (UtilityEnabled("NewBootstrap")) {
                     document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
@@ -1107,10 +1138,13 @@ else {
                     document.querySelector("#result-tab > thead > tr > th:nth-child(10)").innerText = "开启O2";
                 }
                 let Temp = document.querySelector("#result-tab > tbody").childNodes;
+                let SolutionIDs = [];
                 for (let i = 1; i < Temp.length; i += 2) {
+                    let SID = Temp[i].childNodes[1].innerText;
+                    SolutionIDs.push(SID);
                     if (UtilityEnabled("ResetType")) {
                         Temp[i].childNodes[0].remove();
-                        Temp[i].childNodes[0].innerHTML = "<a href=\"showsource.php?id=" + Temp[i].childNodes[0].innerText + "\">" + Temp[i].childNodes[0].innerText + "</a> " +
+                        Temp[i].childNodes[0].innerHTML = "<a href=\"showsource.php?id=" + SID + "\">" + SID + "</a> " +
                             "<a href=\"" + Temp[i].childNodes[6].children[1].href + "\">重交</a>";
                         Temp[i].childNodes[1].remove();
                         Temp[i].childNodes[1].children[0].removeAttribute("class");
@@ -1121,13 +1155,13 @@ else {
                         Temp[i].childNodes[9].innerText = (Temp[i].childNodes[9].innerText == "" ? "否" : "是");
                     }
                     if (SearchParams.get("cid") == null) {
-                        localStorage.setItem("UserScript-Solution-" + Temp[i].childNodes[0].innerText + "-Problem",
+                        localStorage.setItem("UserScript-Solution-" + SID + "-Problem",
                             Temp[i].childNodes[1].innerText);
                     }
                     else {
-                        localStorage.setItem("UserScript-Solution-" + Temp[i].childNodes[0].innerText + "-Contest",
+                        localStorage.setItem("UserScript-Solution-" + SID + "-Contest",
                             SearchParams.get("cid"));
-                        localStorage.setItem("UserScript-Solution-" + Temp[i].childNodes[0].innerText + "-PID-Contest",
+                        localStorage.setItem("UserScript-Solution-" + SID + "-PID-Contest",
                             Temp[i].childNodes[1].innerText.charAt(0));
                     }
                 }
@@ -1135,9 +1169,9 @@ else {
                 if (UtilityEnabled("RefreshSolution")) {
                     let Rows = document.getElementById("result-tab").rows;
                     let Points = Array();
-                    for (let i = Rows.length - 1; i > 0; i--) {
+                    for (let i = 1; i <= SolutionIDs.length; i++) {
                         Rows[i].cells[2].className = "td_result";
-                        let SolutionID = Rows[i].cells[0].innerText;
+                        let SolutionID = SolutionIDs[i - 1];
                         if (Rows[i].cells[2].children.length == 2) {
                             Points[SolutionID] = Rows[i].cells[2].children[1].innerText;
                             Rows[i].cells[2].children[1].remove();
@@ -1151,9 +1185,9 @@ else {
                     let RefreshResult = async (SolutionID) => {
                         let CurrentRow = null;
                         let Rows = document.getElementById("result-tab").rows;
-                        for (let i = 1; i < Rows.length; i++) {
-                            if (Rows[i].cells[0].innerText == SolutionID) {
-                                CurrentRow = Rows[i];
+                        for (let i = 0; i < SolutionIDs.length; i++) {
+                            if (SolutionIDs[i] == SolutionID) {
+                                CurrentRow = Rows[i + 1];
                                 break;
                             }
                         }
@@ -1488,7 +1522,7 @@ else {
             if (document.querySelector("#rank") == null) {
                 document.querySelector("body > div > div.mt-3").innerHTML = "<center><h3>比赛排名</h3><a></a><table id=\"rank\"></table>";
             }
-            if (new URL(location.href).searchParams.get("ByUserScript") == null) {
+            if (SearchParams.get("ByUserScript") == null) {
                 if (document.querySelector("body > div > div.mt-3 > center > h3").innerText == "比赛排名") {
                     document.querySelector("#rank").innerText = "比赛暂时还没有排名";
                 }
@@ -1671,17 +1705,11 @@ else {
                                     UsernameLink.href = "userinfo.php?user=" + RowData.Username; UsernameLink.innerText = RowData.Username;
                                     UsernameLink.className = "link-primary link-offset-2 link-underline-opacity-50";
                                     if (UtilityEnabled("Rating")) {
-                                        let rating = await GetRating(RowData.Username).then();
                                         if (RowData.QuickSubmitCount >= 2) {
                                             UsernameLink.className += " link-info";
-                                        } else if (rating > 500) {
-                                            UsernameLink.className += " link-danger";
-                                        } else if (rating >= 400) {
-                                            UsernameLink.className += " link-warning";
-                                        } else if (rating >= 300) {
-                                            UsernameLink.className += " link-success";
                                         } else {
-                                            UsernameLink.className += " link-info";
+                                            debugger
+                                            UsernameLink.className += " " + (await GetUsernameColorClass(RowData.Username));
                                         }
                                     }
                                     if (RowData.Username == document.getElementById("profile").innerText) {
@@ -2007,9 +2035,9 @@ else {
                 }
             });
         } else if (location.pathname == "/modifypage.php") {
-            if (new URL(location.href).searchParams.get("ByUserScript") != null) {
+            if (SearchParams.get("ByUserScript") != null) {
                 document.querySelector("body > div > div.mt-3").innerHTML = "";
-                await fetch("https://langningchen.github.io/XMOJ-Script/Update.json", { cache: "no-cache" })
+                await fetch("https://web.xmoj-bbs.tech/Update.json", { cache: "no-cache" })
                     .then((Response) => {
                         return Response.json();
                     })
@@ -2443,60 +2471,35 @@ else {
                     let CurrentElement = document.querySelector("#results > div").children[i].children[0].children[0].children[0];
                     let Temp = CurrentElement.innerText.substring(0, CurrentElement.innerText.length - 2).split("/");
                     CurrentElement.innerText = TimeToStringTime(Temp[0]) + "/" + SizeToStringSize(Temp[1]);
-                    CurrentElement = CurrentElement.parentNode.parentNode;
-                    let CopyButton = document.createElement("div"); CurrentElement.appendChild(CopyButton);
-                    CopyButton.style.display = "none";
-                    CopyButton.style.position = "absolute";
-                    CopyButton.style.fontSize = "12px";
-                    CopyButton.style.margin = "6px";
-                    CopyButton.innerText = "点此复制获取数据的语句";
-                    CurrentElement.addEventListener("mouseover", () => {
-                        let Temp = CurrentElement.children;
-                        for (let j = 0; j < Temp.length; j++) {
-                            Temp[j].style.display = "none";
+                }
+                if (document.getElementById("apply_data")) {
+                    document.getElementById("apply_data").addEventListener("click", () => {
+                        let ApplyElements = document.getElementsByClassName("data");
+                        for (let i = 0; i < ApplyElements.length; i++) {
+                            ApplyElements[i].style.display = (ApplyElements[i].style.display == "block" ? "" : "block");
                         }
-                        Temp[Temp.length - 1].style.display = "";
                     });
-                    CurrentElement.addEventListener("mouseout", () => {
-                        let Temp = CurrentElement.children;
-                        for (let j = 0; j < Temp.length; j++) {
-                            Temp[j].style.display = "";
-                        }
-                        Temp[Temp.length - 1].style.display = "none";
+                }
+                let ApplyElements = document.getElementsByClassName("data");
+                for (let i = 0; i < ApplyElements.length; i++) {
+                    ApplyElements[i].addEventListener("click", async () => {
+                        await fetch("/data_distribute_ajax_apply.php", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            body: "user_id=" + document.querySelector("#profile").innerText + "&" +
+                                "solution_id=" + SearchParams.get("sid") + "&" +
+                                "name=" + ApplyElements[i].getAttribute("name")
+                        }).then((Response) => {
+                            return Response.json();
+                        }).then((Response) => {
+                            ApplyElements[i].innerText = Response.msg;
+                            setTimeout(() => {
+                                ApplyElements[i].innerText = "申请数据";
+                            }, 1000);
+                        });
                     });
-                    CurrentElement.addEventListener("click", () => {
-                        let SolutionID = SearchParams.get("sid");
-                        let ContestID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Contest");
-                        if (ContestID == null) {
-                            let ProblemID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
-                            let ProblemName = localStorage.getItem("UserScript-Problem-" + ProblemID + "-Name");
-                            let CaseID = CurrentElement.children[1].innerText.substring(1);
-                            GM_setClipboard("高老师，能发给我" +
-                                ProblemID + "题：" + ProblemName + "，" +
-                                "提交编号" + SolutionID + "，" +
-                                "#" + CaseID + "测试点" +
-                                "的数据吗？谢谢");
-                        }
-                        else {
-                            let ContestName = localStorage.getItem("UserScript-Contest-" + ContestID + "-Name");
-                            let ContestProblemID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-PID-Contest");
-                            let ProblemID = localStorage.getItem("UserScript-Contest-" + ContestID + "-Problem-" + (ContestProblemID.charCodeAt(0) - 65) + "-PID");
-                            let ProblemName = localStorage.getItem("UserScript-Problem-" + ProblemID + "-Name");
-                            let CaseID = CurrentElement.children[1].innerText.substring(1);
-                            GM_setClipboard("高老师，能发给我" +
-                                "比赛" + ContestID + "：" +
-                                ContestName + "，" +
-                                ContestProblemID + "题(" + ProblemID + ")：" + ProblemName + "，" +
-                                "提交编号" + SolutionID + "，" +
-                                "#" + CaseID + "测试点" +
-                                "的数据吗？谢谢");
-                        }
-                        CopyButton.innerText = "已复制";
-                        setTimeout(() => {
-                            CopyButton.innerText = "点此复制获取数据的语句";
-                        }, 1000);
-                    });
-                    CurrentElement.onmouseout();
                 }
             }
         } else if (location.pathname == "/downloads.php") {
@@ -2764,17 +2767,17 @@ else {
                             }
                         }
                     }
-                    RequestAPI("GetMailList", {}, (ResponseData) => {
+                    RequestAPI("GetMailList", {}, async (ResponseData) => {
                         if (ResponseData.Success) {
                             ErrorElement.style.display = "none";
                             let Data = ResponseData.Data.MailList;
                             ReceiveTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
-                                Row.innerHTML = `<td><a href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a>` +
+                                Row.innerHTML = `<td><a class="${await GetUsernameColorClass(Data[i].OtherUser)}" href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a>` +
                                     (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`) + `</td>
                                     <td>${Data[i].LastsMessage}</td>
-                                    <td>${Data[i].SendTime}</td>`;
+                                    <td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
                             }
                         }
                         else {
@@ -2854,7 +2857,7 @@ else {
                     }
                     RequestAPI("GetMail", {
                         "OtherUser": String(SearchParams.get("other"))
-                    }, (ResponseData) => {
+                    }, async (ResponseData) => {
                         if (ResponseData.Success) {
                             ErrorElement.style.display = "none";
                             let Data = ResponseData.Data.Mail;
@@ -2864,9 +2867,9 @@ else {
                                 if (!Data[i].IsRead && Data[i].FromUser != document.querySelector("#profile").innerText) {
                                     Row.className = "table-info";
                                 }
-                                Row.innerHTML = `<td>${Data[i].FromUser}</td>
+                                Row.innerHTML = `<td><a class="${await GetUsernameColorClass(Data[i].FromUser)}" href="/userinfo.php?user=${Data[i].FromUser}">${Data[i].FromUser}</td>
                                     <td>${Data[i].Content}</td>
-                                    <td>${Data[i].SendTime}</td>
+                                    <td>${new Date(Data[i].SendTime).toLocaleString()}</td>
                                     <td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
                             }
                         }
@@ -2967,7 +2970,7 @@ else {
                         RequestAPI("GetPosts", {
                             "ProblemID": Number(ProblemID || 0),
                             "Page": Number(Page)
-                        }, (ResponseData) => {
+                        }, async (ResponseData) => {
                             if (ResponseData.Success == true) {
                                 ErrorElement.style.display = "none";
                                 if (!Silent) {
@@ -2994,11 +2997,11 @@ else {
                                     PostList.children[1].innerHTML += `<tr>
                                     <td>${Posts[i].PostID}</td>
                                     <td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>
-                                    <td><a href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
+                                    <td><a class="${await GetUsernameColorClass(Posts[i].UserID)}" href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
                                         (Posts[i].ProblemID == 0 ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
-                                        `<td>${Posts[i].PostTime}</td>
+                                        `<td>${new Date(Posts[i].PostTime).toLocaleString()}</td>
                                     <td>${Posts[i].ReplyCount}</td>
-                                    <td><a href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
+                                    <td><a class="${await GetUsernameColorClass(Posts[i].LastReplyUserID)}" href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${new Date(Posts[i].LastReplyTime).toLocaleString()}</td>
                                 </tr>`;
                                 }
                             }
@@ -3022,7 +3025,7 @@ else {
                         <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
                     </div>
                     <div class="cf-turnstile" id="CaptchaContainer"></div>
-                    <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
+                    <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
                         发布
                         <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                     </button>
@@ -3034,6 +3037,7 @@ else {
                             sitekey: CaptchaSiteKey,
                             callback: function (CaptchaSecretKeyValue) {
                                 CaptchaSecretKey.value = CaptchaSecretKeyValue;
+                                SubmitElement.disabled = false;
                             },
                         });
                     };
@@ -3041,6 +3045,11 @@ else {
                         url: "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback",
                         onload: (Response) => {
                             eval(Response.responseText);
+                        }
+                    });
+                    ContentElement.addEventListener("keydown", (Event) => {
+                        if (Event.ctrlKey && Event.keyCode == 13) {
+                            SubmitElement.click();
                         }
                     });
                     TitleElement.addEventListener("input", () => {
@@ -3114,7 +3123,7 @@ else {
                             <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
                         </div>
                         <div class="cf-turnstile" id="CaptchaContainer"></div>
-                        <button id="SubmitElement" type="button" class="btn btn-primary mb-2">
+                        <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
                             发布
                             <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                         </button>
@@ -3126,6 +3135,7 @@ else {
                                 sitekey: CaptchaSiteKey,
                                 callback: function (CaptchaSecretKeyValue) {
                                     CaptchaSecretKey.value = CaptchaSecretKeyValue;
+                                    SubmitElement.disabled = false;
                                 },
                             });
                         };
@@ -3165,7 +3175,7 @@ else {
                             RequestAPI("GetPost", {
                                 "PostID": Number(ThreadID),
                                 "Page": Number(Page)
-                            }, (ResponseData) => {
+                            }, async (ResponseData) => {
                                 if (ResponseData.Success == true) {
                                     if (!Silent) {
                                         DiscussPagination.children[0].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=1";
@@ -3186,9 +3196,10 @@ else {
                                         }
                                     }
                                     PostTitle.innerText = ResponseData.Data.Title + (ResponseData.Data.ProblemID == 0 ? "" : ` - 题目` + ResponseData.Data.ProblemID);
-                                    PostAuthor.innerText = ResponseData.Data.UserID;
+                                    PostAuthor.innerHTML = ResponseData.Data.UserID;
+                                    PostAuthor.classList.add(await GetUsernameColorClass(ResponseData.Data.UserID));
                                     PostAuthor.href = "/userinfo.php?user=" + ResponseData.Data.UserID;
-                                    PostTime.innerText = ResponseData.Data.PostTime;
+                                    PostTime.innerText = new Date(ResponseData.Data.PostTime).toLocaleString();
                                     let Replies = ResponseData.Data.Reply;
                                     PostReplies.innerHTML = "";
                                     for (let i = 0; i < Replies.length; i++) {
@@ -3203,13 +3214,14 @@ else {
                                         CardBodyRowSpan1Element.innerText = "作者：";
                                         let CardBodyRowSpan1AElement = document.createElement("a");
                                         CardBodyRowSpan1AElement.href = "/userinfo.php?user=" + Replies[i].UserID;
+                                        CardBodyRowSpan1AElement.classList.add(await GetUsernameColorClass(Replies[i].UserID))
                                         CardBodyRowSpan1AElement.innerText = Replies[i].UserID;
                                         CardBodyRowSpan1Element.appendChild(CardBodyRowSpan1AElement);
                                         let CardBodyRowSpan2Element = document.createElement("span");
                                         CardBodyRowSpan2Element.className = "col-4 text-muted";
                                         CardBodyRowSpan2Element.innerText = "发布时间：";
                                         let CardBodyRowSpan2SpanElement = document.createElement("span");
-                                        CardBodyRowSpan2SpanElement.innerText = Replies[i].ReplyTime;
+                                        CardBodyRowSpan2SpanElement.innerText = new Date(Replies[i].ReplyTime).toLocaleString();
                                         CardBodyRowSpan2Element.appendChild(CardBodyRowSpan2SpanElement);
                                         let CardBodyRowSpan3Element = document.createElement("span");
                                         CardBodyRowSpan3Element.className = "col-4";
@@ -3250,57 +3262,59 @@ else {
                                         CardBodyRowSpan3Button2SpinnerElement.style.display = "none";
                                         CardBodyRowSpan3Button2Element.appendChild(CardBodyRowSpan3Button2SpinnerElement);
                                         CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button2Element);
+                                        let CardBodyRowSpan3Button4Element = document.createElement("button");
+                                        CardBodyRowSpan3Button4Element.type = "button";
+                                        CardBodyRowSpan3Button4Element.style.display = "none";
+                                        CardBodyRowSpan3Button4Element.className = "btn btn-sm btn-success ms-1";
+                                        CardBodyRowSpan3Button4Element.innerText = "确认";
+                                        let CardBodyRowSpan3Button4SpinnerElement = document.createElement("div");
+                                        CardBodyRowSpan3Button4SpinnerElement.className = "spinner-border spinner-border-sm";
+                                        CardBodyRowSpan3Button4SpinnerElement.role = "status";
+                                        CardBodyRowSpan3Button4SpinnerElement.style.display = "none";
+                                        CardBodyRowSpan3Button4Element.appendChild(CardBodyRowSpan3Button4SpinnerElement);
+                                        CardBodyRowSpan3Button4Element.addEventListener("click", () => {
+                                            CardBodyRowSpan3Button4Element.disabled = true;
+                                            CardBodyRowSpan3Button4Element.lastChild.style.display = "";
+                                            RequestAPI("EditReply", {
+                                                ReplyID: Number(Replies[i].ReplyID),
+                                                Content: String(CardBodyEditTextareaElement.value)
+                                            }, (ResponseData) => {
+                                                if (ResponseData.Success == true) {
+                                                    RefreshReply();
+                                                }
+                                                else {
+                                                    CardBodyRowSpan3Button4Element.disabled = false;
+                                                    CardBodyRowSpan3Button4Element.lastChild.style.display = "none";
+                                                    ErrorElement.innerText = ResponseData.Message;
+                                                    ErrorElement.style.display = "";
+                                                }
+                                            });
+                                        });
+                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button4Element);
+                                        let CardBodyRowSpan3Button5Element = document.createElement("button");
+                                        CardBodyRowSpan3Button5Element.type = "button";
+                                        CardBodyRowSpan3Button5Element.style.display = "none";
+                                        CardBodyRowSpan3Button5Element.className = "btn btn-sm btn-secondary ms-1";
+                                        CardBodyRowSpan3Button5Element.innerText = "取消";
+                                        CardBodyRowSpan3Button5Element.addEventListener("click", () => {
+                                            CardBodyElement.children[2].style.display = "";
+                                            CardBodyElement.children[3].style.display = "none";
+                                            CardBodyRowSpan3Button3Element.style.display = "";
+                                            CardBodyRowSpan3Button4Element.style.display = "none";
+                                            CardBodyRowSpan3Button5Element.style.display = "none";
+                                        });
+                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button5Element);
                                         let CardBodyRowSpan3Button3Element = document.createElement("button");
                                         CardBodyRowSpan3Button3Element.type = "button";
                                         CardBodyRowSpan3Button3Element.className = "btn btn-sm btn-warning ms-1";
                                         CardBodyRowSpan3Button3Element.innerText = "编辑";
                                         CardBodyRowSpan3Button3Element.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
                                         CardBodyRowSpan3Button3Element.addEventListener("click", () => {
-                                            CardBodyRowSpan3Button3Element.disabled = true;
-                                            let CardBodyRowSpan3Button4Element = document.createElement("button");
-                                            CardBodyRowSpan3Button4Element.type = "button";
-                                            CardBodyRowSpan3Button4Element.className = "btn btn-sm btn-success ms-1";
-                                            CardBodyRowSpan3Button4Element.innerText = "确认";
-                                            let CardBodyRowSpan3Button4SpinnerElement = document.createElement("div");
-                                            CardBodyRowSpan3Button4SpinnerElement.className = "spinner-border spinner-border-sm";
-                                            CardBodyRowSpan3Button4SpinnerElement.role = "status";
-                                            CardBodyRowSpan3Button4SpinnerElement.style.display = "none";
-                                            CardBodyRowSpan3Button4Element.appendChild(CardBodyRowSpan3Button4SpinnerElement);
-                                            CardBodyRowSpan3Button4Element.addEventListener("click", () => {
-                                                CardBodyRowSpan3Button4Element.disabled = true;
-                                                CardBodyRowSpan3Button4Element.lastChild.style.display = "";
-                                                RequestAPI("EditReply", {
-                                                    ReplyID: Number(Replies[i].ReplyID),
-                                                    Content: String(CardBodyEditTextareaElement.value)
-                                                }, (ResponseData) => {
-                                                    if (ResponseData.Success == true) {
-                                                        RefreshReply();
-                                                    }
-                                                    else {
-                                                        CardBodyRowSpan3Button3Element.disabled = false;
-                                                        CardBodyRowSpan3Button4Element.disabled = false;
-                                                        CardBodyRowSpan3Button4Element.lastChild.style.display = "none";
-                                                        ErrorElement.innerText = ResponseData.Message;
-                                                        ErrorElement.style.display = "";
-                                                    }
-                                                });
-                                            });
-                                            CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button4Element);
-                                            let CardBodyRowSpan3Button5Element = document.createElement("button");
-                                            CardBodyRowSpan3Button5Element.type = "button";
-                                            CardBodyRowSpan3Button5Element.className = "btn btn-sm btn-secondary ms-1";
-                                            CardBodyRowSpan3Button5Element.innerText = "取消";
-                                            CardBodyRowSpan3Button5Element.addEventListener("click", () => {
-                                                CardBodyRowSpan3Button3Element.disabled = false;
-                                                CardBodyRowSpan3Button4Element.remove();
-                                                CardBodyRowSpan3Button5Element.remove();
-                                                CardBodyElement.children[2].style.display = "";
-                                                CardBodyElement.children[3].style.display = "none";
-                                            });
-                                            CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button5Element);
-
                                             CardBodyElement.children[2].style.display = "none";
                                             CardBodyElement.children[3].style.display = "";
+                                            CardBodyRowSpan3Button3Element.style.display = "none";
+                                            CardBodyRowSpan3Button4Element.style.display = "";
+                                            CardBodyRowSpan3Button5Element.style.display = "";
                                         });
                                         CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button3Element);
                                         CardBodyRowElement.appendChild(CardBodyRowSpan1Element);
@@ -3316,11 +3330,20 @@ else {
                                         CardBodyEditElement.style.display = "none";
                                         let CardBodyEditTextareaElement = document.createElement("textarea");
                                         CardBodyEditTextareaElement.className = "form-control";
+                                        CardBodyEditTextareaElement.style.height = "300px";
                                         CardBodyEditTextareaElement.value = Replies[i].Content;
                                         CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replaceAll(/ <a class="link-info" href="http:\/\/www.xmoj.tech\/userinfo.php\?user=(.*?)">@\1<\/a> /g, "@$1");
                                         if (CardBodyEditTextareaElement.value.indexOf("<br>") != -1) {
                                             CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.substring(0, CardBodyEditTextareaElement.value.indexOf("<br>"));
                                         }
+                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replace(/&lt;/g, "<");
+                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replace(/&gt;/g, ">");
+                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replace(/&amp;/g, "&");
+                                        CardBodyEditTextareaElement.addEventListener("keydown", (Event) => {
+                                            if (Event.ctrlKey && Event.keyCode == 13) {
+                                                CardBodyRowSpan3Button4Element.click();
+                                            }
+                                        });
                                         CardBodyEditElement.appendChild(CardBodyEditTextareaElement);
                                         CardBodyElement.appendChild(CardBodyEditElement);
                                         CardElement.appendChild(CardBodyElement);
