@@ -2969,7 +2969,7 @@ else {
                                         (Posts[i].ProblemID == 0 ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
                                         `<td>${new Date(Posts[i].PostTime + 1000 * 60 * 60 * 8).toLocaleString()}</td>
                                     <td>${Posts[i].ReplyCount}</td>
-                                    <td><a class="${await GetUsernameColorClass(Posts[i].LastReplyUserID)}" href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
+                                    <td><a class="${await GetUsernameColorClass(Posts[i].LastReplyUserID)}" href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${new Date(Posts[i].LastReplyTime).toLocaleString()}</td>
                                 </tr>`;
                                 }
                             }
