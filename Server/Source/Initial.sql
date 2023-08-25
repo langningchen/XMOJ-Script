@@ -23,8 +23,7 @@ DROP TABLE IF EXISTS bbs_mention;
 CREATE TABLE bbs_mention (
     mention_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     reply_id INTEGER NOT NULL,
-    user_id TEXT NOT NULL,
-    mention_time TIMESTAMP NOT NULL DEFAULT current_timestamp
+    user_id TEXT NOT NULL
 );
 
 DROP TABLE IF EXISTS short_message;
