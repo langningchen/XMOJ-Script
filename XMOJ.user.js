@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.1.58
+// @version      0.2.58
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -2967,7 +2967,7 @@ else {
                                     <td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>
                                     <td><a class="${await GetUsernameColorClass(Posts[i].UserID)}" href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
                                         (Posts[i].ProblemID == 0 ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
-                                        `<td>${new Date(Posts[i].PostTime + 1000 * 60 * 60 * 8).toLocaleString()}</td>
+                                        `<td>${new Date(Posts[i].PostTime).toLocaleString()}</td>
                                     <td>${Posts[i].ReplyCount}</td>
                                     <td><a class="${await GetUsernameColorClass(Posts[i].LastReplyUserID)}" href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${Posts[i].LastReplyTime}</td>
                                 </tr>`;
@@ -3167,7 +3167,7 @@ else {
                                     PostAuthor.innerHTML = ResponseData.Data.UserID;
                                     PostAuthor.classList.add(await GetUsernameColorClass(ResponseData.Data.UserID));
                                     PostAuthor.href = "/userinfo.php?user=" + ResponseData.Data.UserID;
-                                    PostTime.innerText = new Date(ResponseData.Data.PostTime + 1000 * 60 * 60 * 8).toLocaleString();
+                                    PostTime.innerText = new Date(ResponseData.Data.PostTime).toLocaleString();
                                     let Replies = ResponseData.Data.Reply;
                                     PostReplies.innerHTML = "";
                                     for (let i = 0; i < Replies.length; i++) {
@@ -3189,7 +3189,7 @@ else {
                                         CardBodyRowSpan2Element.className = "col-4 text-muted";
                                         CardBodyRowSpan2Element.innerText = "发布时间：";
                                         let CardBodyRowSpan2SpanElement = document.createElement("span");
-                                        CardBodyRowSpan2SpanElement.innerText = new Date(Replies[i].ReplyTime + 1000 * 60 * 60 * 8).toLocaleString();
+                                        CardBodyRowSpan2SpanElement.innerText = new Date(Replies[i].ReplyTime).toLocaleString();
                                         CardBodyRowSpan2Element.appendChild(CardBodyRowSpan2SpanElement);
                                         let CardBodyRowSpan3Element = document.createElement("span");
                                         CardBodyRowSpan3Element.className = "col-4";
