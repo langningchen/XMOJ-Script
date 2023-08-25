@@ -59,6 +59,7 @@ export class Process {
             Data["Content"] = String(Data["Content"]).replace(/@([a-zA-Z0-9]+)/g, (Match) => {
                 return StringToReplace.shift() || "";
             });
+            MentionPeople = Array.from(new Set(MentionPeople));
             let ReplyID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_reply", {
                 user_id: this.SecurityChecker.GetUsername(),
                 post_id: Data["PostID"],
