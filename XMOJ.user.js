@@ -2752,14 +2752,14 @@ else {
                             }
                         }
                     }
-                    RequestAPI("GetMailList", {}, (ResponseData) => {
+                    RequestAPI("GetMailList", {}, async (ResponseData) => {
                         if (ResponseData.Success) {
                             ErrorElement.style.display = "none";
                             let Data = ResponseData.Data.MailList;
                             ReceiveTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
-                                Row.innerHTML = `<td><a href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a>` +
+                                Row.innerHTML = `<td><a class="${await GetUsernameColorClass(Data[i].OtherUser)}" href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a>` +
                                     (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`) + `</td>
                                     <td>${Data[i].LastsMessage}</td>
                                     <td>${Data[i].SendTime}</td>`;
@@ -2842,7 +2842,7 @@ else {
                     }
                     RequestAPI("GetMail", {
                         "OtherUser": String(SearchParams.get("other"))
-                    }, (ResponseData) => {
+                    }, async (ResponseData) => {
                         if (ResponseData.Success) {
                             ErrorElement.style.display = "none";
                             let Data = ResponseData.Data.Mail;
@@ -2852,7 +2852,7 @@ else {
                                 if (!Data[i].IsRead && Data[i].FromUser != document.querySelector("#profile").innerText) {
                                     Row.className = "table-info";
                                 }
-                                Row.innerHTML = `<td>${Data[i].FromUser}</td>
+                                Row.innerHTML = `<td><a class="${await GetUsernameColorClass(Data[i].FromUser)}" href="/userinfo.php?user=${Data[i].FromUser}">${Data[i].FromUser}</td>
                                     <td>${Data[i].Content}</td>
                                     <td>${Data[i].SendTime}</td>
                                     <td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
