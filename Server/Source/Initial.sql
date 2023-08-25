@@ -5,7 +5,7 @@ CREATE TABLE bbs_post (
     user_id TEXT NOT NULL,
     problem_id INT NOT NULL,
     title TEXT NOT NULL,
-    post_time TIMESTAMP NOT NULL
+    post_time INTEGER NOT NULL
 );
 
 DROP TABLE IF EXISTS bbs_reply;
@@ -15,7 +15,7 @@ CREATE TABLE bbs_reply (
     post_id INTEGER NOT NULL,
     user_id TEXT NOT NULL,
     content TEXT NOT NULL,
-    reply_time TIMESTAMP NOT NULL
+    reply_time INTEGER NOT NULL
 );
 
 DROP TABLE IF EXISTS bbs_mention;
@@ -34,5 +34,5 @@ CREATE TABLE short_message (
     message_to TEXT NOT NULL,
     content TEXT NOT NULL,
     is_read INTEGER NOT NULL DEFAULT 0,
-    send_time TIMESTAMP NOT NULL
+    send_time INTEGER NOT NULL
 );
