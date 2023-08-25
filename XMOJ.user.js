@@ -3173,7 +3173,7 @@ else {
                             RequestAPI("GetPost", {
                                 "PostID": Number(ThreadID),
                                 "Page": Number(Page)
-                            }, (ResponseData) => {
+                            }, async (ResponseData) => {
                                 if (ResponseData.Success == true) {
                                     if (!Silent) {
                                         DiscussPagination.children[0].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=1";
@@ -3194,7 +3194,8 @@ else {
                                         }
                                     }
                                     PostTitle.innerText = ResponseData.Data.Title + (ResponseData.Data.ProblemID == 0 ? "" : ` - 题目` + ResponseData.Data.ProblemID);
-                                    PostAuthor.innerText = ResponseData.Data.UserID;
+                                    PostAuthor.innerHTML = ResponseData.Data.UserID;
+                                    PostAuthor.classList.add(await GetUsernameColorClass(ResponseData.Data.UserID));
                                     PostAuthor.href = "/userinfo.php?user=" + ResponseData.Data.UserID;
                                     PostTime.innerText = ResponseData.Data.PostTime;
                                     let Replies = ResponseData.Data.Reply;
@@ -3211,6 +3212,7 @@ else {
                                         CardBodyRowSpan1Element.innerText = "作者：";
                                         let CardBodyRowSpan1AElement = document.createElement("a");
                                         CardBodyRowSpan1AElement.href = "/userinfo.php?user=" + Replies[i].UserID;
+                                        CardBodyRowSpan1AElement.classList.add(await GetUsernameColorClass(Replies[i].UserID))
                                         CardBodyRowSpan1AElement.innerText = Replies[i].UserID;
                                         CardBodyRowSpan1Element.appendChild(CardBodyRowSpan1AElement);
                                         let CardBodyRowSpan2Element = document.createElement("span");
