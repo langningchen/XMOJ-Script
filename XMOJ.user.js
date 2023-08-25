@@ -3032,6 +3032,11 @@ else {
                             eval(Response.responseText);
                         }
                     });
+                    ContentElement.addEventListener("keydown", (Event) => {
+                        if (Event.ctrlKey && Event.keyCode == 13) {
+                            SubmitElement.click();
+                        }
+                    });
                     TitleElement.addEventListener("input", () => {
                         TitleElement.classList.remove("is-invalid");
                     });
