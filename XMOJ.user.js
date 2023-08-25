@@ -159,8 +159,8 @@ let RequestAPI = (Action, Data, CallBack) => {
     let DataString = JSON.stringify(PostData);
     GM_xmlhttpRequest({
         method: "POST",
-        // url: "https://www.xmoj-bbs.tech/" + Action,
-        url: "http://127.0.0.1:8787/" + Action,
+        url: "https://www.xmoj-bbs.tech/" + Action,
+        // url: "http://127.0.0.1:8787/" + Action,
         headers: {
             "Content-Type": "application/json"
         },
