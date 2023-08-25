@@ -21,12 +21,14 @@ export class Process {
             let PostID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_post", {
                 user_id: this.SecurityChecker.GetUsername(),
                 problem_id: Data["ProblemID"],
-                title: this.SecurityChecker.HTMLEscape(Data["Title"])
+                title: this.SecurityChecker.HTMLEscape(Data["Title"]),
+                post_time: new Date().getTime()
             }))["InsertID"];
             let ReplyID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_reply", {
                 user_id: this.SecurityChecker.GetUsername(),
                 post_id: PostID,
-                content: this.SecurityChecker.HTMLEscape(Data["Content"])
+                content: this.SecurityChecker.HTMLEscape(Data["Content"]),
+                reply_time: new Date().getTime()
             }))["InsertID"];
             return new Result(true, "创建讨论成功", {
                 PostID: PostID,
@@ -63,7 +65,8 @@ export class Process {
             let ReplyID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_reply", {
                 user_id: this.SecurityChecker.GetUsername(),
                 post_id: Data["PostID"],
-                content: Data["Content"]
+                content: Data["Content"],
+                reply_time: new Date().getTime()
             }))["InsertID"];
 
             for (let i in MentionPeople) {
@@ -389,7 +392,8 @@ export class Process {
             let MessageID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("short_message", {
                 message_from: this.SecurityChecker.GetUsername(),
                 message_to: Data["ToUser"],
-                content: Data["Content"]
+                content: Data["Content"],
+                send_time: new Date().getTime()
             }))["InsertID"];
             return new Result(true, "发送短消息成功", {
                 MessageID: MessageID
