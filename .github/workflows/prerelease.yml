@@ -1,11 +1,11 @@
 name: PreRelease only
 on:
+  push:
+    branches:
+      - dev
+    paths:
+      - "XMOJ.user.js"
   workflow_dispatch:
-permissions:
-    id-token: write
-    contents: write
-    pages: write
-    deployments: write
 jobs:
   release:
     name: Release
