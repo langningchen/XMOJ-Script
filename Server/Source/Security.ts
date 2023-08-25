@@ -46,6 +46,7 @@ export class Security {
         }));
         this.SessionID = Data["SessionID"];
         this.Username = Data["Username"];
+        // return new Result(true, "令牌检测跳过");
         let SessionUsername: string = await this.Fetch(new URL("http://www.xmoj.tech/template/bs3/profile.php"))
             .then((Response) => {
                 return Response.text();
@@ -108,6 +109,7 @@ export class Security {
             "timeout-or-duplicate": "相同验证码已经校验过",
             "internal-error": "服务器错误"
         };
+        // return new Result(true, "验证码检测跳过");
         if (CaptchaToken === "") {
             return new Result(false, "验证码没有完成");
         }
