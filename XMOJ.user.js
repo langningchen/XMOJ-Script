@@ -325,6 +325,10 @@ else {
                 .test-case:hover {
                     box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 20px 3px !important;
                 }
+                .data[result-item] {
+                    border-bottom-left-radius: 5px;
+                    border-bottom-right-radius: 5px;
+                }
                 .software_list {
                     width: unset !important;
                 }
@@ -1119,10 +1123,13 @@ else {
                     document.querySelector("#result-tab > thead > tr > th:nth-child(10)").innerText = "开启O2";
                 }
                 let Temp = document.querySelector("#result-tab > tbody").childNodes;
+                let SolutionIDs = [];
                 for (let i = 1; i < Temp.length; i += 2) {
+                    let SID = Temp[i].childNodes[1].innerText;
+                    SolutionIDs.push(SID);
                     if (UtilityEnabled("ResetType")) {
                         Temp[i].childNodes[0].remove();
-                        Temp[i].childNodes[0].innerHTML = "<a href=\"showsource.php?id=" + Temp[i].childNodes[0].innerText + "\">" + Temp[i].childNodes[0].innerText + "</a> " +
+                        Temp[i].childNodes[0].innerHTML = "<a href=\"showsource.php?id=" + SID + "\">" + SID + "</a> " +
                             "<a href=\"" + Temp[i].childNodes[6].children[1].href + "\">重交</a>";
                         Temp[i].childNodes[1].remove();
                         Temp[i].childNodes[1].children[0].removeAttribute("class");
@@ -1133,13 +1140,13 @@ else {
                         Temp[i].childNodes[9].innerText = (Temp[i].childNodes[9].innerText == "" ? "否" : "是");
                     }
                     if (SearchParams.get("cid") == null) {
-                        localStorage.setItem("UserScript-Solution-" + Temp[i].childNodes[0].innerText + "-Problem",
+                        localStorage.setItem("UserScript-Solution-" + SID + "-Problem",
                             Temp[i].childNodes[1].innerText);
                     }
                     else {
-                        localStorage.setItem("UserScript-Solution-" + Temp[i].childNodes[0].innerText + "-Contest",
+                        localStorage.setItem("UserScript-Solution-" + SID + "-Contest",
                             SearchParams.get("cid"));
-                        localStorage.setItem("UserScript-Solution-" + Temp[i].childNodes[0].innerText + "-PID-Contest",
+                        localStorage.setItem("UserScript-Solution-" + SID + "-PID-Contest",
                             Temp[i].childNodes[1].innerText.charAt(0));
                     }
                 }
@@ -1147,9 +1154,9 @@ else {
                 if (UtilityEnabled("RefreshSolution")) {
                     let Rows = document.getElementById("result-tab").rows;
                     let Points = Array();
-                    for (let i = Rows.length - 1; i > 0; i--) {
+                    for (let i = 1; i <= SolutionIDs.length; i++) {
                         Rows[i].cells[2].className = "td_result";
-                        let SolutionID = Rows[i].cells[0].innerText;
+                        let SolutionID = SolutionIDs[i - 1];
                         if (Rows[i].cells[2].children.length == 2) {
                             Points[SolutionID] = Rows[i].cells[2].children[1].innerText;
                             Rows[i].cells[2].children[1].remove();
@@ -1163,9 +1170,9 @@ else {
                     let RefreshResult = async (SolutionID) => {
                         let CurrentRow = null;
                         let Rows = document.getElementById("result-tab").rows;
-                        for (let i = 1; i < Rows.length; i++) {
-                            if (Rows[i].cells[0].innerText == SolutionID) {
-                                CurrentRow = Rows[i];
+                        for (let i = 0; i < SolutionIDs.length; i++) {
+                            if (SolutionIDs[i] == SolutionID) {
+                                CurrentRow = Rows[i + 1];
                                 break;
                             }
                         }
@@ -2449,60 +2456,35 @@ else {
                     let CurrentElement = document.querySelector("#results > div").children[i].children[0].children[0].children[0];
                     let Temp = CurrentElement.innerText.substring(0, CurrentElement.innerText.length - 2).split("/");
                     CurrentElement.innerText = TimeToStringTime(Temp[0]) + "/" + SizeToStringSize(Temp[1]);
-                    CurrentElement = CurrentElement.parentNode.parentNode;
-                    let CopyButton = document.createElement("div"); CurrentElement.appendChild(CopyButton);
-                    CopyButton.style.display = "none";
-                    CopyButton.style.position = "absolute";
-                    CopyButton.style.fontSize = "12px";
-                    CopyButton.style.margin = "6px";
-                    CopyButton.innerText = "点此复制获取数据的语句";
-                    CurrentElement.addEventListener("mouseover", () => {
-                        let Temp = CurrentElement.children;
-                        for (let j = 0; j < Temp.length; j++) {
-                            Temp[j].style.display = "none";
+                }
+                if (document.getElementById("apply_data")) {
+                    document.getElementById("apply_data").addEventListener("click", () => {
+                        let ApplyElements = document.getElementsByClassName("data");
+                        for (let i = 0; i < ApplyElements.length; i++) {
+                            ApplyElements[i].style.display = (ApplyElements[i].style.display == "block" ? "" : "block");
                         }
-                        Temp[Temp.length - 1].style.display = "";
                     });
-                    CurrentElement.addEventListener("mouseout", () => {
-                        let Temp = CurrentElement.children;
-                        for (let j = 0; j < Temp.length; j++) {
-                            Temp[j].style.display = "";
-                        }
-                        Temp[Temp.length - 1].style.display = "none";
+                }
+                let ApplyElements = document.getElementsByClassName("data");
+                for (let i = 0; i < ApplyElements.length; i++) {
+                    ApplyElements[i].addEventListener("click", async () => {
+                        await fetch("/data_distribute_ajax_apply.php", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            body: "user_id=" + document.querySelector("#profile").innerText + "&" +
+                                "solution_id=" + SearchParams.get("sid") + "&" +
+                                "name=" + ApplyElements[i].getAttribute("name")
+                        }).then((Response) => {
+                            return Response.json();
+                        }).then((Response) => {
+                            ApplyElements[i].innerText = Response.msg;
+                            setTimeout(() => {
+                                ApplyElements[i].innerText = "申请数据";
+                            }, 1000);
+                        });
                     });
-                    CurrentElement.addEventListener("click", () => {
-                        let SolutionID = SearchParams.get("sid");
-                        let ContestID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Contest");
-                        if (ContestID == null) {
-                            let ProblemID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
-                            let ProblemName = localStorage.getItem("UserScript-Problem-" + ProblemID + "-Name");
-                            let CaseID = CurrentElement.children[1].innerText.substring(1);
-                            GM_setClipboard("高老师，能发给我" +
-                                ProblemID + "题：" + ProblemName + "，" +
-                                "提交编号" + SolutionID + "，" +
-                                "#" + CaseID + "测试点" +
-                                "的数据吗？谢谢");
-                        }
-                        else {
-                            let ContestName = localStorage.getItem("UserScript-Contest-" + ContestID + "-Name");
-                            let ContestProblemID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-PID-Contest");
-                            let ProblemID = localStorage.getItem("UserScript-Contest-" + ContestID + "-Problem-" + (ContestProblemID.charCodeAt(0) - 65) + "-PID");
-                            let ProblemName = localStorage.getItem("UserScript-Problem-" + ProblemID + "-Name");
-                            let CaseID = CurrentElement.children[1].innerText.substring(1);
-                            GM_setClipboard("高老师，能发给我" +
-                                "比赛" + ContestID + "：" +
-                                ContestName + "，" +
-                                ContestProblemID + "题(" + ProblemID + ")：" + ProblemName + "，" +
-                                "提交编号" + SolutionID + "，" +
-                                "#" + CaseID + "测试点" +
-                                "的数据吗？谢谢");
-                        }
-                        CopyButton.innerText = "已复制";
-                        setTimeout(() => {
-                            CopyButton.innerText = "点此复制获取数据的语句";
-                        }, 1000);
-                    });
-                    CurrentElement.onmouseout();
                 }
             }
         } else if (location.pathname == "/downloads.php") {
