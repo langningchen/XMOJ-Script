@@ -86,12 +86,14 @@ export class Process {
                 });
             }
 
-            if (Post["user_id"] != this.SecurityChecker.GetUsername()) {
-                await this.XMOJDatabase.Insert("short_message", {
-                    message_from: this.SecurityChecker.GetUsername(),
-                    message_to: Post["user_id"],
+            if (Post[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+                await this.XMOJDatabase.Insert("mention", {
+                    from_user_id: this.SecurityChecker.GetUsername(),
+                    to_user_id: Post[0]["user_id"],
                     content: "我在你的讨论" + Post[0]["title"] + "中回复了你",
-                    send_time: new Date().getTime()
+                    mention_url: "/discuss3/thread.php?tid=" + Data["PostID"],
+                    mention_time: new Date().getTime(),
+                    other_data: "reply-" + ReplyID
                 });
             }
 

@@ -15,7 +15,6 @@
 // @require      https://ghproxy.com/https://github.com/drudru/ansi_up/blob/v5.2.1/ansi_up.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
-// @grant        GM_notification
 // @grant        GM_setClipboard
 // @connect      www.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
@@ -160,8 +159,8 @@ let RequestAPI = (Action, Data, CallBack) => {
     let DataString = JSON.stringify(PostData);
     GM_xmlhttpRequest({
         method: "POST",
-        url: "https://www.xmoj-bbs.tech/" + Action,
-        // url: "http://127.0.0.1:8787/" + Action,
+        // url: "https://www.xmoj-bbs.tech/" + Action,
+        url: "http://127.0.0.1:8787/" + Action,
         headers: {
             "Content-Type": "application/json"
         },
@@ -572,22 +571,54 @@ else {
                 eval(Response);
             });
 
+        let ToastContainer = document.createElement("div");
+        ToastContainer.classList.add("toast-container", "position-fixed", "bottom-0", "end-0", "p-3");
+        document.body.appendChild(ToastContainer);
         addEventListener("focus", () => {
             RequestAPI("GetMentionList", {}, (Response) => {
                 if (Response.Success) {
+                    debugger
                     let MentionList = Response.Data.MentionList;
                     for (let i = 0; i < MentionList.length; i++) {
-                        GM_notification({
-                            title: "XMOJ增强脚本",
-                            text: "@" + MentionList[i].FromUserID + "：" + MentionList[i].Content + " (" + (new Date(MentionList[i].MentionTime).toLocaleString()) + ")",
-                            timeout: 5000,
-                            onclick: () => {
-                                open(MentionList[i].MentionURL, "_blank");
-                                RequestAPI("ReadMention", {
-                                    "MentionID": Number(MentionList[i].MentionID)
-                                }, () => { });
-                            }
+                        let Toast = document.createElement("div");
+                        Toast.classList.add("toast");
+                        Toast.setAttribute("role", "alert");
+                        let ToastHeader = document.createElement("div");
+                        ToastHeader.classList.add("toast-header");
+                        let ToastTitle = document.createElement("strong");
+                        ToastTitle.classList.add("me-auto");
+                        ToastTitle.innerText = MentionList[i].FromUserID;
+                        ToastHeader.appendChild(ToastTitle);
+                        let ToastTime = document.createElement("small");
+                        ToastTime.classList.add("text-body-secondary");
+                        ToastTime.innerText = new Date(MentionList[i].MentionTime).toLocaleString();
+                        ToastHeader.appendChild(ToastTime);
+                        let ToastCloseButton = document.createElement("button");
+                        ToastCloseButton.type = "button";
+                        ToastCloseButton.classList.add("btn-close");
+                        ToastCloseButton.setAttribute("data-bs-dismiss", "toast");
+                        ToastHeader.appendChild(ToastCloseButton);
+                        Toast.appendChild(ToastHeader);
+                        let ToastBody = document.createElement("div");
+                        ToastBody.classList.add("toast-body");
+                        ToastBody.innerText = MentionList[i].Content;
+                        let ToastFooter = document.createElement("div");
+                        ToastFooter.classList.add("mt-2", "pt-2", "border-top");
+                        let ToastButton = document.createElement("button");
+                        ToastButton.type = "button";
+                        ToastButton.classList.add("btn", "btn-primary", "btn-sm");
+                        ToastButton.innerText = "查看";
+                        ToastButton.addEventListener("click", () => {
+                            open(MentionList[i].MentionURL, "_blank");
+                            RequestAPI("ReadMention", {
+                                "MentionID": Number(MentionList[i].MentionID)
+                            }, () => { });
                         });
+                        ToastFooter.appendChild(ToastButton);
+                        ToastBody.appendChild(ToastFooter);
+                        Toast.appendChild(ToastBody);
+                        ToastContainer.appendChild(Toast);
+                        new bootstrap.Toast(Toast).show();
                     }
                 }
             });
@@ -970,7 +1001,7 @@ else {
             Style.innerHTML += "    color: white;";
             Style.innerHTML += "}";
         } else if (location.pathname == "/status.php") {
-            if (new URL(location.href).searchParams.get("ByUserScript") == null) {
+            if (SearchParams.get("ByUserScript") == null) {
                 document.querySelector("body > script:nth-child(5)").remove();
                 if (UtilityEnabled("NewBootstrap")) {
                     document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
@@ -1490,7 +1521,7 @@ else {
             if (document.querySelector("#rank") == null) {
                 document.querySelector("body > div > div.mt-3").innerHTML = "<center><h3>比赛排名</h3><a></a><table id=\"rank\"></table>";
             }
-            if (new URL(location.href).searchParams.get("ByUserScript") == null) {
+            if (SearchParams.get("ByUserScript") == null) {
                 if (document.querySelector("body > div > div.mt-3 > center > h3").innerText == "比赛排名") {
                     document.querySelector("#rank").innerText = "比赛暂时还没有排名";
                 }
@@ -2003,7 +2034,7 @@ else {
                 }
             });
         } else if (location.pathname == "/modifypage.php") {
-            if (new URL(location.href).searchParams.get("ByUserScript") != null) {
+            if (SearchParams.get("ByUserScript") != null) {
                 document.querySelector("body > div > div.mt-3").innerHTML = "";
                 await fetch("https://web.xmoj-bbs.tech/Update.json", { cache: "no-cache" })
                     .then((Response) => {
