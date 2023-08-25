@@ -16,8 +16,8 @@ if (LastJSONVersion.split(".")[2] != LastJSVersion.split(".")[2]) {
     console.log("Update.json: " + LastJSONVersion.split(".")[2]);
     process.exit(1);
 }
-var LastVersion = LastJSONVersion.split(".");
-console.log("Last version: " + LastJSONVersion);
+var LastVersion = LastJSVersion.split(".");
+console.log("Last version: " + LastJSVersion);
 var LatestVersion = LastVersion[0] + "." + LastVersion[1] + "." + (parseInt(LastVersion[2]) + 1);
 console.log("Latest version: " + LatestVersion);
 execSync("echo version=" + LatestVersion + " >> $GITHUB_OUTPUT");
