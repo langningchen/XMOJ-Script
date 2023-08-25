@@ -578,11 +578,11 @@ else {
                     let MentionList = Response.Data.MentionList;
                     for (let i = 0; i < MentionList.length; i++) {
                         GM_notification({
-                            title: "XMOJ",
-                            text: "@" + MentionList[i].UserID + " 在讨论 " + MentionList[i].Title + " 中提及了你，点击此处查看",
-                            timeout: 10000,
+                            title: "XMOJ增强脚本",
+                            text: "@" + MentionList[i].FromUserID + "：" + MentionList[i].Content + " (" + (new Date(MentionList[i].MentionTime).toLocaleString()) + ")",
+                            timeout: 5000,
                             onclick: () => {
-                                open("http://www.xmoj.tech/discuss3/thread.php?tid=" + MentionList[i].PostID + "&page=" + MentionList[i].Page, "_blank");
+                                open(MentionList[i].MentionURL, "_blank");
                                 RequestAPI("ReadMention", {
                                     "MentionID": Number(MentionList[i].MentionID)
                                 }, () => { });
@@ -591,23 +591,6 @@ else {
                     }
                 }
             });
-            if (location.pathname != "/mail.php") {
-                RequestAPI("GetUnreadList", {}, (Response) => {
-                    if (Response.Success) {
-                        let UnreadList = Response.Data.UnreadList;
-                        for (let i = 0; i < UnreadList.length; i++) {
-                            GM_notification({
-                                title: "XMOJ",
-                                text: "@" + UnreadList[i].OtherUser + " 给你发了一封短消息，点击此处查看",
-                                timeout: 10000,
-                                onclick: () => {
-                                    open("http://www.xmoj.tech/mail.php?other=" + UnreadList[i].OtherUser, "_blank");
-                                }
-                            });
-                        }
-                    }
-                });
-            }
         });
 
         if (location.pathname == "/index.php" || location.pathname == "/") {
@@ -2762,7 +2745,7 @@ else {
                                 Row.innerHTML = `<td><a href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a>` +
                                     (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`) + `</td>
                                     <td>${Data[i].LastsMessage}</td>
-                                    <td>${Data[i].SendTime}</td>`;
+                                    <td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
                             }
                         }
                         else {
@@ -2854,7 +2837,7 @@ else {
                                 }
                                 Row.innerHTML = `<td>${Data[i].FromUser}</td>
                                     <td>${Data[i].Content}</td>
-                                    <td>${Data[i].SendTime}</td>
+                                    <td>${new Date(Data[i].SendTime).toLocaleString()}</td>
                                     <td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
                             }
                         }

@@ -18,12 +18,16 @@ CREATE TABLE bbs_reply (
     reply_time TIMESTAMP NOT NULL
 );
 
-DROP TABLE IF EXISTS bbs_mention;
+DROP TABLE IF EXISTS mention;
 
-CREATE TABLE bbs_mention (
+CREATE TABLE mention (
     mention_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    reply_id INTEGER NOT NULL,
-    user_id TEXT NOT NULL
+    from_user_id TEXT NOT NULL,
+    to_user_id TEXT NOT NULL,
+    content TEXT NOT NULL,
+    mention_url TEXT NOT NULL,
+    mention_time TIMESTAMP NOT NULL,
+    other_data TEXT NOT NULL
 );
 
 DROP TABLE IF EXISTS short_message;
