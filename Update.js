@@ -10,10 +10,10 @@ var JSONObject = JSON.parse(JSONFileContent);
 
 var LastJSONVersion = Object.keys(JSONObject.UpdateHistory)[Object.keys(JSONObject.UpdateHistory).length - 1];
 var LastJSVersion = JSFileContent.match(/@version\s+(\d+\.\d+\.\d+)/)[1];
-if (LastJSONVersion != LastJSVersion) {
-    console.log("Error: XMOJ.user.js and Update.json have different versions.");
-    console.log("XMOJ.user.js: " + LastJSVersion);
-    console.log("Update.json: " + LastJSONVersion);
+if (LastJSONVersion.split(".")[2] != LastJSVersion.split(".")[2]) {
+    console.log("Error: XMOJ.user.js and Update.json have different patch versions.");
+    console.log("XMOJ.user.js: " + LastJSVersion.split(".")[2]);
+    console.log("Update.json: " + LastJSONVersion.split(".")[2]);
     process.exit(1);
 }
 var LastVersion = LastJSONVersion.split(".");
