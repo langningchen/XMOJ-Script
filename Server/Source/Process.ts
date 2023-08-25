@@ -43,7 +43,7 @@ export class Process {
             }));
             ThrowErrorIfFailed(await this.SecurityChecker.VerifyCaptcha(Data["CaptchaSecretKey"]));
 
-            let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", ["title"], { post_id: Data["PostID"] }));
+            let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", ["title", "user_id"], { post_id: Data["PostID"] }));
             if (Post.toString() == "") {
                 return new Result(false, "未找到讨论");
             }
@@ -83,6 +83,15 @@ export class Process {
                     mention_url: "/discuss3/thread.php?tid=" + Data["PostID"],
                     mention_time: new Date().getTime(),
                     other_data: "reply-" + ReplyID
+                });
+            }
+
+            if (Post["user_id"] != this.SecurityChecker.GetUsername()) {
+                await this.XMOJDatabase.Insert("short_message", {
+                    message_from: this.SecurityChecker.GetUsername(),
+                    message_to: Post["user_id"],
+                    content: "我在你的讨论" + Post[0]["title"] + "中回复了你",
+                    send_time: new Date().getTime()
                 });
             }
 
