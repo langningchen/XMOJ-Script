@@ -185,6 +185,7 @@ if (location.host != "www.xmoj.tech") {
     location.host = "www.xmoj.tech";
 }
 else {
+    document.body.classList.add("placeholder-glow");
     if (document.querySelector("#navbar") != null) {
         if (document.querySelector("body > div > div.jumbotron") != null) {
             document.querySelector("body > div > div.jumbotron").className = "mt-3";
