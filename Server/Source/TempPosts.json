@@ -1,0 +1,524 @@
+{
+    "Posts": [
+        {
+            "post_id": 201,
+            "user_id": "lianzhongzhe",
+            "problem_id": 0,
+            "title": "考明",
+            "post_time": "2023-08-13 06:04:12"
+        },
+        {
+            "post_id": 207,
+            "user_id": "lianzhongzhe",
+            "problem_id": 4727,
+            "title": "线段树求调",
+            "post_time": "2023-08-13 23:21:54"
+        },
+        {
+            "post_id": 216,
+            "user_id": "admin",
+            "problem_id": 0,
+            "title": "[官方] !!!系统重要通知!!!",
+            "post_time": "Now"
+        },
+        {
+            "post_id": 220,
+            "user_id": "leiwenda",
+            "problem_id": 0,
+            "title": "test",
+            "post_time": "2023-08-22 08:18:29"
+        },
+        {
+            "post_id": 225,
+            "user_id": "zhuchenrui2",
+            "problem_id": 0,
+            "title": "关于讨论显示顺序",
+            "post_time": "2023-08-22 10:30:57"
+        },
+        {
+            "post_id": 228,
+            "user_id": "leiwenda",
+            "problem_id": 0,
+            "title": "已找到bug*1",
+            "post_time": "2023-08-23 05:45:52"
+        },
+        {
+            "post_id": 229,
+            "user_id": "admin",
+            "problem_id": 0,
+            "title": "[官方] !!!关于XMOJ讨论区管理的公告!!!",
+            "post_time": "Now"
+        },
+        {
+            "post_id": 230,
+            "user_id": "admin",
+            "problem_id": 0,
+            "title": "[官方] 小黑屋",
+            "post_time": "Now"
+        },
+        {
+            "post_id": 232,
+            "user_id": "chenlangning",
+            "problem_id": 0,
+            "title": "[官方] 关于先前讨论被删除的公告",
+            "post_time": "2023-08-24 07:38:19"
+        }
+    ],
+    "Replies": [
+        {
+            "reply_id": 489,
+            "post_id": 201,
+            "user_id": "lianzhongzhe",
+            "content": "qp",
+            "reply_time": "2023-08-13 06:04:12"
+        },
+        {
+            "reply_id": 491,
+            "post_id": 201,
+            "user_id": "leiwenda",
+            "content": "qp",
+            "reply_time": "2023-08-13 07:45:53"
+        },
+        {
+            "reply_id": 492,
+            "post_id": 201,
+            "user_id": "chenlangning",
+            "content": "qp",
+            "reply_time": "2023-08-13 08:52:18"
+        },
+        {
+            "reply_id": 494,
+            "post_id": 201,
+            "user_id": "shanwenxiao",
+            "content": "qp",
+            "reply_time": "2023-08-13 21:04:36"
+        },
+        {
+            "reply_id": 507,
+            "post_id": 207,
+            "user_id": "lianzhongzhe",
+            "content": "![](https://github.com/langningchen/XMOJ-Script/assets/122505030/9262c467-0b91-414a-ba76-0ee986aa03ba) ![](https://github.com/langningchen/XMOJ-Script/assets/122505030/5e644d06-dc1f-4d23-a618-a2c001e1c9eb)",
+            "reply_time": "2023-08-13 23:22:28"
+        },
+        {
+            "reply_id": 508,
+            "post_id": 207,
+            "user_id": "chenlangning",
+            "content": " @lianzhongzhe 望丰展，使MD",
+            "reply_time": "2023-08-14 00:19:07"
+        },
+        {
+            "reply_id": 509,
+            "post_id": 207,
+            "user_id": "chenlangning",
+            "content": "请用代码框包裹您的代码\n```cpp\n#include &lt;bits/stdc++.h&gt;\nusing namespace std;\nint main()\n{\n    cout &lt;&lt; \"您的代码在此\" &lt;&lt; endl;\n    return 0;\n}\n```\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 8/23/2023, 6:31:07 AM 编辑 </span>",
+            "reply_time": "2023-08-14 00:19:56"
+        },
+        {
+            "reply_id": 510,
+            "post_id": 210,
+            "user_id": "chenlangning",
+            "content": "测试讨论删除功能",
+            "reply_time": "2023-08-14 00:25:14"
+        },
+        {
+            "reply_id": 531,
+            "post_id": 213,
+            "user_id": "leiwenda",
+            "content": "有 $M$ 行文本和 $N$ 个字符串，你需要用这些字符串拼出这个文本（每个字符串可以使用多次），一个字符串内不可以换行。 每个字符串有一个长度 $l[i]$ 和一个系数 $c[i]$，每行字符串的长度和都必须刚好为 $K$。 每行有一个文本的要求系数 $E[i]$ 为大写字母（这意味着最多有 $26$ 个不同的 $E[i]$），$E[i]$ 相同的行的末尾字符串的系数必须相同。 问符合上述要求的文本有几个。 ~~不知道几个人能看懂~~",
+            "reply_time": "2023-08-14 01:22:27"
+        },
+        {
+            "reply_id": 533,
+            "post_id": 213,
+            "user_id": "leiwenda",
+            "content": "举个栗子： 文本的要求为 $3$ 行，每行 $10$ 个字，共有 $3$ 个字符串，分别为：${l[i]=3,c[i]=1},{l[i]=3,c[i]=2},{l[i]=4,c[i]=1}$。 每行的要求系数 $E[i]$ 为 $B,A,B$ 。 那么这要求第一行和最后一行末尾的系数相同，下面是一种符合条件的文本（其中 $1,2,3$ 表示第 $1,2,3$ 个字符串） 第一行：$131$ 第二行：$132$ 第三行：$321$。",
+            "reply_time": "2023-08-14 01:28:43"
+        },
+        {
+            "reply_id": 535,
+            "post_id": 213,
+            "user_id": "wangminghao",
+            "content": " @leiwenda ?",
+            "reply_time": "2023-08-14 01:36:26"
+        },
+        {
+            "reply_id": 536,
+            "post_id": 213,
+            "user_id": "shanwenxiao",
+            "content": "emm你在考试的时候发这个干嘛",
+            "reply_time": "2023-08-14 01:39:28"
+        },
+        {
+            "reply_id": 537,
+            "post_id": 213,
+            "user_id": "leiwenda",
+            "content": " @shanwenxiao 我给自己发的（ 你考试时候来看这个干嘛",
+            "reply_time": "2023-08-14 01:41:02"
+        },
+        {
+            "reply_id": 538,
+            "post_id": 213,
+            "user_id": "chenlangning",
+            "content": " @leiwenda 管理疏忽，未关注讨论区，正在前往后台删除讨论 ~~sqlm~~",
+            "reply_time": "2023-08-14 01:45:02"
+        },
+        {
+            "reply_id": 539,
+            "post_id": 213,
+            "user_id": "chenlangning",
+            "content": " @chenlangning @leiwenda @shanwenxiao @wangminghao @lianzhongzhe @zhuchenrui2 请所有人注意：如果再有比赛时发与题目答案、解题思路有关的讨论的情况，管理员将会在比赛时禁用讨论以及短消息功能",
+            "reply_time": "2023-08-14 01:47:05"
+        },
+        {
+            "reply_id": 540,
+            "post_id": 213,
+            "user_id": "leiwenda",
+            "content": " @chenlangning 你at自己干嘛（（（",
+            "reply_time": "2023-08-14 01:53:24"
+        },
+        {
+            "reply_id": 546,
+            "post_id": 215,
+            "user_id": "zhuchenrui2",
+            "content": "![](https://cdn.luogu.com.cn/upload/image_hosting/rhrdx74s.png)",
+            "reply_time": "2023-08-14 10:18:57"
+        },
+        {
+            "reply_id": 547,
+            "post_id": 215,
+            "user_id": "zhuchenrui2",
+            "content": "https://github.com/langningchen/XMOJ-Script/pull/32",
+            "reply_time": "2023-08-14 10:33:16"
+        },
+        {
+            "reply_id": 548,
+            "post_id": 215,
+            "user_id": "chenlangning",
+            "content": " @zhuchenrui2 ![](//图.tk/gc!25)",
+            "reply_time": "2023-08-15 00:10:50"
+        },
+        {
+            "reply_id": 550,
+            "post_id": 201,
+            "user_id": "hujiaqi",
+            "content": "qpzc",
+            "reply_time": "2023-08-20 22:54:15"
+        },
+        {
+            "reply_id": 551,
+            "post_id": 215,
+            "user_id": "chenlangning",
+            "content": " @shanwenxiao @leiwenda @lianzhongzhe @hujiaqi 欢迎对新功能提出反馈！",
+            "reply_time": "2023-08-21 01:15:12"
+        },
+        {
+            "reply_id": 552,
+            "post_id": 215,
+            "user_id": "hujiaqi",
+            "content": "qpzc",
+            "reply_time": "2023-08-21 01:17:43"
+        },
+        {
+            "reply_id": 553,
+            "post_id": 215,
+            "user_id": "shanwenxiao",
+            "content": "玛卡巴卡我就看到了疑似抄袭当年代码",
+            "reply_time": "2023-08-21 11:55:40"
+        },
+        {
+            "reply_id": 555,
+            "post_id": 215,
+            "user_id": "shanwenxiao",
+            "content": "怎么定义rating的。我觉得有必要做一个rating的wiki",
+            "reply_time": "2023-08-21 12:12:25"
+        },
+        {
+            "reply_id": 556,
+            "post_id": 215,
+            "user_id": "chenlangning",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=shanwenxiao\">@shanwenxiao</a>  详见Github源代码\n",
+            "reply_time": "2023-08-22 07:40:15"
+        },
+        {
+            "reply_id": 557,
+            "post_id": 216,
+            "user_id": "chenlangning",
+            "content": "### 重要通知\n服务器更新，所以此旧版本讨论内容被清空，内容已全部转移至新服务器，请更新用户脚本访问新服务器与先前讨论！关于服务器迁移的讨论请见[此讨论](https://github.com/langningchen/XMOJ-Script/discussions/38)！\n\n----------\n\n**请注意 ~因为开发者手误，~ 新版服务器中的旧讨论会导致换行消失、@提醒链接无法访问等问题，如果找到其他问题，欢迎在此讨论下留言！**\n此讨论禁止无意义内容，包括但不限于`qp`，`qpzc`等",
+            "reply_time": "2023-08-22 07:46:45"
+        },
+        {
+            "reply_id": 569,
+            "post_id": 220,
+            "user_id": "leiwenda",
+            "content": "@chenlangning BUG:$C_n^m$",
+            "reply_time": "2023-08-22 08:18:30"
+        },
+        {
+            "reply_id": 570,
+            "post_id": 220,
+            "user_id": "leiwenda",
+            "content": "我写的是\n```\n$C_n^m$\n```",
+            "reply_time": "2023-08-22 08:18:56"
+        },
+        {
+            "reply_id": 574,
+            "post_id": 220,
+            "user_id": "chenlangning",
+            "content": "好的，知道了，Github Issue见",
+            "reply_time": "2023-08-22 08:20:29"
+        },
+        {
+            "reply_id": 575,
+            "post_id": 220,
+            "user_id": "chenlangning",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=leiwenda\">@leiwenda</a>  ",
+            "reply_time": "2023-08-22 08:20:37"
+        },
+        {
+            "reply_id": 610,
+            "post_id": 225,
+            "user_id": "zhuchenrui2",
+            "content": "能正序显示吗, 和洛谷一样",
+            "reply_time": "2023-08-22 10:30:57"
+        },
+        {
+            "reply_id": 611,
+            "post_id": 225,
+            "user_id": "zhuchenrui2",
+            "content": "done",
+            "reply_time": "2023-08-22 10:31:04"
+        },
+        {
+            "reply_id": 616,
+            "post_id": 225,
+            "user_id": "chenlangning",
+            "content": "谢谢！我本来也想这样的！不过我再帮你改一下，我觉得你改的可能有问题，不止要改`GetPost`，还要改`GetMentionList`\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 8/23/2023, 4:20:43 AM 编辑 </span>",
+            "reply_time": "2023-08-23 01:16:04"
+        },
+        {
+            "reply_id": 618,
+            "post_id": 225,
+            "user_id": "chenlangning",
+            "content": "我改好了 <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=zhuchenrui2\">@zhuchenrui2</a>  准备发布了，你确认一下是否还有其他改动，如果10min无回复，自动覆盖发布",
+            "reply_time": "2023-08-23 01:23:55"
+        },
+        {
+            "reply_id": 619,
+            "post_id": 225,
+            "user_id": "zhuchenrui2",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=chenlangning\">@chenlangning</a>  ~为什么你凌晨发的~ $ $<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 8/23/2023, 2:39:38 AM 编辑 </span>",
+            "reply_time": "2023-08-23 02:07:07"
+        },
+        {
+            "reply_id": 625,
+            "post_id": 225,
+            "user_id": "chenlangning",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=zhuchenrui2\">@zhuchenrui2</a>  ~为什么你也凌晨发~\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 8/23/2023, 6:14:11 AM 编辑 </span>",
+            "reply_time": "2023-08-23 02:21:10"
+        },
+        {
+            "reply_id": 626,
+            "post_id": 225,
+            "user_id": "zhuchenrui2",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=chenlangning\">@chenlangning</a>  az, 我fix一下\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 8/23/2023, 4:20:55 AM 编辑 </span>",
+            "reply_time": "2023-08-23 02:22:27"
+        },
+        {
+            "reply_id": 627,
+            "post_id": 225,
+            "user_id": "chenlangning",
+            "content": "我发布了新版本 <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=zhuchenrui2\">@zhuchenrui2</a> ",
+            "reply_time": "2023-08-23 02:23:03"
+        },
+        {
+            "reply_id": 628,
+            "post_id": 225,
+            "user_id": "chenlangning",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=zhuchenrui2\">@zhuchenrui2</a>  我来修吧，你提一个Issue就行",
+            "reply_time": "2023-08-23 02:24:01"
+        },
+        {
+            "reply_id": 629,
+            "post_id": 225,
+            "user_id": "zhuchenrui2",
+            "content": "adminUserlist 加了 <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=admin\">@admin</a>  (\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 8/24/2023, 3:40:24 AM 编辑</span>",
+            "reply_time": "2023-08-23 02:27:21"
+        },
+        {
+            "reply_id": 631,
+            "post_id": 225,
+            "user_id": "chenlangning",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=zhuchenrui2\">@zhuchenrui2</a>  好吧",
+            "reply_time": "2023-08-23 02:45:26"
+        },
+        {
+            "reply_id": 634,
+            "post_id": 225,
+            "user_id": "chenlangning",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=zhuchenrui2\">@zhuchenrui2</a> \n为什么我要手动验证验证码了……\n![](https://cdn.luogu.com.cn/upload/image_hosting/rt9t8n5o.png)",
+            "reply_time": "2023-08-23 02:48:35"
+        },
+        {
+            "reply_id": 635,
+            "post_id": 225,
+            "user_id": "chenlangning",
+            "content": "现在好了",
+            "reply_time": "2023-08-23 02:49:32"
+        },
+        {
+            "reply_id": 638,
+            "post_id": 228,
+            "user_id": "leiwenda",
+            "content": "没登录时系统有些功能会加载不出来（比如讨论）\n\n他就会显示一个Session Invalid 然后下边是加载样子的页面",
+            "reply_time": "2023-08-23 05:45:53"
+        },
+        {
+            "reply_id": 639,
+            "post_id": 228,
+            "user_id": "chenlangning",
+            "content": "对的，当然了",
+            "reply_time": "2023-08-23 06:12:37"
+        },
+        {
+            "reply_id": 640,
+            "post_id": 228,
+            "user_id": "chenlangning",
+            "content": "`Session`是你的登陆凭证，如果没有登陆凭证，那么就告诉你`Session Invalid`，代表没有登录",
+            "reply_time": "2023-08-23 06:13:08"
+        },
+        {
+            "reply_id": 641,
+            "post_id": 228,
+            "user_id": "chenlangning",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=leiwenda\">@leiwenda</a>  这个讨论不能允许没有登录的人查看，不过你可以提一个[Issue](https://github.com/langningchen/XMOJ-Script/issues/new)，我把它变成自动跳转到登录界面",
+            "reply_time": "2023-08-23 06:16:08"
+        },
+        {
+            "reply_id": 642,
+            "post_id": 228,
+            "user_id": "leiwenda",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=chenlangning\">@chenlangning</a>  但是我登陆了有时候也会这样（bug！）",
+            "reply_time": "2023-08-23 06:30:56"
+        },
+        {
+            "reply_id": 643,
+            "post_id": 228,
+            "user_id": "chenlangning",
+            "content": "确实，我也发现了，但是我不知道为什么，因为这有随机性，所以没法复现\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 8/23/2023, 6:34:34 AM 编辑 </span>",
+            "reply_time": "2023-08-23 06:32:25"
+        },
+        {
+            "reply_id": 644,
+            "post_id": 228,
+            "user_id": "chenlangning",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=leiwenda\">@leiwenda</a>  我认为应该是服务器连接XMOJ服务器不稳定造成的",
+            "reply_time": "2023-08-23 06:33:37"
+        },
+        {
+            "reply_id": 645,
+            "post_id": 228,
+            "user_id": "chenlangning",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=zhuchenrui2\">@zhuchenrui2</a>  来围观，看看有没有解决方案\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 8/23/2023, 6:34:08 AM 编辑 </span>",
+            "reply_time": "2023-08-23 06:34:02"
+        },
+        {
+            "reply_id": 646,
+            "post_id": 228,
+            "user_id": "zhuchenrui2",
+            "content": "https://github.com/langningchen/XMOJ-Script/issues/54",
+            "reply_time": "2023-08-23 06:56:49"
+        },
+        {
+            "reply_id": 647,
+            "post_id": 229,
+            "user_id": "chenlangning",
+            "content": "根据**《互联网电子公告服务管理规定》中第九条、第十三条**规定\n```\n第九条　任何人不得在电子公告服务系统中发布含有下列内容之一的信息：\n(一)反对宪法所确定的基本原则的；\n(二)危害国家安全，泄露国家秘密，颠覆国家政权，破坏国家统一的；\n(三)损害国家荣誉和利益的；\n(四)煽动民族仇恨、民族歧视，破坏民族团结的；\n(五)破坏国家宗教政策，宣扬邪教和封建迷信的；\n(六)散布谣言，扰乱社会秩序，破坏社会稳定的；\n(七)散布淫秽、色情、赌博、暴力、凶杀、恐怖或者教唆犯罪的；\n(八)侮辱或者诽谤他人，侵害他人合法权益的；\n(九)含有法律、行政法规禁止的其他内容的。\n\n第十三条　电子公告服务提供者发现其电子公告服务系统中出现明显属于本办法第九条所列的信息内容之一的，应当立即删除，保存有关记录，并向国家有关机关和xmoj报告。\n```\n请大家根据法律法规规范发言！\n\n----------\n\n[中华人民共和国信息产业部令 第3号 《互联网电子公告服务管理规定》](https://www.gov.cn/gongbao/content/2001/content_61064.htm)\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 8/23/2023, 9:05:44 AM 编辑 </span>",
+            "reply_time": "2023-08-23 07:15:42"
+        },
+        {
+            "reply_id": 650,
+            "post_id": 220,
+            "user_id": "chenlangning",
+            "content": "Test: \n$$\\max(1, 2)$$",
+            "reply_time": "2023-08-23 09:08:30"
+        },
+        {
+            "reply_id": 652,
+            "post_id": 230,
+            "user_id": "zhuchenrui2",
+            "content": "以下 ip 由于攻击本站被永久封禁:\n![](https://cdn.luogu.com.cn/upload/image_hosting/2n370qv3.png)",
+            "reply_time": "2023-08-23 09:55:41"
+        },
+        {
+            "reply_id": 653,
+            "post_id": 230,
+            "user_id": "shanwenxiao",
+            "content": "支持",
+            "reply_time": "2023-08-23 17:04:27"
+        },
+        {
+            "reply_id": 654,
+            "post_id": 230,
+            "user_id": "chenlangning",
+            "content": "qpzc",
+            "reply_time": "2023-08-24 02:33:48"
+        },
+        {
+            "reply_id": 655,
+            "post_id": 228,
+            "user_id": "chenlangning",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=leiwenda\">@leiwenda</a>  昨天就解决了忘说了，等发布",
+            "reply_time": "2023-08-24 02:39:00"
+        },
+        {
+            "reply_id": 656,
+            "post_id": 220,
+            "user_id": "chenlangning",
+            "content": "解决了  <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=leiwenda\">@leiwenda</a> ",
+            "reply_time": "2023-08-24 03:00:04"
+        },
+        {
+            "reply_id": 657,
+            "post_id": 229,
+            "user_id": "chenlangning",
+            "content": "### XMOJ讨论区用户服务协议\n\n欢迎阅读《XMOJ讨论区用户服务协议》(以下简称“本协议”)。本协议阐述之条款和条件适用于您（以下简称“用户”）使用XMOJ讨论区的各种产品和服务。\n\n#### 1. 服务协议的确认\n\n1.1 XMOJ增强脚本开发组同意按照本协议的规定及其不时发布的操作规则提供基于互联网移动网的XMOJ讨论区、XMOJ增强脚本开发组官方网站（web.xmoj-bbs.tech）等相关服务（以下简称“XMOJ增强脚本开发组服务”）。\n\n1.2 XMOJ增强脚本开发组服务使用人（以下简称“用户”）应当基于了解本协议全部内容、在独立思考的基础上认可、同意本协议的全部条款并按照页面上的提示完成全部的注册程序，用户的注册、登录、使用等行为将视为完全接受本协议及XMOJ增强脚本开发组公示的各项规则、规范。\n\n1.3 XMOJ增强脚本开发组享有对XMOJ增强脚本开发组XMOJ讨论区、XMOJ增强脚本开发组官方网站上一切活动的监督、提示、检查、纠正等权利。\n\n#### 2. 服务内容\n\n2.1 XMOJ增强脚本开发组服务的具体内容由XMOJ增强脚本开发组根据实际情况提供，包括但不限于授权用户通过其帐号上传、搜索并向互相关联的用户推送相关信息、授权用户对其进行收录、分享等，XMOJ增强脚本开发组有权对其提供的服务或产品形态进行升级或其他调整，均以XMOJ讨论区网站内容更新的方式通知用户，不单独通知用户。\n\n2.2 XMOJ增强脚本开发组提供的XMOJ增强脚本开发组服务中可能包括广告，用户同意在使用过程中显示XMOJ增强脚本开发组和第三方供应商、合作伙伴提供的广告。\n\n2.3 XMOJ增强脚本开发组仅提供与XMOJ增强脚本开发组服务相关的技术服务等，除此之外与相关网络服务有关的设备（如个人电脑、手机、及其他与接入互联网或移动网有关的装置）及所需费用（如为接入互联网而支付的电话费及上网费、为使用移动网而支付的手机费）均应由用户自行负担。\n\n#### 3. 服务变更、中断或终止\n\n3.1 鉴于网络服务的特殊性（包括但不限于不可抗力、网络稳定性、系统稳定性、技术故障、用户所在位置、用户关机、用户手机病毒或恶意的网络攻击行为及其他任何技术、互联网络、通信线路、内容侵权等原因），用户同意，XMOJ增强脚本开发组有权随时中断或终止部分或全部XMOJ增强脚本开发组服务，XMOJ增强脚本开发组将尽可能及时以合理方式通知用户，并尽可能在第一时间对此进行修复。但对因此导致用户不能发送和接受阅读信息、或接发错信息，XMOJ增强脚本开发组不承担任何责任，用户须承担以上风险。\n\n3.2 用户理解，XMOJ增强脚本开发组需要定期或不定期地对提供XMOJ增强脚本开发组服务的平台或相关设备进行检修和维护，如因此类情况而造成服务在合理期间内的中断，XMOJ增强脚本开发组将尽可能事先通知，但无需为此承担任何责任。\n\n3.3 用户提供的个人资料不真实、用户违反法律法规国家政策或本协议规定的使用规则，XMOJ增强脚本开发组有权随时中断或终止向用户提供本协议项下的XMOJ增强脚本开发组服务，而无需对用户或任何第三方承担任何责任。\n\n#### 4. 使用规则\n\n4.1 用户在申请注册XMOJ增强脚本开发组服务时，必须向XMOJ增强脚本开发组提供准确的主体资料（用户为个人时，包括姓名、性别、出生年月、电话、邮箱等；用户为单位时，包括名称、注册地址、注册号等），如主体资料有任何变动，必须及时更新。因用户提供资料的真实性问题导致协议双方或第三方的任何损失均由用户承担。\n\n4.2 用户注册成功后，将获得一个XMOJ增强脚本开发组帐号及由用户设置的密码，该用户帐号和密码由用户负责保管；用户应当对该用户帐号所有行为负相关法律责任。\n\n用户在使用XMOJ增强脚本开发组服务过程中，必须遵循以下原则:\n\n(1) 遵守中国有关的法律和法规；\n\n(2) 不得为任何非法目的而使用XMOJ增强脚本开发组服务；\n\n(3) 遵守所有与网络服务有关的网络协议、规定和程序；\n\n(4) 不得利用XMOJ增强脚本开发组服务系统进行任何可能对互联网的正常运转造成不利影响的行为；\n\n(5) 不得利用XMOJ增强脚本开发组网络服务系统进行任何不利于XMOJ增强脚本开发组的行为。\n\n4.3 用户不得使用XMOJ增强脚本开发组服务制作、上传、发送、传播敏感信息和违反国家法律制度的信息，包括但不限于下列信息:\n\n(1) 反对宪法所确定的基本原则的；\n\n(2) 危害国家安全，泄露国家秘密，颠覆国家政权，破坏国家统一的；\n\n(3) 损害国家荣誉和利益的；\n\n(4) 煽动民族仇恨、民族歧视，破坏民族团结的；\n\n(5) 破坏国家宗教政策，宣扬邪教和封建迷信的；\n\n(6) 散布谣言，扰乱社会秩序，破坏社会稳定的；\n\n(7) 散布淫秽、色情、赌博、暴力、凶杀、恐怖或者教唆犯罪的；\n\n(8) 侮辱或者诽谤他人，侵害他人合法权益的；\n\n(9) 含有法律、行政法规禁止的其他内容的。\n\n4.4 用户同意在任何情况下不使用其他用户的帐号或密码。在您怀疑他人在使用您的帐号或密码时，您同意立即通知XMOJ增强脚本开发组。\n\n4.5 用户有权更改、删除在XMOJ增强脚本开发组服务中的个人资料、注册信息及传送内容等，但删除有关信息的同时也会删除任何您储存在系统中的文字和图片。用户需承担该风险。\n\n4.6 如因用户违反本协议中的任何条款，XMOJ增强脚本开发组有权依据本协议终止对违约用户XMOJ增强脚本开发组帐号提供服务。\n\n4.7 如用户注册XMOJ增强脚本开发组帐号后长期不登录该帐号，XMOJ增强脚本开发组有权回收该帐号，以免造成资源浪费，由此带来问题均由用户自行承担。\n\n#### 5. 知识产权\n\n5.1 XMOJ增强脚本开发组提供XMOJ增强脚本开发组服务中所包含的任何文本、图片、标识、音频、视频资料均受著作权、商标权、专利权及其他财产权法律的保护。\n\n5.2 未经相关权利人和XMOJ增强脚本开发组的同意，上述资料均不得以任何方式被展示于其他任何第三方平台或被用于其他任何商业目的；用户不得擅自复制、修改、编纂上述内容、或创造与内容有关的衍生产品。\n\n#### 6. 隐私保护\n\n6.1 本协议所指的“隐私”包括《电信和互联网用户个人信息保护规定》第4条规定的用户个人信息的内容以及未来不时制定或修订的法律法规中明确规定的隐私应包括的内容。\n\n6.2 保护用户隐私和个人数据是XMOJ增强脚本开发组的一项基本制度，XMOJ增强脚本开发组将采取各种制度、安全技术和程序等措施来保护用户隐私和个人数据不被未经授权的访问、使用或泄漏，并保证不会将单个用户的注册资料及用户在使用XMOJ增强脚本开发组服务时存储在XMOJ增强脚本开发组的非公开内容向除合作单位以外的第三方公开或用于任何非法的用途，但下列情况除外：\n\n(1) 事先获得用户的明确授权；\n\n(2) 根据有关法律法规的要求；\n\n(3) 按照相关政府主管部门的要求；\n\n(4) 为维护社会公众的利益；\n\n(5) 用户侵害本协议项下XMOJ增强脚本开发组的合法权益的情况下而为维护XMOJ增强脚本开发组的合法权益所必须。\n\n6.3 用户在注册XMOJ增强脚本开发组XMOJ讨论区帐号或使用XMOJ增强脚本开发组XMOJ讨论区服务的过程中，需要提供一些必要的信息，例如：姓名、电话、邮箱、性别、出生年月、名称、注册地址、注册号等。为向用户提供帐号注册服务或进行用户身份识别，需要用户填写手机号码；部分功能需要用户授权使用用户的相机或相册；部分功能需要用户授权访问用户的手机通讯录等。若用户不授权或提供的信息不完整，则无法使用本服务或在使用过程中受到限制。用户授权提供的信息，XMOJ增强脚本开发组承诺将采取措施保护用户的个人信息安全。\n\n6.4 为了向用户提供更好的用户体验和提高XMOJ增强脚本开发组XMOJ讨论区的服务质量，XMOJ增强脚本开发组将可能会收集使用或向第三方提供用户的非个人隐私信息。XMOJ增强脚本开发组将对该第三方使用用户个人数据的行为进行监督和管理，尽一切可能努力保护用户个人信息的安全。\n\n#### 7. 免责声明\n\n7.1 用户在使用XMOJ增强脚本开发组服务的过程中应遵守国家法律法规及政策规定，对其所制作、上传、发送、传播的信息和内容承担任何法律责任，与XMOJ增强脚本开发组无关。\n\n7.2 XMOJ增强脚本开发组XMOJ讨论区在其页面上向用户显示、推送的任何信息和内容如系XMOJ增强脚本开发组利用技术手段根据用户指令从互联网任何第三方网站搜索、定位、匹配后推荐给用户而非XMOJ增强脚本开发组单方制作的，则该显示、推送的信息和内容并不代表XMOJ增强脚本开发组及XMOJ增强脚本开发组XMOJ讨论区的观点，XMOJ增强脚本开发组并不对上述信息的准确性和正确性负责。\n\n7.3XMOJ增强脚本开发组提供XMOJ增强脚本开发组XMOJ讨论区服务中所包含的任何文本、图片、标识、音频、视频资料均为教学用途，不涉及任何实体物品的商业活动。\n\n7.4XMOJ增强脚本开发组XMOJ讨论区在其页面上向用户显示、推送的任何信息和内容如存在侵权任何第三方知识产权的嫌疑，权利人和相关利害关系人应当向XMOJ增强脚本开发组发出权利通知，XMOJ增强脚本开发组经过核实后根据有关法律法规有权采取包括但不限于断开该侵权内容的链接或删除并停止传输该侵权内容，但XMOJ增强脚本开发组并不对该侵权内容承担法律责任。\n\n7.5用户违反本协议的规定，导致或产生的任何第三方主张的任何索赔、要求或损失，包括合理的律师费，用户同意赔偿XMOJ增强脚本开发组，使之免受损害。\n\n#### 8. 其他条款\n\n8.1 XMOJ增强脚本开发组有权随时修改本协议的任何条款，一旦本协议的内容发生变动，XMOJ增强脚本开发组将会在XMOJ增强脚本开发组XMOJ讨论区平台中公布修改后的协议内容或通过其他适当方式向用户公布修改内容。用户不同意上述修改内容，有权选择停止使用XMOJ增强脚本开发组服务，但用户继续使用，则视为接受XMOJ增强脚本开发组对本协议相关条款的修改。\n\n8.2 本《协议》所定的任何条款无论因何种原因部分或全部无效或不具有执行力，本协议的其余条款仍应有效并具备约束力。\n\n8.3 本协议的订立、执行和解释及纠纷的解决均应适用中华人民共和国法律并受中华人民共和国法院管辖。如双方就本协议内容或执行发生任何纠纷或争议，首先应友好协商解决，协商不成的，任何一方均可向XMOJ增强脚本开发组所在地的有管辖权的人民法院提起诉讼。\n\n8.4 本协议的版权归XMOJ增强脚本开发组所有，本协议各项条款内容的最终解释权及修改权归XMOJ增强脚本开发组所有。\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 8/24/2023, 3:15:30 AM 编辑</span>",
+            "reply_time": "2023-08-24 03:13:20"
+        },
+        {
+            "reply_id": 658,
+            "post_id": 220,
+            "user_id": "zhuchenrui2",
+            "content": "$ $",
+            "reply_time": "2023-08-24 03:42:59"
+        },
+        {
+            "reply_id": 660,
+            "post_id": 220,
+            "user_id": "chenlangning",
+            "content": " <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=zhuchenrui2\">@zhuchenrui2</a>  这个问题应该不用修吧，我知道",
+            "reply_time": "2023-08-24 07:20:44"
+        },
+        {
+            "reply_id": 661,
+            "post_id": 220,
+            "user_id": "chenlangning",
+            "content": "这个问题我也不想修",
+            "reply_time": "2023-08-24 07:21:13"
+        },
+        {
+            "reply_id": 662,
+            "post_id": 232,
+            "user_id": "chenlangning",
+            "content": "因为先前讨论有内容涉及违规，现已全部删除，正在全面筛查审核中，感谢大家的理解与配合！\n如果您有在先前讨论中发过言，您的发言也将被删除，给您带来的不便敬请谅解！",
+            "reply_time": "2023-08-24 07:38:19"
+        },
+        {
+            "reply_id": 663,
+            "post_id": 232,
+            "user_id": "zhuchenrui2",
+            "content": "qp",
+            "reply_time": "2023-08-24 08:42:40"
+        }
+    ]
+}
