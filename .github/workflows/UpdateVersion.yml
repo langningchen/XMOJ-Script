@@ -18,20 +18,17 @@ jobs:
     name: UpdateVersion
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout PR
         uses: actions/checkout@v2
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
       - name: Update version
         id: update
         run: node Update.js
-      - name: Commit changes
+      - name: Commit files
         run: |
           git config --local user.email "jpxx_chenlangning@outlook.com"
           git config --local user.name "Langning Chen"
           git commit -a -m "Update version to ${{ steps.update.outputs.version }}"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          git push
