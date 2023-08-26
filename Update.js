@@ -26,7 +26,8 @@ JSONObject.UpdateHistory[LatestVersion] = {
     "UpdateCommits": []
 };
 
-var Commits = execSync("git log --pretty=format:'%h %H %s' " + LastJSONVersion + "..HEAD").toString().split("\n");
+var LastTag = execSync("git describe --tags --abbrev=0").toString().trim();
+var Commits = execSync("git log --pretty=format:'%h %H %s' " + LastTag + "..HEAD").toString().split("\n");
 Commits.pop();
 console.log("Commits (" + Commits.length + "):");
 for (var i = 0; i < Commits.length; i++) {
