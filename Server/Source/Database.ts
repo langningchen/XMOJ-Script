@@ -43,8 +43,11 @@ export class Database {
             "InsertID": ThrowErrorIfFailed(await this.Query(QueryString, BindData))["meta"]["last_row_id"]
         });
     }
-    public async Select(Table: string, Data: string[], Condition?: object, Other?: object): Promise<Result> {
+    public async Select(Table: string, Data: string[], Condition?: object, Other?: object, Distinct?: boolean): Promise<Result> {
         let QueryString = "SELECT ";
+        if (Distinct !== undefined && Distinct) {
+            QueryString += "DISTINCT ";
+        }
         if (Data.length == 0) {
             QueryString += "*";
         }
