@@ -197,7 +197,7 @@ export class Process {
                 "ReplyID": "number",
                 "Content": "string"
             }));
-            let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["user_id"], { reply_id: Data["ReplyID"] }));
+            let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["post_id", "user_id"], { reply_id: Data["ReplyID"] }));
             if (Reply.toString() == "") {
                 return new Result(false, "未找到回复");
             }
