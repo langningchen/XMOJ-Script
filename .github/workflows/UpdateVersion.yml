@@ -24,6 +24,8 @@ jobs:
           fetch-depth: 0
       - name: Checkout PR
         run: gh pr checkout ${{ github.event.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Update version
         id: update
         run: node Update.js
