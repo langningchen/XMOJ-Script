@@ -11,10 +11,11 @@ export default {
 			});
 		}
 		//save the request body as a string
-		let body:JSON = await request.json();
-		const email:string = body["email"], username:string = body["username"];
+		let body: JSON = await request.json();
+		const email: string = body['email'],
+			username: string = body['username'];
 		//check if any of the required fields are missing
-		if (!body["email"]|| !body["username"]) {
+		if (!body['email'] || !body['username']) {
 			return new Response(JSON.stringify({ sucuess: false, error: 'Missing required fields' }), {
 				status: 400,
 				headers: { 'Content-Type': 'application/json' },
@@ -29,7 +30,7 @@ export default {
 			});
 		}
 		//save the email to the database
-		await env.db.prepare('INSERT INTO email (userID, emailHash) VALUES (?1, ?2)').bind(email, username).run();
+		await env.db.prepare('INSERT INTO email (userID, emailHash) VAL	UES (?1, ?2)').bind(username, email).run();
 		return new Response(JSON.stringify({ sucuess: true }), {
 			status: 200,
 			headers: { 'Content-Type': 'application/json' },
