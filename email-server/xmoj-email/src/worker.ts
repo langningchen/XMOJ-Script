@@ -12,7 +12,7 @@ export default {
 		}
 		//save the request body as a string
 		let body: JSON = await request.json();
-		const email: string = body['email'],
+		let email: string = body['email'],
 			username: string = body['username'];
 		//check if any of the required fields are missing
 		if (!body['email'] || !body['username']) {
@@ -29,8 +29,10 @@ export default {
 				headers: { 'Content-Type': 'application/json' },
 			});
 		}
+		//hash the email using MD5
+		email = MD5(email);
 		//save the email to the database
-		await env.db.prepare('INSERT INTO email (userID, emailHash) VAL	UES (?1, ?2)').bind(username, email).run();
+		await env.db.prepare('INSERT INTO email (userID, emailHash) VALUES (?1, ?2)').bind(username, email).run();
 		return new Response(JSON.stringify({ sucuess: true }), {
 			status: 200,
 			headers: { 'Content-Type': 'application/json' },
