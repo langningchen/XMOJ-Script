@@ -1,4 +1,4 @@
-name: PreRelease only
+name: PreRelease
 on:
   push:
     branches:
@@ -65,7 +65,6 @@ jobs:
           title: Update prerelease version to ${{ steps.get_version.outputs.version }}
           body: Update prerelease version to ${{ steps.get_version.outputs.version }}
           branch: dev
-          branch-suffix: pre-release
           delete-branch: true
       - name: Merge Pull Request
         uses: juliangruber/merge-pull-request-action@v1
