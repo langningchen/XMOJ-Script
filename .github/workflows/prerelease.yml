@@ -6,6 +6,9 @@ on:
     paths:
       - "XMOJ.user.js"
   workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
 jobs:
   release:
     name: Release
@@ -39,10 +42,26 @@ jobs:
           asset_path: ./XMOJ.user.js
           asset_name: XMOJ.user.js
           asset_content_type: text/plain
-      - name: Push new version
-        run: |
-          git config --global user.name "langningchen"
-          git config --global user.email "jpxx_chenlangning@outlook.com"
-          git add .
-          git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
-          git push
+      # - name: Push new version
+      #   run: |
+      #     git config --global user.name "langningchen"
+      #     git config --global user.email "jpxx_chenlangning@outlook.com"
+      #     git add .
+      #     git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
+      #     git push
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        id: create_pull_request
+        with:
+          commit-message: Update prerelease version to ${{ steps.get_version.outputs.version }}
+          title: Update prerelease version to ${{ steps.get_version.outputs.version }}
+          body: Update prerelease version to ${{ steps.get_version.outputs.version }}
+          branch: dev
+          branch-suffix: pre-release
+          delete-branch: true
+      - name: Merge Pull Request
+        uses: juliangruber/merge-pull-request-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          number: ${{ steps.create_pull_request.outputs.pull-request-number }}
+          method: merge
