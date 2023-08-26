@@ -324,57 +324,40 @@ export class Process {
             let ResponseData = {
                 MailList: new Array<Object>()
             };
-            let Mails = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", ["message_from", "content", "send_time"], { message_to: this.SecurityChecker.GetUsername() }));
+            let OtherUsernameList = new Array<string>();
+            let Mails = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", ["message_from"], { message_to: this.SecurityChecker.GetUsername() }, {}, true));
             for (let i in Mails) {
-                let Mail = Mails[i];
+                OtherUsernameList.push(Mails[i]["message_from"]);
+            }
+            Mails = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", ["message_to"], { message_from: this.SecurityChecker.GetUsername() }, {}, true));
+            for (let i in Mails) {
+                OtherUsernameList.push(Mails[i]["message_to"]);
+            }
+            OtherUsernameList = Array.from(new Set(OtherUsernameList));
+            for (let i in OtherUsernameList) {
+                let LastMessage = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", ["content", "send_time"], {
+                    message_from: OtherUsernameList[i],
+                    message_to: this.SecurityChecker.GetUsername()
+                }, {
+                    Order: "send_time",
+                    OrderIncreasing: false,
+                    Limit: 1
+                }));
                 let UnreadCount = ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("short_message", {
-                    message_from: Mail["message_from"],
+                    message_from: OtherUsernameList[i],
                     message_to: this.SecurityChecker.GetUsername(),
                     is_read: 0
                 }));
                 ResponseData.MailList.push({
-                    OtherUser: Mail["message_from"],
-                    LastsMessage: Mail["content"],
-                    SendTime: Mail["send_time"],
+                    OtherUser: OtherUsernameList[i],
+                    LastsMessage: LastMessage[0]["content"],
+                    SendTime: LastMessage[0]["send_time"],
                     UnreadCount: UnreadCount["TableSize"]
                 });
-            }
-            Mails = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", ["message_to", "content", "send_time"], { message_from: this.SecurityChecker.GetUsername() }));
-            for (let i in Mails) {
-                let Mail = Mails[i];
-                let UnreadCount = ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("short_message", {
-                    message_from: Mail["message_to"],
-                    message_to: this.SecurityChecker.GetUsername(),
-                    is_read: 0
-                }));
-                ResponseData.MailList.push({
-                    OtherUser: Mail["message_to"],
-                    LastsMessage: Mail["content"],
-                    SendTime: Mail["send_time"],
-                    UnreadCount: UnreadCount["TableSize"]
-                });
-            }
-            for (let i = 0; i < ResponseData.MailList.length; i++) {
-                for (let j = i + 1; j < ResponseData.MailList.length; j++) {
-                    if (ResponseData.MailList[i]["OtherUser"] === ResponseData.MailList[j]["OtherUser"]) {
-                        if (ResponseData.MailList[i]["SendTime"] < ResponseData.MailList[j]["SendTime"]) {
-                            ResponseData.MailList[i] = ResponseData.MailList[j];
-                        }
-                        ResponseData.MailList.splice(j, 1);
-                        j--;
-                    }
-                }
             }
             ResponseData.MailList.sort((a, b) => {
                 return a["SendTime"] < b["SendTime"] ? 1 : -1;
             });
-            for (let i in ResponseData.MailList) {
-                ResponseData.MailList[i]["UnreadCount"] = ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("short_message", {
-                    message_from: ResponseData.MailList[i]["OtherUser"],
-                    message_to: this.SecurityChecker.GetUsername(),
-                    is_read: 0
-                }))["TableSize"];
-            }
             return new Result(true, "获得短消息列表成功", ResponseData);
         },
         SendMail: async (Data: object): Promise<Result> => {
