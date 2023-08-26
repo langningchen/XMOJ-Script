@@ -18,11 +18,12 @@ jobs:
     name: UpdateVersion
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PR
+      - name: Checkout
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
+      - name: Checkout PR
+        run: gh pr checkout ${{ github.event.number }}
       - name: Update version
         id: update
         run: node Update.js
