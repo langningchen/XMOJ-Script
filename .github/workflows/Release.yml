@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - "XMOJ.user.js"
+      - XMOJ.user.js
   workflow_dispatch:
 jobs:
   release:
@@ -15,10 +15,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Update Version
+      - name: Get version
         id: get_version
         run: |
-          node ./Update.js
+          echo "::set-output name=version::$(grep -oP '@version\s*\d+\.\d+\.\d+' XMOJ.user.js | grep -oP '\d+\.\d+\.\d+')"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -39,10 +39,3 @@ jobs:
           asset_path: ./XMOJ.user.js
           asset_name: XMOJ.user.js
           asset_content_type: text/plain
-      - name: Push new version
-        run: |
-          git config --global user.name "langningchen"
-          git config --global user.email "jpxx_chenlangning@outlook.com"
-          git add .
-          git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
-          git push
