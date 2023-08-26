@@ -1,0 +1,16 @@
+name: PRAutoclose
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Close PR
+      run: |
+        if [[ ${{ github.event.pull_request.base.ref }} != "master" ]]; then
+          echo "Closing PR"
+          gh pr close ${{ github.event.pull_request.number }} --delete-branch
+        else
+          echo "Not closing PR"
+        fi
