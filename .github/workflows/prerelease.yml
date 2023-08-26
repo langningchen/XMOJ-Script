@@ -1,74 +1,49 @@
-name: PreRelease
+name: Prerelease
 on:
   push:
     branches:
       - dev
     paths:
-      - "XMOJ.user.js"
-  workflow_dispatch:
-permissions:
-  contents: write
-  pull-requests: write
+      - XMOJ.user.js
 jobs:
-  release:
-    name: Release
+  prerelease:
+    name: Prerelease
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
+          ref: dev
           fetch-depth: 0
       - name: Update Version
-        id: get_version
-        run: |
-          node ./Update.js
+        id: update_version
+        run: node Update.js
       - name: Create Prerelease
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: ${{ steps.get_version.outputs.version }}
-          draft: false
+          tag_name: ${{ steps.update_version.outputs.version }}
+          release_name: ${{ steps.update_version.outputs.version }}
           prerelease: true
-          body: ${{ steps.get_version.outputs.version }}
-      - name: Upload Prerelease Asset
+      - name: Upload Assets
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./XMOJ.user.js
+          asset_path: XMOJ.user.js
           asset_name: XMOJ.user.js
-          asset_content_type: text/plain
-      # - name: Push new version
-      #   run: |
-      #     git config --global user.name "langningchen"
-      #     git config --global user.email "jpxx_chenlangning@outlook.com"
-      #     git add .
-      #     git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
-      #     git push
-      - name: Create branch
+          asset_content_type: application/javascript
+      - name: Commit
         run: |
-          git config --global user.name "langningchen"
-          git config --global user.email "jpxx_chenlangning@outlook.com"
-          git checkout -b pre-release
-          git add .
-          git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
-          git push --set-upstream origin pre-release
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        id: create_pull_request
+          git config --local user.email "jpxx_chenlangning@outlook.com"
+          git config --local user.name "Chen Langning"
+          git commit -a -m "Update version to ${{ steps.update_version.outputs.version }}"
+      - name: Push to dev
+        uses: ad-m/github-push-action@master
         with:
-          commit-message: Update prerelease version to ${{ steps.get_version.outputs.version }}
-          title: Update prerelease version to ${{ steps.get_version.outputs.version }}
-          body: Update prerelease version to ${{ steps.get_version.outputs.version }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: dev
-          delete-branch: true
-      - name: Merge Pull Request
-        uses: juliangruber/merge-pull-request-action@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          number: ${{ steps.create_pull_request.outputs.pull-request-number }}
-          method: merge
+          force: true
