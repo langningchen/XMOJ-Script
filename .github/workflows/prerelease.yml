@@ -41,7 +41,7 @@ jobs:
         run: |
           git config --local user.email "jpxx_chenlangning@outlook.com"
           git config --local user.name "Chen Langning"
-          git remote set-url origin "https://chenlangning:${{ secrets.PAT_TOKEN }}@github.com/chenlangning/XMOJ-Script.git"
+          git remote set-url origin "https://langningchen:${{ secrets.PAT_TOKEN }}@github.com/langningchen/XMOJ-Script.git"
           git checkout dev
           git commit -a -m "Update version to ${{ steps.update_version.outputs.version }}"
           git push origin dev
