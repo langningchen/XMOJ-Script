@@ -49,6 +49,14 @@ jobs:
       #     git add .
       #     git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
       #     git push
+      - name: Create branch
+        run: |
+          git config --global user.name "langningchen"
+          git config --global user.email "jpxx_chenlangning@outlook.com"
+          git checkout -b pre-release
+          git add .
+          git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
+          git push --set-upstream origin pre-release
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         id: create_pull_request
