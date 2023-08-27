@@ -20,13 +20,15 @@ console.log("Last version: " + LastJSONVersion);
 var LastVersion = LastJSVersion.split(".");
 var LatestVersion = LastVersion[0] + "." + LastVersion[1] + "." + (parseInt(LastVersion[2]) + 1);
 console.log("Latest version: " + LatestVersion);
-execSync("echo version=" + LatestVersion + " >> $GITHUB_OUTPUT");
+// execSync("echo version=" + LatestVersion + " >> $GITHUB_OUTPUT");
 JSONObject.UpdateHistory[LatestVersion] = {
     "UpdateDate": Date.now(),
+    "Prerelease": true,
     "UpdateCommits": []
 };
 
-var Commits = execSync("git log --pretty=format:'%h %H %s' " + LastJSONVersion + "..HEAD").toString().split("\n");
+var LastTag = execSync("git describe --tags --abbrev=0").toString().trim();
+var Commits = execSync("git log --pretty=format:'%h %H %s' " + LastTag + "..HEAD").toString().split("\n");
 Commits.pop();
 console.log("Commits (" + Commits.length + "):");
 for (var i = 0; i < Commits.length; i++) {
