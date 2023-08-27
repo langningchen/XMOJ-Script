@@ -1,7 +1,7 @@
 import MD5 from 'crypto-js/md5';
-import { getAnalytics } from 'firebase/analytics';
-import { initializeApp } from 'firebase/app';
-import {} from 'firebase/auth';
+//import { getAnalytics } from 'firebase/analytics';
+//import { initializeApp } from 'firebase/app';
+//import {} from 'firebase/auth';
 import { firebasekey } from './secret.ts';
 export interface Env {
 	db: D1Database;
@@ -57,19 +57,19 @@ export default {
 						headers: { 'Content-Type': 'application/json' },
 					});
 				}
-				//email verification using firebase
-				const firebaseConfig = {
-					apiKey: firebasekey,
-					authDomain: 'xmoj-verification.firebaseapp.com',
-					projectId: 'xmoj-verification',
-					storageBucket: 'xmoj-verification.appspot.com',
-					messagingSenderId: '792060272492',
-					appId: '1:792060272492:web:60d3af9a126eecc02b9d49',
-					measurementId: 'G-W9SQNRHKGT',
-				};
-				// Initialize Firebase
-				const app = initializeApp(firebaseConfig);
-				const analytics = getAnalytics(app);
+				//TODO: email verification using firebase
+				// const firebaseConfig = {
+				// 	apiKey: firebasekey,
+				// 	authDomain: 'xmoj-verification.firebaseapp.com',
+				// 	projectId: 'xmoj-verification',
+				// 	storageBucket: 'xmoj-verification.appspot.com',
+				// 	messagingSenderId: '792060272492',
+				// 	appId: '1:792060272492:web:60d3af9a126eecc02b9d49',
+				// 	measurementId: 'G-W9SQNRHKGT',
+				// };
+				// // Initialize Firebase
+				// const app = initializeApp(firebaseConfig);
+				// const analytics = getAnalytics(app);
 
 				//hash the email using MD5
 				email = MD5(email).toString();
