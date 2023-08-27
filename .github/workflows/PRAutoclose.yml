@@ -11,9 +11,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Close PR
+    - name: Close PRAutoclose
       run: |
-        if [[ ${{ github.event.pull_request.base.ref }} != "master" ]]; then
+        if [[ ${{ github.event.pull_request.base.ref }} != "dev" ]]; then
           echo "Closing PR"
           gh pr close ${{ github.event.pull_request.number }} --delete-branch
         else
