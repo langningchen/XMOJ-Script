@@ -18,9 +18,29 @@ export default {
 				let email: string = body['email'],
 					username: string = body['username'];
 				//check if any of the required fields are missing
-				if (!body['email'] || !body['username']) {
+				if (!body['email'] || !body['username'] || !body['cookie']) {
 					return new Response(JSON.stringify({ sucuess: false, error: 'Missing required fields' }), {
 						status: 400,
+						headers: { 'Content-Type': 'application/json' },
+					});
+				}
+				let authHeader = new Headers();
+				authHeader.append('Cookie', 'PHPSESSID=' + body['cookie']);
+				let loginCheck = await fetch(new Request('http://www.xmoj.tech/template/bs3/profile.php'), { headers: authHeader });
+				//return new Response(await loginCheck.text());
+				let res = await loginCheck.text();
+				let userId = res.substring(res.search('user_id=') + 8);
+				userId = userId.substring(0, userId.search("'"));
+				console.log(userId);
+				if (userId == '') {
+					return new Response(JSON.stringify({ sucuess: false, error: 'Forbidden' }), {
+						status: 403,
+						headers: { 'Content-Type': 'application/json' },
+					});
+				}
+				if (userId != username) {
+					return new Response(JSON.stringify({ sucuess: false, error: 'Forbidden' }), {
+						status: 403,
 						headers: { 'Content-Type': 'application/json' },
 					});
 				}
