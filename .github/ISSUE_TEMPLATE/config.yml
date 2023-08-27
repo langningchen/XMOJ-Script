@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 功能建议
+    url: https://github.com/langningchen/XMOJ-Script/discussions/categories/ideas
+    about: 提交功能建议相关的反馈
+  - name: 提问
+    url: https://github.com/langningchen/XMOJ-Script/discussions/categories/q-a
+    about: 我不想提交反馈，只是想问一些问题
