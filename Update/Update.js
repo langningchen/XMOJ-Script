@@ -20,7 +20,7 @@ console.log("Last version: " + LastJSONVersion);
 var LastVersion = LastJSVersion.split(".");
 var LatestVersion = LastVersion[0] + "." + LastVersion[1] + "." + (parseInt(LastVersion[2]) + 1);
 console.log("Latest version: " + LatestVersion);
-// execSync("echo version=" + LatestVersion + " >> $GITHUB_OUTPUT");
+execSync("echo version=" + LatestVersion + " >> $GITHUB_OUTPUT");
 JSONObject.UpdateHistory[LatestVersion] = {
     "UpdateDate": Date.now(),
     "Prerelease": true,

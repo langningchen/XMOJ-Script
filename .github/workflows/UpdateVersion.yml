@@ -7,11 +7,6 @@ on:
       - reopened
     branches:
       - dev
-  push:
-    branches:
-      - dev
-    paths:
-      - XMOJ.user.js
   workflow_dispatch:
 jobs:
   UpdateVersion:
