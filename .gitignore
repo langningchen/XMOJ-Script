@@ -4,3 +4,4 @@ Server/.wrangler
 Server-Old/
 email-server/xmoj-email/.wrangler
 email-server/xmoj-email/node_modules
+email-server/xmoj-email/src/secret.ts
