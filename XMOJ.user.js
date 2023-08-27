@@ -270,9 +270,9 @@ else {
             let CodeMirrorThemeStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrorThemeStyleElement);
             CodeMirrorThemeStyleElement.rel = "stylesheet";
             CodeMirrorThemeStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/theme/darcula.min.css";
-            let CodeMirrroMergeStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrroMergeStyleElement);
-            CodeMirrroMergeStyleElement.rel = "stylesheet";
-            CodeMirrroMergeStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.min.css";
+            let CodeMirrorMergeStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrorMergeStyleElement);
+            CodeMirrorMergeStyleElement.rel = "stylesheet";
+            CodeMirrorMergeStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.min.css";
             // let SentryScriptElement = document.createElement("script"); document.head.appendChild(SentryScriptElement);
             // SentryScriptElement.src = "https://js.sentry-cdn.com/a4c8d48a19954926bf0d8e3d6d6c3024.min.js";
             Temp = document.querySelectorAll("script");
@@ -2279,8 +2279,8 @@ else {
                 else {
                     document.querySelector("body > div > div.mt-3").innerHTML = `
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" checked id="IgnoreWhitespaces">
-                            <label class="form-check-label" for="IgnoreWhitespaces">忽略空白</label>
+                            <input class="form-check-input" type="checkbox" checked id="IgnoreWhitespace">
+                            <label class="form-check-label" for="IgnoreWhitespace">忽略空白</label>
                         </div>
                         <div id="CompareElement"></div>`;
 
@@ -2312,7 +2312,7 @@ else {
                         ignoreWhitespace: true
                     });
 
-                    IgnoreWhitespaces.addEventListener("change", () => {
+                    IgnoreWhitespace.addEventListener("change", () => {
                         MergeViewElement.ignoreWhitespace = ignorews.checked;
                     });
                 }
