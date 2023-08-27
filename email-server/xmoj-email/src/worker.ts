@@ -1,6 +1,7 @@
 import MD5 from 'crypto-js/md5';
 import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
+import {} from 'firebase/auth';
 import { firebasekey } from './secret.ts';
 export interface Env {
 	db: D1Database;
