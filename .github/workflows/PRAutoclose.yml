@@ -15,7 +15,7 @@ jobs:
       run: |
         if [[ ${{ github.event.pull_request.base.ref }} != "dev" ]]; then
           echo "Closing PR"
-          gh pr close ${{ github.event.pull_request.number }} --delete-branch
+          gh pr close ${{ github.event.pull_request.number }}
         else
           echo "Not closing PR"
         fi
