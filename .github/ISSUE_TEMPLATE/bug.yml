@@ -31,10 +31,6 @@ body:
 - type: textarea
   id: "yml-4"
   attributes:
-    label: 日志与附件
-    description: "上传文件夹中的 workstatus.log."
-    placeholder: "先点击这个文本框，然后再将文件直接拖拽到文本框中以上传。"
-  attributes:
     label: 控制台错误信息
     description: "粘贴控制台错误信息"
     placeholder: "控制台错误信息"
