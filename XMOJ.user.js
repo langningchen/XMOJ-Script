@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.59
+// @version      0.2.61
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -136,7 +136,7 @@ let TidyTable = (Table) => {
 };
 let UtilityEnabled = (Name) => {
     if (localStorage.getItem("UserScript-Setting-" + Name) == null) {
-        localStorage.setItem("UserScript-Setting-" + Name, "true");
+        localStorage.setItem("UserScript-Setting-" + Name, (Name == "DebugMode" ? "false" : "true"));
     }
     return localStorage.getItem("UserScript-Setting-" + Name) == "true";
 };
@@ -270,9 +270,9 @@ else {
             let CodeMirrorThemeStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrorThemeStyleElement);
             CodeMirrorThemeStyleElement.rel = "stylesheet";
             CodeMirrorThemeStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/theme/darcula.min.css";
-            let CodeMirrroMergeStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrroMergeStyleElement);
-            CodeMirrroMergeStyleElement.rel = "stylesheet";
-            CodeMirrroMergeStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.min.css";
+            let CodeMirrorMergeStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrorMergeStyleElement);
+            CodeMirrorMergeStyleElement.rel = "stylesheet";
+            CodeMirrorMergeStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.min.css";
             // let SentryScriptElement = document.createElement("script"); document.head.appendChild(SentryScriptElement);
             // SentryScriptElement.src = "https://js.sentry-cdn.com/a4c8d48a19954926bf0d8e3d6d6c3024.min.js";
             Temp = document.querySelectorAll("script");
@@ -491,7 +491,13 @@ else {
             })
             .then((Response) => {
                 let CurrentVersion = GM_info.script.version;
-                let LatestVersion = Object.keys(Response.UpdateHistory)[Object.keys(Response.UpdateHistory).length - 1];
+                let LatestVersion;
+                for (let i = 0; i < Object.keys(Response.UpdateHistory).length; i++) {
+                    if (Object.keys(Response.UpdateHistory)[i] > CurrentVersion && (UtilityEnabled("DebugMode") || Response.UpdateHistory[i].Prerelease == false)) {
+                        LatestVersion = Object.keys(Response.UpdateHistory)[i];
+                        break;
+                    }
+                }
                 if (CurrentVersion < LatestVersion) {
                     let UpdateDiv = document.createElement("div");
                     UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -702,8 +708,9 @@ else {
                 };
                 UtilitiesCardBody.appendChild(CreateList([
                     { "ID": "ACMRank", "Type": "A", "Name": "比赛ACM排名，并且能下载ACM排名" },
-                    { "ID": "Discussion", "Type": "F", "Name": "恢复讨论功能" },
+                    { "ID": "Discussion", "Type": "F", "Name": "恢复讨论与短消息功能" },
                     { "ID": "MoreSTD", "Type": "F", "Name": "查看到更多标程" },
+                    { "ID": "Rating", "Type": "A", "Name": "添加用户评分和用户名颜色" },
                     { "ID": "GetOthersSample", "Type": "A", "Name": "获取到别人的测试点数据" },
                     { "ID": "AutoRefresh", "Type": "A", "Name": "比赛列表、比赛排名界面自动刷新" },
                     { "ID": "AutoCountdown", "Type": "A", "Name": "比赛列表等界面的时间自动倒计时" },
@@ -742,7 +749,7 @@ else {
                     { "ID": "LoginFailed", "Type": "F", "Name": "登录后跳转失败*" },
                     { "ID": "NewDownload", "Type": "A", "Name": "下载页面增加下载内容" },
                     { "ID": "CompareSource", "Type": "A", "Name": "比较代码" },
-                    { "ID": "Rating", "Type": "A", "Name": "添加用户评分和用户名颜色" }
+                    { "ID": "DebugMode", "Type": "A", "Name": "调试模式（仅供开发者使用）" }
                 ]));
                 let UtilitiesCardFooter = document.createElement("div");
                 UtilitiesCardFooter.className = "card-footer text-muted";
@@ -2272,8 +2279,8 @@ else {
                 else {
                     document.querySelector("body > div > div.mt-3").innerHTML = `
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" checked id="IgnoreWhitespaces">
-                            <label class="form-check-label" for="IgnoreWhitespaces">忽略空白</label>
+                            <input class="form-check-input" type="checkbox" checked id="IgnoreWhitespace">
+                            <label class="form-check-label" for="IgnoreWhitespace">忽略空白</label>
                         </div>
                         <div id="CompareElement"></div>`;
 
@@ -2305,7 +2312,7 @@ else {
                         ignoreWhitespace: true
                     });
 
-                    IgnoreWhitespaces.addEventListener("change", () => {
+                    IgnoreWhitespace.addEventListener("change", () => {
                         MergeViewElement.ignoreWhitespace = ignorews.checked;
                     });
                 }

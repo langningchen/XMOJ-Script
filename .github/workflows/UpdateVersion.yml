@@ -1,0 +1,37 @@
+name: UpdateVersion
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - dev
+  push:
+    branches:
+      - dev
+    paths:
+      - XMOJ.user.js
+  workflow_dispatch:
+jobs:
+  UpdateVersion:
+    name: UpdateVersion
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Checkout PR
+        run: gh pr checkout ${{ github.event.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update version
+        id: update
+        run: node ./Update/Update.js
+      - name: Commit files
+        run: |
+          git config --local user.email "jpxx_chenlangning@outlook.com"
+          git config --local user.name "Langning Chen"
+          git commit -a -m "Update version info to ${{ steps.update.outputs.version }}"
+          git push
