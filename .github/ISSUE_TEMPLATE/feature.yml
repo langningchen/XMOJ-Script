@@ -1,6 +1,8 @@
 name: "新功能提案"
 description: "对已有功能的大幅度修改，或添加一个新内容或选项"
-labels: [Enhancement]
+labels: "enhancement,needs-triage"
+assignees: "langningchen"
+title: "[Feature Request]"
 body:
 - type: checkboxes
   id: "yml-1"
@@ -24,3 +26,8 @@ body:
   attributes:
     label: 原因
     description: "详细描述你为什么需要这项功能，这有助于开发者评估它的优先度。"
+    value: |
+      （示例）
+      我需要这个功能来xxxx。很多人都有xxxx的需求，但如果没有这个功能，就不能xxxx了。
+  validations:
+    required: true
