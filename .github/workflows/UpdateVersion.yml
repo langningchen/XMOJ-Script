@@ -20,11 +20,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Check branch
+        if: github.event.action == 'opened'
         run: |
-          git fetch origin master
-          git diff --name-only master | grep -q "Update/UpdateVersion.js"
+          git fetch origin dev
+          git diff --name-only dev | grep -q "Update.json"
           if [ $? -eq 0 ]; then
-            # echo "UpdateVersion.js has been changed in master branch, please merge master branch to dev branch first."
             gh pr comment ${{ github.event.pull_request.number }} --body "您的分支 \`${{ github.event.pull_request.head.ref }}\` 已经落后于 \`Dev\` 分支，请先合并 \`Dev\` 分支到您的分支。"
             exit 1
           fi
