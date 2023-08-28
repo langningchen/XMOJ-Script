@@ -37,7 +37,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Merge PR
-        run: gh pr merge ${{ github.event.number }} --auto --merge --admin
+        run: gh pr merge ${{ github.event.number }} --merge --admin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete PR
