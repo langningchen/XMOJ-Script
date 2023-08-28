@@ -46,7 +46,7 @@ for (var i = 0; i < Commits.length; i++) {
     });
     console.log("    Commit " + i + "(" + ShortCommitHash + "): " + CommitDescription);
 }
-writeFileSync(JSONFileName, JSON.stringify(JSONObject), "utf8");
+writeFileSync(JSONFileName, JSON.stringify(JSONObject, null, 4), "utf8");
 
 var NewJSFileContent = JSFileContent.replace(/@version(\s+)\d+\.\d+\.\d+/, "@version$1" + LatestVersion);
 writeFileSync(JSFileName, NewJSFileContent, "utf8");

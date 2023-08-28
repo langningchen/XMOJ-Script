@@ -26,7 +26,7 @@ jobs:
         run: node ./Update/Prerelease.js
       - name: Commit files
         run: |
-          git config --local user.email "jpxx_chenlangning@outlook.com"
-          git config --local user.name "Langning Chen"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
           git commit -a -m "Update version info to ${{ steps.update.outputs.version }}"
           git push
