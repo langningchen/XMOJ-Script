@@ -23,7 +23,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Update version
         id: update
-        run: node ./Update/Update.js
+        run: node ./Update/Prerelease.js
       - name: Commit files
         run: |
           git config --local user.email "jpxx_chenlangning@outlook.com"

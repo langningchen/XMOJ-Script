@@ -490,11 +490,13 @@ else {
                 return Response.json();
             })
             .then((Response) => {
-                let CurrentVersion = GM_info.script.version;
+                CurrentVersion = GM_info.script.version;
                 let LatestVersion;
                 for (let i = 0; i < Object.keys(Response.UpdateHistory).length; i++) {
-                    if (Object.keys(Response.UpdateHistory)[i] > CurrentVersion && (UtilityEnabled("DebugMode") || Response.UpdateHistory[i].Prerelease == false)) {
-                        LatestVersion = Object.keys(Response.UpdateHistory)[i];
+                    debugger
+                    let VersionInfo = Object.keys(Response.UpdateHistory)[i];
+                    if (UtilityEnabled("DebugMode") || Response.UpdateHistory[VersionInfo].Prerelease == false) {
+                        LatestVersion = VersionInfo;
                         break;
                     }
                 }
