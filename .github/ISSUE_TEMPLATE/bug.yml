@@ -1,5 +1,5 @@
 name: "综合 Bug 反馈"
-description: "遇见了没有细分选项的其他 Bug"
+description: "有功能有问题"
 assignees: "langningchen"
 labels: "bug,needs-triage"
 title: "[Bug] "
