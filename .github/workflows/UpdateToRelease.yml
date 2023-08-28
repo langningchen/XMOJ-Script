@@ -36,6 +36,6 @@ jobs:
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
           branch-name: dev
-          owner: ${{ github.repository_owner }}
-          repo: ${{ github.repository }}
+          owner: XMOJ-Script
+          repo: langningchen
           file-path: ./Update.json
