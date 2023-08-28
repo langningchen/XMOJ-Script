@@ -2063,6 +2063,27 @@
                     "Description": "更新自动更新至发布脚本使用PR"
                 }
             ]
+        },
+        "0.2.71": {
+            "UpdateDate": 1693213434199,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "022d6ba",
+                    "Commit": "022d6ba0ef24e66564db5e9bb391a5ec4032b209",
+                    "Description": "自动更新脚本有问题"
+                },
+                {
+                    "ShortCommit": "9e9e504",
+                    "Commit": "9e9e50417ac08cd95f0ba4170ee32138a1abafcb",
+                    "Description": "Revert \"Update version info to 0.2.70\""
+                },
+                {
+                    "ShortCommit": "d34e674",
+                    "Commit": "d34e674b61af2ad96e89b79bdc3313343e03f1fa",
+                    "Description": "Update version info to 0.2.70"
+                }
+            ]
         }
     }
 }
