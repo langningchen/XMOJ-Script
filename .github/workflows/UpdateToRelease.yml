@@ -30,7 +30,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git checkout -b actions/temp
-          git commit -a -m "Update version info to ${{ steps.update_to_release.outputs.version }}"
+          git commit -a -m "Update to release ${{ steps.update_to_release.outputs.version }}"
           git push -u origin actions/temp
       - name: Create PR
         id: create_pr
