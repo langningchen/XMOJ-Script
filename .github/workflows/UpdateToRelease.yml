@@ -33,15 +33,19 @@ jobs:
           git commit -a -m "Update version info to ${{ steps.update_to_release.outputs.version }}"
           git push -u origin actions/temp
       - name: Create PR
-        run: gh pr create --title "Update to release ${{ steps.update_to_release.outputs.version }}" --body "Update to release ${{ steps.update_to_release.outputs.version }}" --base dev --head actions/temp
+        id: create_pr
+        run: |
+          gh pr create --title "Update to release ${{ steps.update_to_release.outputs.version }}" --body "Update to release ${{ steps.update_to_release.outputs.version }}" --base dev --head actions/temp >PRURL.txt
+          echo "PRNumber=$(cat PRURL.txt | cut -d'/' -f7)" >> $GITHUB_OUTPUT
+          rm PRURL.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Merge PR
-        run: gh pr merge ${{ github.event.number }} --merge --admin
+        run: gh pr merge ${{ steps.create_pr.outputs.PRNumber }} --merge --admin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete PR
-        run: gh pr delete ${{ github.event.number }}
+        run: gh pr delete ${{ steps.create_pr.outputs.PRNumber }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete branch
