@@ -28,12 +28,11 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-      - name: Create branch
+      - name: Commit using branch actions/temp
         run: |
-          git checkout -b actions/temp
-          git add .
-          git commit -m "Update version info to ${{ steps.update_to_release.outputs.version }}"
-          git push origin actions/temp
+          git checkout actions/temp
+          git commit -a -m "Update version info to ${{ steps.update_to_release.outputs.version }}"
+          git push
       - name: Create PR
         run: gh pr create --title "Update to release ${{ steps.update_to_release.outputs.version }}" --body "Update to release ${{ steps.update_to_release.outputs.version }}" --base dev --head actions/temp
         env:
