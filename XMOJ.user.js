@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.70
+// @version      0.2.71
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -12,7 +12,6 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.js
 // @require      https://cdn.bootcdn.net/ajax/libs/diff_match_patch/20121119/diff_match_patch_uncompressed.js
 // @require      https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js
-// @require      https://cdn.bootcdn.net/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require      https://ghproxy.com/https://github.com/drudru/ansi_up/blob/v5.2.1/ansi_up.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
@@ -20,7 +19,6 @@
 // @connect      www.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
 // @connect      127.0.0.1
-// @connect      cdn.bootcdn.net
 // @license      GPL
 // ==/UserScript==
 
@@ -2111,6 +2109,10 @@ else {
                     ExportACCode.className = "btn btn-outline-secondary";
                     ExportACCode.addEventListener("click", () => {
                         ExportACCode.disabled = true;
+                        let ExportProgressBar = document.getElementsByTagName("progress")[0] || document.createElement("progress");
+                        ExportProgressBar.removeAttribute("value");
+                        ExportProgressBar.removeAttribute("max");
+                        document.querySelector("body > div.container > div").appendChild(ExportProgressBar);
                         ExportACCode.innerText = "正在导出...";
                         let Request = new XMLHttpRequest();
                         Request.addEventListener("readystatechange", () => {
@@ -2118,31 +2120,32 @@ else {
                                 if (Request.status == 200) {
                                     let Response = Request.responseText;
                                     let ACCode = Response.split("------------------------------------------------------\r\n");
-                                    let ScriptElement = document.createElement("script");
-                                    ScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/jszip/3.10.1/jszip.min.js";
-                                    document.head.appendChild(ScriptElement);
-                                    ScriptElement.onload = () => {
-                                        var Zip = new JSZip();
-                                        for (let i = 0; i < ACCode.length; i++) {
-                                            let CurrentCode = ACCode[i];
-                                            if (CurrentCode != "") {
-                                                let CurrentQuestionID = CurrentCode.substring(7, 11);
-                                                CurrentCode = CurrentCode.substring(14);
-                                                CurrentCode = CurrentCode.replaceAll("\r", "");
-                                                Zip.file(CurrentQuestionID + ".cpp", CurrentCode);
-                                            }
+                                    ExportProgressBar.max = ACCode.length - 1;
+                                    let DownloadCode = (i) => {
+                                        if (i >= ACCode.length) {
+                                            ExportACCode.innerText = "AC代码导出成功";
+                                            ExportACCode.disabled = false;
+                                            ExportProgressBar.remove();
+                                            setTimeout(() => {
+                                                ExportACCode.innerText = "导出AC代码";
+                                            }, 1000);
+                                            return;
                                         }
-                                        ExportACCode.innerText = "正在生成压缩包……";
-                                        Zip.generateAsync({ type: "blob" })
-                                            .then(function (Content) {
-                                                saveAs(Content, "ACCodes.zip");
-                                                ExportACCode.innerText = "AC代码导出成功";
-                                                ExportACCode.disabled = false;
-                                                setTimeout(() => {
-                                                    ExportACCode.innerText = "导出AC代码";
-                                                }, 1000);
-                                            });
+                                        let CurrentCode = ACCode[i];
+                                        if (CurrentCode != "") {
+                                            let CurrentQuestionID = CurrentCode.substring(7, 11);
+                                            CurrentCode = CurrentCode.substring(14);
+                                            ExportProgressBar.value = i + 1;
+                                            let DownloadLink = document.createElement("a");
+                                            DownloadLink.href = window.URL.createObjectURL(new Blob([CurrentCode]));
+                                            DownloadLink.download = CurrentQuestionID + ".cpp";
+                                            DownloadLink.click();
+                                        }
+                                        setTimeout(() => {
+                                            DownloadCode(i + 1);
+                                        }, 50);
                                     };
+                                    DownloadCode(0);
                                 } else {
                                     ExportACCode.disabled = false;
                                     ExportACCode.innerText = "AC代码导出失败";
