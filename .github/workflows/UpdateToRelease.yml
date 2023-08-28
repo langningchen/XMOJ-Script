@@ -30,6 +30,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git checkout actions/temp
+          rm -f ./Update.json
           git commit -a -m "Update version info to ${{ steps.update_to_release.outputs.version }}"
           git push
       - name: Create PR
