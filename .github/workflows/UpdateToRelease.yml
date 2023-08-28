@@ -47,4 +47,5 @@ jobs:
       - name: Delete branch
         run: |
           git push origin --delete actions/temp
+          git checkout dev
           git branch -D actions/temp
