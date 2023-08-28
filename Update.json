@@ -1904,13 +1904,13 @@
             ]
         },
         "0.2.70": {
-            "UpdateDate": 1693212673002,
+            "UpdateDate": 1693212259764,
             "Prerelease": true,
             "UpdateCommits": [
                 {
-                    "ShortCommit": "6a4b2d6",
-                    "Commit": "6a4b2d65f794cb5df0b709aabe545b7d610098df",
-                    "Description": "[Bug] 右上角PopUp显示异常 Fixes #170"
+                    "ShortCommit": "91e38f9",
+                    "Commit": "91e38f933e131b48e040dcc26f32aa438f7698fe",
+                    "Description": "[Feature Request] 修复XMOJ导出AC代码的问题 Fixes #173 并使用Zip导出AC代码"
                 },
                 {
                     "ShortCommit": "7ab5906",
