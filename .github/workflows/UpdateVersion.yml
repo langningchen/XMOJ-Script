@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Checkout PR
         run: gh pr checkout ${{ github.event.number }}
         env:
