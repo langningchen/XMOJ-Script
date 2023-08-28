@@ -29,8 +29,13 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git commit -a -m "Update version info to ${{ steps.update_to_release.outputs.version }}"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - name: Setup node
+        uses: actions/setup-node@v1
+      - name: Upload to GitHub
+        uses: LasyIsLazy/github-upload-action@v0.1.0
         with:
-          github_token: ${{ secrets.GHP_TOKEN }}
-          branch: ${{ github.event.pull_request.head.ref }}
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          branch-name: dev
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.repository }}
+          file-path: ./Update.json
