@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.62
+// @version      0.2.69
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -493,8 +493,9 @@ else {
                 let CurrentVersion = GM_info.script.version;
                 let LatestVersion;
                 for (let i = 0; i < Object.keys(Response.UpdateHistory).length; i++) {
-                    if (Object.keys(Response.UpdateHistory)[i] > CurrentVersion && (UtilityEnabled("DebugMode") || Response.UpdateHistory[i].Prerelease == false)) {
-                        LatestVersion = Object.keys(Response.UpdateHistory)[i];
+                    let VersionInfo = Object.keys(Response.UpdateHistory)[i];
+                    if (UtilityEnabled("DebugMode") || Response.UpdateHistory[VersionInfo].Prerelease == false) {
+                        LatestVersion = VersionInfo;
                         break;
                     }
                 }
@@ -584,7 +585,6 @@ else {
         addEventListener("focus", () => {
             RequestAPI("GetMentionList", {}, (Response) => {
                 if (Response.Success) {
-                    debugger
                     let MentionList = Response.Data.MentionList;
                     for (let i = 0; i < MentionList.length; i++) {
                         let Toast = document.createElement("div");
@@ -1715,7 +1715,6 @@ else {
                                         if (RowData.QuickSubmitCount >= 2) {
                                             UsernameLink.className += " link-info";
                                         } else {
-                                            debugger
                                             UsernameLink.className += " " + (await GetUsernameColorClass(RowData.Username));
                                         }
                                     }
@@ -2781,10 +2780,17 @@ else {
                             ReceiveTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
-                                Row.innerHTML = `<td><a class="${await GetUsernameColorClass(Data[i].OtherUser)}" href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a>` +
-                                    (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`) + `</td>
-                                    <td>${Data[i].LastsMessage}</td>
-                                    <td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
+                                var InnerHTMLData = "";
+                                InnerHTMLData += `<td>`;
+                                InnerHTMLData += `<a class="${await GetUsernameColorClass(Data[i].OtherUser)}" href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a>`;
+                                if (AdminUserList.includes(Data[i].OtherUser)) {
+                                    InnerHTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
+                                }
+                                InnerHTMLData += (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`);
+                                InnerHTMLData += `</td>`;
+                                InnerHTMLData += `<td>${Data[i].LastsMessage}</td>`;
+                                InnerHTMLData += `<td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
+                                Row.innerHTML = InnerHTMLData;
                             }
                         }
                         else {
@@ -2874,10 +2880,17 @@ else {
                                 if (!Data[i].IsRead && Data[i].FromUser != document.querySelector("#profile").innerText) {
                                     Row.className = "table-info";
                                 }
-                                Row.innerHTML = `<td><a class="${await GetUsernameColorClass(Data[i].FromUser)}" href="/userinfo.php?user=${Data[i].FromUser}">${Data[i].FromUser}</td>
-                                    <td>${Data[i].Content}</td>
-                                    <td>${new Date(Data[i].SendTime).toLocaleString()}</td>
-                                    <td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
+                                var InnerHTMLData = "";
+                                InnerHTMLData += `<td>`;
+                                InnerHTMLData += `<a class="${await GetUsernameColorClass(Data[i].FromUser)}" href="/userinfo.php?user=${Data[i].FromUser}">${Data[i].FromUser}`;
+                                if (AdminUserList.includes(Data[i].FromUser)) {
+                                    InnerHTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
+                                }
+                                InnerHTMLData += `</td>`;
+                                InnerHTMLData += `<td>${Data[i].Content}</td>`;
+                                InnerHTMLData += `<td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
+                                InnerHTMLData += `<td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
+                                Row.innerHTML = InnerHTMLData;
                             }
                         }
                         else {
@@ -3000,17 +3013,35 @@ else {
                                 if (Posts.length == 0) {
                                     PostList.children[1].innerHTML = `<tr><td colspan="7">暂无数据</td></tr>`;
                                 }
+                                let InnerHTMLData = "";
                                 for (let i = 0; i < Posts.length; i++) {
-                                    PostList.children[1].innerHTML += `<tr>
-                                    <td>${Posts[i].PostID}</td>
-                                    <td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>
-                                    <td><a class="${await GetUsernameColorClass(Posts[i].UserID)}" href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a></td>` +
-                                        (Posts[i].ProblemID == 0 ? `<td></td>` : `<td><a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a></td>`) +
-                                        `<td>${new Date(Posts[i].PostTime).toLocaleString()}</td>
-                                    <td>${Posts[i].ReplyCount}</td>
-                                    <td><a class="${await GetUsernameColorClass(Posts[i].LastReplyUserID)}" href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a> ${new Date(Posts[i].LastReplyTime).toLocaleString()}</td>
-                                </tr>`;
+                                    InnerHTMLData += "<tr>";
+                                    InnerHTMLData += `<td>${Posts[i].PostID}</td>`;
+                                    InnerHTMLData += `<td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>`
+                                    InnerHTMLData += "<td>";
+                                    InnerHTMLData += `<a class="` + (await GetUsernameColorClass(Posts[i].UserID)) + `" href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a>`;
+                                    if (AdminUserList.includes(Posts[i].UserID)) {
+                                        InnerHTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
+                                    }
+                                    InnerHTMLData += "</td>";
+                                    InnerHTMLData += "<td>";
+                                    if (Posts[i].ProblemID != 0) {
+                                        InnerHTMLData += `<a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a>`;
+                                    }
+                                    InnerHTMLData += "</td>";
+                                    InnerHTMLData += "<td>" + new Date(Posts[i].PostTime).toLocaleString() + "</td>";
+                                    InnerHTMLData += `<td>${Posts[i].ReplyCount}</td>`;
+                                    InnerHTMLData += "<td>";
+                                    InnerHTMLData += `<a class="${await GetUsernameColorClass(Posts[i].LastReplyUserID)}" href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a>`;
+                                    if (AdminUserList.includes(Posts[i].LastReplyUserID)) {
+                                        InnerHTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
+                                    }
+                                    InnerHTMLData += " ";
+                                    InnerHTMLData += new Date(Posts[i].LastReplyTime).toLocaleString();
+                                    InnerHTMLData += "</td>";
+                                    InnerHTMLData += "</tr>";
                                 }
+                                PostList.children[1].innerHTML = InnerHTMLData;
                             }
                             else {
                                 ErrorElement.innerText = ResponseData.Message;
@@ -3106,7 +3137,7 @@ else {
                         let Page = Number(SearchParams.get("page")) || 1;
                         document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
                         <div class="row mb-3">
-                            <span class="col-4 text-muted">作者：<a id="PostAuthor" href=""></a></span>
+                            <span class="col-4 text-muted">作者：<a id="PostAuthor" href=""></a><span id="AdminBadge" class="badge text-bg-danger ms-2" style="display: none">管理员</span></span>
                             <span class="col-4 text-muted">发布时间：<span id="PostTime"></span></span>
                             <span class="col-4">
                                 <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
@@ -3206,6 +3237,9 @@ else {
                                     PostAuthor.innerHTML = ResponseData.Data.UserID;
                                     PostAuthor.classList.add(await GetUsernameColorClass(ResponseData.Data.UserID));
                                     PostAuthor.href = "/userinfo.php?user=" + ResponseData.Data.UserID;
+                                    if (AdminUserList.includes(ResponseData.Data.UserID)) {
+                                        AdminBadge.style.display = "";
+                                    }
                                     PostTime.innerText = new Date(ResponseData.Data.PostTime).toLocaleString();
                                     let Replies = ResponseData.Data.Reply;
                                     PostReplies.innerHTML = "";
@@ -3224,6 +3258,12 @@ else {
                                         CardBodyRowSpan1AElement.classList.add(await GetUsernameColorClass(Replies[i].UserID))
                                         CardBodyRowSpan1AElement.innerText = Replies[i].UserID;
                                         CardBodyRowSpan1Element.appendChild(CardBodyRowSpan1AElement);
+                                        if (AdminUserList.includes(Replies[i].UserID)) {
+                                            let CardBodyRowSpan1BadgeElement = document.createElement("span");
+                                            CardBodyRowSpan1BadgeElement.className = "badge text-bg-danger ms-2";
+                                            CardBodyRowSpan1BadgeElement.innerText = "管理员";
+                                            CardBodyRowSpan1Element.appendChild(CardBodyRowSpan1BadgeElement);
+                                        }
                                         let CardBodyRowSpan2Element = document.createElement("span");
                                         CardBodyRowSpan2Element.className = "col-4 text-muted";
                                         CardBodyRowSpan2Element.innerText = "发布时间：";

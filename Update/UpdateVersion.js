@@ -20,7 +20,7 @@ console.log("Last version: " + LastJSONVersion);
 var LastVersion = LastJSVersion.split(".");
 var LatestVersion = LastVersion[0] + "." + LastVersion[1] + "." + (parseInt(LastVersion[2]) + 1);
 console.log("Latest version: " + LatestVersion);
-// execSync("echo version=" + LatestVersion + " >> $GITHUB_OUTPUT");
+execSync("echo version=" + LatestVersion + " >> $GITHUB_OUTPUT");
 JSONObject.UpdateHistory[LatestVersion] = {
     "UpdateDate": Date.now(),
     "Prerelease": true,
@@ -46,7 +46,7 @@ for (var i = 0; i < Commits.length; i++) {
     });
     console.log("    Commit " + i + "(" + ShortCommitHash + "): " + CommitDescription);
 }
-writeFileSync(JSONFileName, JSON.stringify(JSONObject), "utf8");
+writeFileSync(JSONFileName, JSON.stringify(JSONObject, null, 4), "utf8");
 
 var NewJSFileContent = JSFileContent.replace(/@version(\s+)\d+\.\d+\.\d+/, "@version$1" + LatestVersion);
 writeFileSync(JSFileName, NewJSFileContent, "utf8");
