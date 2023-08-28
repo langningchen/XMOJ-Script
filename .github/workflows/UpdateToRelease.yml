@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -26,8 +27,8 @@ jobs:
         run: node ./Update/UpdateToRelease.js
       - name: Commit git
         run: |
-          git config --global user.email "jpxx_chenlangning@outlook.com"
-          git config --global user.name "langningchen"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
           git checkout actions/temp
           git commit -a -m "Update version info to ${{ steps.update_to_release.outputs.version }}"
           git push
