@@ -31,7 +31,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git checkout -b actions/temp
           git commit -a -m "Update version info to ${{ steps.update_to_release.outputs.version }}"
-          git push
+          git push -u origin actions/temp
       - name: Create PR
         run: gh pr create --title "Update to release ${{ steps.update_to_release.outputs.version }}" --body "Update to release ${{ steps.update_to_release.outputs.version }}" --base dev --head actions/temp
         env:
