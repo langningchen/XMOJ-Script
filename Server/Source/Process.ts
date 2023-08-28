@@ -381,7 +381,7 @@ export class Process {
                 from_user_id: this.SecurityChecker.GetUsername(),
                 to_user_id: Data["ToUser"],
                 content: "我给你发送了一条短消息",
-                mention_url: "/discuss3/mail.php?other=" + this.SecurityChecker.GetUsername(),
+                mention_url: "/mail.php?other=" + this.SecurityChecker.GetUsername(),
                 mention_time: new Date().getTime(),
                 other_data: "mail-" + MessageID
             }));

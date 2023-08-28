@@ -1,6 +1,8 @@
 name: "新功能提案"
 description: "对已有功能的大幅度修改，或添加一个新内容或选项"
-labels: [Enhancement]
+labels: "enhancement,needs-triage"
+assignees: "langningchen"
+title: "[Feature Request]"
 body:
 - type: checkboxes
   id: "yml-1"

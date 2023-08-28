@@ -1,6 +1,8 @@
 name: "综合 Bug 反馈"
 description: "有功能有问题"
-labels: [Bug]
+assignees: "langningchen"
+labels: "bug,needs-triage"
+title: "[Bug] "
 body:
 - type: checkboxes
   id: "yml-1"
@@ -24,16 +26,9 @@ body:
   attributes:
     label: 重现步骤
     description: "详细描述要怎么操作才能再次触发这个 Bug。"
-    value: |
-      1、点击xxxx
-      2、往下滚，然后点击xxxx
-  validations:
-    required: true
 - type: textarea
   id: "yml-4"
   attributes:
     label: 控制台错误信息
     description: "粘贴控制台错误信息"
     placeholder: "控制台错误信息"
-  validations:
-    required: true
