@@ -1,5 +1,6 @@
 ![wakatime](https://wakatime.com/badge/github/langningchen/XMOJ-Script.svg)
-[![UpdateVersion](https://github.com/langningchen/XMOJ-Script/actions/workflows/UpdateVersion.yml/badge.svg)](https://github.com/langningchen/XMOJ-Script/actions/workflows/UpdateVersion.yml)
+[![Release](https://github.com/langningchen/XMOJ-Script/actions/workflows/Release.yml/badge.svg)](https://github.com/langningchen/XMOJ-Script/actions/workflows/Release.yml)
+[![Prerelease](https://github.com/langningchen/XMOJ-Script/actions/workflows/Prerelease.yml/badge.svg)](https://github.com/langningchen/XMOJ-Script/actions/workflows/Prerelease.yml)
 ![GitHub](https://img.shields.io/github/license/langningchen/XMOJ-Script)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/langningchen/XMOJ-Script)
 ![GitHub release](https://img.shields.io/github/v/release/langningchen/XMOJ-Script)
