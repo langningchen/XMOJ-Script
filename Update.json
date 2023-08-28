@@ -1874,7 +1874,7 @@
         },
         "0.2.69": {
             "UpdateDate": 1693184748957,
-            "Prerelease": false,
+            "Prerelease": true,
             "UpdateCommits": [
                 {
                     "ShortCommit": "d0278d7",
