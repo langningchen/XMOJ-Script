@@ -493,7 +493,6 @@ else {
                 let CurrentVersion = GM_info.script.version;
                 let LatestVersion;
                 for (let i = 0; i < Object.keys(Response.UpdateHistory).length; i++) {
-                    debugger
                     let VersionInfo = Object.keys(Response.UpdateHistory)[i];
                     if (UtilityEnabled("DebugMode") || Response.UpdateHistory[VersionInfo].Prerelease == false) {
                         LatestVersion = VersionInfo;
@@ -586,7 +585,6 @@ else {
         addEventListener("focus", () => {
             RequestAPI("GetMentionList", {}, (Response) => {
                 if (Response.Success) {
-                    debugger
                     let MentionList = Response.Data.MentionList;
                     for (let i = 0; i < MentionList.length; i++) {
                         let Toast = document.createElement("div");
@@ -3017,7 +3015,6 @@ else {
                                 }
                                 let InnerHTMLData = "";
                                 for (let i = 0; i < Posts.length; i++) {
-                                    debugger
                                     InnerHTMLData += "<tr>";
                                     InnerHTMLData += `<td>${Posts[i].PostID}</td>`;
                                     InnerHTMLData += `<td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>`
