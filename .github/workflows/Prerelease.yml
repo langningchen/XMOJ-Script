@@ -17,8 +17,7 @@ jobs:
           fetch-depth: 0
       - name: Get version
         id: get_version
-        run: |
-          echo "::set-output name=version::$(grep -oP '@version\s*\d+\.\d+\.\d+' XMOJ.user.js | grep -oP '\d+\.\d+\.\d+')"
+        run: node ./Update/GetVersion.js
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1

@@ -1,0 +1,17 @@
+name: Mark stale issues and pull requests
+on:
+  schedule:
+  - cron: '21 12 * * *'
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Stale
+        uses: actions/stale@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: 10
+          exempt-issue-labels: frozen

@@ -3,11 +3,8 @@ on:
   pull_request:
     types:
       - opened
-      - synchronize
-      - reopened
     branches:
       - dev
-  workflow_dispatch:
 jobs:
   UpdateVersion:
     name: UpdateVersion
@@ -22,11 +19,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Update version
-        id: update
-        run: node ./Update/Update.js
+        id: update_version
+        run: node ./Update/UpdateVersion.js
       - name: Commit files
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git commit -a -m "Update version info to ${{ steps.update.outputs.version }}"
+          git commit -a -m "Update version info to ${{ steps.update_version.outputs.version }}"
           git push
