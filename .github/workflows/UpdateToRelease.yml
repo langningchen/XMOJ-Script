@@ -9,6 +9,8 @@ jobs:
   UpdateToRelease:
     name: UpdateToRelease
     runs-on: ubuntu-latest
+    permissions:
+      checks: read
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -25,5 +27,21 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
+          git branch actions/release_version
+          git checkout actions/release_version
           git commit -a -m "Update version info to ${{ steps.update_to_release.outputs.version }}"
-          git push
+          git push -u origin actions/release_version
+      - name: Create PR
+        run: gh pr create --title "Update to release ${{ steps.update_to_release.outputs.version }}" --body "Update to release ${{ steps.update_to_release.outputs.version }}" --base master --head actions/release_version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Wait for status check pass
+        id: wait_for_status_check_pass
+        uses: poseidon/wait-for-status-checks@v0.3.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Merge PR
+        if: steps.wait_for_status_check_pass.outputs.status == 'success'
+        run: gh pr merge ${{ github.event.number }} --delete-branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
