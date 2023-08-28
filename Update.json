@@ -1871,6 +1871,37 @@
                     "Description": "Update version info to 0.2.67"
                 }
             ]
+        },
+        "0.2.69": {
+            "UpdateDate": 1693184748957,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "d0278d7",
+                    "Commit": "d0278d7efcb61f5d975085f17b42091f5961d4c9",
+                    "Description": "Merge pull request #168 from langningchen/dev"
+                },
+                {
+                    "ShortCommit": "71b2ee4",
+                    "Commit": "71b2ee4705aadc256b7902724efb6e29e1c3ea98",
+                    "Description": "PRAutoClose的BUG"
+                },
+                {
+                    "ShortCommit": "bf1bcd4",
+                    "Commit": "bf1bcd4820825f2d1d98f04c5468cc1666481518",
+                    "Description": "Merge pull request #167 from langningchen/master"
+                },
+                {
+                    "ShortCommit": "9ced842",
+                    "Commit": "9ced842017fa212df3a98f6e49dae2d51f950e77",
+                    "Description": "让Update可读"
+                },
+                {
+                    "ShortCommit": "dd59f6c",
+                    "Commit": "dd59f6c1936c849741e4a7d17bb384ae6da0da23",
+                    "Description": "解决自动更新脚本问题"
+                }
+            ]
         }
     }
 }
