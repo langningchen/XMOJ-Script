@@ -2084,6 +2084,11 @@
                     "Description": "Update version info to 0.2.70"
                 }
             ]
+        },
+        "0.2.72": {
+            "UpdateDate": 1693213902966,
+            "Prerelease": true,
+            "UpdateCommits": []
         }
     }
 }
