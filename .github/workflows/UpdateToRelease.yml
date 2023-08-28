@@ -31,6 +31,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git checkout -b actions/temp
           git commit -a -m "Update version info to ${{ steps.update_to_release.outputs.version }}"
+          git pull
           git push -u origin actions/temp
       - name: Create PR
         id: create_pr
@@ -41,7 +42,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Merge PR
-        run: gh pr merge ${{ steps.create_pr.outputs.PRNumber }} --merge --admin
+        run: gh pr merge ${{ steps.create_pr.outputs.PRNumber }} --merge --auto
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete PR
