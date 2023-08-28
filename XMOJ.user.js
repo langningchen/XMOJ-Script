@@ -490,7 +490,7 @@ else {
                 return Response.json();
             })
             .then((Response) => {
-                CurrentVersion = GM_info.script.version;
+                let CurrentVersion = GM_info.script.version;
                 let LatestVersion;
                 for (let i = 0; i < Object.keys(Response.UpdateHistory).length; i++) {
                     debugger
