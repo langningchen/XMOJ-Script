@@ -7,11 +7,6 @@ on:
       - reopened
     branches:
       - dev
-  push:
-    branches:
-      - dev
-    paths:
-      - XMOJ.user.js
   workflow_dispatch:
 jobs:
   UpdateVersion:
@@ -31,7 +26,5 @@ jobs:
         run: node ./Update/Update.js
       - name: Commit files
         run: |
-          git config --local user.email "jpxx_chenlangning@outlook.com"
-          git config --local user.name "Langning Chen"
           git commit -a -m "Update version info to ${{ steps.update.outputs.version }}"
           git push
