@@ -430,11 +430,9 @@ else {
             if (UtilityEnabled("ResetType")) {
                 if (document.querySelector("#profile") != undefined &&
                     document.querySelector("#profile").innerHTML == "登录") {
-                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").innerHTML = `<li class="dropdown-item">登录</li>`
-                    document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li").addEventListener("click", () => {
-                        localStorage.setItem("UserScript-LastPage", location.pathname + location.search);
-                        location.href = "/loginpage.php";
-                    });
+                    if (document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").childNodes.length == 3) {
+                        document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul").childNodes[3].remove();
+                    }
                 }
                 else if (document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(3) > a > span") != undefined &&
                     document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > ul > li:nth-child(3) > a > span").innerText != "个人中心") {
