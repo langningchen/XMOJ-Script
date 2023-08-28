@@ -44,11 +44,7 @@ jobs:
         run: gh pr merge ${{ steps.create_pr.outputs.PRNumber }} --merge --auto
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Delete PR
-        run: gh pr delete ${{ steps.create_pr.outputs.PRNumber }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete branch
-        run: git push origin --delete actions/temp
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push origin --delete actions/temp
+          git branch -D actions/temp
