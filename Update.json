@@ -1902,6 +1902,188 @@
                     "Description": "解决自动更新脚本问题"
                 }
             ]
+        },
+        "0.2.70": {
+            "UpdateDate": 1693212673002,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "6a4b2d6",
+                    "Commit": "6a4b2d65f794cb5df0b709aabe545b7d610098df",
+                    "Description": "[Bug] 右上角PopUp显示异常 Fixes #170"
+                },
+                {
+                    "ShortCommit": "7ab5906",
+                    "Commit": "7ab5906d09871f562595780e312ae8de1a7881eb",
+                    "Description": "Check out dev first"
+                },
+                {
+                    "ShortCommit": "72c6682",
+                    "Commit": "72c6682ed17bbbde13136ba44a6a93075681aba4",
+                    "Description": "Make something to commit"
+                },
+                {
+                    "ShortCommit": "fbcd9eb",
+                    "Commit": "fbcd9eba02c26b90ff8680a213ab66ff466494f3",
+                    "Description": "Remove \"Delete PR\" that is not reasonable"
+                },
+                {
+                    "ShortCommit": "f9eca5e",
+                    "Commit": "f9eca5eeb8fab5a5d5fc2e9554f00058697744ec",
+                    "Description": "Merge pull request #181 from langningchen/actions/temp"
+                },
+                {
+                    "ShortCommit": "0b2c022",
+                    "Commit": "0b2c022e8a57ddd727906721e1cf4299706171b4",
+                    "Description": "Update version info to 0.2.69"
+                },
+                {
+                    "ShortCommit": "c87fb2e",
+                    "Commit": "c87fb2e560441123e16c6cc0bae4662a06cb94b4",
+                    "Description": "remove pull that cause error"
+                },
+                {
+                    "ShortCommit": "3768f54",
+                    "Commit": "3768f54b3c2170c7c76d5aa706a5a8146a7fc76e",
+                    "Description": "Use auto but not admin"
+                },
+                {
+                    "ShortCommit": "04c6979",
+                    "Commit": "04c69793a6af1f98506bca5f13aaeff979bd2387",
+                    "Description": "Update version with sync too"
+                },
+                {
+                    "ShortCommit": "86e13b9",
+                    "Commit": "86e13b922cf8586473aecd420d3895507f0fba44",
+                    "Description": "Use the correct PR Number"
+                },
+                {
+                    "ShortCommit": "38e5b7c",
+                    "Commit": "38e5b7cad575f1758f23232c894a28d574b217b2",
+                    "Description": "Only use the admin option to bypass rules"
+                },
+                {
+                    "ShortCommit": "c1d90c0",
+                    "Commit": "c1d90c0d59772456bc37843e82c053d0c28f4862",
+                    "Description": "set upstream"
+                },
+                {
+                    "ShortCommit": "685018c",
+                    "Commit": "685018c86f0fa220fb64cdbe51e6808de5eb0a92",
+                    "Description": "Use the new branch"
+                },
+                {
+                    "ShortCommit": "c3938ae",
+                    "Commit": "c3938ae9db2be6c1d3eaf30b3b98154960959b38",
+                    "Description": "Config the git first"
+                },
+                {
+                    "ShortCommit": "0100c8c",
+                    "Commit": "0100c8cbf4f39d68bf4ac49d7de3e506c23ccf9c",
+                    "Description": "remove the Update.json first"
+                },
+                {
+                    "ShortCommit": "0ebf173",
+                    "Commit": "0ebf173d162126956f9f03c3259d6ac99ce9fb38",
+                    "Description": "Use merge method to merge and allow bypass rules"
+                },
+                {
+                    "ShortCommit": "c6acce4",
+                    "Commit": "c6acce4a8c5e0d4240a6bf86085666f1005f2462",
+                    "Description": "Give write permission"
+                },
+                {
+                    "ShortCommit": "3a731c4",
+                    "Commit": "3a731c47fd16b67574b1e558972913da45cbd061",
+                    "Description": "Use my account"
+                },
+                {
+                    "ShortCommit": "762f7b2",
+                    "Commit": "762f7b20a29e3606868dd064a4a7b9e73e7206e4",
+                    "Description": "Use the existing branch"
+                },
+                {
+                    "ShortCommit": "ccb6a66",
+                    "Commit": "ccb6a662db21e3b82a7c840d4013ac3d81fd8331",
+                    "Description": "Update the UpdateToRelease.yml"
+                },
+                {
+                    "ShortCommit": "a92edb6",
+                    "Commit": "a92edb688a791cfe6e8f1abad9e0f38acd016359",
+                    "Description": "Update owner and repo"
+                },
+                {
+                    "ShortCommit": "42e36fa",
+                    "Commit": "42e36fa0123236faa47684033e48ac3d39c4c754",
+                    "Description": "换一个试试"
+                },
+                {
+                    "ShortCommit": "b9d997c",
+                    "Commit": "b9d997c613cc8461ade58c38b2f3dff336146399",
+                    "Description": "Update to GHP"
+                },
+                {
+                    "ShortCommit": "ca5423f",
+                    "Commit": "ca5423fdf0a97cf9d8033149e06f545246c3c676",
+                    "Description": "设置写PR的权限"
+                },
+                {
+                    "ShortCommit": "85ebf08",
+                    "Commit": "85ebf081bf243cc2ff90128fdd27b268a6cdaedb",
+                    "Description": "使用别人的库尝试"
+                },
+                {
+                    "ShortCommit": "f951c6b",
+                    "Commit": "f951c6bc8aafc024b4478a82ddec278c88db5f92",
+                    "Description": "使用gh命令行"
+                },
+                {
+                    "ShortCommit": "ea14740",
+                    "Commit": "ea147404e7e0d51aab85650d24e1519fd2a085d0",
+                    "Description": "手动添加分支"
+                },
+                {
+                    "ShortCommit": "4d18b36",
+                    "Commit": "4d18b36465f4e5b186254dde91bd2f78bc7ad31b",
+                    "Description": "使用gh命令行提交更改"
+                },
+                {
+                    "ShortCommit": "2d5f567",
+                    "Commit": "2d5f56707aa061d5d782b0617ac14a333cb0b252",
+                    "Description": "更改用户权限"
+                },
+                {
+                    "ShortCommit": "0c7d04a",
+                    "Commit": "0c7d04a9a846030d81a3a7323a20b01bbd2e89d5",
+                    "Description": "设置自动更新至发布也可以在同步时运行"
+                },
+                {
+                    "ShortCommit": "c3c3932",
+                    "Commit": "c3c393294a7f298af9154d9fd9ddd06056513f2d",
+                    "Description": "更新自动更新至发布脚本使用PR"
+                }
+            ]
+        },
+        "0.2.71": {
+            "UpdateDate": 1693213434199,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "022d6ba",
+                    "Commit": "022d6ba0ef24e66564db5e9bb391a5ec4032b209",
+                    "Description": "自动更新脚本有问题"
+                },
+                {
+                    "ShortCommit": "9e9e504",
+                    "Commit": "9e9e50417ac08cd95f0ba4170ee32138a1abafcb",
+                    "Description": "Revert \"Update version info to 0.2.70\""
+                },
+                {
+                    "ShortCommit": "d34e674",
+                    "Commit": "d34e674b61af2ad96e89b79bdc3313343e03f1fa",
+                    "Description": "Update version info to 0.2.70"
+                }
+            ]
         }
     }
 }
