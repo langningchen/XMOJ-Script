@@ -3,7 +3,7 @@ import { Database } from "./Database";
 import { Security } from "./Security";
 import { Output } from "./Output";
 
-const AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2"];
+const AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2","shanwenxiao"];
 
 export class Process {
     private XMOJDatabase: Database;
@@ -335,7 +335,7 @@ export class Process {
             }
             OtherUsernameList = Array.from(new Set(OtherUsernameList));
             for (let i in OtherUsernameList) {
-                let LastMessage = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", ["content", "send_time"], {
+                let LastMessageFrom = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", ["content", "send_time"], {
                     message_from: OtherUsernameList[i],
                     message_to: this.SecurityChecker.GetUsername()
                 }, {
@@ -343,6 +343,24 @@ export class Process {
                     OrderIncreasing: false,
                     Limit: 1
                 }));
+                let LastMessageTo = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message", ["content", "send_time"], {
+                    message_from: this.SecurityChecker.GetUsername(),
+                    message_to: OtherUsernameList[i]
+                }, {
+                    Order: "send_time",
+                    OrderIncreasing: false,
+                    Limit: 1
+                }));
+                let LastMessage;
+                if (LastMessageFrom.toString() === "") {
+                    LastMessage = LastMessageTo;
+                }
+                else if (LastMessageTo.toString() === "") {
+                    LastMessage = LastMessageFrom;
+                }
+                else {
+                    LastMessage = LastMessageFrom[0]["send_time"] > LastMessageTo[0]["send_time"] ? LastMessageFrom : LastMessageTo;
+                }
                 let UnreadCount = ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("short_message", {
                     message_from: OtherUsernameList[i],
                     message_to: this.SecurityChecker.GetUsername(),

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.69
+// @version      0.2.72
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -29,7 +29,7 @@
  */
 
 const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
-const AdminUserList = ["chenlangning", "zhuchenrui2"];
+const AdminUserList = ["chenlangning", "zhuchenrui2","shanwenxiao"];
 
 let GetRating = async (Username) => {
     if (localStorage.getItem("UserScript-UserRating-" + Username) != null &&
