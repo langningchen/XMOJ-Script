@@ -1,11 +1,6 @@
 name = "xmoj-bbs"
 main = "Source/index.ts"
 compatibility_date = "2023-08-17"
-usage_model = "bundled"
-env = { }
-
-[triggers]
-crons = [ ]
 
 [[d1_databases]]
 binding = "DB"

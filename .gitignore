@@ -2,6 +2,5 @@ Server/Source/Secret.ts
 Server/node_modules
 Server/.wrangler
 Server-Old/
-email-server/xmoj-email/.wrangler
-email-server/xmoj-email/node_modules
-email-server/xmoj-email/src/secret.ts
+Email/.wrangler
+Email/node_modules
