@@ -1,3 +1,4 @@
+import { MD5 } from "crypto-js/md5";
 import { Result, ThrowErrorIfFailed } from "./Result";
 import { Database } from "./Database";
 import { Security } from "./Security";
@@ -9,6 +10,7 @@ export class Process {
     private XMOJDatabase: Database;
     private RequestData: Request;
     private SecurityChecker: Security = new Security();
+    private XMOJEmailKV;
     private ProcessFunctions = {
         NewPost: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
@@ -460,12 +462,30 @@ export class Process {
                 message_to: this.SecurityChecker.GetUsername()
             });
             return new Result(true, "获得短消息成功", ResponseData);
+        },
+        SetEmail: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "Email": "string"
+            }));
+            ThrowErrorIfFailed(this.SecurityChecker.CheckEmail(Data["Email"]));
+            this.XMOJEmailKV.put(this.SecurityChecker.GetUsername() + "_EmailHash", MD5(Data["Email"]).toString());
+            return new Result(true, "邮箱设置成功");
+        },
+        GetEmailHash: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "Username": "string"
+            }));
+            ThrowErrorIfFailed(await this.SecurityChecker.IfUserExist(Data["Username"]));
+            return new Result(true, "获取成功", {
+                EmailHash: await this.XMOJEmailKV.get(Data["Username"] + "_EmailHash")
+            });
         }
     };
     constructor(RequestData: Request, Environment) {
         this.XMOJDatabase = new Database(Environment.DB);
         this.RequestData = RequestData;
         this.SecurityChecker.SetRemoteIP(RequestData.headers.get("CF-Connecting-IP") || "");
+        this.XMOJEmailKV = Environment.XMOJEmailKV;
     }
     public async Process(): Promise<Result> {
         try {
