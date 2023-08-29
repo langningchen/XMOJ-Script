@@ -2084,6 +2084,47 @@
                     "Description": "Update version info to 0.2.70"
                 }
             ]
+        },
+        "0.2.72": {
+            "UpdateDate": 1693288243268,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "829a9c3",
+                    "Commit": "829a9c3754d961ff53bbb016b2baddbd5614e7db",
+                    "Description": "[Bug] 无法读取短消息 Fixes #139"
+                },
+                {
+                    "ShortCommit": "490cda6",
+                    "Commit": "490cda616cacd18bba25add9bbd09d4f70da2bbd",
+                    "Description": "Use all depth"
+                },
+                {
+                    "ShortCommit": "b4f4e03",
+                    "Commit": "b4f4e03259c0a2764600f00628ed821f8174a11e",
+                    "Description": "Merge pull request #189 from langningchen/langningchen/issue75"
+                },
+                {
+                    "ShortCommit": "68d88a5",
+                    "Commit": "68d88a59093477895570f085bf5074ec549a4ab7",
+                    "Description": "[Chore] Update photos Fixes #75"
+                },
+                {
+                    "ShortCommit": "49e3165",
+                    "Commit": "49e31651a17d14d67207e6c2e8edb61d6baaea07",
+                    "Description": "Revert \"Update version info to 0.2.72\""
+                },
+                {
+                    "ShortCommit": "97b64c0",
+                    "Commit": "97b64c028e45c45a3a13ad720e2b25e497cb449d",
+                    "Description": "更新版本时检查是否为最新"
+                },
+                {
+                    "ShortCommit": "750bbf5",
+                    "Commit": "750bbf57a4fc627b4dcd811826e6dbc4d25ae80d",
+                    "Description": "Update version info to 0.2.72"
+                }
+            ]
         }
     }
 }
