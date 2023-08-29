@@ -3,6 +3,7 @@ on:
   pull_request:
     types:
       - opened
+      - synchronize
       - reopened
     branches:
       - dev
@@ -18,20 +19,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Check branch
-        if: github.event.action == 'opened'
         run: |
           git fetch origin dev
           git diff --name-only dev -- | grep -q "Update.json"
           if [ $? -eq 0 ]; then
             gh pr comment ${{ github.event.pull_request.number }} --body "您的分支 \`${{ github.event.pull_request.head.ref }}\` 已经落后于 \`Dev\` 分支，请先合并 \`Dev\` 分支到您的分支。"
+            gh pr edit ${{ github.event.pull_request.number }} --add-label "Need Update"
             exit 1
+          else
+            gh pr edit ${{ github.event.pull_request.number }} --remove-label "Need Update" || true
           fi
       - name: Update version
         id: update_version
+        if: contains(github.event.pull_request.labels.*.name, 'Need Update') == false && contains(github.event.pull_request.labels.*.name, 'Version Updated') == false
         run: node ./Update/UpdateVersion.js
       - name: Commit files
+        if: contains(github.event.pull_request.labels.*.name, 'Need Update') == false && contains(github.event.pull_request.labels.*.name, 'Version Updated') == false
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git commit -a -m "Update version info to ${{ steps.update_version.outputs.version }}"
           git push
+      - name: Add label
+        if: contains(github.event.pull_request.labels.*.name, 'Need Update') == false && contains(github.event.pull_request.labels.*.name, 'Version Updated') == false
+        run: gh pr edit ${{ github.event.pull_request.number }} --add-label "Version Updated"
