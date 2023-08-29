@@ -11,6 +11,9 @@ export class Process {
     private RequestData: Request;
     private SecurityChecker: Security = new Security();
     private XMOJEmailKV;
+    private GetEmailHash = async (Data: object): Promise<string> => {
+        return await this.XMOJEmailKV.get(Data["Username"] + "_EmailHash");
+    }
     private ProcessFunctions = {
         NewPost: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
@@ -470,15 +473,6 @@ export class Process {
             ThrowErrorIfFailed(this.SecurityChecker.CheckEmail(Data["Email"]));
             this.XMOJEmailKV.put(this.SecurityChecker.GetUsername() + "_EmailHash", MD5(Data["Email"]).toString());
             return new Result(true, "邮箱设置成功");
-        },
-        GetEmailHash: async (Data: object): Promise<Result> => {
-            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
-                "Username": "string"
-            }));
-            ThrowErrorIfFailed(await this.SecurityChecker.IfUserExist(Data["Username"]));
-            return new Result(true, "获取成功", {
-                EmailHash: await this.XMOJEmailKV.get(Data["Username"] + "_EmailHash")
-            });
         }
     };
     constructor(RequestData: Request, Environment) {
