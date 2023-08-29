@@ -4,7 +4,7 @@ import { Database } from "./Database";
 import { Security } from "./Security";
 import { Output } from "./Output";
 
-const AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2"];
+const AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2","shanwenxiao"];
 
 export class Process {
     private XMOJDatabase: Database;
