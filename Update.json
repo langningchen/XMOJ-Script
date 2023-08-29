@@ -2087,7 +2087,7 @@
         },
         "0.2.72": {
             "UpdateDate": 1693288243268,
-            "Prerelease": true,
+            "Prerelease": false,
             "UpdateCommits": [
                 {
                     "ShortCommit": "829a9c3",
