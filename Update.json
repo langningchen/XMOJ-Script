@@ -2272,6 +2272,17 @@
                     "Description": "Update version info to 0.2.77"
                 }
             ]
+        },
+        "0.2.79": {
+            "UpdateDate": 1693389343170,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "1ac9cd7",
+                    "Commit": "1ac9cd76ea0c77fe4e4c0bbc4ae02f2c501e17f5",
+                    "Description": "增加更改头像功能"
+                }
+            ]
         }
     }
 }

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.78
+// @version      0.2.79
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -65,10 +65,10 @@ let GetUsernameHTML = async (Username, Href = "userinfo.php?user=") => {
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
     if (UserInfo.EmailHash == undefined) {
-        HTMLData += `https://www.cravatar.com/avatar/00000000000000000000000000000000?s=20&d=mp&f=y`;
+        HTMLData += `https://cravatar.cn/avatar/00000000000000000000000000000000?s=20&d=mp&f=y`;
     }
     else {
-        HTMLData += `https://www.cravatar.com/avatar/${UserInfo.EmailHash}?s=20&d=retro`;
+        HTMLData += `https://cravatar.cn/avatar/${UserInfo.EmailHash}?s=20&d=retro`;
     }
     HTMLData += `" class="rounded me-2" style="width: 20px; height: 20px; ">`;
     HTMLData += `<a href="${Href}${Username}" class="link-offset-2 link-underline-opacity-50 `
@@ -2108,7 +2108,9 @@ else {
             }
             else {
                 if (UtilityEnabled("ResetType")) {
-                    document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(1) > td").innerText = "修改账号";
+                    document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(1)").innerHTML = `
+                    <td><img src="https://cravatar.cn/avatar/` + (await GetUserInfo(document.querySelector("#profile").innerText)).EmailHash + `?d=retro&s=64"></td>
+                    <td><a href="https://cravatar.cn/avatars" target="_blank">修改头像</a></td>`;
                     for (let i = 3; i <= 12; i++) {
                         document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(" + i + ") > td:nth-child(2) > input").classList.add("form-control");
                         document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(" + i + ") > td:nth-child(2) > input").style.marginBottom = "5px";
@@ -2233,10 +2235,10 @@ else {
             let AvatarElement = document.createElement("img");
             let UserEmailHash = (await GetUserInfo(UserID)).EmailHash;
             if (UserEmailHash == undefined) {
-                AvatarElement.src = `https://www.cravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y`;
+                AvatarElement.src = `https://cravatar.cn/avatar/00000000000000000000000000000000?d=mp&f=y`;
             }
             else {
-                AvatarElement.src = `https://www.cravatar.com/avatar/${UserEmailHash}?d=retro`;
+                AvatarElement.src = `https://cravatar.cn/avatar/${UserEmailHash}?d=retro`;
             }
             AvatarElement.classList.add("rounded", "me-2");
             AvatarElement.style.height = "120px";
