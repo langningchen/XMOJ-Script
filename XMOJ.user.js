@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.73
+// @version      0.2.74
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -65,10 +65,10 @@ let GetUsernameHTML = async (Username, Href = "userinfo.php?user=") => {
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
     if (UserInfo.EmailHash == undefined) {
-        HTMLData += `https://www.gravatar.com/avatar/00000000000000000000000000000000?s=20&d=mp&f=y`;
+        HTMLData += `https://www.cravatar.com/avatar/00000000000000000000000000000000?s=20&d=mp&f=y`;
     }
     else {
-        HTMLData += `https://www.gravatar.com/avatar/${UserInfo.EmailHash}?s=20&d=retro`;
+        HTMLData += `https://www.cravatar.com/avatar/${UserInfo.EmailHash}?s=20&d=retro`;
     }
     HTMLData += `" class="rounded me-2" style="width: 20px; height: 20px; ">`;
     HTMLData += `<a href="${Href}${Username}" class="link-offset-2 link-underline-opacity-50 `
@@ -2233,10 +2233,10 @@ else {
             let AvatarElement = document.createElement("img");
             let UserEmailHash = (await GetUserInfo(UserID)).EmailHash;
             if (UserEmailHash == undefined) {
-                AvatarElement.src = `https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y`;
+                AvatarElement.src = `https://www.cravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y`;
             }
             else {
-                AvatarElement.src = `https://www.gravatar.com/avatar/${UserEmailHash}?d=retro`;
+                AvatarElement.src = `https://www.cravatar.com/avatar/${UserEmailHash}?d=retro`;
             }
             AvatarElement.classList.add("rounded", "me-2");
             AvatarElement.style.height = "120px";
@@ -3168,7 +3168,7 @@ else {
                         let Page = Number(SearchParams.get("page")) || 1;
                         document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
                         <div class="row mb-3">
-                            <span class="col-4 text-muted">作者：<div id="PostAuthor"></div></span>
+                            <span class="col-4 text-muted">作者：<div style="display: inline-block;" id="PostAuthor"></div></span>
                             <span class="col-4 text-muted">发布时间：<span id="PostTime"></span></span>
                             <span class="col-4">
                                 <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
@@ -3280,12 +3280,6 @@ else {
                                         CardBodyRowSpan1Element.className = "col-4 text-muted";
                                         CardBodyRowSpan1Element.innerText = "作者：";
                                         CardBodyRowSpan1Element.innerHTML += await GetUsernameHTML(Replies[i].UserID);
-                                        if (AdminUserList.includes(Replies[i].UserID)) {
-                                            let CardBodyRowSpan1BadgeElement = document.createElement("span");
-                                            CardBodyRowSpan1BadgeElement.className = "badge text-bg-danger ms-2";
-                                            CardBodyRowSpan1BadgeElement.innerText = "管理员";
-                                            CardBodyRowSpan1Element.appendChild(CardBodyRowSpan1BadgeElement);
-                                        }
                                         let CardBodyRowSpan2Element = document.createElement("span");
                                         CardBodyRowSpan2Element.className = "col-4 text-muted";
                                         CardBodyRowSpan2Element.innerText = "发布时间：";
