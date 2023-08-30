@@ -519,14 +519,14 @@ else {
             }
         }, 100);
 
-        fetch("https://web.xmoj-bbs.tech/Update.json", { cache: "no-cache" })
+        fetch(UtilityEnabled("DebugMode") ? "https://langningchen.github.io/XMOJ-Script/Update.json" : "https://web.xmoj-bbs.tech/Update.json", { cache: "no-cache" })
             .then((Response) => {
                 return Response.json();
             })
             .then((Response) => {
                 let CurrentVersion = GM_info.script.version;
                 let LatestVersion;
-                for (let i = 0; i < Object.keys(Response.UpdateHistory).length; i++) {
+                for (let i = Object.keys(Response.UpdateHistory).length - 1; i > 0; i--) {
                     let VersionInfo = Object.keys(Response.UpdateHistory)[i];
                     if (UtilityEnabled("DebugMode") || Response.UpdateHistory[VersionInfo].Prerelease == false) {
                         LatestVersion = VersionInfo;
@@ -538,7 +538,7 @@ else {
                     UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <div>
                             XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                            <a href="https://web.xmoj-bbs.tech/XMOJ.user.js" target="_blank" class="alert-link">此处</a>
+                            <a href="https://github.com/langningchen/XMOJ-Script/releases/tag/" target="_blank" class="alert-link">此处</a>
                             更新
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
