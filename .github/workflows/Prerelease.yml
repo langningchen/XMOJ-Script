@@ -38,10 +38,12 @@ jobs:
           asset_path: ./XMOJ.user.js
           asset_name: XMOJ.user.js
           asset_content_type: text/plain
-      - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: f871a3498aa79883e7f4f0fbe8a465a4
-          projectName: xmoj-script-web
-          directory: .
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
