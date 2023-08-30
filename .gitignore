@@ -2,3 +2,5 @@ Server/Source/Secret.ts
 Server/node_modules
 Server/.wrangler
 Server-Old/
+Email/.wrangler
+Email/node_modules

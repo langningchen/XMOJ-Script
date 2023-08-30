@@ -1,9 +1,10 @@
+import MD5 from "crypto-js/md5";
 import { Result, ThrowErrorIfFailed } from "./Result";
 import { Database } from "./Database";
 import { Security } from "./Security";
 import { Output } from "./Output";
 
-const AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2","shanwenxiao"];
+const AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2", "shanwenxiao"];
 
 export class Process {
     private XMOJDatabase: Database;
@@ -137,11 +138,13 @@ export class Process {
                 ResponseData.Posts.push({
                     PostID: Post["post_id"],
                     UserID: Post["user_id"],
+                    UserEmailHash: await this.GetEmailHash(Post["user_id"]),
                     ProblemID: Post["problem_id"],
                     Title: Post["title"],
                     PostTime: Post["post_time"],
                     ReplyCount: ReplyCount,
                     LastReplyUserID: LastReply[0]["user_id"],
+                    LastReplyUserEmailHash: await this.GetEmailHash(LastReply[0]["user_id"]),
                     LastReplyTime: LastReply[0]["reply_time"]
                 });
             }
@@ -186,6 +189,7 @@ export class Process {
                 ResponseData.Reply.push({
                     ReplyID: ReplyItem["reply_id"],
                     UserID: ReplyItem["user_id"],
+                    UserEmailHash: await this.GetEmailHash(ReplyItem["user_id"]),
                     Content: ReplyItem["content"],
                     ReplyTime: ReplyItem["reply_time"]
                 });
@@ -238,8 +242,6 @@ export class Process {
             });
             for (let i in MentionPeople) {
                 await this.XMOJDatabase.Insert("mention", {
-                    // user_id: MentionPeople[i],
-                    // reply_id: Data["ReplyID"]
                     from_user_id: this.SecurityChecker.GetUsername(),
                     to_user_id: MentionPeople[i],
                     content: "我在讨论" + Post[0]["title"] + "中提到了你",
@@ -298,6 +300,7 @@ export class Process {
                 ResponseData.MentionList.push({
                     MentionID: Mention["mention_id"],
                     FromUserID: Mention["from_user_id"],
+                    FromUserEmailHash: await this.GetEmailHash(Mention["from_user_id"]),
                     Content: Mention["content"],
                     MentionURL: Mention["mention_url"],
                     MentionTime: Mention["mention_time"]
@@ -368,6 +371,7 @@ export class Process {
                 }));
                 ResponseData.MailList.push({
                     OtherUser: OtherUsernameList[i],
+                    OtherUserEmailHash: await this.GetEmailHash(OtherUsernameList[i]),
                     LastsMessage: LastMessage[0]["content"],
                     SendTime: LastMessage[0]["send_time"],
                     UnreadCount: UnreadCount["TableSize"]
@@ -426,7 +430,9 @@ export class Process {
                 ResponseData.Mail.push({
                     MessageID: Mail["message_id"],
                     FromUser: Mail["message_from"],
+                    FromUserEmailHash: await this.GetEmailHash(Mail["message_from"]),
                     ToUser: Mail["message_to"],
+                    ToUserEmailHash: await this.GetEmailHash(Mail["message_to"]),
                     Content: Mail["content"],
                     SendTime: Mail["send_time"],
                     IsRead: Mail["is_read"]
@@ -444,7 +450,9 @@ export class Process {
                 ResponseData.Mail.push({
                     MessageID: Mail["message_id"],
                     FromUser: Mail["message_from"],
+                    FromUserEmailHash: await this.GetEmailHash(Mail["message_from"]),
                     ToUser: Mail["message_to"],
+                    ToUserEmailHash: await this.GetEmailHash(Mail["message_to"]),
                     Content: Mail["content"],
                     SendTime: Mail["send_time"],
                     IsRead: Mail["is_read"]
