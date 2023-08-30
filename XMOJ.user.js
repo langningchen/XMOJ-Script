@@ -31,7 +31,7 @@
  */
 
 const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
-const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao"];
+const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
 
 let GetUserInfo = async (Username) => {
     if (localStorage.getItem("UserScript-User-" + Username + "-UserRating") != null &&
