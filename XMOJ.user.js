@@ -65,10 +65,10 @@ let GetUsernameHTML = async (Username, Href = "userinfo.php?user=") => {
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
     if (UserInfo.EmailHash == undefined) {
-        HTMLData += `https://www.cravatar.com/avatar/00000000000000000000000000000000?s=20&d=mp&f=y`;
+        HTMLData += `https://www.cravatar.cn/avatar/00000000000000000000000000000000?s=20&d=mp&f=y`;
     }
     else {
-        HTMLData += `https://www.cravatar.com/avatar/${UserInfo.EmailHash}?s=20&d=retro`;
+        HTMLData += `https://www.cravatar.cn/avatar/${UserInfo.EmailHash}?s=20&d=retro`;
     }
     HTMLData += `" class="rounded me-2" style="width: 20px; height: 20px; ">`;
     HTMLData += `<a href="${Href}${Username}" class="link-offset-2 link-underline-opacity-50 `
@@ -2233,10 +2233,10 @@ else {
             let AvatarElement = document.createElement("img");
             let UserEmailHash = (await GetUserInfo(UserID)).EmailHash;
             if (UserEmailHash == undefined) {
-                AvatarElement.src = `https://www.cravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y`;
+                AvatarElement.src = `https://www.cravatar.cn/avatar/00000000000000000000000000000000?d=mp&f=y`;
             }
             else {
-                AvatarElement.src = `https://www.cravatar.com/avatar/${UserEmailHash}?d=retro`;
+                AvatarElement.src = `https://www.cravatar.cn/avatar/${UserEmailHash}?d=retro`;
             }
             AvatarElement.classList.add("rounded", "me-2");
             AvatarElement.style.height = "120px";
