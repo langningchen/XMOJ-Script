@@ -2125,6 +2125,112 @@
                     "Description": "Update version info to 0.2.72"
                 }
             ]
+        },
+        "0.2.73": {
+            "UpdateDate": 1693385104334,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "3d63c8b",
+                    "Commit": "3d63c8b5152a704ab3ada56d00b5edf3a1286a35",
+                    "Description": "Add admin to AdminUserList"
+                },
+                {
+                    "ShortCommit": "7592e02",
+                    "Commit": "7592e02a7daac7edd83c86ed8710a7cdbbe926c8",
+                    "Description": "增加头像"
+                },
+                {
+                    "ShortCommit": "f8b97e8",
+                    "Commit": "f8b97e87a7fe5cd5339b7b48bf3af6ee39d33f41",
+                    "Description": "增加头像"
+                },
+                {
+                    "ShortCommit": "937270c",
+                    "Commit": "937270ca4b70ba953a6d6507ef30edecf64faa2c",
+                    "Description": "Merge pull request #204 from langningchen/master"
+                },
+                {
+                    "ShortCommit": "9b1a666",
+                    "Commit": "9b1a6665335a0d8b63dbedc9b7fc850732495f5e",
+                    "Description": "Merge pull request #203 from langningchen/langningchen/FixCICD"
+                },
+                {
+                    "ShortCommit": "35b2acf",
+                    "Commit": "35b2acfe4b7c959405324e46fc15e1235131698b",
+                    "Description": "在release之前更新版本"
+                },
+                {
+                    "ShortCommit": "2de63a7",
+                    "Commit": "2de63a75da9f1741775c2c9e1c89c8eedd8ab775",
+                    "Description": "No get email hash API"
+                },
+                {
+                    "ShortCommit": "c21c810",
+                    "Commit": "c21c8102f7289b86c4bca0efa2993e90ad3ba79f",
+                    "Description": "Merge two servers"
+                },
+                {
+                    "ShortCommit": "33f2e7a",
+                    "Commit": "33f2e7acfa73e90b257cecb546094bce44c5b029",
+                    "Description": "规范化"
+                },
+                {
+                    "ShortCommit": "806eb96",
+                    "Commit": "806eb9637de9ac8968f0ba0e973e7bebef8ac79c",
+                    "Description": "Update version info to"
+                },
+                {
+                    "ShortCommit": "2283f38",
+                    "Commit": "2283f38fafa929bb6bf4d389bcbd887af7b368ea",
+                    "Description": "remove firebase"
+                },
+                {
+                    "ShortCommit": "2442105",
+                    "Commit": "2442105e925beb378c094301023ec37e17c5c399",
+                    "Description": "sync"
+                },
+                {
+                    "ShortCommit": "50c06a8",
+                    "Commit": "50c06a8ab4d0d0d3e28e5f1db0bd1a91aeab4a4a",
+                    "Description": "add firebase"
+                },
+                {
+                    "ShortCommit": "ea0bba8",
+                    "Commit": "ea0bba8b201f53f84566b2aa84d219c57812ee86",
+                    "Description": "add auth"
+                },
+                {
+                    "ShortCommit": "79be650",
+                    "Commit": "79be650a66f0baacd312ad1eea85c8fbc70f2e3c",
+                    "Description": "fix hashing"
+                },
+                {
+                    "ShortCommit": "547c106",
+                    "Commit": "547c1062047e1594be07e360467cf679b01104c9",
+                    "Description": "hash"
+                },
+                {
+                    "ShortCommit": "055e800",
+                    "Commit": "055e800f73a5cadde988b57cbca45047d971db60",
+                    "Description": "Delete email-server/xmoj-email/node_modules directory"
+                },
+                {
+                    "ShortCommit": "1c0871d",
+                    "Commit": "1c0871dadb3e96cb68e778796fd89f34a96a5a4e",
+                    "Description": "fix"
+                },
+                {
+                    "ShortCommit": "35b3f5b",
+                    "Commit": "35b3f5bd254b2cc22a2514f208af60b4300cb8ab",
+                    "Description": "sync"
+                },
+                {
+                    "ShortCommit": "1a065a1",
+                    "Commit": "1a065a15d99101479b5ef61ded529ca3dcc90df9",
+                    "Description": "save stuff"
+                }
+            ]
         }
     }
 }
