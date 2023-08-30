@@ -2283,6 +2283,11 @@
                     "Description": "增加更改头像功能"
                 }
             ]
+        },
+        "0.2.80": {
+            "UpdateDate": 1693389522667,
+            "Prerelease": true,
+            "UpdateCommits": []
         }
     }
 }

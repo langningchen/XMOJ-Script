@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.79
+// @version      0.2.80
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -538,7 +538,7 @@ else {
                     UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <div>
                             XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                            <a href="https://github.com/langningchen/XMOJ-Script/releases/tag/" target="_blank" class="alert-link">此处</a>
+                            <a href="` + (UtilityEnabled("DebugMode") ? "https://langningchen.github.io/XMOJ-Script/XMOJ.user.js" : "https://web.xmoj-bbs.tech/XMOJ.user.js") + `" target="_blank" class="alert-link">此处</a>
                             更新
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
