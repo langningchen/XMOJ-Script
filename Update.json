@@ -2251,6 +2251,27 @@
             "UpdateDate": 1693387822132,
             "Prerelease": true,
             "UpdateCommits": []
+        },
+        "0.2.78": {
+            "UpdateDate": 1693388336370,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "e1658a7",
+                    "Commit": "e1658a787ab04eda493df59ff329bc116fe6b153",
+                    "Description": "Allow all permission"
+                },
+                {
+                    "ShortCommit": "0593bd5",
+                    "Commit": "0593bd5d8aaf0efb3c906c8493f8b325d30c1565",
+                    "Description": "Merge pull request #211 from langningchen/avatar"
+                },
+                {
+                    "ShortCommit": "7a70fa5",
+                    "Commit": "7a70fa582d43eaabb400a7e5b6db46c57bb5c752",
+                    "Description": "Update version info to 0.2.77"
+                }
+            ]
         }
     }
 }
