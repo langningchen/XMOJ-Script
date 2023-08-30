@@ -12,6 +12,8 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.js
 // @require      https://cdn.bootcdn.net/ajax/libs/diff_match_patch/20121119/diff_match_patch_uncompressed.js
 // @require      https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js
+// @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/core.min.js
+// @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/md5.min.js
 // @require      https://ghproxy.com/https://github.com/drudru/ansi_up/blob/v5.2.1/ansi_up.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
@@ -29,36 +31,68 @@
  */
 
 const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
-const AdminUserList = ["chenlangning", "zhuchenrui2","shanwenxiao"];
+const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao"];
 
-let GetRating = async (Username) => {
-    if (localStorage.getItem("UserScript-UserRating-" + Username) != null &&
-        new Date().getTime() - parseInt(localStorage.getItem("UserScript-UserRating-" + Username + "-Time")) < 1000 * 60 * 60 * 24) {
-        return localStorage.getItem("UserScript-UserRating-" + Username);
+let GetUserInfo = async (Username) => {
+    if (localStorage.getItem("UserScript-User-" + Username + "-UserRating") != null &&
+        new Date().getTime() - parseInt(localStorage.getItem("UserScript-User-" + Username + "-LastUpdateTime")) < 1000 * 60 * 60 * 24) {
+        return {
+            "Rating": localStorage.getItem("UserScript-User-" + Username + "-UserRating"),
+            "EmailHash": localStorage.getItem("UserScript-User-" + Username + "-EmailHash")
+        }
     }
-    let Rating = await fetch("http://www.xmoj.tech/userinfo.php?user=" + Username).then((Response) => {
+    return await fetch("http://www.xmoj.tech/userinfo.php?user=" + Username).then((Response) => {
         return Response.text();
     }).then((Response) => {
         const ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
-        return (parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(4) > td:nth-child(2)").innerText.trim()) /
+        let Rating = (parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(4) > td:nth-child(2)").innerText.trim()) /
             parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(3) > td:nth-child(2)").innerText.trim())).toFixed(3) * 1000;
+        let Temp = ParsedDocument.querySelector("#statics > tbody").children;
+        let Email = Temp[Temp.length - 1].children[1].innerText.trim();
+        let EmailHash = CryptoJS.MD5(Email).toString();
+        localStorage.setItem("UserScript-User-" + Username + "-UserRating", Rating);
+        if (Email != "") {
+            localStorage.setItem("UserScript-User-" + Username + "-EmailHash", EmailHash);
+        }
+        localStorage.setItem("UserScript-User-" + Username + "-LastUpdateTime", new Date().getTime());
+        return {
+            "Rating": Rating,
+            "EmailHash": EmailHash
+        }
     });
-    localStorage.setItem("UserScript-UserRating-" + Username, Rating);
-    localStorage.setItem("UserScript-UserRating-" + Username + "-Time", new Date().getTime());
-    return Rating;
 };
-let GetUsernameColorClass = async (Username) => {
-    let Rating = await GetRating(Username);
-    if (Rating > 500) {
-        return "link-danger";
-    } else if (Rating >= 400) {
-        return "link-warning";
-    } else if (Rating >= 300) {
-        return "link-success";
-    } else {
-        return "link-info";
+let GetUsernameHTML = async (Username, Href = "userinfo.php?user=") => {
+    let UserInfo = await GetUserInfo(Username);
+    let HTMLData = `<img src="`;
+    if (UserInfo.EmailHash == undefined) {
+        HTMLData += `https://www.gravatar.com/avatar/00000000000000000000000000000000?s=20&d=mp&f=y`;
     }
-}
+    else {
+        HTMLData += `https://www.gravatar.com/avatar/${UserInfo.EmailHash}?s=20&d=retro`;
+    }
+    HTMLData += `" class="rounded me-2" style="width: 20px; height: 20px; ">`;
+    HTMLData += `<a href="${Href}${Username}" class="link-offset-2 link-underline-opacity-50 `
+    if (UtilityEnabled("Rating")) {
+        let Rating = UserInfo.Rating;
+        if (Rating > 500) {
+            HTMLData += "link-danger";
+        } else if (Rating >= 400) {
+            HTMLData += "link-warning";
+        } else if (Rating >= 300) {
+            HTMLData += "link-success";
+        } else {
+            HTMLData += "link-info";
+        }
+    }
+    else {
+        HTMLData += "link-info";
+    }
+    HTMLData += `\";">${Username}</a>`;
+    if (AdminUserList.includes(Username)) {
+        HTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
+    }
+    return HTMLData;
+};
 let SecondsToString = (InputSeconds) => {
     let Hours = Math.floor(InputSeconds / 3600);
     let Minutes = Math.floor((InputSeconds % 3600) / 60);
@@ -1708,16 +1742,7 @@ else {
                                         Medal.classList.add("text-bg-secondary");
                                     }
 
-                                    let UsernameLink = document.createElement("a"); UsernameCell.appendChild(UsernameLink);
-                                    UsernameLink.href = "userinfo.php?user=" + RowData.Username; UsernameLink.innerText = RowData.Username;
-                                    UsernameLink.className = "link-primary link-offset-2 link-underline-opacity-50";
-                                    if (UtilityEnabled("Rating")) {
-                                        if (RowData.QuickSubmitCount >= 2) {
-                                            UsernameLink.className += " link-info";
-                                        } else {
-                                            UsernameLink.className += " " + (await GetUsernameColorClass(RowData.Username));
-                                        }
-                                    }
+                                    UsernameCell.innerHTML += await GetUsernameHTML(RowData.Username);
                                     if (RowData.Username == document.getElementById("profile").innerText) {
                                         Row.classList.add("table-primary");
                                     }
@@ -2195,27 +2220,47 @@ else {
             }
             document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").remove();
 
-
-            let UserInfo = document.createElement("div");
             let UserID, UserName;
             [UserID, UserName] = document.querySelector("#statics > caption").childNodes[0].data.trim().split("--");
             document.querySelector("#statics > caption").remove();
-            UserInfo.innerHTML = "用户名：" + UserID + "&emsp;昵称：" + UserName;
-            if (UtilityEnabled("Rating")) {
-                UserInfo.innerHTML += "&emsp;评分：" + (await GetRating(UserID));
-            }
 
             let Row = document.createElement("div"); Row.className = "row";
-            let LeftDiv = document.createElement("div"); LeftDiv.className = "col-md-6"; Row.appendChild(LeftDiv);
+            let LeftDiv = document.createElement("div"); LeftDiv.className = "col-md-5"; Row.appendChild(LeftDiv);
+
+            let LeftTopDiv = document.createElement("div"); LeftTopDiv.className = "row mb-2"; LeftDiv.appendChild(LeftTopDiv);
+            let AvatarContainer = document.createElement("div");
+            AvatarContainer.classList.add("col-auto");
+            let AvatarElement = document.createElement("img");
+            let UserEmailHash = (await GetUserInfo(UserID)).EmailHash;
+            if (UserEmailHash == undefined) {
+                AvatarElement.src = `https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y`;
+            }
+            else {
+                AvatarElement.src = `https://www.gravatar.com/avatar/${UserEmailHash}?d=retro`;
+            }
+            AvatarElement.classList.add("rounded", "me-2");
+            AvatarElement.style.height = "120px";
+            AvatarContainer.appendChild(AvatarElement);
+            LeftTopDiv.appendChild(AvatarContainer);
+
+            let UserInfoElement = document.createElement("div");
+            UserInfoElement.classList.add("col-auto");
+            UserInfoElement.style.lineHeight = "40px";
+            UserInfoElement.innerHTML += "用户名：" + UserID + "<br>";
+            UserInfoElement.innerHTML += "昵称：" + UserName + "<br>";
+            if (UtilityEnabled("Rating")) {
+                UserInfoElement.innerHTML += "评分：" + ((await GetUserInfo(UserID)).Rating) + "<br>";
+            }
+            LeftTopDiv.appendChild(UserInfoElement);
+            LeftDiv.appendChild(LeftTopDiv);
+
             let LeftTable = document.querySelector("body > div > div > center > table"); LeftDiv.appendChild(LeftTable);
-            let RightDiv = document.createElement("div"); RightDiv.className = "col-md-6"; Row.appendChild(RightDiv);
+            let RightDiv = document.createElement("div"); RightDiv.className = "col-md-7"; Row.appendChild(RightDiv);
             RightDiv.innerHTML = "<h5>已解决题目</h5>";
             for (let i = 0; i < ACProblems.length; i++) {
                 RightDiv.innerHTML += "<a href=\"/problem.php?id=" + ACProblems[i] + "\" target=\"_blank\">" + ACProblems[i] + "</a> ";
             }
-
             document.querySelector("body > div > div").innerHTML = "";
-            document.querySelector("body > div > div").appendChild(UserInfo);
             document.querySelector("body > div > div").appendChild(Row);
         } else if (location.pathname == "/conteststatistics.php") {
             document.querySelector("body > div > div.mt-3 > center > h3").innerText = "比赛统计";
@@ -2277,7 +2322,7 @@ else {
                 }
                 else {
                     document.querySelector("body > div > div.mt-3").innerHTML = `
-                        <div class="form-check">
+                < div class="form-check" >
                             <input class="form-check-input" type="checkbox" checked id="IgnoreWhitespace">
                             <label class="form-check-label" for="IgnoreWhitespace">忽略空白</label>
                         </div>
@@ -2318,7 +2363,7 @@ else {
             }
         } else if (location.pathname == "/loginpage.php") {
             if (UtilityEnabled("NewBootstrap")) {
-                document.querySelector("#login").innerHTML = `<form id="login" action="login.php" method="post">
+                document.querySelector("#login").innerHTML = `< form id = "login" action = "login.php" method = "post" >
             <div class="row g-3 align-items-center mb-3">
                 <div class="col-auto">
                 <label for="user_id" class="col-form-label">用户名（学号）</label>
@@ -2343,7 +2388,7 @@ else {
                 <a class="btn btn-warning" href="lostpassword.php">忘记密码</a>
                 </div>
             </div>
-            </form>`;
+            </form > `;
             }
             let ErrorText = document.createElement("div");
             ErrorText.style.color = "red";
@@ -2607,7 +2652,7 @@ else {
             Temp = document.querySelector("#problemstatus > tbody").children;
             for (let i = 0; i < Temp.length; i++) {
                 if (Temp[i].children[5].children[0] != null) {
-                    Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText}</a>`;
+                    Temp[i].children[1].innerHTML = `< a href = "${Temp[i].children[5].children[0].href + `" > ` + Temp[i].children[1].innerText}</a>`;
                 }
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
@@ -2782,10 +2827,7 @@ else {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
                                 var InnerHTMLData = "";
                                 InnerHTMLData += `<td>`;
-                                InnerHTMLData += `<a class="${await GetUsernameColorClass(Data[i].OtherUser)}" href="mail.php?other=${Data[i].OtherUser + `">` + Data[i].OtherUser}</a>`;
-                                if (AdminUserList.includes(Data[i].OtherUser)) {
-                                    InnerHTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
-                                }
+                                InnerHTMLData += await GetUsernameHTML(Data[i].OtherUser, "mail.php?other=");
                                 InnerHTMLData += (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`);
                                 InnerHTMLData += `</td>`;
                                 InnerHTMLData += `<td>${Data[i].LastsMessage}</td>`;
@@ -2882,10 +2924,7 @@ else {
                                 }
                                 var InnerHTMLData = "";
                                 InnerHTMLData += `<td>`;
-                                InnerHTMLData += `<a class="${await GetUsernameColorClass(Data[i].FromUser)}" href="/userinfo.php?user=${Data[i].FromUser}">${Data[i].FromUser}`;
-                                if (AdminUserList.includes(Data[i].FromUser)) {
-                                    InnerHTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
-                                }
+                                InnerHTMLData += await GetUsernameHTML(Data[i].FromUser);
                                 InnerHTMLData += `</td>`;
                                 InnerHTMLData += `<td>${Data[i].Content}</td>`;
                                 InnerHTMLData += `<td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
@@ -3019,10 +3058,7 @@ else {
                                     InnerHTMLData += `<td>${Posts[i].PostID}</td>`;
                                     InnerHTMLData += `<td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>`
                                     InnerHTMLData += "<td>";
-                                    InnerHTMLData += `<a class="` + (await GetUsernameColorClass(Posts[i].UserID)) + `" href="/userinfo.php?user=${Posts[i].UserID}">${Posts[i].UserID}</a>`;
-                                    if (AdminUserList.includes(Posts[i].UserID)) {
-                                        InnerHTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
-                                    }
+                                    InnerHTMLData += await GetUsernameHTML(Posts[i].UserID);
                                     InnerHTMLData += "</td>";
                                     InnerHTMLData += "<td>";
                                     if (Posts[i].ProblemID != 0) {
@@ -3032,11 +3068,6 @@ else {
                                     InnerHTMLData += "<td>" + new Date(Posts[i].PostTime).toLocaleString() + "</td>";
                                     InnerHTMLData += `<td>${Posts[i].ReplyCount}</td>`;
                                     InnerHTMLData += "<td>";
-                                    InnerHTMLData += `<a class="${await GetUsernameColorClass(Posts[i].LastReplyUserID)}" href="/userinfo.php?user=${Posts[i].LastReplyUserID}">${Posts[i].LastReplyUserID}</a>`;
-                                    if (AdminUserList.includes(Posts[i].LastReplyUserID)) {
-                                        InnerHTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
-                                    }
-                                    InnerHTMLData += " ";
                                     InnerHTMLData += new Date(Posts[i].LastReplyTime).toLocaleString();
                                     InnerHTMLData += "</td>";
                                     InnerHTMLData += "</tr>";
@@ -3137,7 +3168,7 @@ else {
                         let Page = Number(SearchParams.get("page")) || 1;
                         document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
                         <div class="row mb-3">
-                            <span class="col-4 text-muted">作者：<a id="PostAuthor" href=""></a><span id="AdminBadge" class="badge text-bg-danger ms-2" style="display: none">管理员</span></span>
+                            <span class="col-4 text-muted">作者：<div id="PostAuthor"></div></span>
                             <span class="col-4 text-muted">发布时间：<span id="PostTime"></span></span>
                             <span class="col-4">
                                 <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
@@ -3234,12 +3265,7 @@ else {
                                         }
                                     }
                                     PostTitle.innerText = ResponseData.Data.Title + (ResponseData.Data.ProblemID == 0 ? "" : ` - 题目` + ResponseData.Data.ProblemID);
-                                    PostAuthor.innerHTML = ResponseData.Data.UserID;
-                                    PostAuthor.classList.add(await GetUsernameColorClass(ResponseData.Data.UserID));
-                                    PostAuthor.href = "/userinfo.php?user=" + ResponseData.Data.UserID;
-                                    if (AdminUserList.includes(ResponseData.Data.UserID)) {
-                                        AdminBadge.style.display = "";
-                                    }
+                                    PostAuthor.innerHTML = await GetUsernameHTML(ResponseData.Data.UserID);
                                     PostTime.innerText = new Date(ResponseData.Data.PostTime).toLocaleString();
                                     let Replies = ResponseData.Data.Reply;
                                     PostReplies.innerHTML = "";
@@ -3253,11 +3279,7 @@ else {
                                         let CardBodyRowSpan1Element = document.createElement("span");
                                         CardBodyRowSpan1Element.className = "col-4 text-muted";
                                         CardBodyRowSpan1Element.innerText = "作者：";
-                                        let CardBodyRowSpan1AElement = document.createElement("a");
-                                        CardBodyRowSpan1AElement.href = "/userinfo.php?user=" + Replies[i].UserID;
-                                        CardBodyRowSpan1AElement.classList.add(await GetUsernameColorClass(Replies[i].UserID))
-                                        CardBodyRowSpan1AElement.innerText = Replies[i].UserID;
-                                        CardBodyRowSpan1Element.appendChild(CardBodyRowSpan1AElement);
+                                        CardBodyRowSpan1Element.innerHTML += await GetUsernameHTML(Replies[i].UserID);
                                         if (AdminUserList.includes(Replies[i].UserID)) {
                                             let CardBodyRowSpan1BadgeElement = document.createElement("span");
                                             CardBodyRowSpan1BadgeElement.className = "badge text-bg-danger ms-2";
