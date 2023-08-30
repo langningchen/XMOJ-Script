@@ -142,4 +142,12 @@ export class Security {
             return new Result(false, ErrorString);
         }
     }
+    public CheckEmail = (Email: string): Result => {
+        if (/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(Email)) {
+            return new Result(true, "邮箱格式正确");
+        }
+        else {
+            return new Result(false, "邮箱格式错误");
+        }
+    }
 };

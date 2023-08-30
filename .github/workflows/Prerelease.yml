@@ -10,6 +10,7 @@ jobs:
   prerelease:
     name: Prerelease
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -38,3 +39,12 @@ jobs:
           asset_path: ./XMOJ.user.js
           asset_name: XMOJ.user.js
           asset_content_type: text/plain
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
