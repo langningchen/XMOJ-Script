@@ -2300,9 +2300,20 @@
             "UpdateCommits": []
         },
         "0.2.83": {
-            "UpdateDate": 1693485243501,
+            "UpdateDate": 1693459581429,
             "Prerelease": true,
-            "UpdateCommits": []
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "9c19b3d",
+                    "Commit": "9c19b3d0fe6dd19e726db2031fe8fdd88023d350",
+                    "Description": "修登录等界面的显示BUG"
+                },
+                {
+                    "ShortCommit": "3bc474d",
+                    "Commit": "3bc474d3633c07b86c7625a89ec625d2037c30ee",
+                    "Description": "Merge pull request #217 from langningchen/actions/temp"
+                }
+            ]
         }
     }
 }
