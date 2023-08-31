@@ -61,6 +61,41 @@ let GetUserInfo = async (Username) => {
         }
     });
 };
+let GetUserBadge = async (Username) => {
+    if (localStorage.getItem("UserScript-User-" + Username + "-Badge-LastUpdateTime") != null &&
+        new Date().getTime() - parseInt(localStorage.getItem("UserScript-User-" + Username + "-Badge-LastUpdateTime")) < 1000 * 60 * 60 * 24) {
+        return {
+            "BackgroundColor": localStorage.getItem("UserScript-User-" + Username + "-Badge-BackgroundColor"),
+            "Color": localStorage.getItem("UserScript-User-" + Username + "-Badge-Color"),
+            "Content": localStorage.getItem("UserScript-User-" + Username + "-Badge-Content")
+        }
+    } else {
+        let BackgroundColor = "";
+        let Color = "";
+        let Content = "";
+        await new Promise((Resolve, Reject) => {
+            RequestAPI("GetUserBadge", {
+                "Username": String(Username)
+            }, (Response) => {
+                if (Response.Success) {
+                    BackgroundColor = Response.Data.BackgroundColor;
+                    Color = Response.Data.Color;
+                    Content = Response.Data.Content;
+                }
+                Resolve();
+            });
+        });
+        localStorage.setItem("UserScript-User-" + Username + "-Badge-BackgroundColor", BackgroundColor);
+        localStorage.setItem("UserScript-User-" + Username + "-Badge-Color", Color);
+        localStorage.setItem("UserScript-User-" + Username + "-Badge-Content", Content);
+        localStorage.setItem("UserScript-User-" + Username + "-Badge-LastUpdateTime", new Date().getTime());
+        return {
+            "BackgroundColor": BackgroundColor,
+            "Color": Color,
+            "Content": Content
+        }
+    }
+};
 let GetUsernameHTML = async (Username, Href = "userinfo.php?user=") => {
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
@@ -90,6 +125,10 @@ let GetUsernameHTML = async (Username, Href = "userinfo.php?user=") => {
     HTMLData += `\";">${Username}</a>`;
     if (AdminUserList.includes(Username)) {
         HTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
+    }
+    let BadgeInfo = await GetUserBadge(Username);
+    if (BadgeInfo.Content != "") {
+        HTMLData += `<span class="badge ms-2" style="background-color: ${BadgeInfo.BackgroundColor}; color: ${BadgeInfo.Color}">${BadgeInfo.Content}</span>`;
     }
     return HTMLData;
 };
