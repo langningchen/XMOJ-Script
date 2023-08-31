@@ -100,10 +100,10 @@ let GetUsernameHTML = async (Username, Href = "userinfo.php?user=") => {
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
     if (UserInfo.EmailHash == undefined) {
-        HTMLData += `https://cravatar.cn/avatar/00000000000000000000000000000000?s=20&d=mp&f=y`;
+        HTMLData += `https://cravatar.cn/avatar/00000000000000000000000000000000?d=mp&f=y`;
     }
     else {
-        HTMLData += `https://cravatar.cn/avatar/${UserInfo.EmailHash}?s=20&d=retro`;
+        HTMLData += `https://cravatar.cn/avatar/${UserInfo.EmailHash}?d=retro`;
     }
     HTMLData += `" class="rounded me-2" style="width: 20px; height: 20px; ">`;
     HTMLData += `<a href="${Href}${Username}" class="link-offset-2 link-underline-opacity-50 `
@@ -2154,7 +2154,7 @@ else {
             else {
                 if (UtilityEnabled("ResetType")) {
                     document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(1)").innerHTML = `
-                    <td><img src="https://cravatar.cn/avatar/` + (await GetUserInfo(document.querySelector("#profile").innerText)).EmailHash + `?d=retro&s=64"></td>
+                    <td><img width="64" height="64" src="https://cravatar.cn/avatar/` + (await GetUserInfo(document.querySelector("#profile").innerText)).EmailHash + `?d=retro"></td>
                     <td><a href="https://cravatar.cn/avatars" target="_blank">修改头像</a></td>`;
                     for (let i = 3; i <= 12; i++) {
                         document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(" + i + ") > td:nth-child(2) > input").classList.add("form-control");
