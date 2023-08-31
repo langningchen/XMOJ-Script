@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.82
+// @version      0.2.83
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -1047,7 +1047,7 @@ else {
                 document.querySelector("body > script:nth-child(5)").remove();
                 if (UtilityEnabled("NewBootstrap")) {
                     document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
-                    <input class="form-control" type="text" size="4" name="user_id" value="${document.getElementById("profile").innerText}"style="display: none;">
+                    <input class="form-control" type="text" size="4" name="user_id" value="${document.getElementById("profile").innerText} "style="display: none;">
                 <div class="col-md-1">
                     <label for="problem_id" class="form-label">题目编号</label>
                     <input type="text" class="form-control" id="problem_id" name="problem_id" size="4">
@@ -2365,7 +2365,7 @@ else {
             }
         } else if (location.pathname == "/loginpage.php") {
             if (UtilityEnabled("NewBootstrap")) {
-                document.querySelector("#login").innerHTML = `< form id = "login" action = "login.php" method = "post" >
+                document.querySelector("#login").innerHTML = `<form id="login" action="login.php" method="post">
             <div class="row g-3 align-items-center mb-3">
                 <div class="col-auto">
                 <label for="user_id" class="col-form-label">用户名（学号）</label>
@@ -2654,7 +2654,7 @@ else {
             Temp = document.querySelector("#problemstatus > tbody").children;
             for (let i = 0; i < Temp.length; i++) {
                 if (Temp[i].children[5].children[0] != null) {
-                    Temp[i].children[1].innerHTML = `< a href = "${Temp[i].children[5].children[0].href + `" > ` + Temp[i].children[1].innerText}</a>`;
+                    Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText}</a>`;
                 }
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
