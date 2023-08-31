@@ -8,6 +8,7 @@ export class Security {
     private SessionID: string;
     private RemoteIP: string;
     private Fetch = async (RequestURL: URL): Promise<Response> => {
+        Output.Log("Fetch: " + RequestURL.toString());
         let Abort = new AbortController();
         setTimeout(() => {
             Abort.abort();
@@ -229,9 +230,12 @@ export class Security {
                     let SubmitTableBody = SubmitTable.children().eq(1);
                     for (let i = 1; i < SubmitTableBody.children().length; i++) {
                         let SubmitRow = SubmitTableBody.children().eq(i);
-                        console.log(SubmitRow.children().eq(2).text().trim());
                         if (SubmitRow.children().eq(2).text().trim() === "std") {
-                            await this.Fetch(new URL("http://www.xmoj.tech/getsource.php?id=" + SubmitRow.children().eq(1).text().trim()))
+                            let SID: string = SubmitRow.children().eq(1).text();
+                            if (SID.indexOf("(") != -1) {
+                                SID = SID.substring(0, SID.indexOf("("));
+                            }
+                            await this.Fetch(new URL("http://www.xmoj.tech/getsource.php?id=" + SID))
                                 .then((Response) => {
                                     return Response.text();
                                 })
