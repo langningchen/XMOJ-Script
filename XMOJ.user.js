@@ -1284,6 +1284,11 @@ else {
                                 TempHTML += "</a>";
                                 if (Points[SolutionID] != undefined) {
                                     TempHTML += "<span style=\"margin-left: 5px\" class=\"badge text-bg-info\">" + Points[SolutionID] + "</span>";
+                                    if (Points[SolutionID].substring(0, Points[SolutionID].length - 1) >= 50) {
+                                        TempHTML += `<a href="/showsource.php?pid=` +
+                                            localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem") +
+                                            `&ByUserScript=1" class="ms-1 link-secondary">查看标程</a>`;
+                                    }
                                 }
                                 if (ResponseData[0] < 4) {
                                     setTimeout(() => {
@@ -2789,12 +2794,29 @@ else {
                     </div>`;
         } else if (location.pathname == "/showsource.php") {
             let Code = "";
-            await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("id"))
-                .then((Response) => {
-                    return Response.text();
-                }).then((Response) => {
-                    Code = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
+            if (SearchParams.get("ByUserScript") == null) {
+                await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("id"))
+                    .then((Response) => {
+                        return Response.text();
+                    }).then((Response) => {
+                        Code = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
+                    });
+            }
+            else {
+                await new Promise((Resolve) => {
+                    RequestAPI("GetStd", {
+                        "ProblemID": Number(SearchParams.get("pid"))
+                    }, (Response) => {
+                        if (Response.Success) {
+                            Code = Response.Data.StdCode;
+                        }
+                        else {
+                            Code = Response.Message;
+                        }
+                        Resolve();
+                    });
                 });
+            }
             document.querySelector("body > div > div.mt-3").innerHTML = `<textarea>${Code}</textarea>`;
             CodeMirror.fromTextArea(document.querySelector("body > div > div.mt-3 > textarea"), {
                 lineNumbers: true,
