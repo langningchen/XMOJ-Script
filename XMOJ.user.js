@@ -2233,82 +2233,154 @@ else {
                 }
             }
         } else if (location.pathname == "/userinfo.php") {
-            if (UtilityEnabled("RemoveUseless")) {
-                let Temp = document.getElementById("submission").childNodes;
+            if (SearchParams.get("ByUserScript") === null) {
+                if (UtilityEnabled("RemoveUseless")) {
+                    let Temp = document.getElementById("submission").childNodes;
+                    for (let i = 0; i < Temp.length; i++) {
+                        Temp[i].remove();
+                    }
+                }
+                eval(document.querySelector("body > script:nth-child(5)").innerHTML);
+                document.querySelector("#statics > tbody > tr:nth-child(1)").remove();
+
+                let Temp = document.querySelector("#statics > tbody").children;
                 for (let i = 0; i < Temp.length; i++) {
-                    Temp[i].remove();
-                }
-            }
-            eval(document.querySelector("body > script:nth-child(5)").innerHTML);
-            document.querySelector("#statics > tbody > tr:nth-child(1)").remove();
-
-            let Temp = document.querySelector("#statics > tbody").children;
-            for (let i = 0; i < Temp.length; i++) {
-                if (Temp[i].children[0] != undefined) {
-                    if (Temp[i].children[0].innerText == "Statistics") {
-                        Temp[i].children[0].innerText = "统计";
+                    if (Temp[i].children[0] != undefined) {
+                        if (Temp[i].children[0].innerText == "Statistics") {
+                            Temp[i].children[0].innerText = "统计";
+                        }
+                        else if (Temp[i].children[0].innerText == "Email:") {
+                            Temp[i].children[0].innerText = "电子邮箱";
+                        }
+                        else {
+                            Temp[i].children[1].innerText = Temp[i].children[1].innerText;
+                        }
+                        Temp[i].children[1].removeAttribute("align");
                     }
-                    else if (Temp[i].children[0].innerText == "Email:") {
-                        Temp[i].children[0].innerText = "电子邮箱";
-                    }
-                    else {
-                        Temp[i].children[1].innerText = Temp[i].children[1].innerText;
-                    }
-                    Temp[i].children[1].removeAttribute("align");
                 }
-            }
 
-            Temp = document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").childNodes;
-            let ACProblems = [];
-            for (let i = 0; i < Temp.length; i++) {
-                if (Temp[i].tagName == "A" && Temp[i].href.indexOf("problem.php?id=") != -1) {
-                    ACProblems.push(Number(Temp[i].innerText.trim()));
+                Temp = document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").childNodes;
+                let ACProblems = [];
+                for (let i = 0; i < Temp.length; i++) {
+                    if (Temp[i].tagName == "A" && Temp[i].href.indexOf("problem.php?id=") != -1) {
+                        ACProblems.push(Number(Temp[i].innerText.trim()));
+                    }
                 }
-            }
-            document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").remove();
+                document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").remove();
 
-            let UserID, UserName;
-            [UserID, UserName] = document.querySelector("#statics > caption").childNodes[0].data.trim().split("--");
-            document.querySelector("#statics > caption").remove();
+                let UserID, UserName;
+                [UserID, UserName] = document.querySelector("#statics > caption").childNodes[0].data.trim().split("--");
+                document.querySelector("#statics > caption").remove();
 
-            let Row = document.createElement("div"); Row.className = "row";
-            let LeftDiv = document.createElement("div"); LeftDiv.className = "col-md-5"; Row.appendChild(LeftDiv);
+                let Row = document.createElement("div"); Row.className = "row";
+                let LeftDiv = document.createElement("div"); LeftDiv.className = "col-md-5"; Row.appendChild(LeftDiv);
 
-            let LeftTopDiv = document.createElement("div"); LeftTopDiv.className = "row mb-2"; LeftDiv.appendChild(LeftTopDiv);
-            let AvatarContainer = document.createElement("div");
-            AvatarContainer.classList.add("col-auto");
-            let AvatarElement = document.createElement("img");
-            let UserEmailHash = (await GetUserInfo(UserID)).EmailHash;
-            if (UserEmailHash == undefined) {
-                AvatarElement.src = `https://cravatar.cn/avatar/00000000000000000000000000000000?d=mp&f=y`;
-            }
-            else {
-                AvatarElement.src = `https://cravatar.cn/avatar/${UserEmailHash}?d=retro`;
-            }
-            AvatarElement.classList.add("rounded", "me-2");
-            AvatarElement.style.height = "120px";
-            AvatarContainer.appendChild(AvatarElement);
-            LeftTopDiv.appendChild(AvatarContainer);
+                let LeftTopDiv = document.createElement("div"); LeftTopDiv.className = "row mb-2"; LeftDiv.appendChild(LeftTopDiv);
+                let AvatarContainer = document.createElement("div");
+                AvatarContainer.classList.add("col-auto");
+                let AvatarElement = document.createElement("img");
+                let UserEmailHash = (await GetUserInfo(UserID)).EmailHash;
+                if (UserEmailHash == undefined) {
+                    AvatarElement.src = `https://cravatar.cn/avatar/00000000000000000000000000000000?d=mp&f=y`;
+                }
+                else {
+                    AvatarElement.src = `https://cravatar.cn/avatar/${UserEmailHash}?d=retro`;
+                }
+                AvatarElement.classList.add("rounded", "me-2");
+                AvatarElement.style.height = "120px";
+                AvatarContainer.appendChild(AvatarElement);
+                LeftTopDiv.appendChild(AvatarContainer);
 
-            let UserInfoElement = document.createElement("div");
-            UserInfoElement.classList.add("col-auto");
-            UserInfoElement.style.lineHeight = "40px";
-            UserInfoElement.innerHTML += "用户名：" + UserID + "<br>";
-            UserInfoElement.innerHTML += "昵称：" + UserName + "<br>";
-            if (UtilityEnabled("Rating")) {
-                UserInfoElement.innerHTML += "评分：" + ((await GetUserInfo(UserID)).Rating) + "<br>";
-            }
-            LeftTopDiv.appendChild(UserInfoElement);
-            LeftDiv.appendChild(LeftTopDiv);
+                let UserInfoElement = document.createElement("div");
+                UserInfoElement.classList.add("col-auto");
+                UserInfoElement.style.lineHeight = "40px";
+                UserInfoElement.innerHTML += "用户名：" + UserID + "<br>";
+                UserInfoElement.innerHTML += "昵称：" + UserName + "<br>";
+                if (UtilityEnabled("Rating")) {
+                    UserInfoElement.innerHTML += "评分：" + ((await GetUserInfo(UserID)).Rating) + "<br>";
+                }
+                LeftTopDiv.appendChild(UserInfoElement);
+                LeftDiv.appendChild(LeftTopDiv);
 
-            let LeftTable = document.querySelector("body > div > div > center > table"); LeftDiv.appendChild(LeftTable);
-            let RightDiv = document.createElement("div"); RightDiv.className = "col-md-7"; Row.appendChild(RightDiv);
-            RightDiv.innerHTML = "<h5>已解决题目</h5>";
-            for (let i = 0; i < ACProblems.length; i++) {
-                RightDiv.innerHTML += "<a href=\"/problem.php?id=" + ACProblems[i] + "\" target=\"_blank\">" + ACProblems[i] + "</a> ";
+                let LeftTable = document.querySelector("body > div > div > center > table"); LeftDiv.appendChild(LeftTable);
+                let RightDiv = document.createElement("div"); RightDiv.className = "col-md-7"; Row.appendChild(RightDiv);
+                RightDiv.innerHTML = "<h5>已解决题目</h5>";
+                for (let i = 0; i < ACProblems.length; i++) {
+                    RightDiv.innerHTML += "<a href=\"/problem.php?id=" + ACProblems[i] + "\" target=\"_blank\">" + ACProblems[i] + "</a> ";
+                }
+                document.querySelector("body > div > div").innerHTML = "";
+                document.querySelector("body > div > div").appendChild(Row);
+            } else {
+                document.querySelector("body > div > div.mt-3").innerHTML = `<button id="UploadStd" class="btn btn-primary mb-2">上传标程</button>
+                <div class="alert alert-danger mb-3" role="alert" id="ErrorElement" style="display: none;"></div>
+                <div class="progress" role="progressbar">
+                    <div id="UploadProgress" class="progress-bar progress-bar-striped" style="width: 0%">0%</div>
+                </div>
+                <p class="mt-2 text-muted">
+                    您必须要上传标程以后才能使用“查看标程”功能。点击“上传标程”按钮以后，系统会自动上传标程，请您耐心等待。<br>
+                    首次上传标程可能会比较慢，请耐心等待。后续上传标程将会快很多。<br>
+                    上传的内容不是您AC的程序，而是您AC的题目对应的用户std的程序。所以您可以放心上传，不会泄露您的代码。<br>
+                    系统每过一周会自动提醒您上传标程，您必须要上传标程，否则将会被禁止使用“查看标程”功能。<br>
+                </p>`;
+                UploadStd.addEventListener("click", async () => {
+                    UploadStd.disabled = true;
+                    ErrorElement.style.display = "none";
+                    ErrorElement.innerText = "";
+                    UploadProgress.classList.remove("bg-success");
+                    UploadProgress.classList.remove("bg-warning");
+                    UploadProgress.classList.remove("bg-danger");
+                    UploadProgress.classList.add("progress-bar-animated");
+                    UploadProgress.style.width = "0%";
+                    UploadProgress.innerText = "0%";
+                    let ACList = [];
+                    await fetch("/userinfo.php?user=" + document.querySelector("#profile").innerText)
+                        .then((Response) => {
+                            return Response.text();
+                        }).then((Response) => {
+                            let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                            let ScriptData = ParsedDocument.querySelector("#statics > tbody > tr:nth-child(2) > td:nth-child(3) > script").innerText;
+                            ScriptData = ScriptData.substr(ScriptData.indexOf("}") + 1).trim();
+                            ScriptData = ScriptData.split(";");
+                            for (let i = 0; i < ScriptData.length; i++) {
+                                ACList.push(Number(ScriptData[i].substring(2, ScriptData[i].indexOf(","))));
+                            }
+                        });
+                    RequestAPI("GetStdList", {}, async (Result) => {
+                        if (Result.Success) {
+                            let StdList = Result.Data.StdList;
+                            for (let i = 0; i < ACList.length; i++) {
+                                if (StdList.indexOf(ACList[i]) === -1) {
+                                    await new Promise((Resolve) => {
+                                        RequestAPI("UploadStd", {
+                                            "ProblemID": Number(ACList[i])
+                                        }, (Result) => {
+                                            if (!Result.Success) {
+                                                ErrorElement.style.display = "block";
+                                                ErrorElement.innerText += Result.Message + "<br>";
+                                                UploadProgress.classList.add("bg-warning");
+                                            }
+                                            UploadProgress.innerText = (i / ACList.length * 100).toFixed(1) + "% (" + ACList[i] + ")";
+                                            UploadProgress.style.width = (i / ACList.length * 100) + "%";
+                                            Resolve();
+                                        });
+                                    });
+                                }
+                            }
+                            UploadProgress.classList.add("bg-success");
+                            UploadProgress.classList.remove("progress-bar-animated");
+                            UploadProgress.innerText = "100%";
+                            UploadProgress.style.width = "100%";
+                            UploadStd.disabled = false;
+                            localStorage.setItem("UserScript-LastUploadedStdTime", new Date().getTime());
+                        }
+                        else {
+                            ErrorElement.style.display = "block";
+                            ErrorElement.innerText = Result.Message;
+                            UploadStd.disabled = false;
+                        }
+                    });
+                });
             }
-            document.querySelector("body > div > div").innerHTML = "";
-            document.querySelector("body > div > div").appendChild(Row);
         } else if (location.pathname == "/conteststatistics.php") {
             document.querySelector("body > div > div.mt-3 > center > h3").innerText = "比赛统计";
             if (UtilityEnabled("ResetType")) {
@@ -2804,6 +2876,10 @@ else {
                     });
             }
             else {
+                if (localStorage.getItem("UserScript-LastUploadedStdTime") === undefined ||
+                    new Date().getTime() - localStorage.getItem("UserScript-LastUploadedStdTime") > 1000 * 60 * 60 * 24 * 7) {
+                    location.href = "/userinfo.php?ByUserScript=1";
+                }
                 await new Promise((Resolve) => {
                     RequestAPI("GetStd", {
                         "ProblemID": Number(SearchParams.get("pid"))
