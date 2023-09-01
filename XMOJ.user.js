@@ -820,7 +820,7 @@ else {
                         ]
                     },
                     { "ID": "ExportACCode", "Type": "F", "Name": "导出AC代码每一道题目一个文件" },
-                    { "ID": "LoginFailed", "Type": "F", "Name": "登录后跳转失败*" },
+                    { "ID": "LoginFailed", "Type": "F", "Name": "修复登录后跳转失败*" },
                     { "ID": "NewDownload", "Type": "A", "Name": "下载页面增加下载内容" },
                     { "ID": "CompareSource", "Type": "A", "Name": "比较代码" },
                     { "ID": "DebugMode", "Type": "A", "Name": "调试模式（仅供开发者使用）" }
