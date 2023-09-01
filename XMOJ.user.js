@@ -1627,7 +1627,7 @@ else {
                             .then((Response) => {
                                 return Response.text()
                             })
-                            .then((Response) => {
+                            .then(async (Response) => {
                                 let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
                                 TidyTable(ParsedDocument.getElementById("rank"));
                                 let Temp = ParsedDocument.getElementById("rank").rows;
@@ -1638,8 +1638,7 @@ else {
                                     Metal.className = "badge text-bg-primary";
                                     MetalCell.innerText = "";
                                     MetalCell.appendChild(Metal);
-                                    Temp[i].cells[1].children[0].className = "link-primary link-offset-2 link-underline-opacity-50";
-                                    Temp[i].cells[1].children[0].target = "_blank";
+                                    Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
                                     Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                                     Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;
                                 }
