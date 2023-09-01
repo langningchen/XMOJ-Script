@@ -2152,6 +2152,57 @@ else {
                     });
             }
             else {
+                let Nickname = document.getElementsByName("nick")[0].value;
+                let School = document.getElementsByName("nick")[0].value;
+                let EmailAddress = document.getElementsByName("")[0].value;
+                let CodeforcesAccount = document.getElementsByName("")[0].value;
+                let AtcoderAccount = document.getElementsByName("")[0].value;
+                let USACOAccount = document.getElementsByName("")[0].value;
+                let LuoguAccount = document.getElementsByName("")[0].value;
+                document.querySelector("body > div > div").innerHTML = `<div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="UserID" class="col-form-label">用户ID</label></div>
+                    <div class="col-9"><input id="UserID" class="form-control"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="Nickname" class="col-form-label">昵称</label></div>
+                    <div class="col-9"><input id="Nickname" class="form-control">${Nickname}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="OldPassword" class="col-form-label">旧密码</label></div>
+                    <div class="col-9"><input type="password" id="OldPassword" class="form-control"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="NewPassword" class="col-form-label">新密码</label></div>
+                    <div class="col-9"><input type="password" id="NewPassword" class="form-control"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="NewPasswordAgain" class="col-form-label">重复密码</label></div>
+                    <div class="col-9"><input type="password" id="NewPasswordAgain" class="form-control"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="School" class="col-form-label">学校</label></div>
+                    <div class="col-9"><input type="password" id="School" class="form-control">${School}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="EmailAddress" class="col-form-label">电子邮箱</label></div>
+                    <div class="col-9"><input type="password" id="EmailAddress" class="form-control">${EmailAddress}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="CodeforcesAccount" class="col-form-label">Codeforces账号</label></div>
+                    <div class="col-9"><input type="password" id="CodeforcesAccount" class="form-control">${CodeforcesAccount}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="AtcoderAccount" class="col-form-label">Atcoder账号</label></div>
+                    <div class="col-9"><input type="password" id="AtcoderAccount" class="form-control">${AtcoderAccount}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="USACOAccount" class="col-form-label">USACO账号</label></div>
+                    <div class="col-9"><input type="password" id="USACOAccount" class="form-control">${USACOAccount}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="LuoguAccount" class="col-form-label">洛谷账号</label></div>
+                    <div class="col-9"><input type="password" id="LuoguAccount" class="form-control">${LuoguAccount}</div>
+                </div>`;
                 if (UtilityEnabled("ResetType")) {
                     document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(1)").innerHTML = `
                     <td><img width="64" height="64" src="https://cravatar.cn/avatar/` + (await GetUserInfo(document.querySelector("#profile").innerText)).EmailHash + `?d=retro"></td>
