@@ -2823,6 +2823,7 @@ else {
                 if (Temp[i].children[5].children[0] != null) {
                     Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText}</a>`;
                 }
+                Temp[i].children[2].innerHTML = await GetUsernameHTML(Temp[i].children[2].innerText);
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
