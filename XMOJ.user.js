@@ -53,8 +53,9 @@ let GetUserInfo = async (Username) => {
         localStorage.setItem("UserScript-User-" + Username + "-UserRating", Rating);
         if (Email == "") {
             EmailHash = undefined;
+        } else {
+            localStorage.setItem("UserScript-User-" + Username + "-EmailHash", EmailHash);
         }
-        localStorage.setItem("UserScript-User-" + Username + "-EmailHash", EmailHash);
         localStorage.setItem("UserScript-User-" + Username + "-LastUpdateTime", new Date().getTime());
         return {
             "Rating": Rating,
