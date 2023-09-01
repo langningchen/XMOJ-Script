@@ -51,9 +51,10 @@ let GetUserInfo = async (Username) => {
         let Email = Temp[Temp.length - 1].children[1].innerText.trim();
         let EmailHash = CryptoJS.MD5(Email).toString();
         localStorage.setItem("UserScript-User-" + Username + "-UserRating", Rating);
-        if (Email != "") {
-            localStorage.setItem("UserScript-User-" + Username + "-EmailHash", EmailHash);
+        if (Email == "") {
+            EmailHash = undefined;
         }
+        localStorage.setItem("UserScript-User-" + Username + "-EmailHash", EmailHash);
         localStorage.setItem("UserScript-User-" + Username + "-LastUpdateTime", new Date().getTime());
         return {
             "Rating": Rating,
