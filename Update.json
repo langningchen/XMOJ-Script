@@ -2314,6 +2314,77 @@
                     "Description": "Merge pull request #217 from langningchen/actions/temp"
                 }
             ]
+        },
+        "0.2.84": {
+            "UpdateDate": 1693570670416,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "554b598",
+                    "Commit": "554b598841ea1a78248f2fe1b2b5953dbfb5cabf",
+                    "Description": "[Bug] 未登录去讨论区会跳转到不存在页面 Fixes #222"
+                },
+                {
+                    "ShortCommit": "99c0767",
+                    "Commit": "99c07674215bbeccbf888a50a250d72deb328cb5",
+                    "Description": "Temp"
+                },
+                {
+                    "ShortCommit": "c1e7ce1",
+                    "Commit": "c1e7ce1d34168b946af152799dd7297177ada84a",
+                    "Description": "Merge pull request #225 from langningchen/boomzero-patch-1"
+                },
+                {
+                    "ShortCommit": "494ae7f",
+                    "Commit": "494ae7f6a47dc27c8efdd958daa89fba5b2379d6",
+                    "Description": "Update version info to 0.2.83"
+                },
+                {
+                    "ShortCommit": "2d083bd",
+                    "Commit": "2d083bdcafd70d9e3fd1715232a63b1e4d847867",
+                    "Description": "Update README.md"
+                },
+                {
+                    "ShortCommit": "531fd5d",
+                    "Commit": "531fd5d67b1c0d5ef2d9ceba0f99693b71fbc8bb",
+                    "Description": "Update feature description"
+                },
+                {
+                    "ShortCommit": "454f339",
+                    "Commit": "454f3398824d30c5280c9004aaf33db6b94cf775",
+                    "Description": "Update version info to 0.2.83"
+                },
+                {
+                    "ShortCommit": "e4435a2",
+                    "Commit": "e4435a25a18892c6f7d34f8de9d11155944d9928",
+                    "Description": "Update feature description"
+                },
+                {
+                    "ShortCommit": "102a8f9",
+                    "Commit": "102a8f97bdfca4d74514813e29b536e06b0023b9",
+                    "Description": "解决因为大小不一样导致头像不同"
+                },
+                {
+                    "ShortCommit": "c256a40",
+                    "Commit": "c256a40ae044f3f05aaa8c0d033c770e9a83536e",
+                    "Description": "增加上传功能"
+                },
+                {
+                    "ShortCommit": "281fac3",
+                    "Commit": "281fac38ff6703bc4963d99118471574ed80d127",
+                    "Description": "Fix bug"
+                },
+                {
+                    "ShortCommit": "ba429be",
+                    "Commit": "ba429bea4bb3dc96743d7da6be5e4e1397e15670",
+                    "Description": "前端增加查看标程"
+                },
+                {
+                    "ShortCommit": "573b2f8",
+                    "Commit": "573b2f83fa98a145dd75008d0ce736262c4d382c",
+                    "Description": "Badge and code sharing"
+                }
+            ]
         }
     }
 }

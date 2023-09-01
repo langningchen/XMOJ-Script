@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.83
+// @version      0.2.84
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -61,14 +61,49 @@ let GetUserInfo = async (Username) => {
         }
     });
 };
+let GetUserBadge = async (Username) => {
+    if (localStorage.getItem("UserScript-User-" + Username + "-Badge-LastUpdateTime") != null &&
+        new Date().getTime() - parseInt(localStorage.getItem("UserScript-User-" + Username + "-Badge-LastUpdateTime")) < 1000 * 60 * 60 * 24) {
+        return {
+            "BackgroundColor": localStorage.getItem("UserScript-User-" + Username + "-Badge-BackgroundColor"),
+            "Color": localStorage.getItem("UserScript-User-" + Username + "-Badge-Color"),
+            "Content": localStorage.getItem("UserScript-User-" + Username + "-Badge-Content")
+        }
+    } else {
+        let BackgroundColor = "";
+        let Color = "";
+        let Content = "";
+        await new Promise((Resolve, Reject) => {
+            RequestAPI("GetUserBadge", {
+                "Username": String(Username)
+            }, (Response) => {
+                if (Response.Success) {
+                    BackgroundColor = Response.Data.BackgroundColor;
+                    Color = Response.Data.Color;
+                    Content = Response.Data.Content;
+                }
+                Resolve();
+            });
+        });
+        localStorage.setItem("UserScript-User-" + Username + "-Badge-BackgroundColor", BackgroundColor);
+        localStorage.setItem("UserScript-User-" + Username + "-Badge-Color", Color);
+        localStorage.setItem("UserScript-User-" + Username + "-Badge-Content", Content);
+        localStorage.setItem("UserScript-User-" + Username + "-Badge-LastUpdateTime", new Date().getTime());
+        return {
+            "BackgroundColor": BackgroundColor,
+            "Color": Color,
+            "Content": Content
+        }
+    }
+};
 let GetUsernameHTML = async (Username, Href = "userinfo.php?user=") => {
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
     if (UserInfo.EmailHash == undefined) {
-        HTMLData += `https://cravatar.cn/avatar/00000000000000000000000000000000?s=20&d=mp&f=y`;
+        HTMLData += `https://cravatar.cn/avatar/00000000000000000000000000000000?d=mp&f=y`;
     }
     else {
-        HTMLData += `https://cravatar.cn/avatar/${UserInfo.EmailHash}?s=20&d=retro`;
+        HTMLData += `https://cravatar.cn/avatar/${UserInfo.EmailHash}?d=retro`;
     }
     HTMLData += `" class="rounded me-2" style="width: 20px; height: 20px; ">`;
     HTMLData += `<a href="${Href}${Username}" class="link-offset-2 link-underline-opacity-50 `
@@ -90,6 +125,10 @@ let GetUsernameHTML = async (Username, Href = "userinfo.php?user=") => {
     HTMLData += `\";">${Username}</a>`;
     if (AdminUserList.includes(Username)) {
         HTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
+    }
+    let BadgeInfo = await GetUserBadge(Username);
+    if (BadgeInfo.Content != "") {
+        HTMLData += `<span class="badge ms-2" style="background-color: ${BadgeInfo.BackgroundColor}; color: ${BadgeInfo.Color}">${BadgeInfo.Content}</span>`;
     }
     return HTMLData;
 };
@@ -213,6 +252,7 @@ GM_registerMenuCommand("重置数据", () => {
 });
 
 let SearchParams = new URLSearchParams(location.search);
+let ServerURL = (UtilityEnabled("DebugMode") ? "https://langningchen.github.io/XMOJ-Script" : "https://web.xmoj-bbs.tech")
 
 if (location.host != "www.xmoj.tech") {
     location.host = "www.xmoj.tech";
@@ -231,20 +271,20 @@ else {
             location.pathname != "/loginpage.php" &&
             location.pathname != "/lostpassword.php") {
             localStorage.setItem("UserScript-LastPage", location.pathname + location.search);
-            location.href = "loginpage.php";
+            location.href = "http://www.xmoj.tech/loginpage.php";
         }
 
         let Discussion = null;
         if (UtilityEnabled("Discussion")) {
             Discussion = document.createElement("li");
             document.querySelector("#navbar > ul:nth-child(1)").appendChild(Discussion);
-            Discussion.innerHTML = "<a href=\"/discuss3/discuss.php\">讨论</a>";
+            Discussion.innerHTML = "<a href=\"http://www.xmoj.tech/discuss3/discuss.php\">讨论</a>";
         }
 
         if (document.querySelector("#navbar > ul:nth-child(1)").childElementCount > 8 && UtilityEnabled("ACMRank")) {
             let ACMRank = document.createElement("li");
             document.querySelector("#navbar > ul:nth-child(1)").insertBefore(ACMRank, document.querySelector("#navbar > ul:nth-child(1) > li:nth-child(9)"));
-            ACMRank.innerHTML = "<a href=\"/contestrank-oi.php?cid=" + SearchParams.get("cid") + "&ByUserScript=1\">ACM 排名</a>";
+            ACMRank.innerHTML = "<a href=\"http://www.xmoj.tech/contestrank-oi.php?cid=" + SearchParams.get("cid") + "&ByUserScript=1\">ACM 排名</a>";
             ACMRank.classList.add("active");
         }
         if (UtilityEnabled("Translate")) {
@@ -320,7 +360,7 @@ else {
             }
             document.querySelector("nav").className = "navbar navbar-expand-lg bg-body-tertiary";
             document.querySelector("#navbar > ul:nth-child(1)").classList = "navbar-nav me-auto mb-2 mb-lg-0";
-            document.querySelector("body > div > nav > div > div.navbar-header").outerHTML = `<a class="navbar-brand" href="/">高老师的OJ</a><button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"><span class="navbar-toggler-icon"></span></button>`;
+            document.querySelector("body > div > nav > div > div.navbar-header").outerHTML = `<a class="navbar-brand" href="http://www.xmoj.tech/">高老师的OJ</a><button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"><span class="navbar-toggler-icon"></span></button>`;
             document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li").classList = "nav-item dropdown";
             document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > a").className = "nav-link dropdown-toggle";
             document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > a > span.caret").remove();
@@ -477,21 +517,21 @@ else {
                     <li class="dropdown-item">插件设置</li>
                     <li class="dropdown-item">注销</li>`
                     PopupUL.children[0].addEventListener("click", () => {
-                        location.href = "/modifypage.php";
+                        location.href = "http://www.xmoj.tech/modifypage.php";
                     });
                     PopupUL.children[1].addEventListener("click", () => {
-                        location.href = "/userinfo.php?user=" + document.querySelector("#profile").innerText;
+                        location.href = "http://www.xmoj.tech/userinfo.php?user=" + document.querySelector("#profile").innerText;
                     });
                     PopupUL.children[2].addEventListener("click", () => {
-                        location.href = "/mail.php";
+                        location.href = "http://www.xmoj.tech/mail.php";
                     });
                     PopupUL.children[3].addEventListener("click", () => {
-                        location.href = "/index.php?ByUserScript=1";
+                        location.href = "http://www.xmoj.tech/index.php?ByUserScript=1";
                     });
                     PopupUL.children[4].addEventListener("click", () => {
                         localStorage.removeItem("UserScript-Username");
                         localStorage.removeItem("UserScript-Password");
-                        location.href = "/logout.php";
+                        location.href = "http://www.xmoj.tech/logout.php";
                     });
                     Style.innerHTML += ".dropdown-item {";
                     Style.innerHTML += "    cursor: pointer;";
@@ -519,7 +559,7 @@ else {
             }
         }, 100);
 
-        fetch(UtilityEnabled("DebugMode") ? "https://langningchen.github.io/XMOJ-Script/Update.json" : "https://web.xmoj-bbs.tech/Update.json", { cache: "no-cache" })
+        fetch(ServerURL + "/Update.json", { cache: "no-cache" })
             .then((Response) => {
                 return Response.json();
             })
@@ -538,7 +578,7 @@ else {
                     UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <div>
                             XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
-                            <a href="` + (UtilityEnabled("DebugMode") ? "https://langningchen.github.io/XMOJ-Script/XMOJ.user.js" : "https://web.xmoj-bbs.tech/XMOJ.user.js") + `" target="_blank" class="alert-link">此处</a>
+                            <a href="${ServerURL}/XMOJ.user.js" target="_blank" class="alert-link">此处</a>
                             更新
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -605,7 +645,7 @@ else {
                     new bootstrap.Modal(document.getElementById("UpdateModal")).show();
                 }
             });
-        fetch("https://web.xmoj-bbs.tech/AddonScript.js", { cache: "no-cache" })
+        fetch(ServerURL + "/AddonScript.js", { cache: "no-cache" })
             .then((Response) => {
                 return Response.text();
             })
@@ -675,7 +715,7 @@ else {
                 Alert.classList.add("alert-primary");
                 Alert.role = "alert";
                 Alert.innerHTML = `欢迎使用XMOJ增强脚本！点击
-                <a class="alert-link" href="modifypage.php?ByUserScript=1" target="_blank">此处</a>
+                <a class="alert-link" href="http://www.xmoj.tech/modifypage.php?ByUserScript=1" target="_blank">此处</a>
                 查看更新日志。`;
                 Container.appendChild(Alert);
                 let UtilitiesCard = document.createElement("div");
@@ -895,7 +935,7 @@ else {
             if (document.querySelector("body > div > div.mt-3 > h2") != null) {
                 document.querySelector("body > div > div.mt-3").innerHTML = "没有此题目或题目对你不可见";
                 setTimeout(() => {
-                    location.href = "problemset.php";
+                    location.href = "http://www.xmoj.tech/problemset.php";
                 }, 1000);
             }
             else {
@@ -1089,7 +1129,7 @@ else {
                     GetOthersSampleButton.className = "btn btn-outline-secondary";
                     GetOthersSampleButton.innerText = "获取他人样例";
                     GetOthersSampleButton.addEventListener("click", () => {
-                        location.href = "status.php?ByUserScript=1";
+                        location.href = "http://www.xmoj.tech/status.php?ByUserScript=1";
                     });
                     GetOthersSampleButton.style.marginBottom = GetOthersSampleButton.style.marginRight = "7px";
                     GetOthersSampleButton.style.marginRight = "7px";
@@ -1169,7 +1209,7 @@ else {
                     CompareButton.className = "btn btn-outline-secondary";
                     CompareButton.innerText = "比较提交记录";
                     CompareButton.addEventListener("click", () => {
-                        location.href = "comparesource.php";
+                        location.href = "http://www.xmoj.tech/comparesource.php";
                     });
                     CompareButton.style.marginBottom = "7px";
                 }
@@ -1185,7 +1225,7 @@ else {
                     SolutionIDs.push(SID);
                     if (UtilityEnabled("ResetType")) {
                         Temp[i].childNodes[0].remove();
-                        Temp[i].childNodes[0].innerHTML = "<a href=\"showsource.php?id=" + SID + "\">" + SID + "</a> " +
+                        Temp[i].childNodes[0].innerHTML = "<a href=\"http://www.xmoj.tech/showsource.php?id=" + SID + "\">" + SID + "</a> " +
                             "<a href=\"" + Temp[i].childNodes[6].children[1].href + "\">重交</a>";
                         Temp[i].childNodes[1].remove();
                         Temp[i].childNodes[1].children[0].removeAttribute("class");
@@ -1245,6 +1285,11 @@ else {
                                 TempHTML += "</a>";
                                 if (Points[SolutionID] != undefined) {
                                     TempHTML += "<span style=\"margin-left: 5px\" class=\"badge text-bg-info\">" + Points[SolutionID] + "</span>";
+                                    if (Points[SolutionID].substring(0, Points[SolutionID].length - 1) >= 50) {
+                                        TempHTML += `<a href="http://www.xmoj.tech/showsource.php?pid=` +
+                                            localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem") +
+                                            `&ByUserScript=1" class="ms-1 link-secondary">查看标程</a>`;
+                                    }
                                 }
                                 if (ResponseData[0] < 4) {
                                     setTimeout(() => {
@@ -1413,7 +1458,7 @@ else {
                         Temp.innerHTML = TimeStamp;
                     }
                     Temp[i].childNodes[3].style.display = "none";
-                    Temp[i].childNodes[4].innerHTML = "<a href=\"userinfo.php?user=" + Temp[i].childNodes[4].innerHTML + "\">" + Temp[i].childNodes[4].innerHTML + "</a>";
+                    Temp[i].childNodes[4].innerHTML = "<a href=\"http://www.xmoj.tech/userinfo.php?user=" + Temp[i].childNodes[4].innerHTML + "\">" + Temp[i].childNodes[4].innerHTML + "</a>";
                     localStorage.setItem("UserScript-Contest-" + Temp[i].childNodes[0].innerText + "-Name", Temp[i].childNodes[1].innerText);
                 }
             } else {
@@ -1473,7 +1518,7 @@ else {
                     StaticButton.className = "btn btn-outline-secondary";
                     StaticButton.innerText = "统计";
                     StaticButton.addEventListener("click", () => {
-                        location.href = "/conteststatistics.php?cid=" + SearchParams.get("cid");
+                        location.href = "http://www.xmoj.tech/conteststatistics.php?cid=" + SearchParams.get("cid");
                     });
 
                     document.querySelector("#problemset > tbody").innerHTML =
@@ -1502,7 +1547,7 @@ else {
                         document.querySelector("#problemset > thead > tr").innerHTML += "<td width=\"5%\">标程</td>";
                         Temp = document.querySelector("#problemset > tbody").children;
                         for (let i = 0; i < Temp.length; i++) {
-                            Temp[i].innerHTML += "<td><a href=\"problem_std.php?cid=" + SearchParams.get("cid") + "&pid=" + i + "\" target=\"_blank\">打开</a></td>";
+                            Temp[i].innerHTML += "<td><a href=\"http://www.xmoj.tech/problem_std.php?cid=" + SearchParams.get("cid") + "&pid=" + i + "\" target=\"_blank\">打开</a></td>";
                         }
                     }
 
@@ -1818,7 +1863,7 @@ else {
                 DownloadButton.innerText = "下载排名";
                 DownloadButton.style.marginBottom = "20px";
                 DownloadButton.addEventListener("click", () => {
-                    location.href = "/contestrank.xls.php?cid=" + SearchParams.get("cid");
+                    location.href = "http://www.xmoj.tech/contestrank.xls.php?cid=" + SearchParams.get("cid");
                 });
                 let ProblemCount = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-ProblemCount");
                 RefreshACMRank(ProblemCount);
@@ -1925,7 +1970,7 @@ else {
             CodeMirrorElement.getWrapperElement().style.border = "1px solid #ddd";
 
             if (SearchParams.get("sid") !== null) {
-                await fetch("/getsource.php?id=" + SearchParams.get("sid"))
+                await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("sid"))
                     .then((Response) => {
                         return Response.text()
                     })
@@ -2068,7 +2113,7 @@ else {
         } else if (location.pathname == "/modifypage.php") {
             if (SearchParams.get("ByUserScript") != null) {
                 document.querySelector("body > div > div.mt-3").innerHTML = "";
-                await fetch("https://web.xmoj-bbs.tech/Update.json", { cache: "no-cache" })
+                await fetch(ServerURL + "/Update.json", { cache: "no-cache" })
                     .then((Response) => {
                         return Response.json();
                     })
@@ -2107,9 +2152,60 @@ else {
                     });
             }
             else {
+                let Nickname = document.getElementsByName("nick")[0].value;
+                let School = document.getElementsByName("nick")[0].value;
+                let EmailAddress = document.getElementsByName("")[0].value;
+                let CodeforcesAccount = document.getElementsByName("")[0].value;
+                let AtcoderAccount = document.getElementsByName("")[0].value;
+                let USACOAccount = document.getElementsByName("")[0].value;
+                let LuoguAccount = document.getElementsByName("")[0].value;
+                document.querySelector("body > div > div").innerHTML = `<div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="UserID" class="col-form-label">用户ID</label></div>
+                    <div class="col-9"><input id="UserID" class="form-control"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="Nickname" class="col-form-label">昵称</label></div>
+                    <div class="col-9"><input id="Nickname" class="form-control">${Nickname}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="OldPassword" class="col-form-label">旧密码</label></div>
+                    <div class="col-9"><input type="password" id="OldPassword" class="form-control"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="NewPassword" class="col-form-label">新密码</label></div>
+                    <div class="col-9"><input type="password" id="NewPassword" class="form-control"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="NewPasswordAgain" class="col-form-label">重复密码</label></div>
+                    <div class="col-9"><input type="password" id="NewPasswordAgain" class="form-control"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="School" class="col-form-label">学校</label></div>
+                    <div class="col-9"><input type="password" id="School" class="form-control">${School}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="EmailAddress" class="col-form-label">电子邮箱</label></div>
+                    <div class="col-9"><input type="password" id="EmailAddress" class="form-control">${EmailAddress}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="CodeforcesAccount" class="col-form-label">Codeforces账号</label></div>
+                    <div class="col-9"><input type="password" id="CodeforcesAccount" class="form-control">${CodeforcesAccount}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="AtcoderAccount" class="col-form-label">Atcoder账号</label></div>
+                    <div class="col-9"><input type="password" id="AtcoderAccount" class="form-control">${AtcoderAccount}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="USACOAccount" class="col-form-label">USACO账号</label></div>
+                    <div class="col-9"><input type="password" id="USACOAccount" class="form-control">${USACOAccount}</div>
+                </div>
+                <div class="row g-2 align-items-center col-6">
+                    <div class="col-3"><label for="LuoguAccount" class="col-form-label">洛谷账号</label></div>
+                    <div class="col-9"><input type="password" id="LuoguAccount" class="form-control">${LuoguAccount}</div>
+                </div>`;
                 if (UtilityEnabled("ResetType")) {
                     document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(1)").innerHTML = `
-                    <td><img src="https://cravatar.cn/avatar/` + (await GetUserInfo(document.querySelector("#profile").innerText)).EmailHash + `?d=retro&s=64"></td>
+                    <td><img width="64" height="64" src="https://cravatar.cn/avatar/` + (await GetUserInfo(document.querySelector("#profile").innerText)).EmailHash + `?d=retro"></td>
                     <td><a href="https://cravatar.cn/avatars" target="_blank">修改头像</a></td>`;
                     for (let i = 3; i <= 12; i++) {
                         document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(" + i + ") > td:nth-child(2) > input").classList.add("form-control");
@@ -2188,82 +2284,154 @@ else {
                 }
             }
         } else if (location.pathname == "/userinfo.php") {
-            if (UtilityEnabled("RemoveUseless")) {
-                let Temp = document.getElementById("submission").childNodes;
+            if (SearchParams.get("ByUserScript") === null) {
+                if (UtilityEnabled("RemoveUseless")) {
+                    let Temp = document.getElementById("submission").childNodes;
+                    for (let i = 0; i < Temp.length; i++) {
+                        Temp[i].remove();
+                    }
+                }
+                eval(document.querySelector("body > script:nth-child(5)").innerHTML);
+                document.querySelector("#statics > tbody > tr:nth-child(1)").remove();
+
+                let Temp = document.querySelector("#statics > tbody").children;
                 for (let i = 0; i < Temp.length; i++) {
-                    Temp[i].remove();
-                }
-            }
-            eval(document.querySelector("body > script:nth-child(5)").innerHTML);
-            document.querySelector("#statics > tbody > tr:nth-child(1)").remove();
-
-            let Temp = document.querySelector("#statics > tbody").children;
-            for (let i = 0; i < Temp.length; i++) {
-                if (Temp[i].children[0] != undefined) {
-                    if (Temp[i].children[0].innerText == "Statistics") {
-                        Temp[i].children[0].innerText = "统计";
+                    if (Temp[i].children[0] != undefined) {
+                        if (Temp[i].children[0].innerText == "Statistics") {
+                            Temp[i].children[0].innerText = "统计";
+                        }
+                        else if (Temp[i].children[0].innerText == "Email:") {
+                            Temp[i].children[0].innerText = "电子邮箱";
+                        }
+                        else {
+                            Temp[i].children[1].innerText = Temp[i].children[1].innerText;
+                        }
+                        Temp[i].children[1].removeAttribute("align");
                     }
-                    else if (Temp[i].children[0].innerText == "Email:") {
-                        Temp[i].children[0].innerText = "电子邮箱";
-                    }
-                    else {
-                        Temp[i].children[1].innerText = Temp[i].children[1].innerText;
-                    }
-                    Temp[i].children[1].removeAttribute("align");
                 }
-            }
 
-            Temp = document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").childNodes;
-            let ACProblems = [];
-            for (let i = 0; i < Temp.length; i++) {
-                if (Temp[i].tagName == "A" && Temp[i].href.indexOf("problem.php?id=") != -1) {
-                    ACProblems.push(Number(Temp[i].innerText.trim()));
+                Temp = document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").childNodes;
+                let ACProblems = [];
+                for (let i = 0; i < Temp.length; i++) {
+                    if (Temp[i].tagName == "A" && Temp[i].href.indexOf("problem.php?id=") != -1) {
+                        ACProblems.push(Number(Temp[i].innerText.trim()));
+                    }
                 }
-            }
-            document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").remove();
+                document.querySelector("#statics > tbody > tr:nth-child(1) > td:nth-child(3)").remove();
 
-            let UserID, UserName;
-            [UserID, UserName] = document.querySelector("#statics > caption").childNodes[0].data.trim().split("--");
-            document.querySelector("#statics > caption").remove();
+                let UserID, UserName;
+                [UserID, UserName] = document.querySelector("#statics > caption").childNodes[0].data.trim().split("--");
+                document.querySelector("#statics > caption").remove();
 
-            let Row = document.createElement("div"); Row.className = "row";
-            let LeftDiv = document.createElement("div"); LeftDiv.className = "col-md-5"; Row.appendChild(LeftDiv);
+                let Row = document.createElement("div"); Row.className = "row";
+                let LeftDiv = document.createElement("div"); LeftDiv.className = "col-md-5"; Row.appendChild(LeftDiv);
 
-            let LeftTopDiv = document.createElement("div"); LeftTopDiv.className = "row mb-2"; LeftDiv.appendChild(LeftTopDiv);
-            let AvatarContainer = document.createElement("div");
-            AvatarContainer.classList.add("col-auto");
-            let AvatarElement = document.createElement("img");
-            let UserEmailHash = (await GetUserInfo(UserID)).EmailHash;
-            if (UserEmailHash == undefined) {
-                AvatarElement.src = `https://cravatar.cn/avatar/00000000000000000000000000000000?d=mp&f=y`;
-            }
-            else {
-                AvatarElement.src = `https://cravatar.cn/avatar/${UserEmailHash}?d=retro`;
-            }
-            AvatarElement.classList.add("rounded", "me-2");
-            AvatarElement.style.height = "120px";
-            AvatarContainer.appendChild(AvatarElement);
-            LeftTopDiv.appendChild(AvatarContainer);
+                let LeftTopDiv = document.createElement("div"); LeftTopDiv.className = "row mb-2"; LeftDiv.appendChild(LeftTopDiv);
+                let AvatarContainer = document.createElement("div");
+                AvatarContainer.classList.add("col-auto");
+                let AvatarElement = document.createElement("img");
+                let UserEmailHash = (await GetUserInfo(UserID)).EmailHash;
+                if (UserEmailHash == undefined) {
+                    AvatarElement.src = `https://cravatar.cn/avatar/00000000000000000000000000000000?d=mp&f=y`;
+                }
+                else {
+                    AvatarElement.src = `https://cravatar.cn/avatar/${UserEmailHash}?d=retro`;
+                }
+                AvatarElement.classList.add("rounded", "me-2");
+                AvatarElement.style.height = "120px";
+                AvatarContainer.appendChild(AvatarElement);
+                LeftTopDiv.appendChild(AvatarContainer);
 
-            let UserInfoElement = document.createElement("div");
-            UserInfoElement.classList.add("col-auto");
-            UserInfoElement.style.lineHeight = "40px";
-            UserInfoElement.innerHTML += "用户名：" + UserID + "<br>";
-            UserInfoElement.innerHTML += "昵称：" + UserName + "<br>";
-            if (UtilityEnabled("Rating")) {
-                UserInfoElement.innerHTML += "评分：" + ((await GetUserInfo(UserID)).Rating) + "<br>";
-            }
-            LeftTopDiv.appendChild(UserInfoElement);
-            LeftDiv.appendChild(LeftTopDiv);
+                let UserInfoElement = document.createElement("div");
+                UserInfoElement.classList.add("col-auto");
+                UserInfoElement.style.lineHeight = "40px";
+                UserInfoElement.innerHTML += "用户名：" + UserID + "<br>";
+                UserInfoElement.innerHTML += "昵称：" + UserName + "<br>";
+                if (UtilityEnabled("Rating")) {
+                    UserInfoElement.innerHTML += "评分：" + ((await GetUserInfo(UserID)).Rating) + "<br>";
+                }
+                LeftTopDiv.appendChild(UserInfoElement);
+                LeftDiv.appendChild(LeftTopDiv);
 
-            let LeftTable = document.querySelector("body > div > div > center > table"); LeftDiv.appendChild(LeftTable);
-            let RightDiv = document.createElement("div"); RightDiv.className = "col-md-7"; Row.appendChild(RightDiv);
-            RightDiv.innerHTML = "<h5>已解决题目</h5>";
-            for (let i = 0; i < ACProblems.length; i++) {
-                RightDiv.innerHTML += "<a href=\"/problem.php?id=" + ACProblems[i] + "\" target=\"_blank\">" + ACProblems[i] + "</a> ";
+                let LeftTable = document.querySelector("body > div > div > center > table"); LeftDiv.appendChild(LeftTable);
+                let RightDiv = document.createElement("div"); RightDiv.className = "col-md-7"; Row.appendChild(RightDiv);
+                RightDiv.innerHTML = "<h5>已解决题目</h5>";
+                for (let i = 0; i < ACProblems.length; i++) {
+                    RightDiv.innerHTML += "<a href=\"http://www.xmoj.tech/problem.php?id=" + ACProblems[i] + "\" target=\"_blank\">" + ACProblems[i] + "</a> ";
+                }
+                document.querySelector("body > div > div").innerHTML = "";
+                document.querySelector("body > div > div").appendChild(Row);
+            } else {
+                document.querySelector("body > div > div.mt-3").innerHTML = `<button id="UploadStd" class="btn btn-primary mb-2">上传标程</button>
+                <div class="alert alert-danger mb-3" role="alert" id="ErrorElement" style="display: none;"></div>
+                <div class="progress" role="progressbar">
+                    <div id="UploadProgress" class="progress-bar progress-bar-striped" style="width: 0%">0%</div>
+                </div>
+                <p class="mt-2 text-muted">
+                    您必须要上传标程以后才能使用“查看标程”功能。点击“上传标程”按钮以后，系统会自动上传标程，请您耐心等待。<br>
+                    首次上传标程可能会比较慢，请耐心等待。后续上传标程将会快很多。<br>
+                    上传的内容不是您AC的程序，而是您AC的题目对应的用户std的程序。所以您可以放心上传，不会泄露您的代码。<br>
+                    系统每过一周会自动提醒您上传标程，您必须要上传标程，否则将会被禁止使用“查看标程”功能。<br>
+                </p>`;
+                UploadStd.addEventListener("click", async () => {
+                    UploadStd.disabled = true;
+                    ErrorElement.style.display = "none";
+                    ErrorElement.innerText = "";
+                    UploadProgress.classList.remove("bg-success");
+                    UploadProgress.classList.remove("bg-warning");
+                    UploadProgress.classList.remove("bg-danger");
+                    UploadProgress.classList.add("progress-bar-animated");
+                    UploadProgress.style.width = "0%";
+                    UploadProgress.innerText = "0%";
+                    let ACList = [];
+                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.querySelector("#profile").innerText)
+                        .then((Response) => {
+                            return Response.text();
+                        }).then((Response) => {
+                            let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                            let ScriptData = ParsedDocument.querySelector("#statics > tbody > tr:nth-child(2) > td:nth-child(3) > script").innerText;
+                            ScriptData = ScriptData.substr(ScriptData.indexOf("}") + 1).trim();
+                            ScriptData = ScriptData.split(";");
+                            for (let i = 0; i < ScriptData.length; i++) {
+                                ACList.push(Number(ScriptData[i].substring(2, ScriptData[i].indexOf(","))));
+                            }
+                        });
+                    RequestAPI("GetStdList", {}, async (Result) => {
+                        if (Result.Success) {
+                            let StdList = Result.Data.StdList;
+                            for (let i = 0; i < ACList.length; i++) {
+                                if (StdList.indexOf(ACList[i]) === -1) {
+                                    await new Promise((Resolve) => {
+                                        RequestAPI("UploadStd", {
+                                            "ProblemID": Number(ACList[i])
+                                        }, (Result) => {
+                                            if (!Result.Success) {
+                                                ErrorElement.style.display = "block";
+                                                ErrorElement.innerText += Result.Message + "<br>";
+                                                UploadProgress.classList.add("bg-warning");
+                                            }
+                                            UploadProgress.innerText = (i / ACList.length * 100).toFixed(1) + "% (" + ACList[i] + ")";
+                                            UploadProgress.style.width = (i / ACList.length * 100) + "%";
+                                            Resolve();
+                                        });
+                                    });
+                                }
+                            }
+                            UploadProgress.classList.add("bg-success");
+                            UploadProgress.classList.remove("progress-bar-animated");
+                            UploadProgress.innerText = "100%";
+                            UploadProgress.style.width = "100%";
+                            UploadStd.disabled = false;
+                            localStorage.setItem("UserScript-LastUploadedStdTime", new Date().getTime());
+                        }
+                        else {
+                            ErrorElement.style.display = "block";
+                            ErrorElement.innerText = Result.Message;
+                            UploadStd.disabled = false;
+                        }
+                    });
+                });
             }
-            document.querySelector("body > div > div").innerHTML = "";
-            document.querySelector("body > div > div").appendChild(Row);
         } else if (location.pathname == "/conteststatistics.php") {
             document.querySelector("body > div > div.mt-3 > center > h3").innerText = "比赛统计";
             if (UtilityEnabled("ResetType")) {
@@ -2319,7 +2487,7 @@ else {
                     CompareButton.innerText = "比较";
                     CompareButton.className = "btn btn-primary";
                     CompareButton.addEventListener("click", () => {
-                        location.href = "/comparesource.php?left=" + LeftCode.value + "&right=" + RightCode.value;
+                        location.href = "http://www.xmoj.tech/comparesource.php?left=" + LeftCode.value + "&right=" + RightCode.value;
                     });
                 }
                 else {
@@ -2331,14 +2499,14 @@ else {
                         <div id="CompareElement"></div>`;
 
                     let LeftCode = "";
-                    await fetch("/getsource.php?id=" + SearchParams.get("left"))
+                    await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("left"))
                         .then((Response) => {
                             return Response.text();
                         }).then((Response) => {
                             LeftCode = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
                         });
                     let RightCode = "";
-                    await fetch("/getsource.php?id=" + SearchParams.get("right"))
+                    await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("right"))
                         .then((Response) => {
                             return Response.text();
                         }).then((Response) => {
@@ -2387,7 +2555,7 @@ else {
                 <button name="submit" type="button" class="btn btn-primary">登录</button>
                 </div>
                 <div class="col-auto">
-                <a class="btn btn-warning" href="lostpassword.php">忘记密码</a>
+                <a class="btn btn-warning" href="http://www.xmoj.tech/lostpassword.php">忘记密码</a>
                 </div>
             </div>
             </form > `;
@@ -2424,7 +2592,7 @@ else {
                                     }
                                     let NewPage = localStorage.getItem("UserScript-LastPage");
                                     if (NewPage == null) {
-                                        NewPage = "/index.php";
+                                        NewPage = "http://www.xmoj.tech/index.php";
                                     }
                                     location.href = NewPage;
                                 } else {
@@ -2536,7 +2704,7 @@ else {
                 let ApplyElements = document.getElementsByClassName("data");
                 for (let i = 0; i < ApplyElements.length; i++) {
                     ApplyElements[i].addEventListener("click", async () => {
-                        await fetch("/data_distribute_ajax_apply.php", {
+                        await fetch("http://www.xmoj.tech/data_distribute_ajax_apply.php", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/x-www-form-urlencoded"
@@ -2667,11 +2835,11 @@ else {
             let PID = SearchParams.get("id");
             let Pagination = `<nav class="center"><ul class="pagination justify-content-center">`;
             if (CurrentPage != 1) {
-                Pagination += `<li class="page-item"><a href="problemstatus.php?id=${PID + `&page=1" class="page-link">&laquo;</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1)}</a></li>`;
+                Pagination += `<li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=${PID + `&page=1" class="page-link">&laquo;</a></li><li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1)}</a></li>`;
             }
-            Pagination += `<li class="active page-item"><a href="problemstatus.php?id=${PID + `&page=` + CurrentPage + `" class="page-link">` + CurrentPage}</a></li>`;
+            Pagination += `<li class="active page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=${PID + `&page=` + CurrentPage + `" class="page-link">` + CurrentPage}</a></li>`;
             if (document.querySelector("#problemstatus > tbody").children != null && document.querySelector("#problemstatus > tbody").children.length == 20) {
-                Pagination += `<li class="page-item"><a href="problemstatus.php?id=${PID + `&page=` + (CurrentPage + 1) + `" class="page-link">` + (CurrentPage + 1) + `</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1)}" class="page-link">&raquo;</a></li>`;
+                Pagination += `<li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=${PID + `&page=` + (CurrentPage + 1) + `" class="page-link">` + (CurrentPage + 1) + `</a></li><li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1)}" class="page-link">&raquo;</a></li>`;
             }
             Pagination += `</ul></nav>`;
             document.querySelector("body > div > div.mt-3 > center").innerHTML += Pagination;
@@ -2750,12 +2918,33 @@ else {
                     </div>`;
         } else if (location.pathname == "/showsource.php") {
             let Code = "";
-            await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("id"))
-                .then((Response) => {
-                    return Response.text();
-                }).then((Response) => {
-                    Code = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
+            if (SearchParams.get("ByUserScript") == null) {
+                await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("id"))
+                    .then((Response) => {
+                        return Response.text();
+                    }).then((Response) => {
+                        Code = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
+                    });
+            }
+            else {
+                if (localStorage.getItem("UserScript-LastUploadedStdTime") === undefined ||
+                    new Date().getTime() - localStorage.getItem("UserScript-LastUploadedStdTime") > 1000 * 60 * 60 * 24 * 7) {
+                    location.href = "http://www.xmoj.tech/userinfo.php?ByUserScript=1";
+                }
+                await new Promise((Resolve) => {
+                    RequestAPI("GetStd", {
+                        "ProblemID": Number(SearchParams.get("pid"))
+                    }, (Response) => {
+                        if (Response.Success) {
+                            Code = Response.Data.StdCode;
+                        }
+                        else {
+                            Code = Response.Message;
+                        }
+                        Resolve();
+                    });
                 });
+            }
             document.querySelector("body > div > div.mt-3").innerHTML = `<textarea>${Code}</textarea>`;
             CodeMirror.fromTextArea(document.querySelector("body > div > div.mt-3 > textarea"), {
                 lineNumbers: true,
@@ -3011,10 +3200,10 @@ else {
                     </table>`;
                     NewPost.addEventListener("click", () => {
                         if (ProblemID != null) {
-                            location.href = "/discuss3/newpost.php?pid=" + ProblemID;
+                            location.href = "http://www.xmoj.tech/discuss3/newpost.php?pid=" + ProblemID;
                         }
                         else {
-                            location.href = "/discuss3/newpost.php";
+                            location.href = "http://www.xmoj.tech/discuss3/newpost.php";
                         }
                     });
                     const RefreshPostList = (Silent = true) => {
@@ -3035,11 +3224,11 @@ else {
                             if (ResponseData.Success == true) {
                                 ErrorElement.style.display = "none";
                                 if (!Silent) {
-                                    DiscussPagination.children[0].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
-                                    DiscussPagination.children[1].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
-                                    DiscussPagination.children[2].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
-                                    DiscussPagination.children[3].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
-                                    DiscussPagination.children[4].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
+                                    DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
+                                    DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
+                                    DiscussPagination.children[2].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
+                                    DiscussPagination.children[3].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
+                                    DiscussPagination.children[4].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
                                     if (Page <= 1) {
                                         DiscussPagination.children[0].classList.add("disabled");
                                         DiscussPagination.children[1].remove();
@@ -3058,13 +3247,13 @@ else {
                                 for (let i = 0; i < Posts.length; i++) {
                                     InnerHTMLData += "<tr>";
                                     InnerHTMLData += `<td>${Posts[i].PostID}</td>`;
-                                    InnerHTMLData += `<td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>`
+                                    InnerHTMLData += `<td><a href="http://www.xmoj.tech/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>`
                                     InnerHTMLData += "<td>";
                                     InnerHTMLData += await GetUsernameHTML(Posts[i].UserID);
                                     InnerHTMLData += "</td>";
                                     InnerHTMLData += "<td>";
                                     if (Posts[i].ProblemID != 0) {
-                                        InnerHTMLData += `<a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a>`;
+                                        InnerHTMLData += `<a href="http://www.xmoj.tech/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a>`;
                                     }
                                     InnerHTMLData += "</td>";
                                     InnerHTMLData += "<td>" + new Date(Posts[i].PostTime).toLocaleString() + "</td>";
@@ -3153,7 +3342,7 @@ else {
                             SubmitElement.disabled = false;
                             SubmitElement.children[0].style.display = "none";
                             if (ResponseData.Success == true) {
-                                location.href = "/discuss3/thread.php?tid=" + ResponseData.Data.PostID;
+                                location.href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ResponseData.Data.PostID;
                             }
                             else {
                                 ErrorElement.innerText = ResponseData.Message;
@@ -3163,7 +3352,7 @@ else {
                     });
                 } else if (location.pathname == "/discuss3/thread.php") {
                     if (SearchParams.get("tid") == null) {
-                        location.href = "/discuss3/discuss.php";
+                        location.href = "http://www.xmoj.tech/discuss3/discuss.php";
                     }
                     else {
                         let ThreadID = SearchParams.get("tid");
@@ -3249,11 +3438,11 @@ else {
                             }, async (ResponseData) => {
                                 if (ResponseData.Success == true) {
                                     if (!Silent) {
-                                        DiscussPagination.children[0].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=1";
-                                        DiscussPagination.children[1].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
-                                        DiscussPagination.children[2].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + Page;
-                                        DiscussPagination.children[3].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page + 1);
-                                        DiscussPagination.children[4].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + ResponseData.Data.PageCount;
+                                        DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=1";
+                                        DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
+                                        DiscussPagination.children[2].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + Page;
+                                        DiscussPagination.children[3].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page + 1);
+                                        DiscussPagination.children[4].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + ResponseData.Data.PageCount;
                                         if (Page <= 1) {
                                             DiscussPagination.children[0].classList.add("disabled");
                                             DiscussPagination.children[1].remove();
@@ -3486,7 +3675,7 @@ else {
                                 Delete.disabled = false;
                                 Delete.children[0].style.display = "none";
                                 if (ResponseData.Success == true) {
-                                    location.href = "/discuss3/discuss.php";
+                                    location.href = "http://www.xmoj.tech/discuss3/discuss.php";
                                 }
                                 else {
                                     ErrorElement.innerText = ResponseData.Message;

@@ -1,4 +1,3 @@
-import MD5 from "crypto-js/md5";
 import { Result, ThrowErrorIfFailed } from "./Result";
 import { Database } from "./Database";
 import { Security } from "./Security";
@@ -138,13 +137,11 @@ export class Process {
                 ResponseData.Posts.push({
                     PostID: Post["post_id"],
                     UserID: Post["user_id"],
-                    UserEmailHash: await this.GetEmailHash(Post["user_id"]),
                     ProblemID: Post["problem_id"],
                     Title: Post["title"],
                     PostTime: Post["post_time"],
                     ReplyCount: ReplyCount,
                     LastReplyUserID: LastReply[0]["user_id"],
-                    LastReplyUserEmailHash: await this.GetEmailHash(LastReply[0]["user_id"]),
                     LastReplyTime: LastReply[0]["reply_time"]
                 });
             }
@@ -189,7 +186,6 @@ export class Process {
                 ResponseData.Reply.push({
                     ReplyID: ReplyItem["reply_id"],
                     UserID: ReplyItem["user_id"],
-                    UserEmailHash: await this.GetEmailHash(ReplyItem["user_id"]),
                     Content: ReplyItem["content"],
                     ReplyTime: ReplyItem["reply_time"]
                 });
@@ -300,7 +296,6 @@ export class Process {
                 ResponseData.MentionList.push({
                     MentionID: Mention["mention_id"],
                     FromUserID: Mention["from_user_id"],
-                    FromUserEmailHash: await this.GetEmailHash(Mention["from_user_id"]),
                     Content: Mention["content"],
                     MentionURL: Mention["mention_url"],
                     MentionTime: Mention["mention_time"]
@@ -371,7 +366,6 @@ export class Process {
                 }));
                 ResponseData.MailList.push({
                     OtherUser: OtherUsernameList[i],
-                    OtherUserEmailHash: await this.GetEmailHash(OtherUsernameList[i]),
                     LastsMessage: LastMessage[0]["content"],
                     SendTime: LastMessage[0]["send_time"],
                     UnreadCount: UnreadCount["TableSize"]
@@ -430,9 +424,7 @@ export class Process {
                 ResponseData.Mail.push({
                     MessageID: Mail["message_id"],
                     FromUser: Mail["message_from"],
-                    FromUserEmailHash: await this.GetEmailHash(Mail["message_from"]),
                     ToUser: Mail["message_to"],
-                    ToUserEmailHash: await this.GetEmailHash(Mail["message_to"]),
                     Content: Mail["content"],
                     SendTime: Mail["send_time"],
                     IsRead: Mail["is_read"]
@@ -450,9 +442,7 @@ export class Process {
                 ResponseData.Mail.push({
                     MessageID: Mail["message_id"],
                     FromUser: Mail["message_from"],
-                    FromUserEmailHash: await this.GetEmailHash(Mail["message_from"]),
                     ToUser: Mail["message_to"],
-                    ToUserEmailHash: await this.GetEmailHash(Mail["message_to"]),
                     Content: Mail["content"],
                     SendTime: Mail["send_time"],
                     IsRead: Mail["is_read"]
@@ -468,6 +458,118 @@ export class Process {
                 message_to: this.SecurityChecker.GetUsername()
             });
             return new Result(true, "获得短消息成功", ResponseData);
+        },
+        UploadStd: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "ProblemID": "number"
+            }));
+            if (await this.SecurityChecker.GetProblemScore(Data["ProblemID"]) !== 100) {
+                return new Result(false, "没有权限上传此标程");
+            }
+            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("std_answer", {
+                problem_id: Data["ProblemID"]
+            }))["TableSize"] !== 0) {
+                return new Result(false, "此题已经有人上传标程");
+            }
+            ThrowErrorIfFailed(await this.XMOJDatabase.Insert("std_answer", {
+                problem_id: Data["ProblemID"],
+                std_code: await this.SecurityChecker.GetStdCode(Data["ProblemID"])
+            }));
+            return new Result(true, "标程上传成功");
+        },
+        GetStdList: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {}));
+            let ResponseData = {
+                StdList: new Array<number>()
+            };
+            let StdList = ThrowErrorIfFailed(await this.XMOJDatabase.Select("std_answer", ["problem_id"]));
+            for (let i in StdList) {
+                ResponseData.StdList.push(StdList[i]["problem_id"]);
+            }
+            return new Result(true, "获得标程列表成功", ResponseData);
+        },
+        GetStd: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "ProblemID": "number"
+            }));
+            if (await this.SecurityChecker.GetProblemScore(Data["ProblemID"]) < 50) {
+                return new Result(false, "没有权限获取此标程");
+            }
+            let Std = ThrowErrorIfFailed(await this.XMOJDatabase.Select("std_answer", ["std_code"], {
+                problem_id: Data["ProblemID"]
+            }));
+            if (Std.toString() == "") {
+                return new Result(false, "此题还没有人上传标程");
+            }
+            return new Result(true, "获取标程成功", {
+                "StdCode": Std[0]["std_code"]
+            });
+        },
+        NewBadge: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "UserID": "string"
+            }));
+            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1) {
+                return new Result(false, "没有权限创建此标签");
+            }
+            ThrowErrorIfFailed(await this.XMOJDatabase.Insert("badge", {
+                user_id: Data["UserID"]
+            }));
+            return new Result(false, "创建标签成功");
+        },
+        EditBadge: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "UserID": "string",
+                "BackgroundColor": "string",
+                "Color": "string",
+                "Content": "string"
+            }));
+            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1 && Data["UserID"] != this.SecurityChecker.GetUsername()) {
+                return new Result(false, "没有权限编辑此标签");
+            }
+            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("badge", {
+                user_id: Data["UserID"]
+            }))["TableSize"] == 0) {
+                return new Result(false, "未找到标签");
+            }
+            ThrowErrorIfFailed(await this.XMOJDatabase.Update("badge", {
+                background_color: Data["BackgroundColor"],
+                color: Data["Color"],
+                content: Data["Content"]
+            }, {
+                user_id: Data["UserID"]
+            }));
+            return new Result(false, "编辑标签成功");
+        },
+        GetBadge: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "UserID": "string"
+            }));
+            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("badge", {
+                user_id: Data["UserID"]
+            }))["TableSize"] == 0) {
+                return new Result(false, "未找到标签");
+            }
+            ThrowErrorIfFailed(await this.XMOJDatabase.Update("badge", {
+                background_color: Data["BackgroundColor"],
+                color: Data["Color"],
+                content: Data["Content"]
+            }, {
+                user_id: Data["UserID"]
+            }));
+            return new Result(false, "编辑标签成功");
+        },
+        DeleteBadge: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "UserID": "string"
+            }));
+            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1) {
+                return new Result(false, "没有权限删除此标签");
+            }
+            ThrowErrorIfFailed(await this.XMOJDatabase.Delete("badge", {
+                user_id: Data["UserID"]
+            }));
+            return new Result(false, "删除标签成功");
         }
     };
     constructor(RequestData: Request, Environment) {
