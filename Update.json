@@ -2385,6 +2385,22 @@
                     "Description": "Badge and code sharing"
                 }
             ]
+        },
+        "0.2.85": {
+            "UpdateDate": 1693571359804,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "2456855",
+                    "Commit": "2456855461d9e911054c801e9bdde6a291c7142b",
+                    "Description": "修复头像小BUG"
+                },
+                {
+                    "ShortCommit": "4595f81",
+                    "Commit": "4595f81ec56f44d6f581970c53bc3076855a1c00",
+                    "Description": "#227 ProblemStatus增加"
+                }
+            ]
         }
     }
 }

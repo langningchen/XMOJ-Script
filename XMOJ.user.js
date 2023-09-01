@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.84
+// @version      0.2.85
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -51,9 +51,10 @@ let GetUserInfo = async (Username) => {
         let Email = Temp[Temp.length - 1].children[1].innerText.trim();
         let EmailHash = CryptoJS.MD5(Email).toString();
         localStorage.setItem("UserScript-User-" + Username + "-UserRating", Rating);
-        if (Email != "") {
-            localStorage.setItem("UserScript-User-" + Username + "-EmailHash", EmailHash);
+        if (Email == "") {
+            EmailHash = undefined;
         }
+        localStorage.setItem("UserScript-User-" + Username + "-EmailHash", EmailHash);
         localStorage.setItem("UserScript-User-" + Username + "-LastUpdateTime", new Date().getTime());
         return {
             "Rating": Rating,
@@ -1627,7 +1628,7 @@ else {
                             .then((Response) => {
                                 return Response.text()
                             })
-                            .then((Response) => {
+                            .then(async (Response) => {
                                 let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
                                 TidyTable(ParsedDocument.getElementById("rank"));
                                 let Temp = ParsedDocument.getElementById("rank").rows;
@@ -1638,8 +1639,7 @@ else {
                                     Metal.className = "badge text-bg-primary";
                                     MetalCell.innerText = "";
                                     MetalCell.appendChild(Metal);
-                                    Temp[i].cells[1].children[0].className = "link-primary link-offset-2 link-underline-opacity-50";
-                                    Temp[i].cells[1].children[0].target = "_blank";
+                                    Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
                                     Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                                     Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;
                                 }
@@ -2824,6 +2824,7 @@ else {
                 if (Temp[i].children[5].children[0] != null) {
                     Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText}</a>`;
                 }
+                Temp[i].children[2].innerHTML = await GetUsernameHTML(Temp[i].children[2].innerText);
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
