@@ -271,20 +271,20 @@ else {
             location.pathname != "/loginpage.php" &&
             location.pathname != "/lostpassword.php") {
             localStorage.setItem("UserScript-LastPage", location.pathname + location.search);
-            location.href = "loginpage.php";
+            location.href = "http://www.xmoj.tech/loginpage.php";
         }
 
         let Discussion = null;
         if (UtilityEnabled("Discussion")) {
             Discussion = document.createElement("li");
             document.querySelector("#navbar > ul:nth-child(1)").appendChild(Discussion);
-            Discussion.innerHTML = "<a href=\"/discuss3/discuss.php\">讨论</a>";
+            Discussion.innerHTML = "<a href=\"http://www.xmoj.tech/discuss3/discuss.php\">讨论</a>";
         }
 
         if (document.querySelector("#navbar > ul:nth-child(1)").childElementCount > 8 && UtilityEnabled("ACMRank")) {
             let ACMRank = document.createElement("li");
             document.querySelector("#navbar > ul:nth-child(1)").insertBefore(ACMRank, document.querySelector("#navbar > ul:nth-child(1) > li:nth-child(9)"));
-            ACMRank.innerHTML = "<a href=\"/contestrank-oi.php?cid=" + SearchParams.get("cid") + "&ByUserScript=1\">ACM 排名</a>";
+            ACMRank.innerHTML = "<a href=\"http://www.xmoj.tech/contestrank-oi.php?cid=" + SearchParams.get("cid") + "&ByUserScript=1\">ACM 排名</a>";
             ACMRank.classList.add("active");
         }
         if (UtilityEnabled("Translate")) {
@@ -360,7 +360,7 @@ else {
             }
             document.querySelector("nav").className = "navbar navbar-expand-lg bg-body-tertiary";
             document.querySelector("#navbar > ul:nth-child(1)").classList = "navbar-nav me-auto mb-2 mb-lg-0";
-            document.querySelector("body > div > nav > div > div.navbar-header").outerHTML = `<a class="navbar-brand" href="/">高老师的OJ</a><button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"><span class="navbar-toggler-icon"></span></button>`;
+            document.querySelector("body > div > nav > div > div.navbar-header").outerHTML = `<a class="navbar-brand" href="http://www.xmoj.tech/">高老师的OJ</a><button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"><span class="navbar-toggler-icon"></span></button>`;
             document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li").classList = "nav-item dropdown";
             document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > a").className = "nav-link dropdown-toggle";
             document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > a > span.caret").remove();
@@ -517,21 +517,21 @@ else {
                     <li class="dropdown-item">插件设置</li>
                     <li class="dropdown-item">注销</li>`
                     PopupUL.children[0].addEventListener("click", () => {
-                        location.href = "/modifypage.php";
+                        location.href = "http://www.xmoj.tech/modifypage.php";
                     });
                     PopupUL.children[1].addEventListener("click", () => {
-                        location.href = "/userinfo.php?user=" + document.querySelector("#profile").innerText;
+                        location.href = "http://www.xmoj.tech/userinfo.php?user=" + document.querySelector("#profile").innerText;
                     });
                     PopupUL.children[2].addEventListener("click", () => {
-                        location.href = "/mail.php";
+                        location.href = "http://www.xmoj.tech/mail.php";
                     });
                     PopupUL.children[3].addEventListener("click", () => {
-                        location.href = "/index.php?ByUserScript=1";
+                        location.href = "http://www.xmoj.tech/index.php?ByUserScript=1";
                     });
                     PopupUL.children[4].addEventListener("click", () => {
                         localStorage.removeItem("UserScript-Username");
                         localStorage.removeItem("UserScript-Password");
-                        location.href = "/logout.php";
+                        location.href = "http://www.xmoj.tech/logout.php";
                     });
                     Style.innerHTML += ".dropdown-item {";
                     Style.innerHTML += "    cursor: pointer;";
@@ -715,7 +715,7 @@ else {
                 Alert.classList.add("alert-primary");
                 Alert.role = "alert";
                 Alert.innerHTML = `欢迎使用XMOJ增强脚本！点击
-                <a class="alert-link" href="modifypage.php?ByUserScript=1" target="_blank">此处</a>
+                <a class="alert-link" href="http://www.xmoj.tech/modifypage.php?ByUserScript=1" target="_blank">此处</a>
                 查看更新日志。`;
                 Container.appendChild(Alert);
                 let UtilitiesCard = document.createElement("div");
@@ -935,7 +935,7 @@ else {
             if (document.querySelector("body > div > div.mt-3 > h2") != null) {
                 document.querySelector("body > div > div.mt-3").innerHTML = "没有此题目或题目对你不可见";
                 setTimeout(() => {
-                    location.href = "problemset.php";
+                    location.href = "http://www.xmoj.tech/problemset.php";
                 }, 1000);
             }
             else {
@@ -1129,7 +1129,7 @@ else {
                     GetOthersSampleButton.className = "btn btn-outline-secondary";
                     GetOthersSampleButton.innerText = "获取他人样例";
                     GetOthersSampleButton.addEventListener("click", () => {
-                        location.href = "status.php?ByUserScript=1";
+                        location.href = "http://www.xmoj.tech/status.php?ByUserScript=1";
                     });
                     GetOthersSampleButton.style.marginBottom = GetOthersSampleButton.style.marginRight = "7px";
                     GetOthersSampleButton.style.marginRight = "7px";
@@ -1209,7 +1209,7 @@ else {
                     CompareButton.className = "btn btn-outline-secondary";
                     CompareButton.innerText = "比较提交记录";
                     CompareButton.addEventListener("click", () => {
-                        location.href = "comparesource.php";
+                        location.href = "http://www.xmoj.tech/comparesource.php";
                     });
                     CompareButton.style.marginBottom = "7px";
                 }
@@ -1225,7 +1225,7 @@ else {
                     SolutionIDs.push(SID);
                     if (UtilityEnabled("ResetType")) {
                         Temp[i].childNodes[0].remove();
-                        Temp[i].childNodes[0].innerHTML = "<a href=\"showsource.php?id=" + SID + "\">" + SID + "</a> " +
+                        Temp[i].childNodes[0].innerHTML = "<a href=\"http://www.xmoj.tech/showsource.php?id=" + SID + "\">" + SID + "</a> " +
                             "<a href=\"" + Temp[i].childNodes[6].children[1].href + "\">重交</a>";
                         Temp[i].childNodes[1].remove();
                         Temp[i].childNodes[1].children[0].removeAttribute("class");
@@ -1286,7 +1286,7 @@ else {
                                 if (Points[SolutionID] != undefined) {
                                     TempHTML += "<span style=\"margin-left: 5px\" class=\"badge text-bg-info\">" + Points[SolutionID] + "</span>";
                                     if (Points[SolutionID].substring(0, Points[SolutionID].length - 1) >= 50) {
-                                        TempHTML += `<a href="/showsource.php?pid=` +
+                                        TempHTML += `<a href="http://www.xmoj.tech/showsource.php?pid=` +
                                             localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem") +
                                             `&ByUserScript=1" class="ms-1 link-secondary">查看标程</a>`;
                                     }
@@ -1458,7 +1458,7 @@ else {
                         Temp.innerHTML = TimeStamp;
                     }
                     Temp[i].childNodes[3].style.display = "none";
-                    Temp[i].childNodes[4].innerHTML = "<a href=\"userinfo.php?user=" + Temp[i].childNodes[4].innerHTML + "\">" + Temp[i].childNodes[4].innerHTML + "</a>";
+                    Temp[i].childNodes[4].innerHTML = "<a href=\"http://www.xmoj.tech/userinfo.php?user=" + Temp[i].childNodes[4].innerHTML + "\">" + Temp[i].childNodes[4].innerHTML + "</a>";
                     localStorage.setItem("UserScript-Contest-" + Temp[i].childNodes[0].innerText + "-Name", Temp[i].childNodes[1].innerText);
                 }
             } else {
@@ -1518,7 +1518,7 @@ else {
                     StaticButton.className = "btn btn-outline-secondary";
                     StaticButton.innerText = "统计";
                     StaticButton.addEventListener("click", () => {
-                        location.href = "/conteststatistics.php?cid=" + SearchParams.get("cid");
+                        location.href = "http://www.xmoj.tech/conteststatistics.php?cid=" + SearchParams.get("cid");
                     });
 
                     document.querySelector("#problemset > tbody").innerHTML =
@@ -1547,7 +1547,7 @@ else {
                         document.querySelector("#problemset > thead > tr").innerHTML += "<td width=\"5%\">标程</td>";
                         Temp = document.querySelector("#problemset > tbody").children;
                         for (let i = 0; i < Temp.length; i++) {
-                            Temp[i].innerHTML += "<td><a href=\"problem_std.php?cid=" + SearchParams.get("cid") + "&pid=" + i + "\" target=\"_blank\">打开</a></td>";
+                            Temp[i].innerHTML += "<td><a href=\"http://www.xmoj.tech/problem_std.php?cid=" + SearchParams.get("cid") + "&pid=" + i + "\" target=\"_blank\">打开</a></td>";
                         }
                     }
 
@@ -1863,7 +1863,7 @@ else {
                 DownloadButton.innerText = "下载排名";
                 DownloadButton.style.marginBottom = "20px";
                 DownloadButton.addEventListener("click", () => {
-                    location.href = "/contestrank.xls.php?cid=" + SearchParams.get("cid");
+                    location.href = "http://www.xmoj.tech/contestrank.xls.php?cid=" + SearchParams.get("cid");
                 });
                 let ProblemCount = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-ProblemCount");
                 RefreshACMRank(ProblemCount);
@@ -1970,7 +1970,7 @@ else {
             CodeMirrorElement.getWrapperElement().style.border = "1px solid #ddd";
 
             if (SearchParams.get("sid") !== null) {
-                await fetch("/getsource.php?id=" + SearchParams.get("sid"))
+                await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("sid"))
                     .then((Response) => {
                         return Response.text()
                     })
@@ -2357,7 +2357,7 @@ else {
                 let RightDiv = document.createElement("div"); RightDiv.className = "col-md-7"; Row.appendChild(RightDiv);
                 RightDiv.innerHTML = "<h5>已解决题目</h5>";
                 for (let i = 0; i < ACProblems.length; i++) {
-                    RightDiv.innerHTML += "<a href=\"/problem.php?id=" + ACProblems[i] + "\" target=\"_blank\">" + ACProblems[i] + "</a> ";
+                    RightDiv.innerHTML += "<a href=\"http://www.xmoj.tech/problem.php?id=" + ACProblems[i] + "\" target=\"_blank\">" + ACProblems[i] + "</a> ";
                 }
                 document.querySelector("body > div > div").innerHTML = "";
                 document.querySelector("body > div > div").appendChild(Row);
@@ -2384,7 +2384,7 @@ else {
                     UploadProgress.style.width = "0%";
                     UploadProgress.innerText = "0%";
                     let ACList = [];
-                    await fetch("/userinfo.php?user=" + document.querySelector("#profile").innerText)
+                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.querySelector("#profile").innerText)
                         .then((Response) => {
                             return Response.text();
                         }).then((Response) => {
@@ -2487,7 +2487,7 @@ else {
                     CompareButton.innerText = "比较";
                     CompareButton.className = "btn btn-primary";
                     CompareButton.addEventListener("click", () => {
-                        location.href = "/comparesource.php?left=" + LeftCode.value + "&right=" + RightCode.value;
+                        location.href = "http://www.xmoj.tech/comparesource.php?left=" + LeftCode.value + "&right=" + RightCode.value;
                     });
                 }
                 else {
@@ -2499,14 +2499,14 @@ else {
                         <div id="CompareElement"></div>`;
 
                     let LeftCode = "";
-                    await fetch("/getsource.php?id=" + SearchParams.get("left"))
+                    await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("left"))
                         .then((Response) => {
                             return Response.text();
                         }).then((Response) => {
                             LeftCode = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
                         });
                     let RightCode = "";
-                    await fetch("/getsource.php?id=" + SearchParams.get("right"))
+                    await fetch("http://www.xmoj.tech/getsource.php?id=" + SearchParams.get("right"))
                         .then((Response) => {
                             return Response.text();
                         }).then((Response) => {
@@ -2555,7 +2555,7 @@ else {
                 <button name="submit" type="button" class="btn btn-primary">登录</button>
                 </div>
                 <div class="col-auto">
-                <a class="btn btn-warning" href="lostpassword.php">忘记密码</a>
+                <a class="btn btn-warning" href="http://www.xmoj.tech/lostpassword.php">忘记密码</a>
                 </div>
             </div>
             </form > `;
@@ -2592,7 +2592,7 @@ else {
                                     }
                                     let NewPage = localStorage.getItem("UserScript-LastPage");
                                     if (NewPage == null) {
-                                        NewPage = "/index.php";
+                                        NewPage = "http://www.xmoj.tech/index.php";
                                     }
                                     location.href = NewPage;
                                 } else {
@@ -2704,7 +2704,7 @@ else {
                 let ApplyElements = document.getElementsByClassName("data");
                 for (let i = 0; i < ApplyElements.length; i++) {
                     ApplyElements[i].addEventListener("click", async () => {
-                        await fetch("/data_distribute_ajax_apply.php", {
+                        await fetch("http://www.xmoj.tech/data_distribute_ajax_apply.php", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/x-www-form-urlencoded"
@@ -2835,11 +2835,11 @@ else {
             let PID = SearchParams.get("id");
             let Pagination = `<nav class="center"><ul class="pagination justify-content-center">`;
             if (CurrentPage != 1) {
-                Pagination += `<li class="page-item"><a href="problemstatus.php?id=${PID + `&page=1" class="page-link">&laquo;</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1)}</a></li>`;
+                Pagination += `<li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=${PID + `&page=1" class="page-link">&laquo;</a></li><li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1)}</a></li>`;
             }
-            Pagination += `<li class="active page-item"><a href="problemstatus.php?id=${PID + `&page=` + CurrentPage + `" class="page-link">` + CurrentPage}</a></li>`;
+            Pagination += `<li class="active page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=${PID + `&page=` + CurrentPage + `" class="page-link">` + CurrentPage}</a></li>`;
             if (document.querySelector("#problemstatus > tbody").children != null && document.querySelector("#problemstatus > tbody").children.length == 20) {
-                Pagination += `<li class="page-item"><a href="problemstatus.php?id=${PID + `&page=` + (CurrentPage + 1) + `" class="page-link">` + (CurrentPage + 1) + `</a></li><li class="page-item"><a href="problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1)}" class="page-link">&raquo;</a></li>`;
+                Pagination += `<li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=${PID + `&page=` + (CurrentPage + 1) + `" class="page-link">` + (CurrentPage + 1) + `</a></li><li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=` + PID + `&page=` + (CurrentPage + 1)}" class="page-link">&raquo;</a></li>`;
             }
             Pagination += `</ul></nav>`;
             document.querySelector("body > div > div.mt-3 > center").innerHTML += Pagination;
@@ -2929,7 +2929,7 @@ else {
             else {
                 if (localStorage.getItem("UserScript-LastUploadedStdTime") === undefined ||
                     new Date().getTime() - localStorage.getItem("UserScript-LastUploadedStdTime") > 1000 * 60 * 60 * 24 * 7) {
-                    location.href = "/userinfo.php?ByUserScript=1";
+                    location.href = "http://www.xmoj.tech/userinfo.php?ByUserScript=1";
                 }
                 await new Promise((Resolve) => {
                     RequestAPI("GetStd", {
@@ -3200,10 +3200,10 @@ else {
                     </table>`;
                     NewPost.addEventListener("click", () => {
                         if (ProblemID != null) {
-                            location.href = "/discuss3/newpost.php?pid=" + ProblemID;
+                            location.href = "http://www.xmoj.tech/discuss3/newpost.php?pid=" + ProblemID;
                         }
                         else {
-                            location.href = "/discuss3/newpost.php";
+                            location.href = "http://www.xmoj.tech/discuss3/newpost.php";
                         }
                     });
                     const RefreshPostList = (Silent = true) => {
@@ -3224,11 +3224,11 @@ else {
                             if (ResponseData.Success == true) {
                                 ErrorElement.style.display = "none";
                                 if (!Silent) {
-                                    DiscussPagination.children[0].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
-                                    DiscussPagination.children[1].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
-                                    DiscussPagination.children[2].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
-                                    DiscussPagination.children[3].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
-                                    DiscussPagination.children[4].children[0].href = "/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
+                                    DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
+                                    DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
+                                    DiscussPagination.children[2].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
+                                    DiscussPagination.children[3].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
+                                    DiscussPagination.children[4].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
                                     if (Page <= 1) {
                                         DiscussPagination.children[0].classList.add("disabled");
                                         DiscussPagination.children[1].remove();
@@ -3247,13 +3247,13 @@ else {
                                 for (let i = 0; i < Posts.length; i++) {
                                     InnerHTMLData += "<tr>";
                                     InnerHTMLData += `<td>${Posts[i].PostID}</td>`;
-                                    InnerHTMLData += `<td><a href="/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>`
+                                    InnerHTMLData += `<td><a href="http://www.xmoj.tech/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>`
                                     InnerHTMLData += "<td>";
                                     InnerHTMLData += await GetUsernameHTML(Posts[i].UserID);
                                     InnerHTMLData += "</td>";
                                     InnerHTMLData += "<td>";
                                     if (Posts[i].ProblemID != 0) {
-                                        InnerHTMLData += `<a href="/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a>`;
+                                        InnerHTMLData += `<a href="http://www.xmoj.tech/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a>`;
                                     }
                                     InnerHTMLData += "</td>";
                                     InnerHTMLData += "<td>" + new Date(Posts[i].PostTime).toLocaleString() + "</td>";
@@ -3342,7 +3342,7 @@ else {
                             SubmitElement.disabled = false;
                             SubmitElement.children[0].style.display = "none";
                             if (ResponseData.Success == true) {
-                                location.href = "/discuss3/thread.php?tid=" + ResponseData.Data.PostID;
+                                location.href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ResponseData.Data.PostID;
                             }
                             else {
                                 ErrorElement.innerText = ResponseData.Message;
@@ -3352,7 +3352,7 @@ else {
                     });
                 } else if (location.pathname == "/discuss3/thread.php") {
                     if (SearchParams.get("tid") == null) {
-                        location.href = "/discuss3/discuss.php";
+                        location.href = "http://www.xmoj.tech/discuss3/discuss.php";
                     }
                     else {
                         let ThreadID = SearchParams.get("tid");
@@ -3438,11 +3438,11 @@ else {
                             }, async (ResponseData) => {
                                 if (ResponseData.Success == true) {
                                     if (!Silent) {
-                                        DiscussPagination.children[0].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=1";
-                                        DiscussPagination.children[1].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
-                                        DiscussPagination.children[2].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + Page;
-                                        DiscussPagination.children[3].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page + 1);
-                                        DiscussPagination.children[4].children[0].href = "/discuss3/thread.php?tid=" + ThreadID + "&page=" + ResponseData.Data.PageCount;
+                                        DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=1";
+                                        DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
+                                        DiscussPagination.children[2].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + Page;
+                                        DiscussPagination.children[3].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page + 1);
+                                        DiscussPagination.children[4].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + ResponseData.Data.PageCount;
                                         if (Page <= 1) {
                                             DiscussPagination.children[0].classList.add("disabled");
                                             DiscussPagination.children[1].remove();
@@ -3675,7 +3675,7 @@ else {
                                 Delete.disabled = false;
                                 Delete.children[0].style.display = "none";
                                 if (ResponseData.Success == true) {
-                                    location.href = "/discuss3/discuss.php";
+                                    location.href = "http://www.xmoj.tech/discuss3/discuss.php";
                                 }
                                 else {
                                     ErrorElement.innerText = ResponseData.Message;
