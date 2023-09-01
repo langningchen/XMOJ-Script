@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.85
+// @version      0.2.86
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -53,8 +53,9 @@ let GetUserInfo = async (Username) => {
         localStorage.setItem("UserScript-User-" + Username + "-UserRating", Rating);
         if (Email == "") {
             EmailHash = undefined;
+        } else {
+            localStorage.setItem("UserScript-User-" + Username + "-EmailHash", EmailHash);
         }
-        localStorage.setItem("UserScript-User-" + Username + "-EmailHash", EmailHash);
         localStorage.setItem("UserScript-User-" + Username + "-LastUpdateTime", new Date().getTime());
         return {
             "Rating": Rating,
