@@ -2416,6 +2416,11 @@
             "UpdateDate": 1693576466195,
             "Prerelease": true,
             "UpdateCommits": []
+        },
+        "0.2.89": {
+            "UpdateDate": 1693576790677,
+            "Prerelease": true,
+            "UpdateCommits": []
         }
     }
 }
