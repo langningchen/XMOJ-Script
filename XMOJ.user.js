@@ -75,9 +75,9 @@ let GetUserBadge = async (Username) => {
         let BackgroundColor = "";
         let Color = "";
         let Content = "";
-        await new Promise((Resolve, Reject) => {
-            RequestAPI("GetUserBadge", {
-                "Username": String(Username)
+        await new Promise((Resolve) => {
+            RequestAPI("GetBadge", {
+                "UserID": String(Username)
             }, (Response) => {
                 if (Response.Success) {
                     BackgroundColor = Response.Data.BackgroundColor;
@@ -2251,20 +2251,20 @@ else {
                         <a href="https://cravatar.cn/avatars" target="_blank">修改头像</a>
                     </div>
                 </div>
-                <div class="row g-2 align-items-center col-6 mb-1" id="BadgeRow" style="display: none">
+                <div class="row g-2 align-items-center col-6 pb-1 ps-2 pe-2 mt-3 mb-3 border" id="BadgeRow" style="display: none">
                     <div class="col-3">标签</div>
                     <div class="col-9">
-                        <div class="row g-2 align-items-center">
+                        <div class="row g-2 align-items-center mb-1">
                             <div class="col-3"><label for="BadgeContent" class="col-form-label">内容</label></div>
-                            <div class="col-9"><input class="form-control" id="BadgeContent"</div>
+                            <div class="col-9"><input class="form-control" id="BadgeContent"></div>
                         </div>
-                        <div class="row g-2 align-items-center">
+                        <div class="row g-2 align-items-center mb-1">
                             <div class="col-3"><label for="BadgeBackgroundColor" class="col-form-label">背景颜色</label></div>
-                            <div class="col-9"><input class="form-control" type="color" id="BadgeBackgroundColor"</div>
+                            <div class="col-9"><input class="form-control form-control-color" type="color" id="BadgeBackgroundColor"></div>
                         </div>
-                        <div class="row g-2 align-items-center">
+                        <div class="row g-2 align-items-center mb-1">
                             <div class="col-3"><label for="BadgeColor" class="col-form-label">文字颜色</label></div>
-                            <div class="col-9"><input class="form-control" type="color" id="BadgeColor"</div>
+                            <div class="col-9"><input class="form-control form-control-color" type="color" id="BadgeColor"></div>
                         </div>
                     </div>
                 </div>
@@ -2308,21 +2308,51 @@ else {
                     <div class="col-3"><label for="LuoguAccount" class="col-form-label">洛谷账号</label></div>
                     <div class="col-9"><input id="LuoguAccount" class="form-control" value="${LuoguAccount}"></div>
                 </div>
-                <button type="submit" class="btn btn-primary" id="ModifyInfo">修改</button>`;
+                <button type="submit" class="btn btn-primary mb-2" id="ModifyInfo">
+                    修改
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                </button>
+                <div class="alert alert-danger mb-3" role="alert" id="ErrorElement" style="display: none;"></div>
+                <div class="alert alert-success mb-3" role="alert" id="SuccessElement" style="display: none;">修改成功</div>
+                <br>`;
                 RequestAPI("GetBadge", {
                     "UserID": String(document.querySelector("#profile").innerText)
                 }, (Response) => {
                     if (Response.Success) {
+                        debugger
                         BadgeRow.style.display = "";
                         BadgeContent.value = Response.Data.Content;
                         BadgeBackgroundColor.value = Response.Data.BackgroundColor;
                         BadgeColor.value = Response.Data.Color;
+                        SuccessElement.innerText += "，用户标签会在一天内生效";
                     }
                 });
-                BadgeContent
-                BadgeBackgroundColor
-                BadgeColor
                 ModifyInfo.addEventListener("click", async () => {
+                    ModifyInfo.disabled = true;
+                    ModifyInfo.querySelector("span").style.display = "";
+                    ErrorElement.style.display = "none";
+                    SuccessElement.style.display = "none";
+                    let BadgeContent = document.querySelector("#BadgeContent").value;
+                    let BadgeBackgroundColor = document.querySelector("#BadgeBackgroundColor").value;
+                    let BadgeColor = document.querySelector("#BadgeColor").value;
+                    await new Promise((Resolve) => {
+                        RequestAPI("EditBadge", {
+                            "UserID": String(document.querySelector("#profile").innerText),
+                            "Content": String(BadgeContent),
+                            "BackgroundColor": String(BadgeBackgroundColor),
+                            "Color": String(BadgeColor)
+                        }, (Response) => {
+                            if (Response.Success) {
+                                Resolve();
+                            }
+                            else {
+                                ModifyInfo.disabled = false;
+                                ModifyInfo.querySelector("span").style.display = "none";
+                                ErrorElement.style.display = "block";
+                                ErrorElement.innerText = Response.Message;
+                            }
+                        });
+                    });
                     let Nickname = document.querySelector("#Nickname").value;
                     let OldPassword = document.querySelector("#OldPassword").value;
                     let NewPassword = document.querySelector("#NewPassword").value;
@@ -2351,6 +2381,9 @@ else {
                             "acc_usaco=" + encodeURIComponent(USACOAccount) + "&" +
                             "acc_luogu=" + encodeURIComponent(LuoguAccount)
                     });
+                    ModifyInfo.disabled = false;
+                    ModifyInfo.querySelector("span").style.display = "none";
+                    SuccessElement.style.display = "block";
                 });
                 if (UtilityEnabled("ExportACCode")) {
                     let ExportACCode = document.createElement("button");

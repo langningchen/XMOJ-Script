@@ -515,7 +515,7 @@ export class Process {
             ThrowErrorIfFailed(await this.XMOJDatabase.Insert("badge", {
                 user_id: Data["UserID"]
             }));
-            return new Result(false, "创建标签成功");
+            return new Result(true, "创建标签成功");
         },
         EditBadge: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
@@ -539,21 +539,23 @@ export class Process {
             }, {
                 user_id: Data["UserID"]
             }));
-            return new Result(false, "编辑标签成功");
+            return new Result(true, "编辑标签成功");
         },
         GetBadge: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
                 "UserID": "string"
             }));
-            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("badge", {
-                user_id: Data["UserID"]
-            }))["TableSize"] == 0) {
-                return new Result(false, "未找到标签");
-            }
             let BadgeData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("badge", ["background_color", "color", "content"], {
                 user_id: Data["UserID"]
             }));
-            return new Result(false, "获得标签成功");
+            if (BadgeData.toString() == "") {
+                return new Result(false, "未找到标签");
+            }
+            return new Result(true, "获得标签成功", {
+                Content: BadgeData[0]["content"],
+                BackgroundColor: BadgeData[0]["background_color"],
+                Color: BadgeData[0]["color"]
+            });
         },
         DeleteBadge: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
@@ -565,7 +567,7 @@ export class Process {
             ThrowErrorIfFailed(await this.XMOJDatabase.Delete("badge", {
                 user_id: Data["UserID"]
             }));
-            return new Result(false, "删除标签成功");
+            return new Result(true, "删除标签成功");
         }
     };
     constructor(RequestData: Request, Environment) {

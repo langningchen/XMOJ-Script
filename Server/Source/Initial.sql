@@ -52,7 +52,7 @@ DROP TABLE IF EXISTS badge;
 
 CREATE TABLE badge (
     user_id TEXT PRIMARY KEY NOT NULL,
-    background_color TEXT NOT NULL DEFAULT "",
-    color TEXT NOT NULL DEFAULT "",
-    content TEXT NOT NULL DEFAULT ""
+    background_color TEXT NOT NULL DEFAULT "#000000",
+    color TEXT NOT NULL DEFAULT "#ffffff",
+    content TEXT NOT NULL DEFAULT "VIP"
 );
