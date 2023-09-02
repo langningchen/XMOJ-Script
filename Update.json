@@ -2500,6 +2500,27 @@
                     "Description": "之前的LOCAL Bug代码不知道为什么没了"
                 }
             ]
+        },
+        "0.2.98": {
+            "UpdateDate": 1693646260468,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "180ea29",
+                    "Commit": "180ea29a7fc4726b61916be441085a9f0e2a7231",
+                    "Description": "Badge设置成功"
+                },
+                {
+                    "ShortCommit": "5a70b0b",
+                    "Commit": "5a70b0bbe86c2b36f03460b64befd1f6fe212848",
+                    "Description": "Merge branch 'langningchen/badge-and-code-sharing' of https://github.com/langningchen/XMOJ-Script into langningchen/badge-and-code-sharing"
+                },
+                {
+                    "ShortCommit": "31cb844",
+                    "Commit": "31cb844d0ffde54e0f099233eea802bb97cddcd1",
+                    "Description": "Merge pull request #257 from langningchen/dev"
+                }
+            ]
         }
     }
 }
