@@ -2458,6 +2458,22 @@
                     "Description": "删除测试代码"
                 }
             ]
+        },
+        "0.2.94": {
+            "UpdateDate": 1693639797829,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "2db2669",
+                    "Commit": "2db2669f9b124401a336c85f642f30abcc1b4517",
+                    "Description": "Revert \"Update version info to 0.2.93\""
+                },
+                {
+                    "ShortCommit": "b1aa4f8",
+                    "Commit": "b1aa4f8b96c9eb3e50d04c46b265731e93573fee",
+                    "Description": "Update version info to 0.2.93"
+                }
+            ]
         }
     }
 }
