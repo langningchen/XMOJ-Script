@@ -2447,6 +2447,17 @@
             "UpdateDate": 1693638771202,
             "Prerelease": true,
             "UpdateCommits": []
+        },
+        "0.2.93": {
+            "UpdateDate": 1693639256197,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "413dbb8",
+                    "Commit": "413dbb8667eaae323b2360f9ac2f4cd3cdcb73fb",
+                    "Description": "删除测试代码"
+                }
+            ]
         }
     }
 }
