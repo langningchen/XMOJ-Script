@@ -501,7 +501,7 @@ export class Process {
             if (Std.toString() == "") {
                 return new Result(false, "此题还没有人上传标程");
             }
-            return new Result(true, "获取标程成功", {
+            return new Result(true, "获得标程成功", {
                 "StdCode": Std[0]["std_code"]
             });
         },
@@ -550,14 +550,10 @@ export class Process {
             }))["TableSize"] == 0) {
                 return new Result(false, "未找到标签");
             }
-            ThrowErrorIfFailed(await this.XMOJDatabase.Update("badge", {
-                background_color: Data["BackgroundColor"],
-                color: Data["Color"],
-                content: Data["Content"]
-            }, {
+            let BadgeData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("badge", ["background_color", "color", "content"], {
                 user_id: Data["UserID"]
             }));
-            return new Result(false, "编辑标签成功");
+            return new Result(false, "获得标签成功");
         },
         DeleteBadge: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {

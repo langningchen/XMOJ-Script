@@ -100,10 +100,10 @@ let GetUsernameHTML = async (Username, Href = "userinfo.php?user=") => {
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
     if (UserInfo.EmailHash == undefined) {
-        HTMLData += `https://cravatar.cn/avatar/00000000000000000000000000000000?s=20&d=mp&f=y`;
+        HTMLData += `https://cravatar.cn/avatar/00000000000000000000000000000000?d=mp&f=y`;
     }
     else {
-        HTMLData += `https://cravatar.cn/avatar/${UserInfo.EmailHash}?s=20&d=retro`;
+        HTMLData += `https://cravatar.cn/avatar/${UserInfo.EmailHash}?d=retro`;
     }
     HTMLData += `" class="rounded me-2" style="width: 20px; height: 20px; ">`;
     HTMLData += `<a href="${Href}${Username}" class="link-offset-2 link-underline-opacity-50 `
@@ -2152,28 +2152,125 @@ else {
                     });
             }
             else {
-                if (UtilityEnabled("ResetType")) {
-                    document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(1)").innerHTML = `
-                    <td><img src="https://cravatar.cn/avatar/` + (await GetUserInfo(document.querySelector("#profile").innerText)).EmailHash + `?d=retro&s=64"></td>
-                    <td><a href="https://cravatar.cn/avatars" target="_blank">修改头像</a></td>`;
-                    for (let i = 3; i <= 12; i++) {
-                        document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(" + i + ") > td:nth-child(2) > input").classList.add("form-control");
-                        document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(" + i + ") > td:nth-child(2) > input").style.marginBottom = "5px";
+                let Nickname = document.getElementsByName("nick")[0].value;
+                let School = document.getElementsByName("school")[0].value;
+                let EmailAddress = document.getElementsByName("email")[0].value;
+                let CodeforcesAccount = document.getElementsByName("acc_cf")[0].value;
+                let AtcoderAccount = document.getElementsByName("acc_atc")[0].value;
+                let USACOAccount = document.getElementsByName("acc_usaco")[0].value;
+                let LuoguAccount = document.getElementsByName("acc_luogu")[0].value;
+                document.querySelector("body > div > div").innerHTML = `<div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="UserID" class="col-form-label">用户ID</label></div>
+                    <div class="col-9"><input id="UserID" class="form-control" disabled readonly value="${document.querySelector("#profile").innerText}"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="Avatar" class="col-form-label">头像</label></div>
+                    <div class="col-9">
+                        <img width="64" height="64" src="https://cravatar.cn/avatar/` + (await GetUserInfo(document.querySelector("#profile").innerText)).EmailHash + `?d=retro">
+                        <a href="https://cravatar.cn/avatars" target="_blank">修改头像</a>
+                    </div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1" id="BadgeRow" style="display: none">
+                    <div class="col-3">标签</div>
+                    <div class="col-9">
+                        <div class="row g-2 align-items-center">
+                            <div class="col-3"><label for="BadgeContent" class="col-form-label">内容</label></div>
+                            <div class="col-9"><input class="form-control" id="BadgeContent"</div>
+                        </div>
+                        <div class="row g-2 align-items-center">
+                            <div class="col-3"><label for="BadgeBackgroundColor" class="col-form-label">背景颜色</label></div>
+                            <div class="col-9"><input class="form-control" type="color" id="BadgeBackgroundColor"</div>
+                        </div>
+                        <div class="row g-2 align-items-center">
+                            <div class="col-3"><label for="BadgeColor" class="col-form-label">文字颜色</label></div>
+                            <div class="col-9"><input class="form-control" type="color" id="BadgeColor"</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="Nickname" class="col-form-label">昵称</label></div>
+                    <div class="col-9"><input id="Nickname" class="form-control" value="${Nickname}"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="OldPassword" class="col-form-label">旧密码</label></div>
+                    <div class="col-9"><input type="password" id="OldPassword" class="form-control"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="NewPassword" class="col-form-label">新密码</label></div>
+                    <div class="col-9"><input type="password" id="NewPassword" class="form-control"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="NewPasswordAgain" class="col-form-label">重复密码</label></div>
+                    <div class="col-9"><input type="password" id="NewPasswordAgain" class="form-control"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="School" class="col-form-label">学校</label></div>
+                    <div class="col-9"><input id="School" class="form-control" value="${School}"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="EmailAddress" class="col-form-label">电子邮箱</label></div>
+                    <div class="col-9"><input id="EmailAddress" class="form-control" value="${EmailAddress}"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="CodeforcesAccount" class="col-form-label">Codeforces账号</label></div>
+                    <div class="col-9"><input id="CodeforcesAccount" class="form-control" value="${CodeforcesAccount}"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="AtcoderAccount" class="col-form-label">Atcoder账号</label></div>
+                    <div class="col-9"><input id="AtcoderAccount" class="form-control" value="${AtcoderAccount}"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="USACOAccount" class="col-form-label">USACO账号</label></div>
+                    <div class="col-9"><input id="USACOAccount" class="form-control" value="${USACOAccount}"></div>
+                </div>
+                <div class="row g-2 align-items-center col-6 mb-1">
+                    <div class="col-3"><label for="LuoguAccount" class="col-form-label">洛谷账号</label></div>
+                    <div class="col-9"><input id="LuoguAccount" class="form-control" value="${LuoguAccount}"></div>
+                </div>
+                <button type="submit" class="btn btn-primary" id="ModifyInfo">修改</button>`;
+                RequestAPI("GetBadge", {
+                    "UserID": String(document.querySelector("#profile").innerText)
+                }, (Response) => {
+                    if (Response.Success) {
+                        BadgeRow.style.display = "";
+                        BadgeContent.value = Response.Data.Content;
+                        BadgeBackgroundColor.value = Response.Data.BackgroundColor;
+                        BadgeColor.value = Response.Data.Color;
                     }
-                    document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(2) > td:nth-child(1)").innerText = "用户ID";
-                    let Temp = document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(13) > td:nth-child(2) > input:nth-child(1)");
-                    Temp.classList.add("form-control");
-                    Temp.style.width = "40%";
-                    Temp.style.display = "inline-block";
-                    Temp.value = "修改";
-                    Temp = document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(13) > td:nth-child(2) > input:nth-child(2)");
-                    Temp.classList.add("form-control");
-                    Temp.style.width = "40%";
-                    Temp.style.display = "inline-block";
-                    Temp.value = "重置";
-                    document.querySelector("body > div.container > div > form > center > table > tbody > tr:nth-child(13) > td:nth-child(2)").childNodes[1].remove();
-                    document.querySelector("body > div.container > div > form > a").remove();
-                }
+                });
+                BadgeContent
+                BadgeBackgroundColor
+                BadgeColor
+                ModifyInfo.addEventListener("click", async () => {
+                    let Nickname = document.querySelector("#Nickname").value;
+                    let OldPassword = document.querySelector("#OldPassword").value;
+                    let NewPassword = document.querySelector("#NewPassword").value;
+                    let NewPasswordAgain = document.querySelector("#NewPasswordAgain").value;
+                    let School = document.querySelector("#School").value;
+                    let EmailAddress = document.querySelector("#EmailAddress").value;
+                    let CodeforcesAccount = document.querySelector("#CodeforcesAccount").value;
+                    let AtcoderAccount = document.querySelector("#AtcoderAccount").value;
+                    let USACOAccount = document.querySelector("#USACOAccount").value;
+                    let LuoguAccount = document.querySelector("#LuoguAccount").value;
+                    await fetch("http://www.xmoj.tech/modify.php", {
+                        "headers": {
+                            "content-type": "application/x-www-form-urlencoded"
+                        },
+                        "referrer": location.href,
+                        "method": "POST",
+                        "body":
+                            "nick=" + encodeURIComponent(Nickname) + "&" +
+                            "opassword=" + encodeURIComponent(OldPassword) + "&" +
+                            "npassword=" + encodeURIComponent(NewPassword) + "&" +
+                            "rptpassword=" + encodeURIComponent(NewPasswordAgain) + "&" +
+                            "school=" + encodeURIComponent(School) + "&" +
+                            "email=" + encodeURIComponent(EmailAddress) + "&" +
+                            "acc_cf=" + encodeURIComponent(CodeforcesAccount) + "&" +
+                            "acc_atc=" + encodeURIComponent(AtcoderAccount) + "&" +
+                            "acc_usaco=" + encodeURIComponent(USACOAccount) + "&" +
+                            "acc_luogu=" + encodeURIComponent(LuoguAccount)
+                    });
+                });
                 if (UtilityEnabled("ExportACCode")) {
                     let ExportACCode = document.createElement("button");
                     document.querySelector("body > div.container > div").appendChild(ExportACCode);
