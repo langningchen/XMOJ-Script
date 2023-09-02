@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.96
+// @version      0.2.95
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -1235,6 +1235,9 @@ else {
                         Temp[i].childNodes[4].childNodes[0].innerText = TimeToStringTime(Temp[i].childNodes[4].childNodes[0].innerText);
                         Temp[i].childNodes[5].innerText = Temp[i].childNodes[5].childNodes[0].innerText;
                         Temp[i].childNodes[6].innerText = SizeToStringSize(Temp[i].childNodes[6].innerText.substring(0, Temp[i].childNodes[6].innerText.length - 1));
+                        if (Temp[i].childNodes[8].innerText == "LOCAL") {
+                            location.reload();
+                        }
                         Temp[i].childNodes[9].innerText = (Temp[i].childNodes[9].innerText == "" ? "否" : "是");
                     }
                     if (SearchParams.get("cid") == null) {
@@ -3031,24 +3034,6 @@ else {
                 readOnly: true,
                 theme: (UtilityEnabled("DarkMode") ? "darcula" : "default")
             }).setSize("100%", "auto");
-        } else if (location.pathname == "/ceinfo.php") {
-            await fetch(location.href)
-                .then((Result) => {
-                    return Result.text();
-                }).then((Result) => {
-                    let ParsedDocument = new DOMParser().parseFromString(Result, "text/html");
-                    document.querySelector("body > div > div.mt-3").innerHTML = "";
-                    let CodeElement = document.createElement("div");
-                    CodeElement.className = "mb-3";
-                    document.querySelector("body > div > div.mt-3").appendChild(CodeElement);
-                    CodeMirror(CodeElement, {
-                        value: ParsedDocument.getElementById("errtxt").innerHTML.replaceAll("&lt;", "<").replaceAll("&gt;", ">"),
-                        lineNumbers: true,
-                        mode: "text/x-c++src",
-                        readOnly: true,
-                        theme: (UtilityEnabled("DarkMode") ? "darcula" : "default")
-                    }).setSize("100%", "auto");
-                });
         } else if (location.pathname == "/problem_std.php") {
             await fetch("http://www.xmoj.tech/problem_std.php?cid=" + SearchParams.get("cid") + "&pid=" + SearchParams.get("pid"))
                 .then((Response) => {
