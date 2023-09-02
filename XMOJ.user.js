@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.101
+// @version      0.2.102
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -241,7 +241,15 @@ let RequestAPI = (Action, Data, CallBack) => {
         },
         data: DataString,
         onload: (Response) => {
-            CallBack(JSON.parse(Response.responseText));
+            try {
+                CallBack(JSON.parse(Response.responseText));
+            } catch (Error) {
+                CallBack({
+                    "Success": false,
+                    "Message": "JSON解析错误：" + Error,
+                    "Data": null
+                });
+            }
         }
     });
 };
