@@ -2426,6 +2426,22 @@
             "UpdateDate": 1693577059900,
             "Prerelease": false,
             "UpdateCommits": []
+        },
+        "0.2.91": {
+            "UpdateDate": 1693630501453,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "39c94b0",
+                    "Commit": "39c94b03ddc343d9e051511765178c2288526a63",
+                    "Description": "@boomzero @SmallPython-Q 系统安全漏洞，修复！"
+                },
+                {
+                    "ShortCommit": "6de718e",
+                    "Commit": "6de718e3ba9b43d503efe96ec88a1cdc0072c4da",
+                    "Description": "Merge pull request #241 from langningchen/actions/temp"
+                }
+            ]
         }
     }
 }
