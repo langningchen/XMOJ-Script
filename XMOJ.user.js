@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.94
+// @version      0.2.95
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -1945,7 +1945,7 @@ else {
                         .then((Response) => {
                             return Response.text()
                         })
-                        .then((Response) => {
+                        .then(async (Response) => {
                             let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
                             TidyTable(ParsedDocument.getElementById("rank"));
                             let Temp = ParsedDocument.getElementById("rank").rows;
@@ -1956,10 +1956,46 @@ else {
                                 Metal.className = "badge text-bg-primary";
                                 MetalCell.innerText = "";
                                 MetalCell.appendChild(Metal);
-                                Temp[i].cells[1].children[0].className = "link-primary link-offset-2 link-underline-opacity-50";
-                                Temp[i].cells[1].children[0].target = "_blank";
+                                Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
                                 Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                                 Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;
+                                for (let j = 5; j < Temp[i].cells.length; j++) {
+                                    let InnerText = Temp[i].cells[j].innerText;
+                                    let BackgroundColor = Temp[i].cells[j].style.backgroundColor;
+                                    let Red = BackgroundColor.substring(4, BackgroundColor.indexOf(","));
+                                    let Green = BackgroundColor.substring(BackgroundColor.indexOf(",") + 2, BackgroundColor.lastIndexOf(","));
+                                    let Blue = BackgroundColor.substring(BackgroundColor.lastIndexOf(",") + 2, BackgroundColor.lastIndexOf(")"));
+                                    let NoData = (Red == 238 && Green == 238 && Blue == 238);
+                                    let FirstBlood = (Red == 170 && Green == 170 && Blue == 255);
+                                    let Solved = (Green == 255);
+                                    let ErrorCount = "";
+                                    if (Solved) {
+                                        ErrorCount = (Blue == 170 ? "4+" : (Blue - 51) / 32);
+                                    }
+                                    else {
+                                        ErrorCount = (Blue == 22 ? "14+" : (170 - Blue) / 10);
+                                    }
+                                    if (NoData) {
+                                        BackgroundColor = "";
+                                    }
+                                    else if (FirstBlood) {
+                                        BackgroundColor = "rgba(127, 127, 255, 0.5)";
+                                    }
+                                    else if (Solved) {
+                                        BackgroundColor = "rgba(0, 255, 0, 0.5)";
+                                        if (ErrorCount != 0) {
+                                            InnerText += " (" + ErrorCount + ")";
+                                        }
+                                    }
+                                    else {
+                                        BackgroundColor = "rgba(255, 0, 0, 0.5)";
+                                        if (ErrorCount != 0) {
+                                            InnerText += " (" + ErrorCount + ")";
+                                        }
+                                    }
+                                    Temp[i].cells[j].innerHTML = InnerText;
+                                    Temp[i].cells[j].style.backgroundColor = BackgroundColor;
+                                }
                             }
                             document.querySelector("#rank > tbody").innerHTML = ParsedDocument.querySelector("#rank > tbody").innerHTML;
                         });
