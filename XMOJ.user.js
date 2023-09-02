@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.95
+// @version      0.2.96
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -3031,6 +3031,24 @@ else {
                 readOnly: true,
                 theme: (UtilityEnabled("DarkMode") ? "darcula" : "default")
             }).setSize("100%", "auto");
+        } else if (location.pathname == "/ceinfo.php") {
+            await fetch(location.href)
+                .then((Result) => {
+                    return Result.text();
+                }).then((Result) => {
+                    let ParsedDocument = new DOMParser().parseFromString(Result, "text/html");
+                    document.querySelector("body > div > div.mt-3").innerHTML = "";
+                    let CodeElement = document.createElement("div");
+                    CodeElement.className = "mb-3";
+                    document.querySelector("body > div > div.mt-3").appendChild(CodeElement);
+                    CodeMirror(CodeElement, {
+                        value: ParsedDocument.getElementById("errtxt").innerHTML.replaceAll("&lt;", "<").replaceAll("&gt;", ">"),
+                        lineNumbers: true,
+                        mode: "text/x-c++src",
+                        readOnly: true,
+                        theme: (UtilityEnabled("DarkMode") ? "darcula" : "default")
+                    }).setSize("100%", "auto");
+                });
         } else if (location.pathname == "/problem_std.php") {
             await fetch("http://www.xmoj.tech/problem_std.php?cid=" + SearchParams.get("cid") + "&pid=" + SearchParams.get("pid"))
                 .then((Response) => {
