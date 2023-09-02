@@ -244,6 +244,7 @@ let RequestAPI = (Action, Data, CallBack) => {
             try {
                 CallBack(JSON.parse(Response.responseText));
             } catch (Error) {
+                console.log(Response.responseText);
                 CallBack({
                     "Success": false,
                     "Message": "JSON解析错误：" + Error,
