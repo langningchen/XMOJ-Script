@@ -2484,6 +2484,22 @@
             "UpdateDate": 1693640496743,
             "Prerelease": true,
             "UpdateCommits": []
+        },
+        "0.2.97": {
+            "UpdateDate": 1693641537329,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "9ffa3c7",
+                    "Commit": "9ffa3c73bd7afd34b3f8e0d15a8a6eff98dc45a9",
+                    "Description": "漏代码了？"
+                },
+                {
+                    "ShortCommit": "669a20a",
+                    "Commit": "669a20a140d985caa904610465830ac39b6042b9",
+                    "Description": "之前的LOCAL Bug代码不知道为什么没了"
+                }
+            ]
         }
     }
 }
