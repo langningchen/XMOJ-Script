@@ -241,7 +241,15 @@ let RequestAPI = (Action, Data, CallBack) => {
         },
         data: DataString,
         onload: (Response) => {
-            CallBack(JSON.parse(Response.responseText));
+            try {
+                CallBack(JSON.parse(Response.responseText));
+            } catch (Error) {
+                CallBack({
+                    "Success": false,
+                    "Message": "JSON解析错误：" + Error,
+                    "Data": null
+                });
+            }
         }
     });
 };
