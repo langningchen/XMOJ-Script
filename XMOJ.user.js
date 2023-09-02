@@ -1683,12 +1683,6 @@ else {
                                         }
                                         Temp[i].cells[j].innerHTML = InnerText;
                                         Temp[i].cells[j].style.backgroundColor = BackgroundColor;
-
-                                        // if (Temp[i].cells[j].style.backgroundColor == "rgb(238, 238, 238)") {
-                                        //     Temp[i].cells[j].style.backgroundColor = "";
-                                        // } else {
-                                        //     Temp[i].cells[j].style.backgroundColor = Temp[i].cells[j].style.backgroundColor.replace(/rgb\((.*), (.*), (.*)\)/, "rgba($1, $2, $3, 0.5)");
-                                        // }
                                     }
                                 }
                                 document.querySelector("#rank > tbody").innerHTML = ParsedDocument.querySelector("#rank > tbody").innerHTML;
