@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.102
+// @version      0.2.103
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -244,6 +244,7 @@ let RequestAPI = (Action, Data, CallBack) => {
             try {
                 CallBack(JSON.parse(Response.responseText));
             } catch (Error) {
+                console.log(Response.responseText);
                 CallBack({
                     "Success": false,
                     "Message": "JSON解析错误：" + Error,
