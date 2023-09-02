@@ -2521,6 +2521,11 @@
                     "Description": "Merge pull request #257 from langningchen/dev"
                 }
             ]
+        },
+        "0.2.99": {
+            "UpdateDate": 1693646486349,
+            "Prerelease": true,
+            "UpdateCommits": []
         }
     }
 }
