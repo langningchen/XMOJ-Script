@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.100
+// @version      0.2.101
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -659,7 +659,7 @@ else {
         ToastContainer.classList.add("toast-container", "position-fixed", "bottom-0", "end-0", "p-3");
         document.body.appendChild(ToastContainer);
         addEventListener("focus", () => {
-            RequestAPI("GetMentionList", {}, (Response) => {
+            RequestAPI("GetMentionList", {}, async (Response) => {
                 if (Response.Success) {
                     let MentionList = Response.Data.MentionList;
                     for (let i = 0; i < MentionList.length; i++) {
@@ -670,7 +670,7 @@ else {
                         ToastHeader.classList.add("toast-header");
                         let ToastTitle = document.createElement("strong");
                         ToastTitle.classList.add("me-auto");
-                        ToastTitle.innerHTML = GetUsernameHTML(MentionList[i].FromUserID);
+                        ToastTitle.innerHTML = await GetUsernameHTML(MentionList[i].FromUserID);
                         ToastHeader.appendChild(ToastTitle);
                         let ToastTime = document.createElement("small");
                         ToastTime.classList.add("text-body-secondary");

@@ -2531,6 +2531,17 @@
             "UpdateDate": 1693648199490,
             "Prerelease": true,
             "UpdateCommits": []
+        },
+        "0.2.101": {
+            "UpdateDate": 1693652666559,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "3da48c0",
+                    "Commit": "3da48c0777be2e381bdde4a45885d8ef4926493e",
+                    "Description": "Merge branch 'dev' into langningchen/issue243-fix"
+                }
+            ]
         }
     }
 }
