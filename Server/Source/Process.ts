@@ -390,7 +390,7 @@ export class Process {
             let MessageID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("short_message", {
                 message_from: this.SecurityChecker.GetUsername(),
                 message_to: Data["ToUser"],
-                content: Data["Content"],
+                content: this.SecurityChecker.HTMLEscape(Data["Content"]),
                 send_time: new Date().getTime()
             }))["InsertID"];
             ThrowErrorIfFailed(await this.XMOJDatabase.Insert("mention", {
