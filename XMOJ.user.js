@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.98
+// @version      0.2.99
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -670,7 +670,7 @@ else {
                         ToastHeader.classList.add("toast-header");
                         let ToastTitle = document.createElement("strong");
                         ToastTitle.classList.add("me-auto");
-                        ToastTitle.innerText = MentionList[i].FromUserID;
+                        ToastTitle.innerHTML = GetUsernameHTML(MentionList[i].FromUserID);
                         ToastHeader.appendChild(ToastTitle);
                         let ToastTime = document.createElement("small");
                         ToastTime.classList.add("text-body-secondary");
