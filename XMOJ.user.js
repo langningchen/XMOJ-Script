@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.93
+// @version      0.2.94
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -98,7 +98,7 @@ let GetUserBadge = async (Username) => {
         }
     }
 };
-let GetUsernameHTML = async (Username, Href = "userinfo.php?user=") => {
+let GetUsernameHTML = async (Username, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
     if (UserInfo.EmailHash == undefined) {
@@ -3061,7 +3061,7 @@ else {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
                                 var InnerHTMLData = "";
                                 InnerHTMLData += `<td>`;
-                                InnerHTMLData += await GetUsernameHTML(Data[i].OtherUser, "mail.php?other=");
+                                InnerHTMLData += await GetUsernameHTML(Data[i].OtherUser, "http://www.xmoj.tech/mail.php?other=");
                                 InnerHTMLData += (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`);
                                 InnerHTMLData += `</td>`;
                                 InnerHTMLData += `<td>${Data[i].LastsMessage}</td>`;
