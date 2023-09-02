@@ -1288,9 +1288,13 @@ else {
                                 if (Points[SolutionID] != undefined) {
                                     TempHTML += "<span style=\"margin-left: 5px\" class=\"badge text-bg-info\">" + Points[SolutionID] + "</span>";
                                     if (Points[SolutionID].substring(0, Points[SolutionID].length - 1) >= 50) {
-                                        TempHTML += `<a href="http://www.xmoj.tech/showsource.php?pid=` +
-                                            localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem") +
-                                            `&ByUserScript=1" class="ms-1 link-secondary">查看标程</a>`;
+                                        let PID = 0;
+                                        if (SearchParams.get("cid") === null) {
+                                            PID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
+                                        } else {
+                                            PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + (CurrentRow.cells[1].innerText.charCodeAt(0) - 65) + "-PID");
+                                        }
+                                        TempHTML += `<a href="http://www.xmoj.tech/showsource.php?pid=${PID}&ByUserScript=1" class="ms-1 link-secondary">查看标程</a>`;
                                     }
                                 }
                                 if (ResponseData[0] < 4) {
