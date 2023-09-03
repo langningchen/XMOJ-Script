@@ -3019,6 +3019,22 @@
                     "Description": "Update to release 0.2.120"
                 }
             ]
+        },
+        "0.2.123": {
+            "UpdateDate": 1693729017984,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "3dab3c0",
+                    "Commit": "3dab3c0b07035e14401c2a5556903f09c90b1ed1",
+                    "Description": "Update CI/CD"
+                },
+                {
+                    "ShortCommit": "566bcca",
+                    "Commit": "566bcca21675e4cf19e54f684903fc8197baceb2",
+                    "Description": "Merge branch 'dev' of https://github.com/langningchen/XMOJ-Script into dev"
+                }
+            ]
         }
     }
 }

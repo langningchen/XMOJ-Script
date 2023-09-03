@@ -30,5 +30,5 @@ body:
   id: "yml-4"
   attributes:
     label: 控制台错误信息
-    description: "粘贴控制台错误信息"
-    placeholder: "控制台错误信息"
+    description: "粘贴控制台错误信息，如果没有错误请忽略"
+    placeholder: "请按F12并选择控制台/Console，并将其中的错误信息粘贴至此处"
