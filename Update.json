@@ -2734,6 +2734,37 @@
                     "Description": "Merge pull request #273 from langningchen/actions/temp"
                 }
             ]
+        },
+        "0.2.112": {
+            "UpdateDate": 1693708698459,
+            "Prerelease": false,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "acddcf5",
+                    "Commit": "acddcf57e4518b96b605f6b05f595f8819310b46",
+                    "Description": "Merge pull request #274 from langningchen/langningchen/fix-typo"
+                },
+                {
+                    "ShortCommit": "3816cfd",
+                    "Commit": "3816cfdabc8a9fd98e60b69adc0bf19d5621eea8",
+                    "Description": "Update version info to 0.2.111"
+                },
+                {
+                    "ShortCommit": "4dacf16",
+                    "Commit": "4dacf162487015d478c7fb7447565bbb6917d7ff",
+                    "Description": "Merge branch 'dev' into langningchen/fix-typo"
+                },
+                {
+                    "ShortCommit": "b3537a8",
+                    "Commit": "b3537a87886aed295886994a543c7d4eafab3da0",
+                    "Description": "Use \" instead of ' for string literals"
+                },
+                {
+                    "ShortCommit": "9ae5c5f",
+                    "Commit": "9ae5c5f1658dafcb4fe7933e73cb0bd37d2bd116",
+                    "Description": "Merge pull request #273 from langningchen/actions/temp"
+                }
+            ]
         }
     }
 }
