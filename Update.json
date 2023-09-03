@@ -2833,6 +2833,119 @@
                     "Description": "Merge branch 'master' into dev"
                 }
             ]
+        },
+        "0.2.116": {
+            "UpdateDate": 1693712493287,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "da30fff",
+                    "Commit": "da30fff139291824d90857a2232da205b92eee98",
+                    "Description": "替换XMOJ为小明的OJ"
+                },
+                {
+                    "ShortCommit": "10188b3",
+                    "Commit": "10188b39342256834424f6a2c0ec25f20bb8fa3f",
+                    "Description": "Merge pull request #285 from langningchen/revert-282-PythonSmall-Q-patch-1"
+                },
+                {
+                    "ShortCommit": "8580c52",
+                    "Commit": "8580c52264a8dd7da9cd772cb031cc24bd67da7d",
+                    "Description": "Revert \"Update index.html\""
+                },
+                {
+                    "ShortCommit": "42fa6fe",
+                    "Commit": "42fa6fed0bdeca6a7ec1387165720b8610049dff",
+                    "Description": "Merge pull request #282 from langningchen/PythonSmall-Q-patch-1"
+                },
+                {
+                    "ShortCommit": "8fb79b9",
+                    "Commit": "8fb79b93eee2f096ef317580173a3e322df789cf",
+                    "Description": "Update index.html"
+                },
+                {
+                    "ShortCommit": "77b94dc",
+                    "Commit": "77b94dc28fa748f8ba1c248e3f7e2318b5be5407",
+                    "Description": "Merge branch 'dev' into PythonSmall-Q-patch-1"
+                },
+                {
+                    "ShortCommit": "aad90f9",
+                    "Commit": "aad90f9f6b491e02880d89ba47a85e3a4795b599",
+                    "Description": "Update index.html"
+                },
+                {
+                    "ShortCommit": "7fd3788",
+                    "Commit": "7fd3788dbf3fba75175b1dedb659515f78dcb462",
+                    "Description": "Update index.html"
+                },
+                {
+                    "ShortCommit": "15cb2b3",
+                    "Commit": "15cb2b3fc6add9fa65161b87dbdf37f1f558e3d0",
+                    "Description": "Merge pull request #284 from langningchen/actions/temp"
+                },
+                {
+                    "ShortCommit": "3bbeb18",
+                    "Commit": "3bbeb18669c3b388f7c9a849b77aff7eb6722ff5",
+                    "Description": "Update to release 0.2.115"
+                },
+                {
+                    "ShortCommit": "ce0886e",
+                    "Commit": "ce0886e0b6a258435001179248b1db7c24871253",
+                    "Description": "还是去掉 Scan 吧 我们仓库不规范，全是问题"
+                },
+                {
+                    "ShortCommit": "fc7fdd8",
+                    "Commit": "fc7fdd87f6cc511ad39995c1d6515dc8e1ab4539",
+                    "Description": "Merge pull request #283 from langningchen/actions/temp"
+                },
+                {
+                    "ShortCommit": "debd045",
+                    "Commit": "debd0453b8f644486f5dbd5d670455b9eaa72318",
+                    "Description": "Update to release 0.2.114"
+                },
+                {
+                    "ShortCommit": "a92597c",
+                    "Commit": "a92597ceb43ccc85accd922005b3c7cf142e303a",
+                    "Description": "Update version info to 0.2.114"
+                },
+                {
+                    "ShortCommit": "12f726c",
+                    "Commit": "12f726c25ee572bc87ead3bd53dc5c8e49dd51c7",
+                    "Description": "Merge branch 'master' into dev"
+                },
+                {
+                    "ShortCommit": "ac42618",
+                    "Commit": "ac42618f503e13b3e5e6daf293c1d2c8998bdcc5",
+                    "Description": "Update index.html"
+                }
+            ]
+        },
+        "0.2.117": {
+            "UpdateDate": 1693713045443,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "5fd8bdd",
+                    "Commit": "5fd8bddd3043e4b65c86c54cf2c67967defce009",
+                    "Description": "Create Dependency-scan.yml"
+                },
+                {
+                    "ShortCommit": "dcd2cb5",
+                    "Commit": "dcd2cb55a2c1848d4de7bc047cd5615e3b18b6eb",
+                    "Description": "Merge pull request #287 from langningchen/master"
+                }
+            ]
+        },
+        "0.2.118": {
+            "UpdateDate": 1693719653356,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "7331f3a",
+                    "Commit": "7331f3ab1ba102e62e4a0d121b4ee1546bab7141",
+                    "Description": "Merge branch 'dev' into boomzero/translate"
+                }
+            ]
         }
     }
 }
