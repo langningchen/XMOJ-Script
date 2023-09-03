@@ -888,7 +888,6 @@ else {
                     { "ID": "LoginFailed", "Type": "F", "Name": "修复登录后跳转失败*" },
                     { "ID": "NewDownload", "Type": "A", "Name": "下载页面增加下载内容" },
                     { "ID": "CompareSource", "Type": "A", "Name": "比较代码" },
-                    {"ID": "MailPopup","Type": "A","Name": "关闭全部提醒"},
                     {"ID": "BBSPopup","Type": "A","Name": "讨论提醒"},
                     {"ID": "MessagePopup","Type": "A","Name": "短消息提醒"},
                     { "ID": "DebugMode", "Type": "A", "Name": "调试模式（仅供开发者使用）" }
