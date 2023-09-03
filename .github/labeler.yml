@@ -3,12 +3,12 @@ userscript:
 website:
   - index.html
   - robots.txt
-  - *.html
+  - '*.html'
 updateScript:
   - Update/**
 server:
   - Server/**
 Github-related:
-  - .github/**
+  - '.github/**'
 addonScript:
   - AddonScript.js
