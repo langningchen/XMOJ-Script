@@ -2983,6 +2983,42 @@
                     "Description": "Update to release 0.2.120"
                 }
             ]
+        },
+        "0.2.122": {
+            "UpdateDate": 1693723920731,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "d55405c",
+                    "Commit": "d55405cc08d924621b659f8392a8c2ee76e71f2c",
+                    "Description": "修复URL中的问题"
+                },
+                {
+                    "ShortCommit": "c81e76d",
+                    "Commit": "c81e76d5ad8332ee2e9f9f3946c869b5076965c3",
+                    "Description": "Merge pull request #296 from langningchen/actions/temp"
+                },
+                {
+                    "ShortCommit": "50e8873",
+                    "Commit": "50e8873f0f86269a7912936ce3ac1535bcb17de2",
+                    "Description": "Update to release 0.2.121"
+                },
+                {
+                    "ShortCommit": "43d8906",
+                    "Commit": "43d8906d65dfe25a8ee09eb5163231c97023bdd4",
+                    "Description": "Merge branch 'dev' of https://github.com/langningchen/XMOJ-Script into dev"
+                },
+                {
+                    "ShortCommit": "e613a66",
+                    "Commit": "e613a661bd25fba7b4e544e362c90ca809cc39cd",
+                    "Description": "Merge pull request #295 from langningchen/actions/temp"
+                },
+                {
+                    "ShortCommit": "d9ef498",
+                    "Commit": "d9ef498b03fc98955b36a099a0a647167b5ad825",
+                    "Description": "Update to release 0.2.120"
+                }
+            ]
         }
     }
 }
