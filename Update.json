@@ -2919,6 +2919,22 @@
                     "Description": "Update index.html"
                 }
             ]
+        },
+        "0.2.117": {
+            "UpdateDate": 1693713045443,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "5fd8bdd",
+                    "Commit": "5fd8bddd3043e4b65c86c54cf2c67967defce009",
+                    "Description": "Create Dependency-scan.yml"
+                },
+                {
+                    "ShortCommit": "dcd2cb5",
+                    "Commit": "dcd2cb55a2c1848d4de7bc047cd5615e3b18b6eb",
+                    "Description": "Merge pull request #287 from langningchen/master"
+                }
+            ]
         }
     }
 }
