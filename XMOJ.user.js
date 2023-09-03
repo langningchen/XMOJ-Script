@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.125
+// @version      0.2.126
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -33,6 +33,18 @@
 const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
 const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
 
+let RenderMathJax = () => {
+    var ScriptElement = document.createElement("script");
+    ScriptElement.id = "MathJax-script";
+    ScriptElement.type = "text/javascript";
+    ScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/mathjax/3.0.5/es5/tex-chtml.js";
+    document.body.appendChild(ScriptElement);
+    ScriptElement.onload = () => {
+        MathJax.startup.input[0].findTeX.options.inlineMath.push(["$", "$"]);
+        MathJax.startup.input[0].findTeX.getPatterns();
+        MathJax.typeset();
+    };
+};
 let GetUserInfo = async (Username) => {
     if (localStorage.getItem("UserScript-User-" + Username + "-UserRating") != null &&
         new Date().getTime() - parseInt(localStorage.getItem("UserScript-User-" + Username + "-LastUpdateTime")) < 1000 * 60 * 60 * 24) {
@@ -3523,9 +3535,21 @@ else {
                         <label for="Title" class="mb-1">标题</label>
                         <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="ContentElement" class="mb-1">内容</label>
-                        <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ReplyTab" type="button" role="tab">编辑</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#PreviewTab" type="button" role="tab">预览</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content mb-2">
+                        <div class="tab-pane fade show active" id="ReplyTab" role="tabpanel">
+                            <label for="ContentElement" class="mb-1">回复</label>
+                            <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                        </div>
+                        <div class="tab-pane fade" id="PreviewTab" role="tabpanel">
+                        </div>
                     </div>
                     <div class="cf-turnstile" id="CaptchaContainer"></div>
                     <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
@@ -3554,6 +3578,10 @@ else {
                         if (Event.ctrlKey && Event.keyCode == 13) {
                             SubmitElement.click();
                         }
+                    });
+                    ContentElement.addEventListener("input", () => {
+                        PreviewTab.innerHTML = marked.parse(ContentElement.value);
+                        RenderMathJax();
                     });
                     TitleElement.addEventListener("input", () => {
                         TitleElement.classList.remove("is-invalid");
@@ -3621,9 +3649,21 @@ else {
                                 <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
                             </ul>
                         </nav>
-                        <div class="form-group mb-3">
-                            <label for="ContentElement" class="mb-1">回复</label>
-                            <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ReplyTab" type="button" role="tab">编辑</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#PreviewTab" type="button" role="tab">预览</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content mb-2">
+                            <div class="tab-pane fade show active" id="ReplyTab" role="tabpanel">
+                                <label for="ContentElement" class="mb-1">回复</label>
+                                <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                            </div>
+                            <div class="tab-pane fade" id="PreviewTab" role="tabpanel">
+                            </div>
                         </div>
                         <div class="cf-turnstile" id="CaptchaContainer"></div>
                         <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
@@ -3652,6 +3692,10 @@ else {
                             if (Event.ctrlKey && Event.keyCode == 13) {
                                 SubmitElement.click();
                             }
+                        });
+                        ContentElement.addEventListener("input", () => {
+                            PreviewTab.innerHTML = marked.parse(ContentElement.value);
+                            RenderMathJax();
                         });
                         let RefreshReply = (Silent = true) => {
                             if (!Silent) {
@@ -3886,16 +3930,7 @@ else {
                                     Style.innerHTML += "    width: 50%;";
                                     Style.innerHTML += "}";
 
-                                    var ScriptElement = document.createElement("script");
-                                    ScriptElement.id = "MathJax-script";
-                                    ScriptElement.type = "text/javascript";
-                                    ScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/mathjax/3.0.5/es5/tex-chtml.js";
-                                    document.body.appendChild(ScriptElement);
-                                    ScriptElement.onload = () => {
-                                        MathJax.startup.input[0].findTeX.options.inlineMath.push(["$", "$"]);
-                                        MathJax.startup.input[0].findTeX.getPatterns();
-                                        MathJax.typeset();
-                                    };
+                                    RenderMathJax();
 
                                     if (Silent) {
                                         scrollTo({
