@@ -2798,9 +2798,41 @@
             ]
         },
         "0.2.114": {
-            "UpdateDate": 1693711151822,
-            "Prerelease": true,
-            "UpdateCommits": []
+            "UpdateDate": 1693711151850,
+            "Prerelease": false,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "12f726c",
+                    "Commit": "12f726c25ee572bc87ead3bd53dc5c8e49dd51c7",
+                    "Description": "Merge branch 'master' into dev"
+                }
+            ]
+        },
+        "0.2.115": {
+            "UpdateDate": 1693711411929,
+            "Prerelease": false,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "ce0886e",
+                    "Commit": "ce0886e0b6a258435001179248b1db7c24871253",
+                    "Description": "还是去掉 Scan 吧 我们仓库不规范，全是问题"
+                },
+                {
+                    "ShortCommit": "fc7fdd8",
+                    "Commit": "fc7fdd87f6cc511ad39995c1d6515dc8e1ab4539",
+                    "Description": "Merge pull request #283 from langningchen/actions/temp"
+                },
+                {
+                    "ShortCommit": "debd045",
+                    "Commit": "debd0453b8f644486f5dbd5d670455b9eaa72318",
+                    "Description": "Update to release 0.2.114"
+                },
+                {
+                    "ShortCommit": "12f726c",
+                    "Commit": "12f726c25ee572bc87ead3bd53dc5c8e49dd51c7",
+                    "Description": "Merge branch 'master' into dev"
+                }
+            ]
         }
     }
 }
