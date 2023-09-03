@@ -2584,6 +2584,42 @@
                     "Description": "Create labeler.yml"
                 }
             ]
+        },
+        "0.2.106": {
+            "UpdateDate": 1693705140753,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "3f40b3c",
+                    "Commit": "3f40b3c47940c7b5b4937a09acc4865e7814d287",
+                    "Description": "Delete .github/workflows/PRLabeler.yml"
+                },
+                {
+                    "ShortCommit": "9f642f0",
+                    "Commit": "9f642f0814b0b29b2145ab9f6a27c2d4ba2423c3",
+                    "Description": "merge actions"
+                },
+                {
+                    "ShortCommit": "6cbb346",
+                    "Commit": "6cbb34694deeb645d846079f7e317d341c2d418e",
+                    "Description": "Update version info to 0.2.105"
+                },
+                {
+                    "ShortCommit": "0bd923b",
+                    "Commit": "0bd923b6fab8dbf7684173d4ddaeedc3695548ca",
+                    "Description": "fix errors"
+                },
+                {
+                    "ShortCommit": "988d363",
+                    "Commit": "988d363d408e576a45766420c7e4f2fa67bce57d",
+                    "Description": "Update version info to 0.2.104"
+                },
+                {
+                    "ShortCommit": "abaaf56",
+                    "Commit": "abaaf56eaa6ded6a0144d155cbbec961b9aebf3d",
+                    "Description": "Create labeler.yml"
+                }
+            ]
         }
     }
 }
