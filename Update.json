@@ -2552,6 +2552,17 @@
             "UpdateDate": 1693659769969,
             "Prerelease": true,
             "UpdateCommits": []
+        },
+        "0.2.104": {
+            "UpdateDate": 1693704666831,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "abaaf56",
+                    "Commit": "abaaf56eaa6ded6a0144d155cbbec961b9aebf3d",
+                    "Description": "Create labeler.yml"
+                }
+            ]
         }
     }
 }
