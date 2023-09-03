@@ -2935,6 +2935,17 @@
                     "Description": "Merge pull request #287 from langningchen/master"
                 }
             ]
+        },
+        "0.2.118": {
+            "UpdateDate": 1693719653356,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "7331f3a",
+                    "Commit": "7331f3ab1ba102e62e4a0d121b4ee1546bab7141",
+                    "Description": "Merge branch 'dev' into boomzero/translate"
+                }
+            ]
         }
     }
 }
