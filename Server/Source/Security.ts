@@ -1,7 +1,7 @@
 import { Result, ThrowErrorIfFailed } from "./Result";
 import { CaptchaSecretKey } from "./Secret"
 import { Output } from "./Output";
-import * as cheerio from 'cheerio';
+import * as cheerio from "cheerio";
 
 export class Security {
     private Username: string;
