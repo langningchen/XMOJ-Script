@@ -9,6 +9,49 @@ export class Process {
     private XMOJDatabase: Database;
     private RequestData: Request;
     private SecurityChecker: Security = new Security();
+    private AddBBSMention = async (ToUserID: string, PostID: number): Promise<void> => {
+        if (ToUserID === this.SecurityChecker.GetUsername()) {
+            return;
+        }
+        if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_mention", {
+            to_user_id: ToUserID,
+            post_id: PostID
+        }))["TableSize"] === 0) {
+            ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_mention", {
+                to_user_id: ToUserID,
+                post_id: PostID,
+                bbs_mention_time: new Date().getTime()
+            }));
+        }
+        else {
+            ThrowErrorIfFailed(await this.XMOJDatabase.Update("bbs_mention", {
+                bbs_mention_time: new Date().getTime()
+            }, {
+                to_user_id: ToUserID,
+                post_id: PostID
+            }));
+        }
+    };
+    private AddMailMention = async (FromUserID: string, ToUserID: string): Promise<void> => {
+        if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("mail_mention", {
+            from_user_id: FromUserID,
+            to_user_id: ToUserID
+        }))["TableSize"] === 0) {
+            ThrowErrorIfFailed(await this.XMOJDatabase.Insert("mail_mention", {
+                from_user_id: FromUserID,
+                to_user_id: ToUserID,
+                mail_mention_time: new Date().getTime()
+            }));
+        }
+        else {
+            ThrowErrorIfFailed(await this.XMOJDatabase.Update("mail_mention", {
+                mail_mention_time: new Date().getTime()
+            }, {
+                from_user_id: FromUserID,
+                to_user_id: ToUserID
+            }));
+        }
+    };
     private ProcessFunctions = {
         NewPost: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
@@ -53,7 +96,7 @@ export class Process {
             if (Data["Content"] === "") {
                 return new Result(false, "内容不能为空");
             }
-            let MentionPeople = new Array<String>();
+            let MentionPeople = new Array<string>();
             let StringToReplace = new Array<string>();
             for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
                 if (ThrowErrorIfFailed(await this.SecurityChecker.IfUserExist(Match[1]))["Exist"]) {
@@ -76,25 +119,11 @@ export class Process {
             }))["InsertID"];
 
             for (let i in MentionPeople) {
-                await this.XMOJDatabase.Insert("mention", {
-                    from_user_id: this.SecurityChecker.GetUsername(),
-                    to_user_id: MentionPeople[i],
-                    content: "我在讨论" + Post[0]["title"] + "中提到了你",
-                    mention_url: "/discuss3/thread.php?tid=" + Data["PostID"],
-                    mention_time: new Date().getTime(),
-                    other_data: "reply-" + ReplyID
-                });
+                await this.AddBBSMention(MentionPeople[i], Data["PostID"]);
             }
 
             if (Post[0]["user_id"] != this.SecurityChecker.GetUsername()) {
-                await this.XMOJDatabase.Insert("mention", {
-                    from_user_id: this.SecurityChecker.GetUsername(),
-                    to_user_id: Post[0]["user_id"],
-                    content: "我在你的讨论" + Post[0]["title"] + "中回复了你",
-                    mention_url: "/discuss3/thread.php?tid=" + Data["PostID"],
-                    mention_time: new Date().getTime(),
-                    other_data: "reply-" + ReplyID
-                });
+                await this.AddBBSMention(Post[0]["user_id"], Data["PostID"]);
             }
 
             return new Result(true, "创建回复成功", {
@@ -213,7 +242,7 @@ export class Process {
             if (Data["Content"] === "") {
                 return new Result(false, "内容不能为空");
             }
-            let MentionPeople = new Array<String>();
+            let MentionPeople = new Array<string>();
             let StringToReplace = new Array<string>();
             for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
                 if (ThrowErrorIfFailed(await this.SecurityChecker.IfUserExist(Match[1]))["Exist"]) {
@@ -233,18 +262,8 @@ export class Process {
             }, {
                 reply_id: Data["ReplyID"]
             });
-            await this.XMOJDatabase.Delete("mention", {
-                other_data: "reply-" + Data["ReplyID"]
-            });
             for (let i in MentionPeople) {
-                await this.XMOJDatabase.Insert("mention", {
-                    from_user_id: this.SecurityChecker.GetUsername(),
-                    to_user_id: MentionPeople[i],
-                    content: "我在讨论" + Post[0]["title"] + "中提到了你",
-                    mention_url: "/discuss3/thread.php?tid=" + Reply[0]["post_id"],
-                    mention_time: new Date().getTime(),
-                    other_data: "reply-" + Data["ReplyID"]
-                });
+                await this.AddBBSMention(MentionPeople[i], Reply[0]["post_id"]);
             }
             return new Result(true, "编辑回复成功");
         },
@@ -283,39 +302,82 @@ export class Process {
             await this.XMOJDatabase.Delete("bbs_reply", { reply_id: Data["ReplyID"] });
             return new Result(true, "删除回复成功");
         },
-        GetMentionList: async (Data: object): Promise<Result> => {
+        GetBBSMentionList: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {}));
             let ResponseData = {
                 MentionList: new Array<Object>()
             };
-            let Mentions = ThrowErrorIfFailed(await this.XMOJDatabase.Select("mention", ["mention_id", "from_user_id", "content", "mention_url", "mention_time"], {
+            let Mentions = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_mention", ["bbs_mention_id", "post_id", "bbs_mention_time"], {
+                to_user_id: this.SecurityChecker.GetUsername()
+            }));
+            for (let i in Mentions) {
+                let Mention = Mentions[i];
+                let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", ["user_id", "title"], { post_id: Mention["post_id"] }));
+                if (Post.toString() == "") {
+                    continue;
+                }
+                ResponseData.MentionList.push({
+                    MentionID: Mention["bbs_mention_id"],
+                    PostID: Mention["post_id"],
+                    PostTitle: Post[0]["title"],
+                    MentionTime: Mention["bbs_mention_time"]
+                });
+            }
+            return new Result(true, "获得讨论提及列表成功", ResponseData);
+        },
+        GetMailMentionList: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {}));
+            let ResponseData = {
+                MentionList: new Array<Object>()
+            };
+            let Mentions = ThrowErrorIfFailed(await this.XMOJDatabase.Select("mail_mention", ["mail_mention_id", "from_user_id", "mail_mention_time"], {
                 to_user_id: this.SecurityChecker.GetUsername()
             }));
             for (let i in Mentions) {
                 let Mention = Mentions[i];
                 ResponseData.MentionList.push({
-                    MentionID: Mention["mention_id"],
+                    MentionID: Mention["mail_mention_id"],
                     FromUserID: Mention["from_user_id"],
-                    Content: Mention["content"],
-                    MentionURL: Mention["mention_url"],
-                    MentionTime: Mention["mention_time"]
+                    MentionTime: Mention["mail_mention_time"]
                 });
             }
-            return new Result(true, "获得提及列表成功", ResponseData);
+            return new Result(true, "获得短消息提及列表成功", ResponseData);
         },
-        ReadMention: async (Data: object): Promise<Result> => {
+        ReadBBSMention: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
                 "MentionID": "number"
             }));
-            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("mention", {
-                mention_id: Data["MentionID"]
-            }))["TableSize"] === 0) {
+            let MentionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_mention", ["to_user_id"], {
+                bbs_mention_id: Data["MentionID"]
+            }));
+            if (MentionData.toString() == "") {
                 return new Result(false, "未找到提及");
             }
-            ThrowErrorIfFailed(await this.XMOJDatabase.Delete("mention", {
-                mention_id: Data["MentionID"]
+            if (MentionData[0]["to_user_id"] != this.SecurityChecker.GetUsername()) {
+                return new Result(false, "没有权限阅读此提及");
+            }
+            ThrowErrorIfFailed(await this.XMOJDatabase.Delete("bbs_mention", {
+                bbs_mention_id: Data["MentionID"]
             }));
-            return new Result(true, "阅读提及成功");
+            return new Result(true, "阅读讨论提及成功");
+        },
+        ReadMailMention: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "MentionID": "number"
+            }));
+            let MentionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("mail_mention", ["to_user_id"], {
+                mail_mention_id: Data["MentionID"]
+            }));
+            if (MentionData.toString() == "") {
+                return new Result(false, "未找到提及");
+            }
+            if (MentionData[0]["to_user_id"] != this.SecurityChecker.GetUsername()) {
+                return new Result(false, "没有权限阅读此提及");
+            }
+            ThrowErrorIfFailed(await this.XMOJDatabase.Delete("mail_mention", {
+                mail_mention_id: Data["MentionID"]
+            }));
+            return new Result(true, "阅读短消息提及成功");
         },
         GetMailList: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {}));
@@ -393,14 +455,7 @@ export class Process {
                 content: this.SecurityChecker.HTMLEscape(Data["Content"]),
                 send_time: new Date().getTime()
             }))["InsertID"];
-            ThrowErrorIfFailed(await this.XMOJDatabase.Insert("mention", {
-                from_user_id: this.SecurityChecker.GetUsername(),
-                to_user_id: Data["ToUser"],
-                content: "我给你发送了一条短消息",
-                mention_url: "/mail.php?other=" + this.SecurityChecker.GetUsername(),
-                mention_time: new Date().getTime(),
-                other_data: "mail-" + MessageID
-            }));
+            await this.AddMailMention(this.SecurityChecker.GetUsername(), Data["ToUser"]);
             return new Result(true, "发送短消息成功", {
                 MessageID: MessageID
             });

@@ -668,7 +668,8 @@ else {
         ToastContainer.classList.add("toast-container", "position-fixed", "bottom-0", "end-0", "p-3");
         document.body.appendChild(ToastContainer);
         addEventListener("focus", () => {
-            RequestAPI("GetMentionList", {}, async (Response) => {
+            ToastContainer.innerHTML = "";
+            RequestAPI("GetBBSMentionList", {}, (Response) => {
                 if (Response.Success) {
                     let MentionList = Response.Data.MentionList;
                     for (let i = 0; i < MentionList.length; i++) {
@@ -679,7 +680,7 @@ else {
                         ToastHeader.classList.add("toast-header");
                         let ToastTitle = document.createElement("strong");
                         ToastTitle.classList.add("me-auto");
-                        ToastTitle.innerHTML = await GetUsernameHTML(MentionList[i].FromUserID);
+                        ToastTitle.innerHTML = "提醒";
                         ToastHeader.appendChild(ToastTitle);
                         let ToastTime = document.createElement("small");
                         ToastTime.classList.add("text-body-secondary");
@@ -693,7 +694,7 @@ else {
                         Toast.appendChild(ToastHeader);
                         let ToastBody = document.createElement("div");
                         ToastBody.classList.add("toast-body");
-                        ToastBody.innerText = MentionList[i].Content;
+                        ToastBody.innerHTML = "讨论" + MentionList[i].PostTitle + "有新回复";
                         let ToastFooter = document.createElement("div");
                         ToastFooter.classList.add("mt-2", "pt-2", "border-top");
                         let ToastButton = document.createElement("button");
@@ -701,8 +702,54 @@ else {
                         ToastButton.classList.add("btn", "btn-primary", "btn-sm");
                         ToastButton.innerText = "查看";
                         ToastButton.addEventListener("click", () => {
-                            open(MentionList[i].MentionURL, "_blank");
-                            RequestAPI("ReadMention", {
+                            open("http://www.xmoj.tech/discuss3/thread.php?tid=" + MentionList[i].PostID, "_blank");
+                            RequestAPI("ReadBBSMention", {
+                                "MentionID": Number(MentionList[i].MentionID)
+                            }, () => { });
+                        });
+                        ToastFooter.appendChild(ToastButton);
+                        ToastBody.appendChild(ToastFooter);
+                        Toast.appendChild(ToastBody);
+                        ToastContainer.appendChild(Toast);
+                        new bootstrap.Toast(Toast).show();
+                    }
+                }
+            });
+            RequestAPI("GetMailMentionList", {}, async (Response) => {
+                if (Response.Success) {
+                    let MentionList = Response.Data.MentionList;
+                    for (let i = 0; i < MentionList.length; i++) {
+                        let Toast = document.createElement("div");
+                        Toast.classList.add("toast");
+                        Toast.setAttribute("role", "alert");
+                        let ToastHeader = document.createElement("div");
+                        ToastHeader.classList.add("toast-header");
+                        let ToastTitle = document.createElement("strong");
+                        ToastTitle.classList.add("me-auto");
+                        ToastTitle.innerHTML = "提醒";
+                        ToastHeader.appendChild(ToastTitle);
+                        let ToastTime = document.createElement("small");
+                        ToastTime.classList.add("text-body-secondary");
+                        ToastTime.innerText = new Date(MentionList[i].MentionTime).toLocaleString();
+                        ToastHeader.appendChild(ToastTime);
+                        let ToastCloseButton = document.createElement("button");
+                        ToastCloseButton.type = "button";
+                        ToastCloseButton.classList.add("btn-close");
+                        ToastCloseButton.setAttribute("data-bs-dismiss", "toast");
+                        ToastHeader.appendChild(ToastCloseButton);
+                        Toast.appendChild(ToastHeader);
+                        let ToastBody = document.createElement("div");
+                        ToastBody.classList.add("toast-body");
+                        ToastBody.innerHTML = await GetUsernameHTML(MentionList[i].FromUserID) + "  给你发了一封短消息";
+                        let ToastFooter = document.createElement("div");
+                        ToastFooter.classList.add("mt-2", "pt-2", "border-top");
+                        let ToastButton = document.createElement("button");
+                        ToastButton.type = "button";
+                        ToastButton.classList.add("btn", "btn-primary", "btn-sm");
+                        ToastButton.innerText = "查看";
+                        ToastButton.addEventListener("click", () => {
+                            open("http://www.xmoj.tech/mail.php?other=" + MentionList[i].FromUserID, "_blank");
+                            RequestAPI("ReadMailMention", {
                                 "MentionID": Number(MentionList[i].MentionID)
                             }, () => { });
                         });
@@ -715,6 +762,7 @@ else {
                 }
             });
         });
+        dispatchEvent(new Event("focus"));
 
         if (location.pathname == "/index.php" || location.pathname == "/") {
             if (new URL(location.href).searchParams.get("ByUserScript") != null) {
