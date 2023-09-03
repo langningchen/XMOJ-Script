@@ -1,16 +1,18 @@
 import { Result, ThrowErrorIfFailed } from "./Result";
 import { CaptchaSecretKey } from "./Secret"
 import { Output } from "./Output";
+import * as cheerio from "cheerio";
 
 export class Security {
     private Username: string;
     private SessionID: string;
     private RemoteIP: string;
     private Fetch = async (RequestURL: URL): Promise<Response> => {
+        Output.Log("Fetch: " + RequestURL.toString());
         let Abort = new AbortController();
         setTimeout(() => {
             Abort.abort();
-        }, 3000);
+        }, 5000);
         let RequestData = new Request(RequestURL, {
             headers: {
                 "Cookie": "PHPSESSID=" + this.SessionID
@@ -56,8 +58,8 @@ export class Security {
                 return SessionUsername;
             }).catch((Error) => {
                 Output.Error("Check token failed: " + Error + "\n" +
-                    "PHPSessionID   : \"" + this.SessionID + "\"\n" +
-                    "Username       : \"" + this.Username + "\"\n");
+                    "PHPSessionID: \"" + this.SessionID + "\"\n" +
+                    "Username    : \"" + this.Username + "\"\n");
                 return "";
             });
         if (SessionUsername == "") {
@@ -149,5 +151,115 @@ export class Security {
         else {
             return new Result(false, "邮箱格式错误");
         }
+    }
+    public GetProblemScore = async (ProblemID: number): Promise<number> => {
+        return await this.Fetch(new URL("http://www.xmoj.tech/status.php?user_id=" + this.GetUsername() + "&problem_id=" + ProblemID))
+            .then((Response) => {
+                return Response.text();
+            }).then((Response) => {
+                let ParsedDocument: cheerio.CheerioAPI = cheerio.load(Response);
+                let ResultTable = ParsedDocument("#result-tab");
+                if (ResultTable.length == 0) {
+                    Output.Error("Get problem score failed: Cannot find table element\n" +
+                        "ProblemID: \"" + ProblemID + "\"\n" +
+                        "Username : \"" + this.Username + "\"\n");
+                    ThrowErrorIfFailed(new Result(false, "获取题目分数失败"));
+                }
+                let MaxScore: number = 0;
+                let ResultTableBody = ResultTable.children().eq(1);
+                for (let i = 0; i < ResultTableBody.children().length; i++) {
+                    let ResultRow = ResultTableBody.children().eq(i);
+                    if (ResultRow.children().eq(4).text().trim() === "正确") {
+                        return 100;
+                    }
+                    else if (ResultRow.children().eq(4).children().length == 2) {
+                        let ScoreSpan = ResultRow.children().eq(4).children().eq(1);
+                        if (ScoreSpan.length == 0) {
+                            Output.Error("Get problem score failed: Cannot find score span\n" +
+                                "ProblemID: \"" + ProblemID + "\"\n" +
+                                "Username : \"" + this.Username + "\"\n");
+                            ThrowErrorIfFailed(new Result(false, "获取题目分数失败"));
+                        }
+                        let Score: string = ScoreSpan.text().trim();
+                        MaxScore = Math.max(MaxScore, parseInt(Score.substring(0, Score.length - 1)));
+                    }
+                }
+                return MaxScore;
+            }).catch((Error) => {
+                Output.Error("Get user score failed: " + Error + "\n" +
+                    "ProblemID: \"" + ProblemID + "\"\n" +
+                    "Username : \"" + this.Username + "\"\n");
+                ThrowErrorIfFailed(new Result(false, "获取题目分数失败"));
+                return 0;
+            });
+    }
+    public IsProblemExists = async (ProblemID: number): Promise<boolean> => {
+        return await this.Fetch(new URL("http://www.xmoj.tech/problem.php?id=" + ProblemID))
+            .then((Response) => {
+                return Response.text();
+            }).then((Response) => {
+                return Response.indexOf("题目不可用") === -1;
+            }).catch((Error) => {
+                Output.Error("Check if problem exist failed: " + Error + "\n" +
+                    "ProblemID: \"" + ProblemID + "\"\n" +
+                    "Username : \"" + this.Username + "\"\n");
+                ThrowErrorIfFailed(new Result(false, "检查题目是否存在失败"));
+                return false;
+            });
+    }
+    public GetStdCode = async (ProblemID: number): Promise<string> => {
+        var StdCode: string = "";
+        var PageIndex: number = 0;
+        while (StdCode === "") {
+            await this.Fetch(new URL("http://www.xmoj.tech/problemstatus.php?id=" + ProblemID + "&page=" + PageIndex))
+                .then((Response) => {
+                    return Response.text();
+                }).then(async (Response) => {
+                    if (Response.indexOf("[NEXT]") === -1) {
+                        StdCode = "这道题没有标程（即用户std没有AC这道题）";
+                        return;
+                    }
+                    let ParsedDocument: cheerio.CheerioAPI = cheerio.load(Response);
+                    let SubmitTable = ParsedDocument("#problemstatus");
+                    if (SubmitTable.length == 0) {
+                        Output.Error("Get Std code failed: Cannot find submit table\n" +
+                            "ProblemID: \"" + ProblemID + "\"\n" +
+                            "Username : \"" + this.Username + "\"\n");
+                        ThrowErrorIfFailed(new Result(false, "获取标程失败"));
+                    }
+                    let SubmitTableBody = SubmitTable.children().eq(1);
+                    for (let i = 1; i < SubmitTableBody.children().length; i++) {
+                        let SubmitRow = SubmitTableBody.children().eq(i);
+                        if (SubmitRow.children().eq(2).text().trim() === "std") {
+                            let SID: string = SubmitRow.children().eq(1).text();
+                            if (SID.indexOf("(") != -1) {
+                                SID = SID.substring(0, SID.indexOf("("));
+                            }
+                            await this.Fetch(new URL("http://www.xmoj.tech/getsource.php?id=" + SID))
+                                .then((Response) => {
+                                    return Response.text();
+                                })
+                                .then((Response) => {
+                                    Response = Response.substring(0, Response.indexOf("<!--not cached-->")).trim();
+                                    if (Response === "I am sorry, You could not view this code!") {
+                                        Output.Error("Get Std code failed: Cannot view code\n" +
+                                            "ProblemID: \"" + ProblemID + "\"\n" +
+                                            "Username : \"" + this.Username + "\"\n");
+                                        ThrowErrorIfFailed(new Result(false, "获取标程失败"));
+                                    }
+                                    Response = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
+                                    StdCode = Response;
+                                });
+                        }
+                    }
+                }).catch((Error) => {
+                    Output.Error("Get Std code failed: " + Error + "\n" +
+                        "ProblemID: \"" + ProblemID + "\"\n" +
+                        "Username : \"" + this.Username + "\"\n");
+                    ThrowErrorIfFailed(new Result(false, "获取标程失败"));
+                });
+            PageIndex++;
+        }
+        return StdCode;
     }
 };

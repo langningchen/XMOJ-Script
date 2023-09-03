@@ -40,3 +40,19 @@ CREATE TABLE short_message (
     is_read INTEGER NOT NULL DEFAULT 0,
     send_time INTEGER NOT NULL
 );
+
+DROP TABLE IF EXISTS std_answer;
+
+CREATE TABLE std_answer (
+    problem_id INTEGER PRIMARY KEY NOT NULL,
+    std_code TEXT
+);
+
+DROP TABLE IF EXISTS badge;
+
+CREATE TABLE badge (
+    user_id TEXT PRIMARY KEY NOT NULL,
+    background_color TEXT NOT NULL DEFAULT "#000000",
+    color TEXT NOT NULL DEFAULT "#ffffff",
+    content TEXT NOT NULL DEFAULT "VIP"
+);
