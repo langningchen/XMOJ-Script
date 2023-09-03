@@ -3050,6 +3050,17 @@
             "UpdateDate": 1693738208494,
             "Prerelease": true,
             "UpdateCommits": []
+        },
+        "0.2.127": {
+            "UpdateDate": 1693738367689,
+            "Prerelease": false,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "e6a24bb",
+                    "Commit": "e6a24bb8c84ff46aebd4e289074a092e71e230f7",
+                    "Description": "Merge branch 'master' into dev"
+                }
+            ]
         }
     }
 }
