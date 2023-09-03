@@ -2,8 +2,8 @@
 // @name         XMOJ
 // @version      0.2.121
 // @description  XMOJ增强脚本
-// @author       @langningchen
-// @namespace    https://github/langningchen
+// @author       @xmoj-script-dev-team
+// @namespace    https://github/xmoj-script-dev-team
 // @match        http://*.xmoj.tech/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/hmac-sha1.min.js
@@ -263,7 +263,7 @@ GM_registerMenuCommand("重置数据", () => {
 });
 
 let SearchParams = new URLSearchParams(location.search);
-let ServerURL = (UtilityEnabled("DebugMode") ? "https://langningchen.github.io/XMOJ-Script" : "https://web.xmoj-bbs.tech")
+let ServerURL = (UtilityEnabled("DebugMode") ? "https://xmoj-script-dev-team.github.io/XMOJ-Script" : "https://web.xmoj-bbs.tech")
 
 if (location.host != "www.xmoj.tech") {
     location.host = "www.xmoj.tech";
@@ -644,13 +644,13 @@ else {
                         let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                         UpdateDataCardListItem.className = "list-group-item";
                         UpdateDataCardListItem.innerHTML =
-                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data.UpdateCommits[j].Commit + "\" target=\"_blank\">"
+                            "(<a href=\"https://github.com/xmoj-script-dev-team/XMOJ-Script/commit/" + Data.UpdateCommits[j].Commit + "\" target=\"_blank\">"
                             + Data.UpdateCommits[j].ShortCommit + "</a>) " +
                             Data.UpdateCommits[j].Description;
                     }
                     let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                     UpdateDataCardLink.className = "card-link";
-                    UpdateDataCardLink.href = "https://github.com/langningchen/XMOJ-Script/releases/tag/" + Version;
+                    UpdateDataCardLink.href = "https://github.com/xmoj-script-dev-team/XMOJ-Script/releases/tag/" + Version;
                     UpdateDataCardLink.target = "_blank";
                     UpdateDataCardLink.innerText = "查看该版本";
                     new bootstrap.Modal(document.getElementById("UpdateModal")).show();
@@ -905,7 +905,7 @@ else {
                 let FeedbackCardLink = document.createElement("a");
                 FeedbackCardLink.className = "card-link";
                 FeedbackCardLink.innerText = "GitHub";
-                FeedbackCardLink.href = "https://github.com/langningchen/XMOJ-Script";
+                FeedbackCardLink.href = "https://github.com/xmoj-script-dev-team/XMOJ-Script";
                 FeedbackCardBody.appendChild(FeedbackCardLink);
                 FeedbackCard.appendChild(FeedbackCardBody);
                 Container.appendChild(FeedbackCard);
@@ -2277,13 +2277,13 @@ else {
                                 let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                                 UpdateDataCardListItem.className = "list-group-item";
                                 UpdateDataCardListItem.innerHTML =
-                                    "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data.UpdateCommits[j].Commit + "\" target=\"_blank\">"
+                                    "(<a href=\"https://github.com/xmoj-script-dev-team/XMOJ-Script/commit/" + Data.UpdateCommits[j].Commit + "\" target=\"_blank\">"
                                     + Data.UpdateCommits[j].ShortCommit + "</a>) " +
                                     Data.UpdateCommits[j].Description;
                             }
                             let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                             UpdateDataCardLink.className = "card-link";
-                            UpdateDataCardLink.href = "https://github.com/langningchen/XMOJ-Script/releases/tag/" + Version;
+                            UpdateDataCardLink.href = "https://github.com/xmoj-script-dev-team/XMOJ-Script/releases/tag/" + Version;
                             UpdateDataCardLink.target = "_blank";
                             UpdateDataCardLink.innerText = "查看该版本";
                         }

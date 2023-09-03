@@ -1,10 +1,10 @@
-![wakatime](https://wakatime.com/badge/github/langningchen/XMOJ-Script.svg)
-![Release](https://github.com/langningchen/XMOJ-Script/actions/workflows/Release.yml/badge.svg)
-![Prerelease](https://github.com/langningchen/XMOJ-Script/actions/workflows/Prerelease.yml/badge.svg)
-![GitHub](https://img.shields.io/github/license/langningchen/XMOJ-Script)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/langningchen/XMOJ-Script)
-![GitHub release](https://img.shields.io/github/v/release/langningchen/XMOJ-Script)
-![GitHub issues](https://img.shields.io/github/issues/langningchen/XMOJ-Script)
+![wakatime](https://wakatime.com/badge/github/xmoj-script-dev-team/XMOJ-Script.svg)
+![Release](https://github.com/xmoj-script-dev-team/XMOJ-Script/actions/workflows/Release.yml/badge.svg)
+![Prerelease](https://github.com/xmoj-script-dev-team/XMOJ-Script/actions/workflows/Prerelease.yml/badge.svg)
+![GitHub](https://img.shields.io/github/license/xmoj-script-dev-team/XMOJ-Script)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/xmoj-script-dev-team/XMOJ-Script)
+![GitHub release](https://img.shields.io/github/v/release/xmoj-script-dev-team/XMOJ-Script)
+![GitHub issues](https://img.shields.io/github/issues/xmoj-script-dev-team/XMOJ-Script)
 
 [点击此处访问官网查看更多内容](https://web.xmoj-bbs.tech)
 
