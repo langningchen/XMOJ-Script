@@ -2983,6 +2983,136 @@
                     "Description": "Update to release 0.2.120"
                 }
             ]
+        },
+        "0.2.122": {
+            "UpdateDate": 1693723920731,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "d55405c",
+                    "Commit": "d55405cc08d924621b659f8392a8c2ee76e71f2c",
+                    "Description": "修复URL中的问题"
+                },
+                {
+                    "ShortCommit": "c81e76d",
+                    "Commit": "c81e76d5ad8332ee2e9f9f3946c869b5076965c3",
+                    "Description": "Merge pull request #296 from langningchen/actions/temp"
+                },
+                {
+                    "ShortCommit": "50e8873",
+                    "Commit": "50e8873f0f86269a7912936ce3ac1535bcb17de2",
+                    "Description": "Update to release 0.2.121"
+                },
+                {
+                    "ShortCommit": "43d8906",
+                    "Commit": "43d8906d65dfe25a8ee09eb5163231c97023bdd4",
+                    "Description": "Merge branch 'dev' of https://github.com/langningchen/XMOJ-Script into dev"
+                },
+                {
+                    "ShortCommit": "e613a66",
+                    "Commit": "e613a661bd25fba7b4e544e362c90ca809cc39cd",
+                    "Description": "Merge pull request #295 from langningchen/actions/temp"
+                },
+                {
+                    "ShortCommit": "d9ef498",
+                    "Commit": "d9ef498b03fc98955b36a099a0a647167b5ad825",
+                    "Description": "Update to release 0.2.120"
+                }
+            ]
+        },
+        "0.2.123": {
+            "UpdateDate": 1693729017984,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "3dab3c0",
+                    "Commit": "3dab3c0b07035e14401c2a5556903f09c90b1ed1",
+                    "Description": "Update CI/CD"
+                },
+                {
+                    "ShortCommit": "566bcca",
+                    "Commit": "566bcca21675e4cf19e54f684903fc8197baceb2",
+                    "Description": "Merge branch 'dev' of https://github.com/langningchen/XMOJ-Script into dev"
+                }
+            ]
+        },
+        "0.2.124": {
+            "UpdateDate": 1693731577223,
+            "Prerelease": true,
+            "UpdateCommits": []
+        },
+        "0.2.125": {
+            "UpdateDate": 1693736060634,
+            "Prerelease": true,
+            "UpdateCommits": []
+        },
+        "0.2.126": {
+            "UpdateDate": 1693738208494,
+            "Prerelease": true,
+            "UpdateCommits": []
+        },
+        "0.2.127": {
+            "UpdateDate": 1693738367689,
+            "Prerelease": false,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "e6a24bb",
+                    "Commit": "e6a24bb8c84ff46aebd4e289074a092e71e230f7",
+                    "Description": "Merge branch 'master' into dev"
+                }
+            ]
+        },
+        "0.2.128": {
+            "UpdateDate": 1693738373294,
+            "Prerelease": false,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "90dbb28",
+                    "Commit": "90dbb2801d884f1a61e126c8b04fc65cb6d78460",
+                    "Description": "Merge pull request #305 from langningchen/actions/temp"
+                },
+                {
+                    "ShortCommit": "e0249bc",
+                    "Commit": "e0249bc33ef1a46a7bc919bfd35a373cf4d52e6c",
+                    "Description": "Update to release 0.2.127"
+                },
+                {
+                    "ShortCommit": "e6a24bb",
+                    "Commit": "e6a24bb8c84ff46aebd4e289074a092e71e230f7",
+                    "Description": "Merge branch 'master' into dev"
+                }
+            ]
+        },
+        "0.2.129": {
+            "UpdateDate": 1693738458086,
+            "Prerelease": false,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "6029cfd",
+                    "Commit": "6029cfde7d60979e7b6d19d58c977e888b0b5999",
+                    "Description": "Merge pull request #306 from langningchen/actions/temp"
+                },
+                {
+                    "ShortCommit": "e551b06",
+                    "Commit": "e551b0614319ef9ae6ef90f8328aba47ea09f624",
+                    "Description": "Update to release 0.2.128"
+                },
+                {
+                    "ShortCommit": "90dbb28",
+                    "Commit": "90dbb2801d884f1a61e126c8b04fc65cb6d78460",
+                    "Description": "Merge pull request #305 from langningchen/actions/temp"
+                },
+                {
+                    "ShortCommit": "e0249bc",
+                    "Commit": "e0249bc33ef1a46a7bc919bfd35a373cf4d52e6c",
+                    "Description": "Update to release 0.2.127"
+                },
+                {
+                    "ShortCommit": "e6a24bb",
+                    "Commit": "e6a24bb8c84ff46aebd4e289074a092e71e230f7",
+                    "Description": "Merge branch 'master' into dev"
+                }
+            ]
         }
     }
 }
