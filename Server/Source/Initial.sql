@@ -18,16 +18,13 @@ CREATE TABLE bbs_reply (
     reply_time INTEGER NOT NULL
 );
 
-DROP TABLE IF EXISTS mention;
+DROP TABLE IF EXISTS bbs_mention;
 
-CREATE TABLE mention (
-    mention_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    from_user_id TEXT NOT NULL,
+CREATE TABLE bbs_mention (
+    bbs_mention_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     to_user_id TEXT NOT NULL,
-    content TEXT NOT NULL,
-    mention_url TEXT NOT NULL,
-    mention_time TIMESTAMP NOT NULL,
-    other_data TEXT NOT NULL
+    post_id INTEGER NOT NULL,
+    bbs_mention_time TIMESTAMP NOT NULL
 );
 
 DROP TABLE IF EXISTS short_message;
@@ -39,6 +36,15 @@ CREATE TABLE short_message (
     content TEXT NOT NULL,
     is_read INTEGER NOT NULL DEFAULT 0,
     send_time INTEGER NOT NULL
+);
+
+DROP TABLE IF EXISTS mail_mention;
+
+CREATE TABLE mail_mention (
+    mail_mention_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    from_user_id TEXT NOT NULL,
+    to_user_id TEXT NOT NULL,
+    mail_mention_time TIMESTAMP NOT NULL
 );
 
 DROP TABLE IF EXISTS std_answer;

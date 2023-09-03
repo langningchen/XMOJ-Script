@@ -2946,6 +2946,17 @@
                     "Description": "Merge branch 'dev' into boomzero/translate"
                 }
             ]
+        },
+        "0.2.119": {
+            "UpdateDate": 1693720086860,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "daae04a",
+                    "Commit": "daae04a9d8e9a72ebebad70aa021375cb3a2a5ef",
+                    "Description": "Merge branch 'dev' into langningchen/issue242"
+                }
+            ]
         }
     }
 }
