@@ -1,6 +1,7 @@
 Server/Source/Secret.ts
 Server/node_modules
 Server/.wrangler
+Server/package-lock.json
 Server-Old/
 Email/.wrangler
 Email/node_modules
