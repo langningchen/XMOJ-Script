@@ -3035,6 +3035,11 @@
                     "Description": "Merge branch 'dev' of https://github.com/langningchen/XMOJ-Script into dev"
                 }
             ]
+        },
+        "0.2.124": {
+            "UpdateDate": 1693731577223,
+            "Prerelease": true,
+            "UpdateCommits": []
         }
     }
 }
