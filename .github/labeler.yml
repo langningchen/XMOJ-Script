@@ -1,14 +1,14 @@
-userscript:
+user-script:
   - XMOJ.user.js
 website:
   - index.html
   - robots.txt
   - '*.html'
-updateScript:
+update-script:
   - Update/**
 server:
   - Server/**
-Github-related:
+GitHub-related:
   - '.github/**'
-addonScript:
+addon-script:
   - AddonScript.js
