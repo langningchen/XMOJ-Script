@@ -15,7 +15,6 @@ jobs:
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           dot: true
-          sync-labels: true
       - name: Checkout
         uses: actions/checkout@v2
       - name: Checkout PR
