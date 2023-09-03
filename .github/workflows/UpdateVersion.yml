@@ -6,10 +6,16 @@ on:
     branches:
       - dev
 jobs:
-  UpdateVersion:
-    name: UpdateVersion
+  UpdateVersion_label:
+    name: 'UpdateVersion + label'
     runs-on: ubuntu-latest
     steps:
+      - name: Add labels
+        uses: actions/labeler@v4
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          dot: true
+          sync-labels: true
       - name: Checkout
         uses: actions/checkout@v2
       - name: Checkout PR
