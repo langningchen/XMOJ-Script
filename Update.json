@@ -3247,6 +3247,47 @@
                     "Description": "Merge branch 'dev' into boomzero/actions-rel"
                 }
             ]
+        },
+        "0.2.134": {
+            "UpdateDate": 1694234714536,
+            "Prerelease": true,
+            "UpdateCommits": [
+                {
+                    "ShortCommit": "45a8c9b",
+                    "Commit": "45a8c9b0b6399b015c9f5e38a6261b3b53c1b2a7",
+                    "Description": "Update version info to 0.2.133"
+                },
+                {
+                    "ShortCommit": "da41826",
+                    "Commit": "da41826a7a6c89427e1880fd46b5972db53d23cf",
+                    "Description": "Update version info to 0.2.132"
+                },
+                {
+                    "ShortCommit": "97d0e69",
+                    "Commit": "97d0e699ba83eebef696b8d8acb0616a70c3a507",
+                    "Description": "test"
+                },
+                {
+                    "ShortCommit": "be2d29b",
+                    "Commit": "be2d29ba72b47db21f2d4666fe2bcb45596cd373",
+                    "Description": "Update version info to 0.2.131"
+                },
+                {
+                    "ShortCommit": "b8a1a1d",
+                    "Commit": "b8a1a1d796d360d457ebe3bc593251258eb59939",
+                    "Description": "fix format"
+                },
+                {
+                    "ShortCommit": "fb1c52b",
+                    "Commit": "fb1c52b5b23da577952230fa57e694ea43444f1d",
+                    "Description": "fix"
+                },
+                {
+                    "ShortCommit": "668234c",
+                    "Commit": "668234cc5fc8f8d08b05821d318c8aacce4ce070",
+                    "Description": "Merge branch 'dev' into boomzero/actions-rel"
+                }
+            ]
         }
     }
 }
