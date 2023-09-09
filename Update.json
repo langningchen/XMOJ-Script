@@ -21,19 +21,14 @@
             ]
         },
         "0.2.135": {
-            "UpdateDate": 1694248792018,
-            "Prerelease": false,
+            "UpdateDate": 1694249503705,
+            "Prerelease": true,
             "UpdateContents": [
                 {
-                    "PR": 322,
-                    "Description": "使用新版更新日志以适应新的仓库架构"
+                    "PR": 335,
+                    "Description": "避免重复发布"
                 }
             ]
-        },
-        "0.2.136": {
-            "UpdateDate": 1694248990723,
-            "Prerelease": false,
-            "UpdateContents": []
         }
     }
 }

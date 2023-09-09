@@ -17,18 +17,22 @@ var LastJSONVersion = Object.keys(JSONObject.UpdateHistory)[Object.keys(JSONObje
 var LastJSVersion = JSFileContent.match(/@version\s+(\d+\.\d+\.\d+)/)[1];
 var LastVersion = LastJSVersion.split(".");
 var LastPR = JSONObject.UpdateHistory[LastJSONVersion].UpdateContents[0].PR;
+var LastType = JSONObject.UpdateHistory[LastJSONVersion].Prerelease ? "Prerelease" : "Release";
 console.log("Last JS version    : " + LastJSVersion);
 console.log("Last JSON version  : " + LastJSONVersion);
 console.log("Last PR            : " + LastPR);
+console.log("Last type          : " + LastType);
 if (LastJSONVersion.split(".")[2] != LastJSVersion.split(".")[2]) {
     console.error("XMOJ.user.js and Update.json have different patch versions.");
     process.exit(1);
 }
 
 var CurrentVersion = LastVersion[0] + "." + LastVersion[1] + "." + (parseInt(LastVersion[2]) + 1);
+if (LastType == "Release") {
+    CurrentVersion = LastJSONVersion;
+}
 console.log("Current version    : " + CurrentVersion);
 
-execSync("echo version=" + CurrentVersion + " >> $GITHUB_OUTPUT");
 JSONObject.UpdateHistory[CurrentVersion] = {
     "UpdateDate": Date.now(),
     "Prerelease": false,
