@@ -26,11 +26,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: ${{ steps.get_version.outputs.version }}
+          name: ${{ steps.get_version.outputs.version }}
           generate_release_notes: true
           draft: false
           prerelease: true
-          body: ${{ steps.get_version.outputs.version }}
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
