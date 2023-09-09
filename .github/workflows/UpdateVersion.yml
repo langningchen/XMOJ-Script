@@ -17,7 +17,7 @@ jobs:
       - name: Get modified files
         id: getmod
         run: |
-          echo "::set-output name=modified_user_js::$([[ -n $(git diff --name-only HEAD HEAD~1 | grep XMOJ.user.js) ]] && echo 'true' || echo 'false')"
+          echo "modified_user_js=$([[ -n $(git diff --name-only HEAD HEAD~1 | grep XMOJ.user.js) ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
       - name: Update version
         if: ${{ steps.getmod.outputs.modified_user_js == 'true' }}
         id: update_version
