@@ -24,25 +24,12 @@ execSync("echo version=" + LatestVersion + " >> $GITHUB_OUTPUT");
 JSONObject.UpdateHistory[LatestVersion] = {
     "UpdateDate": Date.now(),
     "Prerelease": true,
-    "UpdateCommits": []
+    "UpdateContents": [{
+        "PR": Number(process.argv[2]),
+        "Description": String(process.argv[3])
+    }]
 };
 
-var LastTag = execSync("git describe --tags --abbrev=0").toString().trim();
-var Commits = execSync("git log --pretty=format:'%h %H %s' " + LastTag + "..HEAD").toString().split("\n");
-Commits.pop();
-console.log("Commits (" + Commits.length + "):");
-for (var i = 0; i < Commits.length; i++) {
-    var Commit = Commits[i].split(" ");
-    var ShortCommitHash = Commit[0];
-    var LongCommitHash = Commit[1];
-    var CommitDescription = Commit.slice(2).join(" ");
-    JSONObject.UpdateHistory[LatestVersion].UpdateCommits.push({
-        "ShortCommit": ShortCommitHash,
-        "Commit": LongCommitHash,
-        "Description": CommitDescription
-    });
-    console.log("    Commit " + i + "(" + ShortCommitHash + "): " + CommitDescription);
-}
 writeFileSync(JSONFileName, JSON.stringify(JSONObject, null, 4), "utf8");
 
 var NewJSFileContent = JSFileContent.replace(/@version(\s+)\d+\.\d+\.\d+/, "@version$1" + LatestVersion);

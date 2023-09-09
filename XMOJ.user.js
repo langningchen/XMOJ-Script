@@ -652,13 +652,13 @@ else {
                     UpdateDataCardText.className = "card-text";
                     let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
                     UpdateDataCardList.className = "list-group list-group-flush";
-                    for (let j = 0; j < Data.UpdateCommits.length; j++) {
+                    for (let j = 0; j < Data.UpdateContents.length; j++) {
                         let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                         UpdateDataCardListItem.className = "list-group-item";
                         UpdateDataCardListItem.innerHTML =
-                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data.UpdateCommits[j].Commit + "\" target=\"_blank\">"
-                            + Data.UpdateCommits[j].ShortCommit + "</a>) " +
-                            Data.UpdateCommits[j].Description;
+                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
+                            "#" + Data.UpdateContents[j].PR + "</a>) " +
+                            Data.UpdateContents[j].Description;
                     }
                     let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                     UpdateDataCardLink.className = "card-link";
@@ -2292,13 +2292,13 @@ else {
                             UpdateDataCardText.className = "card-text";
                             let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
                             UpdateDataCardList.className = "list-group list-group-flush";
-                            for (let j = 0; j < Data.UpdateCommits.length; j++) {
+                            for (let j = 0; j < Data.UpdateContents.length; j++) {
                                 let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                                 UpdateDataCardListItem.className = "list-group-item";
                                 UpdateDataCardListItem.innerHTML =
-                                    "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data.UpdateCommits[j].Commit + "\" target=\"_blank\">"
-                                    + Data.UpdateCommits[j].ShortCommit + "</a>) " +
-                                    Data.UpdateCommits[j].Description;
+                                    "(<a href=\"https://github.com/langningchen/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
+                                    "#" + Data.UpdateContents[j].PR + "</a>) " +
+                                    Data.UpdateContents[j].Description;
                             }
                             let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                             UpdateDataCardLink.className = "card-link";
