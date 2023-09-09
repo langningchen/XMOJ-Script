@@ -1,8 +1,6 @@
 name: SetPRLabel
 on:
   pull_request:
-    types:
-      - opened
 jobs:
   SetPRLabel:
     name: SetPRLabel
