@@ -18,33 +18,5 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Checkout PR
-        run: gh pr checkout ${{ github.event.number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Update version
-        id: update_version
-        run: node ./Update/UpdateVersion.js
       - name: Update to release
-        id: update_to_release
-        run: node ./Update/UpdateToRelease.js
-      - name: Commit git
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git push origin --delete actions/temp || true
-          git checkout -b actions/temp
-          git commit -a -m "Update to release ${{ steps.update_to_release.outputs.version }}"
-          git push -u origin actions/temp
-      - name: Create PR
-        id: create_pr
-        run: |
-          gh pr create --title "Update to release ${{ steps.update_to_release.outputs.version }}" --body "Update to release ${{ steps.update_to_release.outputs.version }}" --base dev --head actions/temp >PRURL.txt
-          echo "PRNumber=$(cat PRURL.txt | cut -d'/' -f7)" >> $GITHUB_OUTPUT
-          rm PRURL.txt
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Merge PR
-        run: gh pr merge ${{ steps.create_pr.outputs.PRNumber }} --merge --auto
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node ./Update/UpdateToRelease.js ${{ secrets.GITHUB_TOKEN }} ${{ github.event.number }}
