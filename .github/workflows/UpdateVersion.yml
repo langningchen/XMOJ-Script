@@ -3,6 +3,9 @@ on:
   pull_request:
     types:
       - opened
+      - reopened
+      - synchronize
+      - edited
     branches:
       - dev
 jobs:
@@ -12,16 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Checkout PR
-        run: gh pr checkout ${{ github.event.number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Update version
         id: update_version
-        run: node ./Update/UpdateVersion.js
-      - name: Commit files
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git commit -a -m "Update version info to ${{ steps.update_version.outputs.version }}"
-          git push
+        run: node ./Update/UpdateVersion.js ${{ secrets.GITHUB_TOKEN }} ${{ github.event.number }} "${{ github.event.pull_request.title }}"

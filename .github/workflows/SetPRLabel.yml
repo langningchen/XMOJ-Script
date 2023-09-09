@@ -1,8 +1,6 @@
 name: SetPRLabel
 on:
   pull_request:
-    types:
-      - opened
 jobs:
   SetPRLabel:
     name: SetPRLabel
@@ -11,5 +9,5 @@ jobs:
       - name: Set PR labels
         uses: actions/labeler@v4
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           dot: true

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.129
+// @version      0.2.140
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -652,13 +652,13 @@ else {
                     UpdateDataCardText.className = "card-text";
                     let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
                     UpdateDataCardList.className = "list-group list-group-flush";
-                    for (let j = 0; j < Data.UpdateCommits.length; j++) {
+                    for (let j = 0; j < Data.UpdateContents.length; j++) {
                         let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                         UpdateDataCardListItem.className = "list-group-item";
                         UpdateDataCardListItem.innerHTML =
-                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data.UpdateCommits[j].Commit + "\" target=\"_blank\">"
-                            + Data.UpdateCommits[j].ShortCommit + "</a>) " +
-                            Data.UpdateCommits[j].Description;
+                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
+                            "#" + Data.UpdateContents[j].PR + "</a>) " +
+                            Data.UpdateContents[j].Description;
                     }
                     let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                     UpdateDataCardLink.className = "card-link";
@@ -1329,6 +1329,16 @@ else {
                 }
 
                 if (UtilityEnabled("RefreshSolution")) {
+                    let StdList;
+                    await new Promise((Resolve) => {
+                        RequestAPI("GetStdList", {}, async (Result) => {
+                            if (Result.Success) {
+                                StdList = Result.Data.StdList;
+                                Resolve();
+                            }
+                        })
+                    });
+
                     let Rows = document.getElementById("result-tab").rows;
                     let Points = Array();
                     for (let i = 1; i <= SolutionIDs.length; i++) {
@@ -1381,6 +1391,26 @@ else {
                                         RefreshResult(SolutionID)
                                     }, 500);
                                     TempHTML += "<img style=\"margin-left: 5px\" height=\"18\" width=\"18\" src=\"image/loader.gif\">";
+                                }
+                                else if (ResponseData[0] == 4 && UtilityEnabled("UploadStd")) {
+                                    let Std = StdList.find((Element) => {
+                                        return Element == Number(CurrentRow.cells[1].innerText);
+                                    });
+                                    if (Std != undefined) {
+                                        TempHTML += "✅";
+                                    }
+                                    else {
+                                        RequestAPI("UploadStd", {
+                                            "ProblemID": Number(CurrentRow.cells[1].innerText),
+                                        }, (Result) => {
+                                            if (Result.Success) {
+                                                CurrentRow.cells[2].innerHTML += "🆗";
+                                            }
+                                            else {
+                                                CurrentRow.cells[2].innerHTML += "⚠️";
+                                            }
+                                        });
+                                    }
                                 }
                                 CurrentRow.cells[2].innerHTML = TempHTML;
                             });
@@ -1737,31 +1767,32 @@ else {
                                         let Solved = (Green == 255);
                                         let ErrorCount = "";
                                         if (Solved) {
-                                            ErrorCount = (Blue == 170 ? "4+" : (Blue - 51) / 32);
+                                            ErrorCount = (Blue == 170 ? 5 : (Blue - 51) / 32);
                                         }
                                         else {
-                                            ErrorCount = (Blue == 22 ? "14+" : (170 - Blue) / 10);
+                                            ErrorCount = (Blue == 22 ? 15 : (170 - Blue) / 10);
                                         }
                                         if (NoData) {
                                             BackgroundColor = "";
                                         }
                                         else if (FirstBlood) {
-                                            BackgroundColor = "rgba(127, 127, 255, 0.5)";
+                                            BackgroundColor = "rgb(127, 127, 255)";
                                         }
                                         else if (Solved) {
-                                            BackgroundColor = "rgba(0, 255, 0, 0.5)";
+                                            BackgroundColor = "rgb(0, 255, 0, " + Math.max(1 / 10 * (10 - ErrorCount), 0.2) + ")";
                                             if (ErrorCount != 0) {
-                                                InnerText += " (" + ErrorCount + ")";
+                                                InnerText += " (" + (ErrorCount == 5 ? "4+" : ErrorCount) + ")";
                                             }
                                         }
                                         else {
-                                            BackgroundColor = "rgba(255, 0, 0, 0.5)";
+                                            BackgroundColor = "rgba(255, 0, 0, " + Math.min(ErrorCount / 10 + 0.2, 1) + ")";
                                             if (ErrorCount != 0) {
-                                                InnerText += " (" + ErrorCount + ")";
+                                                InnerText += " (" + (ErrorCount == 15 ? "14+" : ErrorCount) + ")";
                                             }
                                         }
                                         Temp[i].cells[j].innerHTML = InnerText;
                                         Temp[i].cells[j].style.backgroundColor = BackgroundColor;
+                                        Temp[i].cells[j].style.color = (UtilityEnabled("DarkMode") ? "white" : "black");
                                     }
                                 }
                                 document.querySelector("#rank > tbody").innerHTML = ParsedDocument.querySelector("#rank > tbody").innerHTML;
@@ -1958,12 +1989,7 @@ else {
                                             let Color = Math.min(ProblemData.Attempts.length / 10 + 0.2, 1);
                                             Problem.style.backgroundColor = "rgba(255, 0, 0, " + Color + ")";
                                         }
-                                        if (UtilityEnabled("DarkMode")) {
-                                            Problem.style.color = "white";
-                                        }
-                                        else {
-                                            Problem.style.color = "black";
-                                        }
+                                        Problem.style.color = (UtilityEnabled("DarkMode") ? "white" : "black");
                                     }
                                 }
 
@@ -2292,13 +2318,13 @@ else {
                             UpdateDataCardText.className = "card-text";
                             let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
                             UpdateDataCardList.className = "list-group list-group-flush";
-                            for (let j = 0; j < Data.UpdateCommits.length; j++) {
+                            for (let j = 0; j < Data.UpdateContents.length; j++) {
                                 let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                                 UpdateDataCardListItem.className = "list-group-item";
                                 UpdateDataCardListItem.innerHTML =
-                                    "(<a href=\"https://github.com/langningchen/XMOJ-Script/commit/" + Data.UpdateCommits[j].Commit + "\" target=\"_blank\">"
-                                    + Data.UpdateCommits[j].ShortCommit + "</a>) " +
-                                    Data.UpdateCommits[j].Description;
+                                    "(<a href=\"https://github.com/langningchen/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
+                                    "#" + Data.UpdateContents[j].PR + "</a>) " +
+                                    Data.UpdateContents[j].Description;
                             }
                             let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                             UpdateDataCardLink.className = "card-link";
@@ -2607,7 +2633,7 @@ else {
                     您必须要上传标程以后才能使用“查看标程”功能。点击“上传标程”按钮以后，系统会自动上传标程，请您耐心等待。<br>
                     首次上传标程可能会比较慢，请耐心等待。后续上传标程将会快很多。<br>
                     上传的内容不是您AC的程序，而是您AC的题目对应的用户std的程序。所以您可以放心上传，不会泄露您的代码。<br>
-                    系统每过一周会自动提醒您上传标程，您必须要上传标程，否则将会被禁止使用“查看标程”功能。<br>
+                    系统每过30天会自动提醒您上传标程，您必须要上传标程，否则将会被禁止使用“查看标程”功能。<br>
                 </p>`;
                 UploadStd.addEventListener("click", async () => {
                     UploadStd.disabled = true;
@@ -3165,7 +3191,7 @@ else {
             }
             else {
                 if (localStorage.getItem("UserScript-LastUploadedStdTime") === undefined ||
-                    new Date().getTime() - localStorage.getItem("UserScript-LastUploadedStdTime") > 1000 * 60 * 60 * 24 * 7) {
+                    new Date().getTime() - localStorage.getItem("UserScript-LastUploadedStdTime") > 1000 * 60 * 60 * 24 * 30) {
                     location.href = "http://www.xmoj.tech/userinfo.php?ByUserScript=1";
                 }
                 await new Promise((Resolve) => {
