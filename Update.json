@@ -30,37 +30,13 @@
                 }
             ]
         },
-        "0.2.136": {
-            "UpdateDate": 1694250064615,
-            "Prerelease": false,
-            "UpdateContents": [
-                {
-                    "PR": 322,
-                    "Description": "使用新版更新日志以适应新的仓库架构"
-                },
-                {
-                    "PR": 335,
-                    "Description": "避免重复发布"
-                }
-            ]
-        },
-        "0.2.137": {
+        "0.2.138": {
             "UpdateDate": 1694251061099,
             "Prerelease": true,
             "UpdateContents": [
                 {
                     "PR": 343,
-                    "Description": "Make"
-                }
-            ]
-        },
-        "0.2.138": {
-            "UpdateDate": 1694251102075,
-            "Prerelease": false,
-            "UpdateContents": [
-                {
-                    "PR": 343,
-                    "Description": "Make"
+                    "Description": "让OI和ACM排名颜色统一"
                 }
             ]
         }

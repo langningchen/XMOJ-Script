@@ -18,9 +18,12 @@ var LastJSVersion = JSFileContent.match(/@version\s+(\d+\.\d+\.\d+)/)[1];
 var LastVersion = LastJSVersion.split(".");
 var LastPR = JSONObject.UpdateHistory[LastJSONVersion].UpdateContents[0].PR;
 var LastDescription = JSONObject.UpdateHistory[LastJSONVersion].UpdateContents[0].Description;
+var LastReleaseVersionOnline = execSync("gh release list --exclude-pre-releases --limit 1").toString().trim().split("\t")[2];
 console.log("Last JS version    : " + LastJSVersion);
 console.log("Last JSON version  : " + LastJSONVersion);
 console.log("Last PR            : " + LastPR);
+console.log("Last description   : " + LastDescription);
+console.log("Last release online: " + LastReleaseVersionOnline);
 if (LastJSONVersion.split(".")[2] != LastJSVersion.split(".")[2]) {
     console.error("XMOJ.user.js and Update.json have different patch versions.");
     process.exit(1);
@@ -29,11 +32,10 @@ if (LastJSONVersion.split(".")[2] != LastJSVersion.split(".")[2]) {
 var CurrentVersion = LastVersion[0] + "." + LastVersion[1] + "." + (parseInt(LastVersion[2]) + 1);
 var CurrentPR = Number(PRNumber);
 var CurrentDescription = String(process.argv[4]);
-if (LastPR == CurrentPR) {
+if (LastPR == CurrentPR || JSONObject.UpdateHistory[LastJSONVersion].Prerelease == false && LastReleaseVersionOnline != LastJSONVersion) {
     CurrentVersion = LastJSONVersion;
 }
 
-console.log("Last description   : " + LastDescription);
 console.log("Current version    : " + CurrentVersion);
 console.log("Current PR         : " + CurrentPR);
 console.log("Current description: " + CurrentDescription);
@@ -48,7 +50,10 @@ if (LastPR == CurrentPR) {
     JSONObject.UpdateHistory[CurrentVersion].UpdateContents[0].Description = CurrentDescription;
     CommitMessage = "Update time and description of " + CurrentVersion;
 }
-else if (ChangedFileList.indexOf("XMOJ.user.js") != -1) {
+else if (ChangedFileList.indexOf("XMOJ.user.js") == -1) {
+    console.warn("XMOJ.user.js is not changed, so the version should not be updated.");
+    process.exit(0);
+} else {
     JSONObject.UpdateHistory[CurrentVersion] = {
         "UpdateDate": Date.now(),
         "Prerelease": true,
@@ -60,10 +65,6 @@ else if (ChangedFileList.indexOf("XMOJ.user.js") != -1) {
     writeFileSync(JSFileName, JSFileContent.replace(/@version(\s+)\d+\.\d+\.\d+/, "@version$1" + CurrentVersion), "utf8");
     console.warn("XMOJ.user.js has been updated.");
     CommitMessage = "Update version info to " + CurrentVersion;
-}
-else {
-    console.warn("XMOJ.user.js is not changed, so the version should not be updated.");
-    process.exit(0);
 }
 console.log("Commit message     : " + CommitMessage);
 

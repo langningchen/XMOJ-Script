@@ -17,4 +17,4 @@ jobs:
         uses: actions/checkout@v2
       - name: Update version
         id: update_version
-        run: node ./Update/UpdateVersion.js ${{ secrets.GITHUB_TOKEN }} ${{ github.event.number }} ${{ github.event.pull_request.title }}
+        run: node ./Update/UpdateVersion.js ${{ secrets.GITHUB_TOKEN }} ${{ github.event.number }} "${{ github.event.pull_request.title }}"
