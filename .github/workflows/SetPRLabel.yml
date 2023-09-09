@@ -11,5 +11,5 @@ jobs:
       - name: Set PR labels
         uses: actions/labeler@v4
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          repo-token: "${{ secrets.GHP_TOKEN }}"
           dot: true
