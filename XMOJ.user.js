@@ -1737,31 +1737,32 @@ else {
                                         let Solved = (Green == 255);
                                         let ErrorCount = "";
                                         if (Solved) {
-                                            ErrorCount = (Blue == 170 ? "4+" : (Blue - 51) / 32);
+                                            ErrorCount = (Blue == 170 ? 5 : (Blue - 51) / 32);
                                         }
                                         else {
-                                            ErrorCount = (Blue == 22 ? "14+" : (170 - Blue) / 10);
+                                            ErrorCount = (Blue == 22 ? 15 : (170 - Blue) / 10);
                                         }
                                         if (NoData) {
                                             BackgroundColor = "";
                                         }
                                         else if (FirstBlood) {
-                                            BackgroundColor = "rgba(127, 127, 255, 0.5)";
+                                            BackgroundColor = "rgb(127, 127, 255)";
                                         }
                                         else if (Solved) {
-                                            BackgroundColor = "rgba(0, 255, 0, 0.5)";
+                                            BackgroundColor = "rgb(0, 255, 0, " + Math.max(1 / 10 * (10 - ErrorCount), 0.2) + ")";
                                             if (ErrorCount != 0) {
-                                                InnerText += " (" + ErrorCount + ")";
+                                                InnerText += " (" + (ErrorCount == 5 ? "4+" : ErrorCount) + ")";
                                             }
                                         }
                                         else {
-                                            BackgroundColor = "rgba(255, 0, 0, 0.5)";
+                                            BackgroundColor = "rgba(255, 0, 0, " + Math.min(ErrorCount / 10 + 0.2, 1) + ")";
                                             if (ErrorCount != 0) {
-                                                InnerText += " (" + ErrorCount + ")";
+                                                InnerText += " (" + (ErrorCount == 15 ? "14+" : ErrorCount) + ")";
                                             }
                                         }
                                         Temp[i].cells[j].innerHTML = InnerText;
                                         Temp[i].cells[j].style.backgroundColor = BackgroundColor;
+                                        Temp[i].cells[j].style.color = (UtilityEnabled("DarkMode") ? "white" : "black");
                                     }
                                 }
                                 document.querySelector("#rank > tbody").innerHTML = ParsedDocument.querySelector("#rank > tbody").innerHTML;
@@ -1958,12 +1959,7 @@ else {
                                             let Color = Math.min(ProblemData.Attempts.length / 10 + 0.2, 1);
                                             Problem.style.backgroundColor = "rgba(255, 0, 0, " + Color + ")";
                                         }
-                                        if (UtilityEnabled("DarkMode")) {
-                                            Problem.style.color = "white";
-                                        }
-                                        else {
-                                            Problem.style.color = "black";
-                                        }
+                                        Problem.style.color = (UtilityEnabled("DarkMode") ? "white" : "black");
                                     }
                                 }
 
