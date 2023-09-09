@@ -119,6 +119,16 @@
                     "Description": "先发一个0.3鼓舞鼓舞士气"
                 }
             ]
+        },
+        "0.3.145": {
+            "UpdateDate": 1694267629564,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 368,
+                    "Description": "test"
+                }
+            ]
         }
     }
 }
