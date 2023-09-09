@@ -19,11 +19,6 @@
                     "Description": "使用新版更新日志以适应新的仓库架构"
                 }
             ]
-        },
-        "0.2.134": {
-            "UpdateDate": 1694239251793,
-            "Prerelease": false,
-            "UpdateCommits": []
         }
     }
 }
