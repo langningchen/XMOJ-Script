@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.140
+// @version      0.2.142
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -326,7 +326,6 @@ else {
             document.body.innerHTML = String(document.body.innerHTML).replaceAll("下海", "上海");
             document.body.innerHTML = String(document.body.innerHTML).replaceAll("海上", "上海");
             document.body.innerHTML = String(document.body.innerHTML).replaceAll("小红", "低老师");
-            document.body.innerHTML = String(document.body.innerHTML).replaceAll("xiaoming", "gaolaoshi");
             document.body.innerHTML = String(document.body.innerHTML).replaceAll("高老师们", "我们");
             document.body.innerHTML = String(document.body.innerHTML).replaceAll("自高老师", "自我");
             document.title = String(document.title).replaceAll("小明", "高老师");
@@ -336,7 +335,7 @@ else {
             let Temp = document.querySelectorAll("link");
             for (var i = 0; i < Temp.length; i++) {
                 if (Temp[i].href.indexOf("bootstrap.min.css") != -1) {
-                    Temp[i].href = "https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0-alpha3/css/bootstrap.min.css";
+                    Temp[i].remove();
                 }
                 else if (Temp[i].href.indexOf("white.css") != -1) {
                     Temp[i].remove();
@@ -370,8 +369,16 @@ else {
             let CodeMirrorMergeStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrorMergeStyleElement);
             CodeMirrorMergeStyleElement.rel = "stylesheet";
             CodeMirrorMergeStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.min.css";
+            let BootstrapStyleElement = document.createElement("link"); document.head.appendChild(BootstrapStyleElement);
+            BootstrapStyleElement.rel = "stylesheet";
+            BootstrapStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0-alpha3/css/bootstrap.min.css";
             // let SentryScriptElement = document.createElement("script"); document.head.appendChild(SentryScriptElement);
             // SentryScriptElement.src = "https://js.sentry-cdn.com/a4c8d48a19954926bf0d8e3d6d6c3024.min.js";
+            await new Promise((Resolve) => {
+                PopperScriptElement.onload = () => {
+                    Resolve();
+                };
+            });
             Temp = document.querySelectorAll("script");
             for (var i = 0; i < Temp.length; i++) {
                 if (Temp[i].src.indexOf("bootstrap.min.js") != -1) {
@@ -379,6 +386,11 @@ else {
                     let BootstrapScriptElement = document.createElement("script"); document.head.appendChild(BootstrapScriptElement);
                     BootstrapScriptElement.type = "module";
                     BootstrapScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0-alpha3/js/bootstrap.min.js";
+                    await new Promise((Resolve) => {
+                        BootstrapScriptElement.onload = () => {
+                            Resolve();
+                        };
+                    });
                 }
             }
             document.querySelector("nav").className = "navbar navbar-expand-lg bg-body-tertiary";
@@ -880,7 +892,7 @@ else {
                             { "ID": "Translate", "Type": "F", "Name": "统一使用中文，翻译了部分英文*" },
                             { "ID": "ReplaceLinks", "Type": "F", "Name": "将网站中所有以方括号包装的链接替换为按钮" },
                             { "ID": "RemoveUseless", "Type": "D", "Name": "删去无法使用的功能*" },
-                            { "ID": "ReplaceXM", "Type": "F", "Name": "将网站中所有“小明”和“我”关键字替换为“高老师”，所有“小红”替换为“低老师”，所有“下海”、“海上”替换为“上海”，所有“xiaoming”替换为“gaolaoshi”" }
+                            { "ID": "ReplaceXM", "Type": "F", "Name": "将网站中所有“小明”和“我”关键字替换为“高老师”，所有“小红”替换为“低老师”，所有“下海”、“海上”替换为“上海”" }
                         ]
                     },
                     { "ID": "AutoLogin", "Type": "A", "Name": "在需要登录的界面自动跳转到登陆界面" },

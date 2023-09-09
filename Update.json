@@ -51,7 +51,27 @@
             ]
         },
         "0.2.140": {
-            "UpdateDate": 1694260523435,
+            "UpdateDate": 1694261586218,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 351,
+                    "Description": "修复无法显示提交代码框"
+                }
+            ]
+        },
+        "0.2.141": {
+            "UpdateDate": 1694262612607,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 356,
+                    "Description": "取消替换xiaoming为gaolaoshi"
+                }
+            ]
+        },
+        "0.2.142": {
+            "UpdateDate": 1694262807311,
             "Prerelease": false,
             "UpdateContents": [
                 {
@@ -69,6 +89,14 @@
                 {
                     "PR": 349,
                     "Description": "AC题目时自动上传标程"
+                },
+                {
+                    "PR": 351,
+                    "Description": "修复无法显示提交代码框"
+                },
+                {
+                    "PR": 356,
+                    "Description": "取消替换xiaoming为gaolaoshi"
                 }
             ]
         }
