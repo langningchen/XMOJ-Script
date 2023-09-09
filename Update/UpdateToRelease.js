@@ -60,7 +60,7 @@ execSync("git commit -a -m \"Update to release " + CurrentVersion + "\"");
 execSync("git push -u origin actions/temp");
 console.warn("Pushed to actions/temp.");
 
-var PRNumber = execSync("gh pr create --title \"Update to release " + CurrentVersion + "\" --body \"Update to release " + CurrentVersion + "\" --base dev --head actions/temp").toString().split("/")[6];
+var PRNumber = execSync("gh pr create --title \"Update to release " + CurrentVersion + "\" --body \"Update to release " + CurrentVersion + "\" --base dev --head actions/temp").toString().split("/")[6].trim();
 console.warn("PR #" + PRNumber + " has been created.");
 
 execSync("gh pr merge " + PRNumber + " --merge --auto");
