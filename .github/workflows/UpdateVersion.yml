@@ -2,7 +2,7 @@ name: UpdateVersion
 on:
   pull_request:
     types:
-      - opened
+      - labeled
     branches:
       - dev
 jobs:
@@ -17,9 +17,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Update version
+        if: ${{github.event.label.name == 'user-script'}}
         id: update_version
         run: node ./Update/UpdateVersion.js
       - name: Commit files
+        if: ${{github.event.label.name == 'user-script'}}
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
