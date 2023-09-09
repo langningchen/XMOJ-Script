@@ -3,6 +3,7 @@ on:
   pull_request:
     types:
       - opened
+      - reopened
     branches:
       - dev
 jobs:
@@ -16,10 +17,16 @@ jobs:
         run: gh pr checkout ${{ github.event.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get modified files
+        id: getmod
+        run: |
+          echo "modified_user_js=$([[ -n $(git diff --name-only HEAD HEAD~1 | grep XMOJ.user.js) ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
       - name: Update version
+        if: ${{ steps.getmod.outputs.modified_user_js == 'true' }}
         id: update_version
         run: node ./Update/UpdateVersion.js ${{ github.event.pull_request.id }} "${{ github.event.pull_request.title }}"
       - name: Commit files
+        if: ${{ steps.getmod.outputs.modified_user_js == 'true' }}
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
