@@ -10,6 +10,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -45,3 +46,12 @@ jobs:
           accountId: f871a3498aa79883e7f4f0fbe8a465a4
           projectName: xmoj-script-web
           directory: .
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: .
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

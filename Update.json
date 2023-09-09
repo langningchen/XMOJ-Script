@@ -99,6 +99,26 @@
                     "Description": "取消替换xiaoming为gaolaoshi"
                 }
             ]
+        },
+        "0.3.143": {
+            "UpdateDate": 1694263430563,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 360,
+                    "Description": "先发一个0.3鼓舞鼓舞士气"
+                }
+            ]
+        },
+        "0.3.144": {
+            "UpdateDate": 1694263488716,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 360,
+                    "Description": "先发一个0.3鼓舞鼓舞士气"
+                }
+            ]
         }
     }
 }
