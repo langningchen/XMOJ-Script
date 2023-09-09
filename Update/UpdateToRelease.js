@@ -35,7 +35,7 @@ JSONObject.UpdateHistory[CurrentVersion] = {
     "UpdateContents": []
 };
 
-for (var i = Object.keys(JSONObject.UpdateHistory).length - 1; i >= 0; i--) {
+for (var i = Object.keys(JSONObject.UpdateHistory).length - 2; i >= 0; i--) {
     var Version = Object.keys(JSONObject.UpdateHistory)[i];
     if (JSONObject.UpdateHistory[Version].Prerelease == false) {
         break;
