@@ -61,28 +61,12 @@
             ]
         },
         "0.2.141": {
-            "UpdateDate": 1694262439052,
-            "Prerelease": false,
+            "UpdateDate": 1694262612607,
+            "Prerelease": true,
             "UpdateContents": [
                 {
-                    "PR": 322,
-                    "Description": "使用新版更新日志以适应新的仓库架构"
-                },
-                {
-                    "PR": 335,
-                    "Description": "避免重复发布"
-                },
-                {
-                    "PR": 343,
-                    "Description": "让OI和ACM排名颜色统一"
-                },
-                {
-                    "PR": 349,
-                    "Description": "AC题目时自动上传标程"
-                },
-                {
-                    "PR": 351,
-                    "Description": "修复无法显示提交代码框"
+                    "PR": 356,
+                    "Description": "Langningchen/issue342"
                 }
             ]
         }
