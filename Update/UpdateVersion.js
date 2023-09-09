@@ -1,6 +1,12 @@
 import { readFileSync, writeFileSync } from "fs";
 import { execSync } from "child_process";
 
+var GithubToken = process.argv[2];
+var PRNumber = process.argv[3];
+process.env.GITHUB_TOKEN = GithubToken;
+execSync("gh pr checkout " + PRNumber);
+console.info("PR #" + PRNumber + " has been checked out.");
+
 const JSONFileName = "./Update.json";
 const JSFileName = "./XMOJ.user.js";
 var JSONFileContent = readFileSync(JSONFileName, "utf8");
@@ -21,8 +27,8 @@ if (LastJSONVersion.split(".")[2] != LastJSVersion.split(".")[2]) {
 }
 
 var CurrentVersion = LastVersion[0] + "." + LastVersion[1] + "." + (parseInt(LastVersion[2]) + 1);
-var CurrentPR = Number(process.argv[2]);
-var CurrentDescription = String(process.argv[3]);
+var CurrentPR = Number(PRNumber);
+var CurrentDescription = String(process.argv[4]);
 if (LastPR == CurrentPR) {
     CurrentVersion = LastJSONVersion;
 }
@@ -59,7 +65,6 @@ writeFileSync(JSONFileName, JSON.stringify(JSONObject, null, 4), "utf8");
 console.warn("Update.json has been updated.");
 
 if (LastPR != CurrentPR) {
-    console.log("Pushing to GitHub...");
     execSync("git config --global user.email \"github-actions[bot]@users.noreply.github.com\"");
     execSync("git config --global user.name \"github-actions[bot]\"");
     execSync("git commit -a -m \"" + CommitMessage + "\"");

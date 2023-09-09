@@ -15,10 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Checkout PR
-        run: gh pr checkout ${{ github.event.number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Update version
         id: update_version
-        run: node ./Update/UpdateVersion.js ${{ github.event.number }} ${{ github.event.pull_request.title }}
+        run: node ./Update/UpdateVersion.js ${{ secrets.GITHUB_TOKEN }} ${{ github.event.number }} ${{ github.event.pull_request.title }}

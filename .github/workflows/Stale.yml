@@ -1,7 +1,7 @@
 name: Mark stale issues and pull requests
 on:
   schedule:
-  - cron: '21 12 * * *'
+  - cron: 0 0 * * *
 jobs:
   stale:
     runs-on: ubuntu-latest
