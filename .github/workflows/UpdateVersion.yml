@@ -24,7 +24,7 @@ jobs:
       - name: Update version
         if: ${{ steps.getmod.outputs.modified_user_js == 'true' }}
         id: update_version
-        run: node ./Update/UpdateVersion.js ${{ github.event.pull_request.id }} "${{ github.event.pull_request.title }}"
+        run: node ./Update/UpdateVersion.js ${{ github.event.number }} ${{ github.event.pull_request.title }}
       - name: Commit files
         if: ${{ steps.getmod.outputs.modified_user_js == 'true' }}
         run: |
