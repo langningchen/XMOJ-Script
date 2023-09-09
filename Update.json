@@ -9,6 +9,16 @@
                     "Description": "对不起，先前的更新历史已被删除"
                 }
             ]
+        },
+        "0.2.131": {
+            "UpdateDate": 1694237533765,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 1508703027,
+                    "Description": "使用新版更新日志以适应新的仓库架构"
+                }
+            ]
         }
     }
 }
