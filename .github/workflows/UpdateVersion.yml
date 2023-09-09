@@ -1,6 +1,8 @@
 name: UpdateVersion
 on:
   pull_request:
+    types:
+      - opened
     branches:
       - dev
 jobs:
