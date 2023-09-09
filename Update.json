@@ -19,6 +19,11 @@
                     "Description": "使用新版更新日志以适应新的仓库架构"
                 }
             ]
+        },
+        "0.2.135": {
+            "UpdateDate": 1694247986806,
+            "Prerelease": false,
+            "UpdateContents": []
         }
     }
 }
