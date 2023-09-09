@@ -49,6 +49,7 @@ for (var i = Object.keys(JSONObject.UpdateHistory).length - 2; i >= 0; i--) {
         console.log("Add update content #" + JSONObject.UpdateHistory[Version].UpdateContents[j].PR + ": " + JSONObject.UpdateHistory[Version].UpdateContents[j].Description);
     }
 }
+JSONObject.UpdateHistory[CurrentVersion].UpdateContents.reverse();
 writeFileSync(JSONFileName, JSON.stringify(JSONObject, null, 4), "utf8");
 console.warn("Update.json has been updated.");
 
