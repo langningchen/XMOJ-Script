@@ -21,12 +21,13 @@ jobs:
         run: node ./Update/GetVersion.js
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
           release_name: ${{ steps.get_version.outputs.version }}
+          generate_release_notes: true
           draft: false
           prerelease: false
           body: ${{ steps.get_version.outputs.version }}
