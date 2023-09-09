@@ -33,6 +33,7 @@
 const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
 const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
 
+
 let RenderMathJax = () => {
     var ScriptElement = document.createElement("script");
     ScriptElement.id = "MathJax-script";
