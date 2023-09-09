@@ -38,7 +38,7 @@ console.log("Current version    : " + CurrentVersion);
 console.log("Current PR         : " + CurrentPR);
 console.log("Current description: " + CurrentDescription);
 
-var ChangedFileList = execSync("gh pr diff " + CurrentPR + " --name-only").toString().split("\n");
+var ChangedFileList = execSync("gh pr diff " + CurrentPR + " --name-only").toString().trim().split("\n");
 console.log("Changed files      : " + ChangedFileList.join(", "));
 
 let CommitMessage = "";
