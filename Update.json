@@ -49,6 +49,28 @@
                     "Description": "AC题目时自动上传标程"
                 }
             ]
+        },
+        "0.2.140": {
+            "UpdateDate": 1694260523435,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 322,
+                    "Description": "使用新版更新日志以适应新的仓库架构"
+                },
+                {
+                    "PR": 335,
+                    "Description": "避免重复发布"
+                },
+                {
+                    "PR": 343,
+                    "Description": "让OI和ACM排名颜色统一"
+                },
+                {
+                    "PR": 349,
+                    "Description": "AC题目时自动上传标程"
+                }
+            ]
         }
     }
 }
