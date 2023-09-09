@@ -69,6 +69,36 @@
                     "Description": "取消替换xiaoming为gaolaoshi"
                 }
             ]
+        },
+        "0.2.142": {
+            "UpdateDate": 1694262807311,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 322,
+                    "Description": "使用新版更新日志以适应新的仓库架构"
+                },
+                {
+                    "PR": 335,
+                    "Description": "避免重复发布"
+                },
+                {
+                    "PR": 343,
+                    "Description": "让OI和ACM排名颜色统一"
+                },
+                {
+                    "PR": 349,
+                    "Description": "AC题目时自动上传标程"
+                },
+                {
+                    "PR": 351,
+                    "Description": "修复无法显示提交代码框"
+                },
+                {
+                    "PR": 356,
+                    "Description": "取消替换xiaoming为gaolaoshi"
+                }
+            ]
         }
     }
 }
