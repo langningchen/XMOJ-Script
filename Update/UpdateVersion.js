@@ -64,10 +64,8 @@ writeFileSync(JSONFileName, JSON.stringify(JSONObject, null, 4), "utf8");
 
 console.warn("Update.json has been updated.");
 
-if (LastPR != CurrentPR) {
-    execSync("git config --global user.email \"github-actions[bot]@users.noreply.github.com\"");
-    execSync("git config --global user.name \"github-actions[bot]\"");
-    execSync("git commit -a -m \"" + CommitMessage + "\"");
-    execSync("git push");
-    console.log("Pushed to GitHub.");
-}
+execSync("git config --global user.email \"github-actions[bot]@users.noreply.github.com\"");
+execSync("git config --global user.name \"github-actions[bot]\"");
+execSync("git commit -a -m \"" + CommitMessage + "\"");
+execSync("git push");
+console.log("Pushed to GitHub.");
