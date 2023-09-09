@@ -53,6 +53,16 @@
                     "Description": "Make"
                 }
             ]
+        },
+        "0.2.138": {
+            "UpdateDate": 1694251102075,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 343,
+                    "Description": "Make"
+                }
+            ]
         }
     }
 }
