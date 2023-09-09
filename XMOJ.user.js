@@ -1342,6 +1342,16 @@ else {
                 }
 
                 if (UtilityEnabled("RefreshSolution")) {
+                    let StdList;
+                    await new Promise((Resolve) => {
+                        RequestAPI("GetStdList", {}, async (Result) => {
+                            if (Result.Success) {
+                                StdList = Result.Data.StdList;
+                                Resolve();
+                            }
+                        })
+                    });
+
                     let Rows = document.getElementById("result-tab").rows;
                     let Points = Array();
                     for (let i = 1; i <= SolutionIDs.length; i++) {
@@ -1394,6 +1404,26 @@ else {
                                         RefreshResult(SolutionID)
                                     }, 500);
                                     TempHTML += "<img style=\"margin-left: 5px\" height=\"18\" width=\"18\" src=\"image/loader.gif\">";
+                                }
+                                else if (ResponseData[0] == 4 && UtilityEnabled("UploadStd")) {
+                                    let Std = StdList.find((Element) => {
+                                        return Element == Number(CurrentRow.cells[1].innerText);
+                                    });
+                                    if (Std != undefined) {
+                                        TempHTML += "✅";
+                                    }
+                                    else {
+                                        RequestAPI("UploadStd", {
+                                            "ProblemID": Number(CurrentRow.cells[1].innerText),
+                                        }, (Result) => {
+                                            if (Result.Success) {
+                                                CurrentRow.cells[2].innerHTML += "🆗";
+                                            }
+                                            else {
+                                                CurrentRow.cells[2].innerHTML += "⚠️";
+                                            }
+                                        });
+                                    }
                                 }
                                 CurrentRow.cells[2].innerHTML = TempHTML;
                             });
@@ -2616,7 +2646,7 @@ else {
                     您必须要上传标程以后才能使用“查看标程”功能。点击“上传标程”按钮以后，系统会自动上传标程，请您耐心等待。<br>
                     首次上传标程可能会比较慢，请耐心等待。后续上传标程将会快很多。<br>
                     上传的内容不是您AC的程序，而是您AC的题目对应的用户std的程序。所以您可以放心上传，不会泄露您的代码。<br>
-                    系统每过一周会自动提醒您上传标程，您必须要上传标程，否则将会被禁止使用“查看标程”功能。<br>
+                    系统每过30天会自动提醒您上传标程，您必须要上传标程，否则将会被禁止使用“查看标程”功能。<br>
                 </p>`;
                 UploadStd.addEventListener("click", async () => {
                     UploadStd.disabled = true;
@@ -3174,7 +3204,7 @@ else {
             }
             else {
                 if (localStorage.getItem("UserScript-LastUploadedStdTime") === undefined ||
-                    new Date().getTime() - localStorage.getItem("UserScript-LastUploadedStdTime") > 1000 * 60 * 60 * 24 * 7) {
+                    new Date().getTime() - localStorage.getItem("UserScript-LastUploadedStdTime") > 1000 * 60 * 60 * 24 * 30) {
                     location.href = "http://www.xmoj.tech/userinfo.php?ByUserScript=1";
                 }
                 await new Promise((Resolve) => {
