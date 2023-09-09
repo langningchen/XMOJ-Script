@@ -2,7 +2,7 @@ name: UpdateVersion
 on:
   pull_request:
     types:
-      - labeled
+      - opened
     branches:
       - dev
 jobs:
@@ -10,6 +10,11 @@ jobs:
     name: UpdateVersion
     runs-on: ubuntu-latest
     steps:
+      - name: Set PR labels
+        uses: actions/labeler@v4
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          dot: true
       - name: Checkout
         uses: actions/checkout@v2
       - name: Checkout PR
