@@ -336,7 +336,7 @@ else {
             let Temp = document.querySelectorAll("link");
             for (var i = 0; i < Temp.length; i++) {
                 if (Temp[i].href.indexOf("bootstrap.min.css") != -1) {
-                    Temp[i].href = "https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0-alpha3/css/bootstrap.min.css";
+                    Temp[i].remove();
                 }
                 else if (Temp[i].href.indexOf("white.css") != -1) {
                     Temp[i].remove();
@@ -370,8 +370,16 @@ else {
             let CodeMirrorMergeStyleElement = document.createElement("link"); document.head.appendChild(CodeMirrorMergeStyleElement);
             CodeMirrorMergeStyleElement.rel = "stylesheet";
             CodeMirrorMergeStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.min.css";
+            let BootstrapStyleElement = document.createElement("link"); document.head.appendChild(BootstrapStyleElement);
+            BootstrapStyleElement.rel = "stylesheet";
+            BootstrapStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0-alpha3/css/bootstrap.min.css";
             // let SentryScriptElement = document.createElement("script"); document.head.appendChild(SentryScriptElement);
             // SentryScriptElement.src = "https://js.sentry-cdn.com/a4c8d48a19954926bf0d8e3d6d6c3024.min.js";
+            await new Promise((Resolve) => {
+                PopperScriptElement.onload = () => {
+                    Resolve();
+                };
+            });
             Temp = document.querySelectorAll("script");
             for (var i = 0; i < Temp.length; i++) {
                 if (Temp[i].src.indexOf("bootstrap.min.js") != -1) {
@@ -379,6 +387,11 @@ else {
                     let BootstrapScriptElement = document.createElement("script"); document.head.appendChild(BootstrapScriptElement);
                     BootstrapScriptElement.type = "module";
                     BootstrapScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0-alpha3/js/bootstrap.min.js";
+                    await new Promise((Resolve) => {
+                        BootstrapScriptElement.onload = () => {
+                            Resolve();
+                        };
+                    });
                 }
             }
             document.querySelector("nav").className = "navbar navbar-expand-lg bg-body-tertiary";
