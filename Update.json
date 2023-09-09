@@ -41,7 +41,27 @@
             ]
         },
         "0.2.139": {
-            "UpdateDate": 1694251949026,
+            "UpdateDate": 1694260479207,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 349,
+                    "Description": "AC题目时自动上传标程"
+                }
+            ]
+        },
+        "0.2.140": {
+            "UpdateDate": 1694261586218,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 351,
+                    "Description": "修复无法显示提交代码框"
+                }
+            ]
+        },
+        "0.2.141": {
+            "UpdateDate": 1694262439052,
             "Prerelease": false,
             "UpdateContents": [
                 {
@@ -55,6 +75,14 @@
                 {
                     "PR": 343,
                     "Description": "让OI和ACM排名颜色统一"
+                },
+                {
+                    "PR": 349,
+                    "Description": "AC题目时自动上传标程"
+                },
+                {
+                    "PR": 351,
+                    "Description": "修复无法显示提交代码框"
                 }
             ]
         }

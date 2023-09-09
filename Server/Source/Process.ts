@@ -524,7 +524,7 @@ export class Process {
             if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("std_answer", {
                 problem_id: Data["ProblemID"]
             }))["TableSize"] !== 0) {
-                return new Result(false, "此题已经有人上传标程");
+                return new Result(true, "此题已经有人上传标程");
             }
             ThrowErrorIfFailed(await this.XMOJDatabase.Insert("std_answer", {
                 problem_id: Data["ProblemID"],
