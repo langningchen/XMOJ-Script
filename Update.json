@@ -129,6 +129,16 @@
                     "Description": "test"
                 }
             ]
+        },
+        "0.3.146": {
+            "UpdateDate": 1694316085405,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 383,
+                    "Description": "fix #375"
+                }
+            ]
         }
     }
 }
