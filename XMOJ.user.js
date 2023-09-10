@@ -427,7 +427,6 @@ else {
                 blockquote {
                     border-left: 5px solid var(--bs-secondary-bg);
                     padding: 0.5em 1em;
-                    margin: 1em 0;
                 }
                 .status_y:hover {
                     box-shadow: #52c41a 1px 1px 10px 0px !important;
@@ -3813,7 +3812,11 @@ else {
                                         CardBodyRowSpan3Button1Element.className = "btn btn-sm btn-info";
                                         CardBodyRowSpan3Button1Element.innerText = "回复";
                                         CardBodyRowSpan3Button1Element.addEventListener("click", () => {
-                                            ContentElement.value += `@${Replies[i].UserID} `;
+                                            let Content = Replies[i].Content;
+                                            Content = Content.split("\n").map((Line) => {
+                                                return "> " + Line;
+                                            }).join("\n");
+                                            ContentElement.value += Content + `\n\n@${Replies[i].UserID} `;
                                             ContentElement.focus();
                                         });
                                         CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button1Element);
