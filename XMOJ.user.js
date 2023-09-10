@@ -1323,9 +1323,6 @@ else {
                         Temp[i].childNodes[4].childNodes[0].innerText = TimeToStringTime(Temp[i].childNodes[4].childNodes[0].innerText);
                         Temp[i].childNodes[5].innerText = Temp[i].childNodes[5].childNodes[0].innerText;
                         Temp[i].childNodes[6].innerText = SizeToStringSize(Temp[i].childNodes[6].innerText.substring(0, Temp[i].childNodes[6].innerText.length - 1));
-                        if (Temp[i].childNodes[8].innerText == "LOCAL") {
-                            location.reload();
-                        }
                         Temp[i].childNodes[9].innerText = (Temp[i].childNodes[9].innerText == "" ? "否" : "是");
                     }
                     if (SearchParams.get("cid") == null) {
