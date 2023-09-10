@@ -11,7 +11,7 @@ body:
     options:
     - label: 我已确认了XMOJ增强脚本已为最新版，且最新版未修复这个 Bug 。
       required: true
-    - label: 我已在 [Issues 页面](https://github.com/langningchen/XMOJ-Script/Issues) 中搜索，确认了这一 Bug 未被提交过。
+    - label: 我已在 [Issues 页面](https://github.com/langningchen/XMOJ-Script/issues) 中搜索，确认了这一 Bug 未被提交过。
       required: true
 - type: textarea
   attributes:
