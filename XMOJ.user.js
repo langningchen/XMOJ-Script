@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.147
+// @version      0.3.148
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -12,6 +12,7 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/mode/clike/clike.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.js
 // @require      https://cdn.bootcdn.net/ajax/libs/diff_match_patch/20121119/diff_match_patch_uncompressed.js
+// @require      https://cdn.bootcdn.net/ajax/libs/dompurify/3.0.2/purify.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/core.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/md5.min.js
@@ -422,6 +423,10 @@ else {
                 nav {
                     border-bottom-left-radius: 5px;
                     border-bottom-right-radius: 5px;
+                }
+                blockquote {
+                    border-left: 5px solid var(--bs-secondary-bg);
+                    padding: 0.5em 1em;
                 }
                 .status_y:hover {
                     box-shadow: #52c41a 1px 1px 10px 0px !important;
@@ -3408,7 +3413,7 @@ else {
                                 InnerHTMLData += `<td>`;
                                 InnerHTMLData += await GetUsernameHTML(Data[i].FromUser);
                                 InnerHTMLData += `</td>`;
-                                InnerHTMLData += `<td>${Data[i].Content}</td>`;
+                                InnerHTMLData += `<td>${DOMPurify.sanitize(Data[i].Content)}</td>`;
                                 InnerHTMLData += `<td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
                                 InnerHTMLData += `<td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
                                 Row.innerHTML = InnerHTMLData;
@@ -3616,7 +3621,7 @@ else {
                         }
                     });
                     ContentElement.addEventListener("input", () => {
-                        PreviewTab.innerHTML = marked.parse(ContentElement.value);
+                        PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentElement.value));
                         RenderMathJax();
                     });
                     TitleElement.addEventListener("input", () => {
@@ -3730,7 +3735,7 @@ else {
                             }
                         });
                         ContentElement.addEventListener("input", () => {
-                            PreviewTab.innerHTML = marked.parse(ContentElement.value);
+                            PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentElement.value));
                             RenderMathJax();
                         });
                         let RefreshReply = (Silent = true) => {
@@ -3807,7 +3812,11 @@ else {
                                         CardBodyRowSpan3Button1Element.className = "btn btn-sm btn-info";
                                         CardBodyRowSpan3Button1Element.innerText = "回复";
                                         CardBodyRowSpan3Button1Element.addEventListener("click", () => {
-                                            ContentElement.value += `@${Replies[i].UserID} `;
+                                            let Content = Replies[i].Content;
+                                            Content = Content.split("\n").map((Line) => {
+                                                return "> " + Line;
+                                            }).join("\n");
+                                            ContentElement.value += Content + `\n\n@${Replies[i].UserID} `;
                                             ContentElement.focus();
                                         });
                                         CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button1Element);
@@ -3901,7 +3910,7 @@ else {
                                         let CardBodyHRElement = document.createElement("hr");
                                         CardBodyElement.appendChild(CardBodyHRElement);
                                         let CardBodyDisplayElement = document.createElement("div");
-                                        CardBodyDisplayElement.innerHTML = marked.parse(Replies[i].Content);
+                                        CardBodyDisplayElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content));
                                         CardBodyElement.appendChild(CardBodyDisplayElement);
                                         let CardBodyEditElement = document.createElement("div");
                                         CardBodyEditElement.style.display = "none";
@@ -3913,9 +3922,6 @@ else {
                                         if (CardBodyEditTextareaElement.value.indexOf("<br>") != -1) {
                                             CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.substring(0, CardBodyEditTextareaElement.value.indexOf("<br>"));
                                         }
-                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replace(/&lt;/g, "<");
-                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replace(/&gt;/g, ">");
-                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replace(/&amp;/g, "&");
                                         CardBodyEditTextareaElement.addEventListener("keydown", (Event) => {
                                             if (Event.ctrlKey && Event.keyCode == 13) {
                                                 CardBodyRowSpan3Button4Element.click();
@@ -3926,16 +3932,6 @@ else {
                                         CardElement.appendChild(CardBodyElement);
                                         PostReplies.appendChild(CardElement);
                                     }
-                                    let InlineCodeElements = document.querySelectorAll("#PostReplies > div > div > div:nth-child(3) > p > code");
-                                    for (let i = 0; i < InlineCodeElements.length; i++) {
-                                        let Code = InlineCodeElements[i].innerText;
-                                        Code = Code.replaceAll("&lt;", "<");
-                                        Code = Code.replaceAll("&gt;", ">");
-                                        Code = Code.replaceAll("&amp;", "&");
-                                        Code = Code.replaceAll("&quot;", "\"");
-                                        Code = Code.replaceAll("&apos;", "'");
-                                        InlineCodeElements[i].innerText = Code.trim();
-                                    }
                                     let CodeElements = document.querySelectorAll("#PostReplies > div > div > div:nth-child(3) > pre > code");
                                     for (let i = 0; i < CodeElements.length; i++) {
                                         let ModeName = "text/plain";
@@ -3945,15 +3941,8 @@ else {
                                         else if (CodeElements[i].className == "language-cpp") {
                                             ModeName = "text/x-c++src";
                                         }
-                                        let Code = CodeElements[i].innerText;
-                                        Code = Code.replaceAll("&lt;", "<");
-                                        Code = Code.replaceAll("&gt;", ">");
-                                        Code = Code.replaceAll("&amp;", "&");
-                                        Code = Code.replaceAll("&quot;", "\"");
-                                        Code = Code.replaceAll("&apos;", "'");
-                                        Code = Code.trim();
                                         CodeMirror(CodeElements[i].parentElement, {
-                                            value: Code,
+                                            value: CodeElements[i].innerText,
                                             mode: ModeName,
                                             theme: (UtilityEnabled("DarkMode") ? "darcula" : "default"),
                                             lineNumbers: true,

@@ -64,13 +64,13 @@ export class Process {
             let PostID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_post", {
                 user_id: this.SecurityChecker.GetUsername(),
                 problem_id: Data["ProblemID"],
-                title: this.SecurityChecker.HTMLEscape(Data["Title"]),
+                title: Data["Title"],
                 post_time: new Date().getTime()
             }))["InsertID"];
             let ReplyID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_reply", {
                 user_id: this.SecurityChecker.GetUsername(),
                 post_id: PostID,
-                content: this.SecurityChecker.HTMLEscape(Data["Content"]),
+                content: Data["Content"],
                 reply_time: new Date().getTime()
             }))["InsertID"];
             return new Result(true, "创建讨论成功", {
@@ -91,7 +91,6 @@ export class Process {
                 return new Result(false, "未找到讨论");
             }
 
-            Data["Content"] = this.SecurityChecker.HTMLEscape(Data["Content"]);
             Data["Content"] = Data["Content"].trim();
             if (Data["Content"] === "") {
                 return new Result(false, "内容不能为空");
@@ -237,7 +236,6 @@ export class Process {
             if (Post.toString() == "") {
                 return new Result(false, "未找到讨论");
             }
-            Data["Content"] = this.SecurityChecker.HTMLEscape(Data["Content"]);
             Data["Content"] = Data["Content"].trim();
             if (Data["Content"] === "") {
                 return new Result(false, "内容不能为空");
@@ -452,7 +450,7 @@ export class Process {
             let MessageID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("short_message", {
                 message_from: this.SecurityChecker.GetUsername(),
                 message_to: Data["ToUser"],
-                content: this.SecurityChecker.HTMLEscape(Data["Content"]),
+                content: Data["Content"],
                 send_time: new Date().getTime()
             }))["InsertID"];
             await this.AddMailMention(this.SecurityChecker.GetUsername(), Data["ToUser"]);

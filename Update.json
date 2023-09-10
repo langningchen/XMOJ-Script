@@ -149,6 +149,16 @@
                     "Description": "增加XMOJ的IP地址"
                 }
             ]
+        },
+        "0.3.148": {
+            "UpdateDate": 1694334888627,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 391,
+                    "Description": "增加回复时引用并且支持内嵌标签"
+                }
+            ]
         }
     }
 }
