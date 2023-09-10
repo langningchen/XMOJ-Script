@@ -136,7 +136,7 @@
             "UpdateContents": [
                 {
                     "PR": 383,
-                    "Description": "fix #375"
+                    "Description": "修复OI赛制下状态页无限刷新"
                 }
             ]
         },
@@ -146,7 +146,7 @@
             "UpdateContents": [
                 {
                     "PR": 384,
-                    "Description": "Update XMOJ.user.js"
+                    "Description": "增加XMOJ的IP地址"
                 }
             ]
         }
