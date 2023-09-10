@@ -30,15 +30,7 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: true
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.url }}
-          asset_path: ./XMOJ.user.js
-          asset_name: XMOJ.user.js
-          asset_content_type: text/plain
+          files: XMOJ.user.js
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
