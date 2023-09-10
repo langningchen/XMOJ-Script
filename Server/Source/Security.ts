@@ -90,9 +90,6 @@ export class Security {
                 return new Result(false, "用户检查失败");
             });
     }
-    public HTMLEscape = (HTML: string): string => {
-        return HTML.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
     public GetUsername = (): string => {
         return this.Username;
     }
