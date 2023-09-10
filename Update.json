@@ -139,6 +139,16 @@
                     "Description": "fix #375"
                 }
             ]
+        },
+        "0.3.147": {
+            "UpdateDate": 1694319386629,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 384,
+                    "Description": "Update XMOJ.user.js"
+                }
+            ]
         }
     }
 }
