@@ -159,6 +159,16 @@
                     "Description": "增加回复时引用并且支持内嵌标签"
                 }
             ]
+        },
+        "0.3.149": {
+            "UpdateDate": 1694338104449,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 392,
+                    "Description": "Update XMOJ.user.js"
+                }
+            ]
         }
     }
 }
