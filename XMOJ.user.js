@@ -5,6 +5,7 @@
 // @author       @langningchen
 // @namespace    https://github/langningchen
 // @match        http://*.xmoj.tech/*
+// @match        http://116.62.212.172/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/hmac-sha1.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/codemirror.min.js
