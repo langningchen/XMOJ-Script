@@ -3,8 +3,6 @@ import { Database } from "./Database";
 import { Security } from "./Security";
 import { Output } from "./Output";
 
-const AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
-
 export class Process {
     private XMOJDatabase: Database;
     private RequestData: Request;
@@ -184,11 +182,13 @@ export class Process {
                 UserID: "",
                 ProblemID: 0,
                 Title: "",
-                PostTime: "",
+                PostTime: 0,
                 Reply: new Array<Object>(),
                 PageCount: 0
             };
-            let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", [], { post_id: Data["PostID"] }));
+            let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", [], {
+                post_id: Data["PostID"]
+            }));
             if (Post.toString() == "") {
                 return new Result(false, "未找到讨论");
             }
@@ -225,15 +225,18 @@ export class Process {
                 "ReplyID": "number",
                 "Content": "string"
             }));
-            let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["post_id", "user_id"], { reply_id: Data["ReplyID"] }));
+            let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["post_id", "user_id"], {
+                reply_id: Data["ReplyID"]
+            }));
             if (Reply.toString() == "") {
                 return new Result(false, "未找到回复");
             }
-            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1 && Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+            if (!this.SecurityChecker.IsAdmin() && Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限编辑此回复");
             }
-            let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", ["title"], { post_id: Reply[0]["post_id"] }));
-            if (Post.toString() == "") {
+            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_post", {
+                post_id: Reply[0]["post_id"]
+            }))["TableSize"] === 0) {
                 return new Result(false, "未找到讨论");
             }
             Data["Content"] = Data["Content"].trim();
@@ -269,16 +272,22 @@ export class Process {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
                 "PostID": "number"
             }));
-            let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", ["user_id"], { post_id: Data["PostID"] }));
+            let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", ["user_id"], {
+                post_id: Data["PostID"]
+            }));
             if (Post.toString() == "") {
                 return new Result(false, "未找到讨论");
             }
-            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1 && CheckUserID && Post[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+            if (!this.SecurityChecker.IsAdmin() && CheckUserID && Post[0]["user_id"] != this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限删除此讨论");
             }
-            let Replies = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["reply_id"], { post_id: Data["PostID"] }));
+            let Replies = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["reply_id"], {
+                post_id: Data["PostID"]
+            }));
             for (let i in Replies) {
-                await this.XMOJDatabase.Delete("bbs_reply", { reply_id: Replies[i]["reply_id"] });
+                await this.XMOJDatabase.Delete("bbs_reply", {
+                    reply_id: Replies[i]["reply_id"]
+                });
             }
             await this.XMOJDatabase.Delete("bbs_post", { post_id: Data["PostID"] });
             return new Result(true, "删除讨论成功");
@@ -291,10 +300,12 @@ export class Process {
             if (Reply.toString() == "") {
                 return new Result(false, "未找到回复");
             }
-            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1 && Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+            if (!this.SecurityChecker.IsAdmin() && Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限删除此回复");
             }
-            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_reply", { post_id: Reply[0]["post_id"] }))["TableSize"] === 1) {
+            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_reply", {
+                post_id: Reply[0]["post_id"]
+            }))["TableSize"] === 1) {
                 await this.ProcessFunctions.DeletePost({ PostID: Reply[0]["post_id"] }, false);
             }
             await this.XMOJDatabase.Delete("bbs_reply", { reply_id: Data["ReplyID"] });
@@ -562,7 +573,7 @@ export class Process {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
                 "UserID": "string"
             }));
-            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1) {
+            if (!this.SecurityChecker.IsAdmin()) {
                 return new Result(false, "没有权限创建此标签");
             }
             ThrowErrorIfFailed(await this.XMOJDatabase.Insert("badge", {
@@ -577,7 +588,7 @@ export class Process {
                 "Color": "string",
                 "Content": "string"
             }));
-            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1 && Data["UserID"] != this.SecurityChecker.GetUsername()) {
+            if (!this.SecurityChecker.IsAdmin() && Data["UserID"] != this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限编辑此标签");
             }
             if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("badge", {
@@ -614,7 +625,7 @@ export class Process {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
                 "UserID": "string"
             }));
-            if (AdminUserList.indexOf(this.SecurityChecker.GetUsername()) === -1) {
+            if (!this.SecurityChecker.IsAdmin()) {
                 return new Result(false, "没有权限删除此标签");
             }
             ThrowErrorIfFailed(await this.XMOJDatabase.Delete("badge", {
