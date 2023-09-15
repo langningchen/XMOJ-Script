@@ -4,6 +4,7 @@ import { Output } from "./Output";
 import * as cheerio from "cheerio";
 
 export class Security {
+    private AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
     private Username: string;
     private SessionID: string;
     private RemoteIP: string;
@@ -92,6 +93,9 @@ export class Security {
     }
     public GetUsername = (): string => {
         return this.Username;
+    }
+    public IsAdmin = (): boolean => {
+        return AdminUserList.indexOf(this.Username) !== -1;
     }
     public SetRemoteIP = (RemoteIP: string): void => {
         this.RemoteIP = RemoteIP;

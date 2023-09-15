@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.148
+// @version      0.3.149
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -3541,23 +3541,26 @@ else {
                                 }
                                 let InnerHTMLData = "";
                                 for (let i = 0; i < Posts.length; i++) {
-                                    InnerHTMLData += "<tr>";
+                                    InnerHTMLData += `<tr>`;
                                     InnerHTMLData += `<td>${Posts[i].PostID}</td>`;
-                                    InnerHTMLData += `<td><a href="http://www.xmoj.tech/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>`
-                                    InnerHTMLData += "<td>";
+                                    InnerHTMLData += `<td>`;
+                                    InnerHTMLData += `<a href="http://www.xmoj.tech/discuss3/thread.php?tid=${Posts[i].PostID}">`;
+                                    InnerHTMLData += `</a>`;
+                                    InnerHTMLData += `</td>`;
+                                    InnerHTMLData += `<td>`;
                                     InnerHTMLData += await GetUsernameHTML(Posts[i].UserID);
-                                    InnerHTMLData += "</td>";
-                                    InnerHTMLData += "<td>";
+                                    InnerHTMLData += `</td>`;
+                                    InnerHTMLData += `<td>`;
                                     if (Posts[i].ProblemID != 0) {
                                         InnerHTMLData += `<a href="http://www.xmoj.tech/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a>`;
                                     }
                                     InnerHTMLData += "</td>";
                                     InnerHTMLData += "<td>" + new Date(Posts[i].PostTime).toLocaleString() + "</td>";
                                     InnerHTMLData += `<td>${Posts[i].ReplyCount}</td>`;
-                                    InnerHTMLData += "<td>";
+                                    InnerHTMLData += `<td>`;
                                     InnerHTMLData += new Date(Posts[i].LastReplyTime).toLocaleString();
-                                    InnerHTMLData += "</td>";
-                                    InnerHTMLData += "</tr>";
+                                    InnerHTMLData += `</td>`;
+                                    InnerHTMLData += `</tr>`;
                                 }
                                 PostList.children[1].innerHTML = InnerHTMLData;
                             }
@@ -3795,23 +3798,20 @@ else {
                                         CardBodyElement.className = "card-body row";
                                         let CardBodyRowElement = document.createElement("div");
                                         CardBodyRowElement.className = "row mb-3";
-                                        let CardBodyRowSpan1Element = document.createElement("span");
-                                        CardBodyRowSpan1Element.className = "col-4 text-muted";
-                                        CardBodyRowSpan1Element.innerText = "作者：";
-                                        CardBodyRowSpan1Element.innerHTML += await GetUsernameHTML(Replies[i].UserID);
-                                        let CardBodyRowSpan2Element = document.createElement("span");
-                                        CardBodyRowSpan2Element.className = "col-4 text-muted";
-                                        CardBodyRowSpan2Element.innerText = "发布时间：";
-                                        let CardBodyRowSpan2SpanElement = document.createElement("span");
-                                        CardBodyRowSpan2SpanElement.innerText = new Date(Replies[i].ReplyTime).toLocaleString();
-                                        CardBodyRowSpan2Element.appendChild(CardBodyRowSpan2SpanElement);
-                                        let CardBodyRowSpan3Element = document.createElement("span");
-                                        CardBodyRowSpan3Element.className = "col-4";
-                                        let CardBodyRowSpan3Button1Element = document.createElement("button");
-                                        CardBodyRowSpan3Button1Element.type = "button";
-                                        CardBodyRowSpan3Button1Element.className = "btn btn-sm btn-info";
-                                        CardBodyRowSpan3Button1Element.innerText = "回复";
-                                        CardBodyRowSpan3Button1Element.addEventListener("click", () => {
+                                        let AuthorElement = document.createElement("span");
+                                        AuthorElement.className = "col-4 text-muted";
+                                        AuthorElement.innerText = "作者：" + await GetUsernameHTML(Replies[i].UserID);
+                                        let SendTimeElement = document.createElement("span");
+                                        SendTimeElement.className = "col-4 text-muted";
+                                        SendTimeElement.innerText = "发布时间：" + new Date(Replies[i].ReplyTime).toLocaleString();
+                                        let ButtonsElement = document.createElement("span");
+                                        ButtonsElement.className = "col-4";
+                                        let ReplyButton = document.createElement("button");
+                                        ReplyButton.type = "button";
+                                        ReplyButton.className = "btn btn-sm btn-info";
+                                        ReplyButton.innerText = "回复";
+                                        ReplyButton.disabled = AdminUserList.indexOf(profile.innerText) === -1 && ResponseData.Lock.Locked;
+                                        ReplyButton.addEventListener("click", () => {
                                             let Content = Replies[i].Content;
                                             Content = Content.split("\n").map((Line) => {
                                                 return "> " + Line;
@@ -3819,15 +3819,15 @@ else {
                                             ContentElement.value += Content + `\n\n@${Replies[i].UserID} `;
                                             ContentElement.focus();
                                         });
-                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button1Element);
-                                        let CardBodyRowSpan3Button2Element = document.createElement("button");
-                                        CardBodyRowSpan3Button2Element.type = "button";
-                                        CardBodyRowSpan3Button2Element.className = "btn btn-sm btn-danger ms-1";
-                                        CardBodyRowSpan3Button2Element.innerText = "删除";
-                                        CardBodyRowSpan3Button2Element.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
-                                        CardBodyRowSpan3Button2Element.addEventListener("click", () => {
-                                            CardBodyRowSpan3Button2Element.disabled = true;
-                                            CardBodyRowSpan3Button2Element.lastChild.style.display = "";
+                                        ButtonsElement.appendChild(ReplyButton);
+                                        let DeleteButton = document.createElement("button");
+                                        DeleteButton.type = "button";
+                                        DeleteButton.className = "btn btn-sm btn-danger ms-1";
+                                        DeleteButton.innerText = "删除";
+                                        DeleteButton.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
+                                        DeleteButton.addEventListener("click", () => {
+                                            DeleteButton.disabled = true;
+                                            DeleteButton.lastChild.style.display = "";
                                             RequestAPI("DeleteReply", {
                                                 "ReplyID": Number(Replies[i].ReplyID)
                                             }, (ResponseData) => {
@@ -3835,100 +3835,102 @@ else {
                                                     RefreshReply();
                                                 }
                                                 else {
-                                                    CardBodyRowSpan3Button2Element.disabled = false;
-                                                    CardBodyRowSpan3Button2Element.lastChild.style.display = "none";
+                                                    DeleteButton.disabled = false;
+                                                    DeleteButton.lastChild.style.display = "none";
                                                     ErrorElement.innerText = ResponseData.Message;
                                                     ErrorElement.style.display = "";
                                                 }
                                             });
                                         });
-                                        let CardBodyRowSpan3Button2SpinnerElement = document.createElement("div");
-                                        CardBodyRowSpan3Button2SpinnerElement.className = "spinner-border spinner-border-sm";
-                                        CardBodyRowSpan3Button2SpinnerElement.role = "status";
-                                        CardBodyRowSpan3Button2SpinnerElement.style.display = "none";
-                                        CardBodyRowSpan3Button2Element.appendChild(CardBodyRowSpan3Button2SpinnerElement);
-                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button2Element);
-                                        let CardBodyRowSpan3Button4Element = document.createElement("button");
-                                        CardBodyRowSpan3Button4Element.type = "button";
-                                        CardBodyRowSpan3Button4Element.style.display = "none";
-                                        CardBodyRowSpan3Button4Element.className = "btn btn-sm btn-success ms-1";
-                                        CardBodyRowSpan3Button4Element.innerText = "确认";
-                                        let CardBodyRowSpan3Button4SpinnerElement = document.createElement("div");
-                                        CardBodyRowSpan3Button4SpinnerElement.className = "spinner-border spinner-border-sm";
-                                        CardBodyRowSpan3Button4SpinnerElement.role = "status";
-                                        CardBodyRowSpan3Button4SpinnerElement.style.display = "none";
-                                        CardBodyRowSpan3Button4Element.appendChild(CardBodyRowSpan3Button4SpinnerElement);
-                                        CardBodyRowSpan3Button4Element.addEventListener("click", () => {
-                                            CardBodyRowSpan3Button4Element.disabled = true;
-                                            CardBodyRowSpan3Button4Element.lastChild.style.display = "";
+                                        let DeleteSpin = document.createElement("div");
+                                        DeleteSpin.className = "spinner-border spinner-border-sm";
+                                        DeleteSpin.role = "status";
+                                        DeleteSpin.style.display = "none";
+                                        DeleteButton.appendChild(DeleteSpin);
+                                        ButtonsElement.appendChild(DeleteButton);
+                                        let OKButton = document.createElement("button");
+                                        OKButton.type = "button";
+                                        OKButton.style.display = "none";
+                                        OKButton.className = "btn btn-sm btn-success ms-1";
+                                        OKButton.innerText = "确认";
+                                        let OKSpin = document.createElement("div");
+                                        OKSpin.className = "spinner-border spinner-border-sm";
+                                        OKSpin.role = "status";
+                                        OKSpin.style.display = "none";
+                                        OKButton.appendChild(OKSpin);
+                                        OKButton.addEventListener("click", () => {
+                                            OKButton.disabled = true;
+                                            OKButton.lastChild.style.display = "";
                                             RequestAPI("EditReply", {
                                                 ReplyID: Number(Replies[i].ReplyID),
-                                                Content: String(CardBodyEditTextareaElement.value)
+                                                Content: String(ContentEditor.value)
                                             }, (ResponseData) => {
                                                 if (ResponseData.Success == true) {
                                                     RefreshReply();
                                                 }
                                                 else {
-                                                    CardBodyRowSpan3Button4Element.disabled = false;
-                                                    CardBodyRowSpan3Button4Element.lastChild.style.display = "none";
+                                                    OKButton.disabled = false;
+                                                    OKButton.lastChild.style.display = "none";
                                                     ErrorElement.innerText = ResponseData.Message;
                                                     ErrorElement.style.display = "";
                                                 }
                                             });
                                         });
-                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button4Element);
-                                        let CardBodyRowSpan3Button5Element = document.createElement("button");
-                                        CardBodyRowSpan3Button5Element.type = "button";
-                                        CardBodyRowSpan3Button5Element.style.display = "none";
-                                        CardBodyRowSpan3Button5Element.className = "btn btn-sm btn-secondary ms-1";
-                                        CardBodyRowSpan3Button5Element.innerText = "取消";
-                                        CardBodyRowSpan3Button5Element.addEventListener("click", () => {
+                                        ButtonsElement.appendChild(OKButton);
+                                        let CancelButton = document.createElement("button");
+                                        CancelButton.type = "button";
+                                        CancelButton.style.display = "none";
+                                        CancelButton.className = "btn btn-sm btn-secondary ms-1";
+                                        CancelButton.innerText = "取消";
+                                        CancelButton.addEventListener("click", () => {
                                             CardBodyElement.children[2].style.display = "";
                                             CardBodyElement.children[3].style.display = "none";
-                                            CardBodyRowSpan3Button3Element.style.display = "";
-                                            CardBodyRowSpan3Button4Element.style.display = "none";
-                                            CardBodyRowSpan3Button5Element.style.display = "none";
+                                            EditButton.style.display = "";
+                                            OKButton.style.display = "none";
+                                            CancelButton.style.display = "none";
                                         });
-                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button5Element);
-                                        let CardBodyRowSpan3Button3Element = document.createElement("button");
-                                        CardBodyRowSpan3Button3Element.type = "button";
-                                        CardBodyRowSpan3Button3Element.className = "btn btn-sm btn-warning ms-1";
-                                        CardBodyRowSpan3Button3Element.innerText = "编辑";
-                                        CardBodyRowSpan3Button3Element.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
-                                        CardBodyRowSpan3Button3Element.addEventListener("click", () => {
+                                        ButtonsElement.appendChild(CancelButton);
+                                        let EditButton = document.createElement("button");
+                                        EditButton.type = "button";
+                                        EditButton.className = "btn btn-sm btn-warning ms-1";
+                                        EditButton.innerText = "编辑";
+                                        EditButton.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
+                                        EditButton.addEventListener("click", () => {
                                             CardBodyElement.children[2].style.display = "none";
                                             CardBodyElement.children[3].style.display = "";
-                                            CardBodyRowSpan3Button3Element.style.display = "none";
-                                            CardBodyRowSpan3Button4Element.style.display = "";
-                                            CardBodyRowSpan3Button5Element.style.display = "";
+                                            EditButton.style.display = "none";
+                                            OKButton.style.display = "";
+                                            CancelButton.style.display = "";
                                         });
-                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button3Element);
-                                        CardBodyRowElement.appendChild(CardBodyRowSpan1Element);
-                                        CardBodyRowElement.appendChild(CardBodyRowSpan2Element);
-                                        CardBodyRowElement.appendChild(CardBodyRowSpan3Element);
+                                        ButtonsElement.appendChild(EditButton);
+                                        CardBodyRowElement.appendChild(AuthorElement);
+                                        CardBodyRowElement.appendChild(SendTimeElement);
+                                        CardBodyRowElement.appendChild(ButtonsElement);
                                         CardBodyElement.appendChild(CardBodyRowElement);
+
                                         let CardBodyHRElement = document.createElement("hr");
                                         CardBodyElement.appendChild(CardBodyHRElement);
-                                        let CardBodyDisplayElement = document.createElement("div");
-                                        CardBodyDisplayElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content));
-                                        CardBodyElement.appendChild(CardBodyDisplayElement);
-                                        let CardBodyEditElement = document.createElement("div");
-                                        CardBodyEditElement.style.display = "none";
-                                        let CardBodyEditTextareaElement = document.createElement("textarea");
-                                        CardBodyEditTextareaElement.className = "form-control";
-                                        CardBodyEditTextareaElement.style.height = "300px";
-                                        CardBodyEditTextareaElement.value = Replies[i].Content;
-                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replaceAll(/ <a class="link-info" href="http:\/\/www.xmoj.tech\/userinfo.php\?user=(.*?)">@\1<\/a> /g, "@$1");
-                                        if (CardBodyEditTextareaElement.value.indexOf("<br>") != -1) {
-                                            CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.substring(0, CardBodyEditTextareaElement.value.indexOf("<br>"));
+
+                                        let ContentElement = document.createElement("div");
+                                        ContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content));
+                                        CardBodyElement.appendChild(ContentElement);
+                                        let ContentEditElement = document.createElement("div");
+                                        ContentEditElement.style.display = "none";
+                                        let ContentEditor = document.createElement("textarea");
+                                        ContentEditor.className = "form-control";
+                                        ContentEditor.style.height = "300px";
+                                        ContentEditor.value = Replies[i].Content;
+                                        ContentEditor.value = ContentEditor.value.replaceAll(/ <a class="link-info" href="http:\/\/www.xmoj.tech\/userinfo.php\?user=(.*?)">@\1<\/a> /g, "@$1");
+                                        if (ContentEditor.value.indexOf("<br>") != -1) {
+                                            ContentEditor.value = ContentEditor.value.substring(0, ContentEditor.value.indexOf("<br>"));
                                         }
-                                        CardBodyEditTextareaElement.addEventListener("keydown", (Event) => {
+                                        ContentEditor.addEventListener("keydown", (Event) => {
                                             if (Event.ctrlKey && Event.keyCode == 13) {
-                                                CardBodyRowSpan3Button4Element.click();
+                                                OKButton.click();
                                             }
                                         });
-                                        CardBodyEditElement.appendChild(CardBodyEditTextareaElement);
-                                        CardBodyElement.appendChild(CardBodyEditElement);
+                                        ContentEditElement.appendChild(ContentEditor);
+                                        CardBodyElement.appendChild(ContentEditElement);
                                         CardElement.appendChild(CardBodyElement);
                                         PostReplies.appendChild(CardElement);
                                     }
