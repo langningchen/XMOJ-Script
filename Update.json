@@ -169,6 +169,16 @@
                     "Description": "Better code"
                 }
             ]
+        },
+        "0.3.150": {
+            "UpdateDate": 1694782645632,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 409,
+                    "Description": "使用相对时间"
+                }
+            ]
         }
     }
 }
