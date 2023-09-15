@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.150
+// @version      0.3.151
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -3816,7 +3816,7 @@ else {
                                         CardBodyRowElement.className = "row mb-3";
                                         let AuthorElement = document.createElement("span");
                                         AuthorElement.className = "col-4 text-muted";
-                                        AuthorElement.innerText = "作者：" + await GetUsernameHTML(Replies[i].UserID);
+                                        AuthorElement.innerHTML = "作者：" + await GetUsernameHTML(Replies[i].UserID);
                                         let SendTimeElement = document.createElement("span");
                                         SendTimeElement.className = "col-4 text-muted";
                                         SendTimeElement.innerHTML = "发布时间：" + GetRelativeTime(Replies[i].ReplyTime);

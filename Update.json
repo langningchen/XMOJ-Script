@@ -179,6 +179,16 @@
                     "Description": "使用相对时间"
                 }
             ]
+        },
+        "0.3.151": {
+            "UpdateDate": 1694783069305,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 411,
+                    "Description": "修复HTML显示失败"
+                }
+            ]
         }
     }
 }
