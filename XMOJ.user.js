@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.149
+// @version      0.3.150
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -34,6 +34,21 @@
 
 const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
 const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
+
+let GetRelativeTime = (Input) => {
+    Input = new Date(Input);
+    let Now = new Date();
+    let Delta = Now.getTime() - Input.getTime();
+    let RelativeName = "";
+    if (Delta < 0) { RelativeName = "未来"; }
+    else if (Delta <= 1000 * 60) { RelativeName = "刚刚"; }
+    else if (Delta <= 1000 * 60 * 60) { RelativeName = (Now.getMinutes() - Input.getMinutes()) + "分钟前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24) { RelativeName = (Now.getHours() - Input.getHours()) + "小时前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24 * 31) { RelativeName = (Now.getDay() - Input.getDay()) + "天前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24 * 365) { RelativeName = (Now.getMonth() - Input.getMonth()) + "个月前"; }
+    else { RelativeName = (Now.getFullYear() - Input.getFullYear()) + "年前"; }
+    return "<span title=\"" + Input.toLocaleString() + "\">" + RelativeName + "</span>";
+}
 
 let RenderMathJax = () => {
     var ScriptElement = document.createElement("script");
@@ -665,7 +680,7 @@ else {
                     UpdateDataCardTitle.innerText = Version;
                     let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
                     UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
-                    UpdateDataCardSubtitle.innerText = new Date(Data.UpdateDate).toLocaleString();
+                    UpdateDataCardSubtitle.innerHTML = GetRelativeTime(Data.UpdateDate);
                     let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
                     UpdateDataCardText.className = "card-text";
                     let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
@@ -715,7 +730,7 @@ else {
                             ToastHeader.appendChild(ToastTitle);
                             let ToastTime = document.createElement("small");
                             ToastTime.classList.add("text-body-secondary");
-                            ToastTime.innerText = new Date(MentionList[i].MentionTime).toLocaleString();
+                            ToastTime.innerHTML = GetRelativeTime(MentionList[i].MentionTime);
                             ToastHeader.appendChild(ToastTime);
                             let ToastCloseButton = document.createElement("button");
                             ToastCloseButton.type = "button";
@@ -763,7 +778,7 @@ else {
                             ToastHeader.appendChild(ToastTitle);
                             let ToastTime = document.createElement("small");
                             ToastTime.classList.add("text-body-secondary");
-                            ToastTime.innerText = new Date(MentionList[i].MentionTime).toLocaleString();
+                            ToastTime.innerHTML = GetRelativeTime(MentionList[i].MentionTime);
                             ToastHeader.appendChild(ToastTime);
                             let ToastCloseButton = document.createElement("button");
                             ToastCloseButton.type = "button";
@@ -2328,7 +2343,7 @@ else {
                             UpdateDataCardTitle.innerText = Version;
                             let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
                             UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
-                            UpdateDataCardSubtitle.innerText = new Date(Data.UpdateDate).toLocaleString();
+                            UpdateDataCardSubtitle.innerHTML = GetRelativeTime(Data.UpdateDate);
                             let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
                             UpdateDataCardText.className = "card-text";
                             let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
@@ -3318,7 +3333,7 @@ else {
                                 InnerHTMLData += (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`);
                                 InnerHTMLData += `</td>`;
                                 InnerHTMLData += `<td>${Data[i].LastsMessage}</td>`;
-                                InnerHTMLData += `<td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
+                                InnerHTMLData += `<td>${GetRelativeTime(Data[i].SendTime)}</td>`;
                                 Row.innerHTML = InnerHTMLData;
                             }
                         }
@@ -3414,7 +3429,7 @@ else {
                                 InnerHTMLData += await GetUsernameHTML(Data[i].FromUser);
                                 InnerHTMLData += `</td>`;
                                 InnerHTMLData += `<td>${DOMPurify.sanitize(Data[i].Content)}</td>`;
-                                InnerHTMLData += `<td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
+                                InnerHTMLData += `<td>${GetRelativeTime(Data[i].SendTime)}</td>`;
                                 InnerHTMLData += `<td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
                                 Row.innerHTML = InnerHTMLData;
                             }
@@ -3545,6 +3560,7 @@ else {
                                     InnerHTMLData += `<td>${Posts[i].PostID}</td>`;
                                     InnerHTMLData += `<td>`;
                                     InnerHTMLData += `<a href="http://www.xmoj.tech/discuss3/thread.php?tid=${Posts[i].PostID}">`;
+                                    InnerHTMLData += Posts[i].Title;
                                     InnerHTMLData += `</a>`;
                                     InnerHTMLData += `</td>`;
                                     InnerHTMLData += `<td>`;
@@ -3555,10 +3571,10 @@ else {
                                         InnerHTMLData += `<a href="http://www.xmoj.tech/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a>`;
                                     }
                                     InnerHTMLData += "</td>";
-                                    InnerHTMLData += "<td>" + new Date(Posts[i].PostTime).toLocaleString() + "</td>";
+                                    InnerHTMLData += "<td>" + GetRelativeTime(Posts[i].PostTime) + "</td>";
                                     InnerHTMLData += `<td>${Posts[i].ReplyCount}</td>`;
                                     InnerHTMLData += `<td>`;
-                                    InnerHTMLData += new Date(Posts[i].LastReplyTime).toLocaleString();
+                                    InnerHTMLData += GetRelativeTime(Posts[i].LastReplyTime);
                                     InnerHTMLData += `</td>`;
                                     InnerHTMLData += `</tr>`;
                                 }
@@ -3788,7 +3804,7 @@ else {
                                     }
                                     PostTitle.innerText = ResponseData.Data.Title + (ResponseData.Data.ProblemID == 0 ? "" : ` - 题目` + ResponseData.Data.ProblemID);
                                     PostAuthor.innerHTML = await GetUsernameHTML(ResponseData.Data.UserID);
-                                    PostTime.innerText = new Date(ResponseData.Data.PostTime).toLocaleString();
+                                    PostTime.innerHTML = GetRelativeTime(ResponseData.Data.PostTime);
                                     let Replies = ResponseData.Data.Reply;
                                     PostReplies.innerHTML = "";
                                     for (let i = 0; i < Replies.length; i++) {
@@ -3803,7 +3819,7 @@ else {
                                         AuthorElement.innerText = "作者：" + await GetUsernameHTML(Replies[i].UserID);
                                         let SendTimeElement = document.createElement("span");
                                         SendTimeElement.className = "col-4 text-muted";
-                                        SendTimeElement.innerText = "发布时间：" + new Date(Replies[i].ReplyTime).toLocaleString();
+                                        SendTimeElement.innerHTML = "发布时间：" + GetRelativeTime(Replies[i].ReplyTime);
                                         let ButtonsElement = document.createElement("span");
                                         ButtonsElement.className = "col-4";
                                         let ReplyButton = document.createElement("button");
