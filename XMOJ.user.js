@@ -3545,6 +3545,11 @@ else {
                                     InnerHTMLData += `<td>${Posts[i].PostID}</td>`;
                                     InnerHTMLData += `<td>`;
                                     InnerHTMLData += `<a href="http://www.xmoj.tech/discuss3/thread.php?tid=${Posts[i].PostID}">`;
+                                    if (Posts[i].Lock.Locked) {
+                                        InnerHTMLData += `<span class="text-muted">🔒 ${Posts[i].Title}</span>`;
+                                    } else {
+                                        InnerHTMLData += `<span>${Posts[i].Title}</span>`;
+                                    }
                                     InnerHTMLData += `</a>`;
                                     InnerHTMLData += `</td>`;
                                     InnerHTMLData += `<td>`;
@@ -3825,6 +3830,7 @@ else {
                                         DeleteButton.className = "btn btn-sm btn-danger ms-1";
                                         DeleteButton.innerText = "删除";
                                         DeleteButton.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
+                                        DeleteButton.disabled = AdminUserList.indexOf(profile.innerText) === -1 && ResponseData.Lock.Locked;
                                         DeleteButton.addEventListener("click", () => {
                                             DeleteButton.disabled = true;
                                             DeleteButton.lastChild.style.display = "";
@@ -3895,6 +3901,7 @@ else {
                                         EditButton.className = "btn btn-sm btn-warning ms-1";
                                         EditButton.innerText = "编辑";
                                         EditButton.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
+                                        EditButton.disabled = AdminUserList.indexOf(profile.innerText) === -1 && ResponseData.Lock.Locked;
                                         EditButton.addEventListener("click", () => {
                                             CardBodyElement.children[2].style.display = "none";
                                             CardBodyElement.children[3].style.display = "";
@@ -3951,6 +3958,10 @@ else {
                                             readOnly: true
                                         }).setSize("100%", "auto");
                                         CodeElements[i].remove();
+                                    }
+                                    if (AdminUserList.indexOf(profile.innerText) === -1 && ResponseData.Lock.Locked) {
+                                        ContentElement.disabled = true;
+                                        ContentElement.innerHTML = "帖子已于 " + (new Date(ResponseData.Lock.Locked).toLocaleString()) + " 被 " + (await GetUsernameHTML(ResponseData.Lock.LockPerson)) + " 锁定";
                                     }
 
                                     Style.innerHTML += "img {";
