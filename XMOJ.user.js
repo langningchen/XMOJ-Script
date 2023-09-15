@@ -3800,7 +3800,7 @@ else {
                                         CardBodyRowElement.className = "row mb-3";
                                         let AuthorElement = document.createElement("span");
                                         AuthorElement.className = "col-4 text-muted";
-                                        AuthorElement.innerText = "作者：" + await GetUsernameHTML(Replies[i].UserID);
+                                        AuthorElement.innerHTML = "作者：" + await GetUsernameHTML(Replies[i].UserID);
                                         let SendTimeElement = document.createElement("span");
                                         SendTimeElement.className = "col-4 text-muted";
                                         SendTimeElement.innerText = "发布时间：" + new Date(Replies[i].ReplyTime).toLocaleString();
