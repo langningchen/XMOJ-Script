@@ -219,6 +219,16 @@
                     "Description": "修复比赛状态页无法上传标程"
                 }
             ]
+        },
+        "0.3.155": {
+            "UpdateDate": 1694860353202,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 418,
+                    "Description": "使用异步加载用户名，增快加载速度"
+                }
+            ]
         }
     }
 }
