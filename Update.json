@@ -199,6 +199,16 @@
                     "Description": "解决时间变为负数"
                 }
             ]
+        },
+        "0.3.153": {
+            "UpdateDate": 1694857914347,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 416,
+                    "Description": "[Bug] 编辑时有时候自动跳掉"
+                }
+            ]
         }
     }
 }

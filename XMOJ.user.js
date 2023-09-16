@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.152
+// @version      0.3.153
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -3301,9 +3301,9 @@ else {
                     <table class="table mb-3" id="ReceiveTable">
                         <thead>
                             <tr>
-                                <td class="col-2">接收者</td>
+                                <td class="col-3">接收者</td>
                                 <td class="col-7">最新消息</td>
-                                <td class="col-3">最后联系时间</td>
+                                <td class="col-2">最后联系时间</td>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -3392,10 +3392,10 @@ else {
                     <table class="table mb-3" id="MessageTable">
                         <thead>
                             <tr>
-                                <td class="col-2">发送者</td>
-                                <td class="col-6">内容</td>
-                                <td class="col-2">发送时间</td>
-                                <td class="col-2">阅读状态</td>
+                                <td class="col-3">发送者</td>
+                                <td class="col-7">内容</td>
+                                <td class="col-1">发送时间</td>
+                                <td class="col-1">阅读状态</td>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -3498,12 +3498,12 @@ else {
                         <thead>
                             <tr>
                                 <th class="col-1">编号</th>
-                                <th class="col-2">标题</th>
-                                <th class="col-2">作者</th>
+                                <th class="col-3">标题</th>
+                                <th class="col-3">作者</th>
                                 <th class="col-1">题目编号</th>
-                                <th class="col-2">发布时间</th>
+                                <th class="col-1">发布时间</th>
                                 <th class="col-1">回复数</th>
-                                <th class="col-3">最后回复</th>
+                                <th class="col-1">最后回复</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -3778,12 +3778,12 @@ else {
                                     </div>`;
                                 }
                             }
-                            let OldScrollTop = document.documentElement.scrollTop;
                             RequestAPI("GetPost", {
                                 "PostID": Number(ThreadID),
                                 "Page": Number(Page)
                             }, async (ResponseData) => {
                                 if (ResponseData.Success == true) {
+                                    let OldScrollTop = document.documentElement.scrollTop;
                                     if (!Silent) {
                                         DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=1";
                                         DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
