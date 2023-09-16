@@ -1,0 +1,13 @@
+name: AutoLabel
+on:
+  issue_comment:
+    types: 
+      - created
+      - edited
+jobs:
+  AutoLabel:
+    name: AutoLabel
+    runs-on: ubuntu-latest
+    steps:
+      - name: AutoLabel
+        run: node Update/AutoLabel.js
