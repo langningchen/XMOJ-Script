@@ -189,6 +189,16 @@
                     "Description": "修复HTML显示失败"
                 }
             ]
+        },
+        "0.3.152": {
+            "UpdateDate": 1694840601277,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 413,
+                    "Description": "解决时间变为负数"
+                }
+            ]
         }
     }
 }
