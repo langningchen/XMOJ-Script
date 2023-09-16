@@ -3613,23 +3613,12 @@ else {
                         <label for="Title" class="mb-1">标题</label>
                         <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
                     </div>
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ReplyTab" type="button" role="tab">编辑</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#PreviewTab" type="button" role="tab">预览</button>
-                        </li>
-                    </ul>
-                    <div class="tab-content mb-2">
-                        <div class="tab-pane fade show active" id="ReplyTab" role="tabpanel">
-                            <label for="ContentElement" class="mb-1">回复</label>
-                            <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
-                        </div>
-                        <div class="tab-pane fade" id="PreviewTab" role="tabpanel">
-                        </div>
+                    <label for="ContentElement" class="mb-1">回复</label>
+                    <div class="input-group">
+                        <textarea class="col-6 form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                        <div class="col-6 form-control" id="PreviewTab"></div>
                     </div>
-                    <div class="cf-turnstile" id="CaptchaContainer"></div>
+                    <div class="cf-turnstile mt-2" id="CaptchaContainer"></div>
                     <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
                         发布
                         <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
@@ -3727,23 +3716,12 @@ else {
                                 <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
                             </ul>
                         </nav>
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ReplyTab" type="button" role="tab">编辑</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#PreviewTab" type="button" role="tab">预览</button>
-                            </li>
-                        </ul>
-                        <div class="tab-content mb-2">
-                            <div class="tab-pane fade show active" id="ReplyTab" role="tabpanel">
-                                <label for="ContentElement" class="mb-1">回复</label>
-                                <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
-                            </div>
-                            <div class="tab-pane fade" id="PreviewTab" role="tabpanel">
-                            </div>
+                        <label for="ContentElement" class="mb-1">回复</label>
+                        <div class="input-group">
+                            <textarea class="col-6 form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                            <div class="col-6 form-control" id="PreviewTab"></div>
                         </div>
-                        <div class="cf-turnstile" id="CaptchaContainer"></div>
+                        <div class="cf-turnstile mt-2" id="CaptchaContainer"></div>
                         <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
                             发布
                             <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
