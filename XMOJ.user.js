@@ -42,11 +42,11 @@ let GetRelativeTime = (Input) => {
     let RelativeName = "";
     if (Delta < 0) { RelativeName = "未来"; }
     else if (Delta <= 1000 * 60) { RelativeName = "刚刚"; }
-    else if (Delta <= 1000 * 60 * 60) { RelativeName = (Now.getMinutes() - Input.getMinutes()) + "分钟前"; }
-    else if (Delta <= 1000 * 60 * 60 * 24) { RelativeName = (Now.getHours() - Input.getHours()) + "小时前"; }
-    else if (Delta <= 1000 * 60 * 60 * 24 * 31) { RelativeName = (Now.getDay() - Input.getDay()) + "天前"; }
-    else if (Delta <= 1000 * 60 * 60 * 24 * 365) { RelativeName = (Now.getMonth() - Input.getMonth()) + "个月前"; }
-    else { RelativeName = (Now.getFullYear() - Input.getFullYear()) + "年前"; }
+    else if (Delta <= 1000 * 60 * 60) { RelativeName = Math.floor((Now - Input) / 1000 / 60) + "分钟前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24) { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60) + "小时前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24 * 31) { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60 / 24) + "天前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24 * 365) { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60 / 24 / 31) + "个月前"; }
+    else { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60 / 24 / 365) + "年前"; }
     return "<span title=\"" + Input.toLocaleString() + "\">" + RelativeName + "</span>";
 }
 
