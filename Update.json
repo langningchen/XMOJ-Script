@@ -229,6 +229,16 @@
                     "Description": "使用异步加载用户名，增快加载速度"
                 }
             ]
+        },
+        "0.3.156": {
+            "UpdateDate": 1694862657621,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 419,
+                    "Description": "编辑预览放在右侧"
+                }
+            ]
         }
     }
 }
