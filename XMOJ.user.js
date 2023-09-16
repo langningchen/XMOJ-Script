@@ -1398,6 +1398,12 @@ else {
                                 return Response.text();
                             })
                             .then((Response) => {
+                                let PID = 0;
+                                if (SearchParams.get("cid") === null) {
+                                    PID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
+                                } else {
+                                    PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + (CurrentRow.cells[1].innerText.charCodeAt(0) - 65) + "-PID");
+                                }
                                 let ResponseData = Response.split(",");
                                 CurrentRow.cells[3].innerHTML = "<div id=\"center\" class=\"red\">" + SizeToStringSize(ResponseData[1]) + "</div>";
                                 CurrentRow.cells[4].innerHTML = "<div id=\"center\" class=\"red\">" + TimeToStringTime(ResponseData[2]) + "</div>";
@@ -1407,12 +1413,6 @@ else {
                                 if (Points[SolutionID] != undefined) {
                                     TempHTML += "<span style=\"margin-left: 5px\" class=\"badge text-bg-info\">" + Points[SolutionID] + "</span>";
                                     if (Points[SolutionID].substring(0, Points[SolutionID].length - 1) >= 50) {
-                                        let PID = 0;
-                                        if (SearchParams.get("cid") === null) {
-                                            PID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
-                                        } else {
-                                            PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + (CurrentRow.cells[1].innerText.charCodeAt(0) - 65) + "-PID");
-                                        }
                                         TempHTML += `<a href="http://www.xmoj.tech/showsource.php?pid=${PID}&ByUserScript=1" class="ms-1 link-secondary">查看标程</a>`;
                                     }
                                 }
@@ -1423,15 +1423,17 @@ else {
                                     TempHTML += "<img style=\"margin-left: 5px\" height=\"18\" width=\"18\" src=\"image/loader.gif\">";
                                 }
                                 else if (ResponseData[0] == 4 && UtilityEnabled("UploadStd")) {
+                                    if (SearchParams.get("cid") == null)
+                                        CurrentRow.cells[1].innerText;
                                     let Std = StdList.find((Element) => {
-                                        return Element == Number(CurrentRow.cells[1].innerText);
+                                        return Element == Number(PID);
                                     });
                                     if (Std != undefined) {
                                         TempHTML += "✅";
                                     }
                                     else {
                                         RequestAPI("UploadStd", {
-                                            "ProblemID": Number(CurrentRow.cells[1].innerText),
+                                            "ProblemID": Number(PID),
                                         }, (Result) => {
                                             if (Result.Success) {
                                                 CurrentRow.cells[2].innerHTML += "🆗";
