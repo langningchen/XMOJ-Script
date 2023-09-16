@@ -127,7 +127,9 @@ let GetUserBadge = async (Username) => {
         }
     }
 };
-let GetUsernameHTML = async (Username, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
+let GetUsernameHTML = async (Element, Username, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
+    let ID = "Username-" + Username + "-" + Math.random();
+    Element.id = ID;
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
     if (UserInfo.EmailHash == undefined) {
@@ -161,7 +163,7 @@ let GetUsernameHTML = async (Username, Href = "http://www.xmoj.tech/userinfo.php
     if (BadgeInfo.Content != "") {
         HTMLData += `<span class="badge ms-2" style="background-color: ${BadgeInfo.BackgroundColor}; color: ${BadgeInfo.Color}">${BadgeInfo.Content}</span>`;
     }
-    return HTMLData;
+    document.getElementById(ID).innerHTML = HTMLData;
 };
 let SecondsToString = (InputSeconds) => {
     let Hours = Math.floor(InputSeconds / 3600);
@@ -788,7 +790,11 @@ else {
                             Toast.appendChild(ToastHeader);
                             let ToastBody = document.createElement("div");
                             ToastBody.classList.add("toast-body");
-                            ToastBody.innerHTML = await GetUsernameHTML(MentionList[i].FromUserID) + "  给你发了一封短消息";
+                            let ToastUser = document.createElement("span");
+                            // ToastUser.innerHTML = await GetUsernameHTML(MentionList[i].FromUserID);
+                            GetUsernameHTML(ToastUser, MentionList[i].FromUserID);
+                            ToastBody.appendChild(ToastUser);
+                            ToastBody.innerHTML += "  给你发了一封短消息";
                             let ToastFooter = document.createElement("div");
                             ToastFooter.classList.add("mt-2", "pt-2", "border-top");
                             let ToastButton = document.createElement("button");
@@ -1786,6 +1792,7 @@ else {
                                     MetalCell.innerText = "";
                                     MetalCell.appendChild(Metal);
                                     Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
+                                    GetUsernameHTML(Temp[i].cells[1], Temp[i].cells[1].innerText);
                                     Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                                     Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;
                                     for (let j = 5; j < Temp[i].cells.length; j++) {
@@ -1971,7 +1978,9 @@ else {
                                         Medal.classList.add("text-bg-secondary");
                                     }
 
-                                    UsernameCell.innerHTML += await GetUsernameHTML(RowData.Username);
+                                    let UsernameSpan = document.createElement("span"); UsernameCell.appendChild(UsernameSpan);
+                                    // UsernameSpan.innerHTML = await GetUsernameHTML(RowData.Username);
+                                    GetUsernameHTML(UsernameSpan, RowData.Username);
                                     if (RowData.Username == document.getElementById("profile").innerText) {
                                         Row.classList.add("table-primary");
                                     }
@@ -2093,7 +2102,8 @@ else {
                                 Metal.className = "badge text-bg-primary";
                                 MetalCell.innerText = "";
                                 MetalCell.appendChild(Metal);
-                                Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
+                                // Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
+                                GetUsernameHTML(Temp[i].cells[1], Temp[i].cells[1].innerText);
                                 Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                                 Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;
                                 for (let j = 5; j < Temp[i].cells.length; j++) {
@@ -3118,7 +3128,8 @@ else {
                 if (Temp[i].children[5].children[0] != null) {
                     Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText}</a>`;
                 }
-                Temp[i].children[2].innerHTML = await GetUsernameHTML(Temp[i].children[2].innerText);
+                // Temp[i].children[2].innerHTML = await GetUsernameHTML(Temp[i].children[2].innerText);
+                GetUsernameHTML(Temp[i].children[2], Temp[i].children[2].innerText);
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
@@ -3329,14 +3340,19 @@ else {
                             ReceiveTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
-                                var InnerHTMLData = "";
-                                InnerHTMLData += `<td>`;
-                                InnerHTMLData += await GetUsernameHTML(Data[i].OtherUser, "http://www.xmoj.tech/mail.php?other=");
-                                InnerHTMLData += (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`);
-                                InnerHTMLData += `</td>`;
-                                InnerHTMLData += `<td>${Data[i].LastsMessage}</td>`;
-                                InnerHTMLData += `<td>${GetRelativeTime(Data[i].SendTime)}</td>`;
-                                Row.innerHTML = InnerHTMLData;
+                                let UsernameCell = document.createElement("td"); Row.appendChild(UsernameCell);
+                                let UsernameSpan = document.createElement("span"); UsernameCell.appendChild(UsernameSpan);
+                                // UsernameSpan.innerHTML = await GetUsernameHTML(Data[i].OtherUser, "http://www.xmoj.tech/mail.php?other=");
+                                GetUsernameHTML(UsernameSpan, Data[i].OtherUser, "http://www.xmoj.tech/mail.php?other=");
+                                if (Data[i].UnreadCount != 0) {
+                                    let UnreadCountSpan = document.createElement("span"); UsernameCell.appendChild(UnreadCountSpan);
+                                    UnreadCountSpan.className = "ms-1 badge text-bg-danger";
+                                    UnreadCountSpan.innerText = Data[i].UnreadCount;
+                                }
+                                let LastsMessageCell = document.createElement("td"); Row.appendChild(LastsMessageCell);
+                                LastsMessageCell.innerText = Data[i].LastsMessage;
+                                let SendTimeCell = document.createElement("td"); Row.appendChild(SendTimeCell);
+                                SendTimeCell.innerHTML = GetRelativeTime(Data[i].SendTime);
                             }
                         }
                         else {
@@ -3426,14 +3442,15 @@ else {
                                 if (!Data[i].IsRead && Data[i].FromUser != document.querySelector("#profile").innerText) {
                                     Row.className = "table-info";
                                 }
-                                var InnerHTMLData = "";
-                                InnerHTMLData += `<td>`;
-                                InnerHTMLData += await GetUsernameHTML(Data[i].FromUser);
-                                InnerHTMLData += `</td>`;
-                                InnerHTMLData += `<td>${DOMPurify.sanitize(Data[i].Content)}</td>`;
-                                InnerHTMLData += `<td>${GetRelativeTime(Data[i].SendTime)}</td>`;
-                                InnerHTMLData += `<td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
-                                Row.innerHTML = InnerHTMLData;
+                                let UsernameCell = document.createElement("td"); Row.appendChild(UsernameCell);
+                                // UsernameCell.innerHTML = await GetUsernameHTML(Data[i].FromUser);
+                                GetUsernameHTML(UsernameCell, Data[i].FromUser);
+                                let ContentCell = document.createElement("td"); Row.appendChild(ContentCell);
+                                ContentCell.innerHTML = DOMPurify.sanitize(Data[i].Content);
+                                let SendTimeCell = document.createElement("td"); Row.appendChild(SendTimeCell);
+                                SendTimeCell.innerHTML = GetRelativeTime(Data[i].SendTime);
+                                let IsReadCell = document.createElement("td"); Row.appendChild(IsReadCell);
+                                IsReadCell.innerHTML = (Data[i].IsRead ? "已读" : "未读");
                             }
                         }
                         else {
@@ -3556,31 +3573,30 @@ else {
                                 if (Posts.length == 0) {
                                     PostList.children[1].innerHTML = `<tr><td colspan="7">暂无数据</td></tr>`;
                                 }
-                                let InnerHTMLData = "";
                                 for (let i = 0; i < Posts.length; i++) {
-                                    InnerHTMLData += `<tr>`;
-                                    InnerHTMLData += `<td>${Posts[i].PostID}</td>`;
-                                    InnerHTMLData += `<td>`;
-                                    InnerHTMLData += `<a href="http://www.xmoj.tech/discuss3/thread.php?tid=${Posts[i].PostID}">`;
-                                    InnerHTMLData += Posts[i].Title;
-                                    InnerHTMLData += `</a>`;
-                                    InnerHTMLData += `</td>`;
-                                    InnerHTMLData += `<td>`;
-                                    InnerHTMLData += await GetUsernameHTML(Posts[i].UserID);
-                                    InnerHTMLData += `</td>`;
-                                    InnerHTMLData += `<td>`;
+                                    let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
+                                    let IDCell = document.createElement("td"); Row.appendChild(IDCell);
+                                    IDCell.innerText = Posts[i].PostID;
+                                    let TitleCell = document.createElement("td"); Row.appendChild(TitleCell);
+                                    let TitleLink = document.createElement("a"); TitleCell.appendChild(TitleLink);
+                                    TitleLink.href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + Posts[i].PostID;
+                                    TitleLink.innerText = Posts[i].Title;
+                                    let AuthorCell = document.createElement("td"); Row.appendChild(AuthorCell);
+                                    // AuthorCell.innerHTML = await GetUsernameHTML(Posts[i].UserID);
+                                    GetUsernameHTML(AuthorCell, Posts[i].UserID);
+                                    let ProblemIDCell = document.createElement("td"); Row.appendChild(ProblemIDCell);
                                     if (Posts[i].ProblemID != 0) {
-                                        InnerHTMLData += `<a href="http://www.xmoj.tech/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a>`;
+                                        let ProblemIDLink = document.createElement("a"); ProblemIDCell.appendChild(ProblemIDLink);
+                                        ProblemIDLink.href = "http://www.xmoj.tech/problem.php?id=" + Posts[i].ProblemID;
+                                        ProblemIDLink.innerText = Posts[i].ProblemID;
                                     }
-                                    InnerHTMLData += "</td>";
-                                    InnerHTMLData += "<td>" + GetRelativeTime(Posts[i].PostTime) + "</td>";
-                                    InnerHTMLData += `<td>${Posts[i].ReplyCount}</td>`;
-                                    InnerHTMLData += `<td>`;
-                                    InnerHTMLData += GetRelativeTime(Posts[i].LastReplyTime);
-                                    InnerHTMLData += `</td>`;
-                                    InnerHTMLData += `</tr>`;
+                                    let PostTimeCell = document.createElement("td"); Row.appendChild(PostTimeCell);
+                                    PostTimeCell.innerHTML = GetRelativeTime(Posts[i].PostTime);
+                                    let ReplyCountCell = document.createElement("td"); Row.appendChild(ReplyCountCell);
+                                    ReplyCountCell.innerText = Posts[i].ReplyCount;
+                                    let LastReplyTimeCell = document.createElement("td"); Row.appendChild(LastReplyTimeCell);
+                                    LastReplyTimeCell.innerHTML = GetRelativeTime(Posts[i].LastReplyTime);
                                 }
-                                PostList.children[1].innerHTML = InnerHTMLData;
                             }
                             else {
                                 ErrorElement.innerText = ResponseData.Message;
@@ -3805,7 +3821,8 @@ else {
                                         }
                                     }
                                     PostTitle.innerText = ResponseData.Data.Title + (ResponseData.Data.ProblemID == 0 ? "" : ` - 题目` + ResponseData.Data.ProblemID);
-                                    PostAuthor.innerHTML = await GetUsernameHTML(ResponseData.Data.UserID);
+                                    // PostAuthor.innerHTML = await GetUsernameHTML(ResponseData.Data.UserID);
+                                    GetUsernameHTML(PostAuthor, ResponseData.Data.UserID);
                                     PostTime.innerHTML = GetRelativeTime(ResponseData.Data.PostTime);
                                     let Replies = ResponseData.Data.Reply;
                                     PostReplies.innerHTML = "";
@@ -3818,7 +3835,13 @@ else {
                                         CardBodyRowElement.className = "row mb-3";
                                         let AuthorElement = document.createElement("span");
                                         AuthorElement.className = "col-4 text-muted";
-                                        AuthorElement.innerHTML = "作者：" + await GetUsernameHTML(Replies[i].UserID);
+                                        let AuthorSpanElement = document.createElement("span");
+                                        AuthorSpanElement.innerText = "作者：";
+                                        AuthorElement.appendChild(AuthorSpanElement);
+                                        let AuthorUsernameElement = document.createElement("span");
+                                        // AuthorUsernameElement.innerHTML = await GetUsernameHTML(Replies[i].UserID);
+                                        GetUsernameHTML(AuthorUsernameElement, Replies[i].UserID);
+                                        AuthorElement.appendChild(AuthorUsernameElement);
                                         let SendTimeElement = document.createElement("span");
                                         SendTimeElement.className = "col-4 text-muted";
                                         SendTimeElement.innerHTML = "发布时间：" + GetRelativeTime(Replies[i].ReplyTime);
