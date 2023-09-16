@@ -209,6 +209,16 @@
                     "Description": "[Bug] 编辑时有时候自动跳掉"
                 }
             ]
+        },
+        "0.3.154": {
+            "UpdateDate": 1694858956575,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 417,
+                    "Description": "修复比赛状态页无法上传标程"
+                }
+            ]
         }
     }
 }
