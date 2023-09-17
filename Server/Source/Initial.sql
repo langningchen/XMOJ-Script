@@ -44,6 +44,14 @@ CREATE TABLE bbs_reply (
     reply_time INTEGER NOT NULL
 );
 
+DROP TABLE IF EXISTS phpsessid;
+
+CREATE TABLE phpsessid (
+    token TEXT PRIMARY KEY NOT NULL,
+    user_id TEXT NOT NULL,
+    create_time INTEGER NOT NULL
+);
+
 DROP TABLE IF EXISTS short_message;
 
 CREATE TABLE short_message (
