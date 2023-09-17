@@ -26,11 +26,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
-          name: ${{ steps.get_version.outputs.version }}
           generate_release_notes: true
           draft: false
           prerelease: true
           files: XMOJ.user.js
+          target_commitish: ${{ github.sha }}
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
