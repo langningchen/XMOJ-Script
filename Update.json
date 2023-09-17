@@ -269,6 +269,16 @@
                     "Description": "使用新的讨论API"
                 }
             ]
+        },
+        "0.3.160": {
+            "UpdateDate": 1694945525580,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 430,
+                    "Description": "解决回复按钮失效与锁定被多次触发导致错误"
+                }
+            ]
         }
     }
 }

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.159
+// @version      0.3.160
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -3919,8 +3919,8 @@ else {
 
                                         let CardBodyHRElement = document.createElement("hr"); CardBodyElement.appendChild(CardBodyHRElement);
 
-                                        let ContentElement = document.createElement("div"); CardBodyElement.appendChild(ContentElement);
-                                        ContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content));
+                                        let ReplyContentElement = document.createElement("div"); CardBodyElement.appendChild(ReplyContentElement);
+                                        ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content));
                                         let ContentEditElement = document.createElement("div"); CardBodyElement.appendChild(ContentEditElement);
                                         ContentEditElement.style.display = "none";
                                         let ContentEditor = document.createElement("textarea"); ContentEditElement.appendChild(ContentEditor);
@@ -3968,9 +3968,10 @@ else {
                                     if (AdminUserList.indexOf(profile.innerText) !== -1) {
                                         ToggleLock.style.display = "";
                                         ToggleLockButton.checked = ResponseData.Data.Lock.Locked;
-                                        ToggleLockButton.addEventListener("click", () => {
+                                        ToggleLockButton.onclick = () => {
                                             ToggleLockButton.disabled = true;
                                             ErrorElement.style.display = "none";
+                                            debugger
                                             RequestAPI((ToggleLockButton.checked ? "LockPost" : "UnlockPost"), {
                                                 "PostID": Number(ThreadID)
                                             }, (LockResponseData) => {
@@ -3983,7 +3984,7 @@ else {
                                                     ToggleLockButton.checked = !ToggleLockButton.checked;
                                                 }
                                             });
-                                        });
+                                        };
                                     }
 
                                     Style.innerHTML += "img {";
