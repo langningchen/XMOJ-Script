@@ -167,7 +167,7 @@ export class Process {
                     LockTime: 0
                 };
                 let Locked = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_lock", [], {
-                    post_id: Data["PostID"]
+                    post_id: Post["post_id"]
                 }));
                 if (Locked.toString() != "") {
                     LockData.Locked = true;
