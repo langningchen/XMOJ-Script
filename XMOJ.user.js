@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.157
+// @version      0.3.158
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -3927,7 +3927,7 @@ else {
                                         ContentEditor.className = "form-control";
                                         ContentEditor.style.height = "300px";
                                         ContentEditor.value = Replies[i].Content;
-                                        ContentEditor.value = ContentEditor.value.replaceAll(/ <a class="link-info" href="http:\/\/www.xmoj.tech\/userinfo.php\?user=(.*?)">@\1<\/a> /g, "@$1");
+                                        ContentEditor.value = ContentEditor.value.replaceAll(/ ?<a class="link-info" href="http:\/\/www.xmoj.tech\/userinfo.php\?user=(.*?)">@\1<\/a> ?/g, "@$1");
                                         if (ContentEditor.value.indexOf("<br>") != -1) {
                                             ContentEditor.value = ContentEditor.value.substring(0, ContentEditor.value.indexOf("<br>"));
                                         }
