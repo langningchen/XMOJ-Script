@@ -95,7 +95,7 @@ export class Security {
         return this.Username;
     }
     public IsAdmin = (): boolean => {
-        return AdminUserList.indexOf(this.Username) !== -1;
+        return this.AdminUserList.indexOf(this.Username) !== -1;
     }
     public SetRemoteIP = (RemoteIP: string): void => {
         this.RemoteIP = RemoteIP;
