@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.149
+// @version      0.3.156
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -34,6 +34,21 @@
 
 const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
 const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
+
+let GetRelativeTime = (Input) => {
+    Input = new Date(Input);
+    let Now = new Date();
+    let Delta = Now.getTime() - Input.getTime();
+    let RelativeName = "";
+    if (Delta < 0) { RelativeName = "未来"; }
+    else if (Delta <= 1000 * 60) { RelativeName = "刚刚"; }
+    else if (Delta <= 1000 * 60 * 60) { RelativeName = Math.floor((Now - Input) / 1000 / 60) + "分钟前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24) { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60) + "小时前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24 * 31) { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60 / 24) + "天前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24 * 365) { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60 / 24 / 31) + "个月前"; }
+    else { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60 / 24 / 365) + "年前"; }
+    return "<span title=\"" + Input.toLocaleString() + "\">" + RelativeName + "</span>";
+}
 
 let RenderMathJax = () => {
     var ScriptElement = document.createElement("script");
@@ -112,7 +127,9 @@ let GetUserBadge = async (Username) => {
         }
     }
 };
-let GetUsernameHTML = async (Username, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
+let GetUsernameHTML = async (Element, Username, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
+    let ID = "Username-" + Username + "-" + Math.random();
+    Element.id = ID;
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
     if (UserInfo.EmailHash == undefined) {
@@ -146,7 +163,7 @@ let GetUsernameHTML = async (Username, Href = "http://www.xmoj.tech/userinfo.php
     if (BadgeInfo.Content != "") {
         HTMLData += `<span class="badge ms-2" style="background-color: ${BadgeInfo.BackgroundColor}; color: ${BadgeInfo.Color}">${BadgeInfo.Content}</span>`;
     }
-    return HTMLData;
+    document.getElementById(ID).innerHTML = HTMLData;
 };
 let SecondsToString = (InputSeconds) => {
     let Hours = Math.floor(InputSeconds / 3600);
@@ -665,7 +682,7 @@ else {
                     UpdateDataCardTitle.innerText = Version;
                     let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
                     UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
-                    UpdateDataCardSubtitle.innerText = new Date(Data.UpdateDate).toLocaleString();
+                    UpdateDataCardSubtitle.innerHTML = GetRelativeTime(Data.UpdateDate);
                     let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
                     UpdateDataCardText.className = "card-text";
                     let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
@@ -715,7 +732,7 @@ else {
                             ToastHeader.appendChild(ToastTitle);
                             let ToastTime = document.createElement("small");
                             ToastTime.classList.add("text-body-secondary");
-                            ToastTime.innerText = new Date(MentionList[i].MentionTime).toLocaleString();
+                            ToastTime.innerHTML = GetRelativeTime(MentionList[i].MentionTime);
                             ToastHeader.appendChild(ToastTime);
                             let ToastCloseButton = document.createElement("button");
                             ToastCloseButton.type = "button";
@@ -763,7 +780,7 @@ else {
                             ToastHeader.appendChild(ToastTitle);
                             let ToastTime = document.createElement("small");
                             ToastTime.classList.add("text-body-secondary");
-                            ToastTime.innerText = new Date(MentionList[i].MentionTime).toLocaleString();
+                            ToastTime.innerHTML = GetRelativeTime(MentionList[i].MentionTime);
                             ToastHeader.appendChild(ToastTime);
                             let ToastCloseButton = document.createElement("button");
                             ToastCloseButton.type = "button";
@@ -773,7 +790,11 @@ else {
                             Toast.appendChild(ToastHeader);
                             let ToastBody = document.createElement("div");
                             ToastBody.classList.add("toast-body");
-                            ToastBody.innerHTML = await GetUsernameHTML(MentionList[i].FromUserID) + "  给你发了一封短消息";
+                            let ToastUser = document.createElement("span");
+                            // ToastUser.innerHTML = await GetUsernameHTML(MentionList[i].FromUserID);
+                            GetUsernameHTML(ToastUser, MentionList[i].FromUserID);
+                            ToastBody.appendChild(ToastUser);
+                            ToastBody.innerHTML += "  给你发了一封短消息";
                             let ToastFooter = document.createElement("div");
                             ToastFooter.classList.add("mt-2", "pt-2", "border-top");
                             let ToastButton = document.createElement("button");
@@ -1383,6 +1404,12 @@ else {
                                 return Response.text();
                             })
                             .then((Response) => {
+                                let PID = 0;
+                                if (SearchParams.get("cid") === null) {
+                                    PID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
+                                } else {
+                                    PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + (CurrentRow.cells[1].innerText.charCodeAt(0) - 65) + "-PID");
+                                }
                                 let ResponseData = Response.split(",");
                                 CurrentRow.cells[3].innerHTML = "<div id=\"center\" class=\"red\">" + SizeToStringSize(ResponseData[1]) + "</div>";
                                 CurrentRow.cells[4].innerHTML = "<div id=\"center\" class=\"red\">" + TimeToStringTime(ResponseData[2]) + "</div>";
@@ -1392,12 +1419,6 @@ else {
                                 if (Points[SolutionID] != undefined) {
                                     TempHTML += "<span style=\"margin-left: 5px\" class=\"badge text-bg-info\">" + Points[SolutionID] + "</span>";
                                     if (Points[SolutionID].substring(0, Points[SolutionID].length - 1) >= 50) {
-                                        let PID = 0;
-                                        if (SearchParams.get("cid") === null) {
-                                            PID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
-                                        } else {
-                                            PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + (CurrentRow.cells[1].innerText.charCodeAt(0) - 65) + "-PID");
-                                        }
                                         TempHTML += `<a href="http://www.xmoj.tech/showsource.php?pid=${PID}&ByUserScript=1" class="ms-1 link-secondary">查看标程</a>`;
                                     }
                                 }
@@ -1408,15 +1429,17 @@ else {
                                     TempHTML += "<img style=\"margin-left: 5px\" height=\"18\" width=\"18\" src=\"image/loader.gif\">";
                                 }
                                 else if (ResponseData[0] == 4 && UtilityEnabled("UploadStd")) {
+                                    if (SearchParams.get("cid") == null)
+                                        CurrentRow.cells[1].innerText;
                                     let Std = StdList.find((Element) => {
-                                        return Element == Number(CurrentRow.cells[1].innerText);
+                                        return Element == Number(PID);
                                     });
                                     if (Std != undefined) {
                                         TempHTML += "✅";
                                     }
                                     else {
                                         RequestAPI("UploadStd", {
-                                            "ProblemID": Number(CurrentRow.cells[1].innerText),
+                                            "ProblemID": Number(PID),
                                         }, (Result) => {
                                             if (Result.Success) {
                                                 CurrentRow.cells[2].innerHTML += "🆗";
@@ -1769,6 +1792,7 @@ else {
                                     MetalCell.innerText = "";
                                     MetalCell.appendChild(Metal);
                                     Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
+                                    GetUsernameHTML(Temp[i].cells[1], Temp[i].cells[1].innerText);
                                     Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                                     Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;
                                     for (let j = 5; j < Temp[i].cells.length; j++) {
@@ -1954,7 +1978,9 @@ else {
                                         Medal.classList.add("text-bg-secondary");
                                     }
 
-                                    UsernameCell.innerHTML += await GetUsernameHTML(RowData.Username);
+                                    let UsernameSpan = document.createElement("span"); UsernameCell.appendChild(UsernameSpan);
+                                    // UsernameSpan.innerHTML = await GetUsernameHTML(RowData.Username);
+                                    GetUsernameHTML(UsernameSpan, RowData.Username);
                                     if (RowData.Username == document.getElementById("profile").innerText) {
                                         Row.classList.add("table-primary");
                                     }
@@ -2076,7 +2102,8 @@ else {
                                 Metal.className = "badge text-bg-primary";
                                 MetalCell.innerText = "";
                                 MetalCell.appendChild(Metal);
-                                Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
+                                // Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
+                                GetUsernameHTML(Temp[i].cells[1], Temp[i].cells[1].innerText);
                                 Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                                 Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;
                                 for (let j = 5; j < Temp[i].cells.length; j++) {
@@ -2328,7 +2355,7 @@ else {
                             UpdateDataCardTitle.innerText = Version;
                             let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
                             UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
-                            UpdateDataCardSubtitle.innerText = new Date(Data.UpdateDate).toLocaleString();
+                            UpdateDataCardSubtitle.innerHTML = GetRelativeTime(Data.UpdateDate);
                             let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
                             UpdateDataCardText.className = "card-text";
                             let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
@@ -3101,7 +3128,8 @@ else {
                 if (Temp[i].children[5].children[0] != null) {
                     Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText}</a>`;
                 }
-                Temp[i].children[2].innerHTML = await GetUsernameHTML(Temp[i].children[2].innerText);
+                // Temp[i].children[2].innerHTML = await GetUsernameHTML(Temp[i].children[2].innerText);
+                GetUsernameHTML(Temp[i].children[2], Temp[i].children[2].innerText);
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
@@ -3286,9 +3314,9 @@ else {
                     <table class="table mb-3" id="ReceiveTable">
                         <thead>
                             <tr>
-                                <td class="col-2">接收者</td>
+                                <td class="col-3">接收者</td>
                                 <td class="col-7">最新消息</td>
-                                <td class="col-3">最后联系时间</td>
+                                <td class="col-2">最后联系时间</td>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -3312,14 +3340,19 @@ else {
                             ReceiveTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
-                                var InnerHTMLData = "";
-                                InnerHTMLData += `<td>`;
-                                InnerHTMLData += await GetUsernameHTML(Data[i].OtherUser, "http://www.xmoj.tech/mail.php?other=");
-                                InnerHTMLData += (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`);
-                                InnerHTMLData += `</td>`;
-                                InnerHTMLData += `<td>${Data[i].LastsMessage}</td>`;
-                                InnerHTMLData += `<td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
-                                Row.innerHTML = InnerHTMLData;
+                                let UsernameCell = document.createElement("td"); Row.appendChild(UsernameCell);
+                                let UsernameSpan = document.createElement("span"); UsernameCell.appendChild(UsernameSpan);
+                                // UsernameSpan.innerHTML = await GetUsernameHTML(Data[i].OtherUser, "http://www.xmoj.tech/mail.php?other=");
+                                GetUsernameHTML(UsernameSpan, Data[i].OtherUser, "http://www.xmoj.tech/mail.php?other=");
+                                if (Data[i].UnreadCount != 0) {
+                                    let UnreadCountSpan = document.createElement("span"); UsernameCell.appendChild(UnreadCountSpan);
+                                    UnreadCountSpan.className = "ms-1 badge text-bg-danger";
+                                    UnreadCountSpan.innerText = Data[i].UnreadCount;
+                                }
+                                let LastsMessageCell = document.createElement("td"); Row.appendChild(LastsMessageCell);
+                                LastsMessageCell.innerText = Data[i].LastsMessage;
+                                let SendTimeCell = document.createElement("td"); Row.appendChild(SendTimeCell);
+                                SendTimeCell.innerHTML = GetRelativeTime(Data[i].SendTime);
                             }
                         }
                         else {
@@ -3377,10 +3410,10 @@ else {
                     <table class="table mb-3" id="MessageTable">
                         <thead>
                             <tr>
-                                <td class="col-2">发送者</td>
-                                <td class="col-6">内容</td>
-                                <td class="col-2">发送时间</td>
-                                <td class="col-2">阅读状态</td>
+                                <td class="col-3">发送者</td>
+                                <td class="col-7">内容</td>
+                                <td class="col-1">发送时间</td>
+                                <td class="col-1">阅读状态</td>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -3409,14 +3442,15 @@ else {
                                 if (!Data[i].IsRead && Data[i].FromUser != document.querySelector("#profile").innerText) {
                                     Row.className = "table-info";
                                 }
-                                var InnerHTMLData = "";
-                                InnerHTMLData += `<td>`;
-                                InnerHTMLData += await GetUsernameHTML(Data[i].FromUser);
-                                InnerHTMLData += `</td>`;
-                                InnerHTMLData += `<td>${DOMPurify.sanitize(Data[i].Content)}</td>`;
-                                InnerHTMLData += `<td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
-                                InnerHTMLData += `<td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
-                                Row.innerHTML = InnerHTMLData;
+                                let UsernameCell = document.createElement("td"); Row.appendChild(UsernameCell);
+                                // UsernameCell.innerHTML = await GetUsernameHTML(Data[i].FromUser);
+                                GetUsernameHTML(UsernameCell, Data[i].FromUser);
+                                let ContentCell = document.createElement("td"); Row.appendChild(ContentCell);
+                                ContentCell.innerHTML = DOMPurify.sanitize(Data[i].Content);
+                                let SendTimeCell = document.createElement("td"); Row.appendChild(SendTimeCell);
+                                SendTimeCell.innerHTML = GetRelativeTime(Data[i].SendTime);
+                                let IsReadCell = document.createElement("td"); Row.appendChild(IsReadCell);
+                                IsReadCell.innerHTML = (Data[i].IsRead ? "已读" : "未读");
                             }
                         }
                         else {
@@ -3483,12 +3517,12 @@ else {
                         <thead>
                             <tr>
                                 <th class="col-1">编号</th>
-                                <th class="col-2">标题</th>
-                                <th class="col-2">作者</th>
+                                <th class="col-3">标题</th>
+                                <th class="col-3">作者</th>
                                 <th class="col-1">题目编号</th>
-                                <th class="col-2">发布时间</th>
+                                <th class="col-1">发布时间</th>
                                 <th class="col-1">回复数</th>
-                                <th class="col-3">最后回复</th>
+                                <th class="col-1">最后回复</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -3539,35 +3573,35 @@ else {
                                 if (Posts.length == 0) {
                                     PostList.children[1].innerHTML = `<tr><td colspan="7">暂无数据</td></tr>`;
                                 }
-                                let InnerHTMLData = "";
                                 for (let i = 0; i < Posts.length; i++) {
-                                    InnerHTMLData += `<tr>`;
-                                    InnerHTMLData += `<td>${Posts[i].PostID}</td>`;
-                                    InnerHTMLData += `<td>`;
-                                    InnerHTMLData += `<a href="http://www.xmoj.tech/discuss3/thread.php?tid=${Posts[i].PostID}">`;
+                                    let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
+                                    let IDCell = document.createElement("td"); Row.appendChild(IDCell);
+                                    IDCell.innerText = Posts[i].PostID;
+                                    let TitleCell = document.createElement("td"); Row.appendChild(TitleCell);
+                                    let TitleLink = document.createElement("a"); TitleCell.appendChild(TitleLink);
+                                    TitleLink.href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + Posts[i].PostID;
                                     if (Posts[i].Lock.Locked) {
-                                        InnerHTMLData += `<span class="text-muted">🔒 ${Posts[i].Title}</span>`;
+                                        TitleLink.innerText = `<span class="text-muted">🔒 ${Posts[i].Title}</span>`;
                                     } else {
-                                        InnerHTMLData += `<span>${Posts[i].Title}</span>`;
+                                        TitleLink.innerText = `<span>${Posts[i].Title}</span>`;
                                     }
-                                    InnerHTMLData += `</a>`;
-                                    InnerHTMLData += `</td>`;
-                                    InnerHTMLData += `<td>`;
-                                    InnerHTMLData += await GetUsernameHTML(Posts[i].UserID);
-                                    InnerHTMLData += `</td>`;
-                                    InnerHTMLData += `<td>`;
+                                    TitleLink.innerText = Posts[i].Title;
+                                    let AuthorCell = document.createElement("td"); Row.appendChild(AuthorCell);
+                                    // AuthorCell.innerHTML = await GetUsernameHTML(Posts[i].UserID);
+                                    GetUsernameHTML(AuthorCell, Posts[i].UserID);
+                                    let ProblemIDCell = document.createElement("td"); Row.appendChild(ProblemIDCell);
                                     if (Posts[i].ProblemID != 0) {
-                                        InnerHTMLData += `<a href="http://www.xmoj.tech/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a>`;
+                                        let ProblemIDLink = document.createElement("a"); ProblemIDCell.appendChild(ProblemIDLink);
+                                        ProblemIDLink.href = "http://www.xmoj.tech/problem.php?id=" + Posts[i].ProblemID;
+                                        ProblemIDLink.innerText = Posts[i].ProblemID;
                                     }
-                                    InnerHTMLData += "</td>";
-                                    InnerHTMLData += "<td>" + new Date(Posts[i].PostTime).toLocaleString() + "</td>";
-                                    InnerHTMLData += `<td>${Posts[i].ReplyCount}</td>`;
-                                    InnerHTMLData += `<td>`;
-                                    InnerHTMLData += new Date(Posts[i].LastReplyTime).toLocaleString();
-                                    InnerHTMLData += `</td>`;
-                                    InnerHTMLData += `</tr>`;
+                                    let PostTimeCell = document.createElement("td"); Row.appendChild(PostTimeCell);
+                                    PostTimeCell.innerHTML = GetRelativeTime(Posts[i].PostTime);
+                                    let ReplyCountCell = document.createElement("td"); Row.appendChild(ReplyCountCell);
+                                    ReplyCountCell.innerText = Posts[i].ReplyCount;
+                                    let LastReplyTimeCell = document.createElement("td"); Row.appendChild(LastReplyTimeCell);
+                                    LastReplyTimeCell.innerHTML = GetRelativeTime(Posts[i].LastReplyTime);
                                 }
-                                PostList.children[1].innerHTML = InnerHTMLData;
                             }
                             else {
                                 ErrorElement.innerText = ResponseData.Message;
@@ -3584,23 +3618,12 @@ else {
                         <label for="Title" class="mb-1">标题</label>
                         <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
                     </div>
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ReplyTab" type="button" role="tab">编辑</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#PreviewTab" type="button" role="tab">预览</button>
-                        </li>
-                    </ul>
-                    <div class="tab-content mb-2">
-                        <div class="tab-pane fade show active" id="ReplyTab" role="tabpanel">
-                            <label for="ContentElement" class="mb-1">回复</label>
-                            <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
-                        </div>
-                        <div class="tab-pane fade" id="PreviewTab" role="tabpanel">
-                        </div>
+                    <label for="ContentElement" class="mb-1">回复</label>
+                    <div class="input-group">
+                        <textarea class="col-6 form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                        <div class="col-6 form-control" id="PreviewTab"></div>
                     </div>
-                    <div class="cf-turnstile" id="CaptchaContainer"></div>
+                    <div class="cf-turnstile mt-2" id="CaptchaContainer"></div>
                     <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
                         发布
                         <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
@@ -3698,23 +3721,12 @@ else {
                                 <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
                             </ul>
                         </nav>
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ReplyTab" type="button" role="tab">编辑</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#PreviewTab" type="button" role="tab">预览</button>
-                            </li>
-                        </ul>
-                        <div class="tab-content mb-2">
-                            <div class="tab-pane fade show active" id="ReplyTab" role="tabpanel">
-                                <label for="ContentElement" class="mb-1">回复</label>
-                                <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
-                            </div>
-                            <div class="tab-pane fade" id="PreviewTab" role="tabpanel">
-                            </div>
+                        <label for="ContentElement" class="mb-1">回复</label>
+                        <div class="input-group">
+                            <textarea class="col-6 form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                            <div class="col-6 form-control" id="PreviewTab"></div>
                         </div>
-                        <div class="cf-turnstile" id="CaptchaContainer"></div>
+                        <div class="cf-turnstile mt-2" id="CaptchaContainer"></div>
                         <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
                             发布
                             <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
@@ -3767,12 +3779,12 @@ else {
                                     </div>`;
                                 }
                             }
-                            let OldScrollTop = document.documentElement.scrollTop;
                             RequestAPI("GetPost", {
                                 "PostID": Number(ThreadID),
                                 "Page": Number(Page)
                             }, async (ResponseData) => {
                                 if (ResponseData.Success == true) {
+                                    let OldScrollTop = document.documentElement.scrollTop;
                                     if (!Silent) {
                                         DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=1";
                                         DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
@@ -3792,8 +3804,9 @@ else {
                                         }
                                     }
                                     PostTitle.innerText = ResponseData.Data.Title + (ResponseData.Data.ProblemID == 0 ? "" : ` - 题目` + ResponseData.Data.ProblemID);
-                                    PostAuthor.innerHTML = await GetUsernameHTML(ResponseData.Data.UserID);
-                                    PostTime.innerText = new Date(ResponseData.Data.PostTime).toLocaleString();
+                                    // PostAuthor.innerHTML = await GetUsernameHTML(ResponseData.Data.UserID);
+                                    GetUsernameHTML(PostAuthor, ResponseData.Data.UserID);
+                                    PostTime.innerHTML = GetRelativeTime(ResponseData.Data.PostTime);
                                     let Replies = ResponseData.Data.Reply;
                                     PostReplies.innerHTML = "";
                                     for (let i = 0; i < Replies.length; i++) {
@@ -3805,10 +3818,16 @@ else {
                                         CardBodyRowElement.className = "row mb-3";
                                         let AuthorElement = document.createElement("span");
                                         AuthorElement.className = "col-4 text-muted";
-                                        AuthorElement.innerText = "作者：" + await GetUsernameHTML(Replies[i].UserID);
+                                        let AuthorSpanElement = document.createElement("span");
+                                        AuthorSpanElement.innerText = "作者：";
+                                        AuthorElement.appendChild(AuthorSpanElement);
+                                        let AuthorUsernameElement = document.createElement("span");
+                                        // AuthorUsernameElement.innerHTML = await GetUsernameHTML(Replies[i].UserID);
+                                        GetUsernameHTML(AuthorUsernameElement, Replies[i].UserID);
+                                        AuthorElement.appendChild(AuthorUsernameElement);
                                         let SendTimeElement = document.createElement("span");
                                         SendTimeElement.className = "col-4 text-muted";
-                                        SendTimeElement.innerText = "发布时间：" + new Date(Replies[i].ReplyTime).toLocaleString();
+                                        SendTimeElement.innerHTML = "发布时间：" + GetRelativeTime(Replies[i].ReplyTime);
                                         let ButtonsElement = document.createElement("span");
                                         ButtonsElement.className = "col-4";
                                         let ReplyButton = document.createElement("button");

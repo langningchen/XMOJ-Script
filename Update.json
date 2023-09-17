@@ -169,6 +169,76 @@
                     "Description": "Better code"
                 }
             ]
+        },
+        "0.3.150": {
+            "UpdateDate": 1694782645632,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 409,
+                    "Description": "使用相对时间"
+                }
+            ]
+        },
+        "0.3.151": {
+            "UpdateDate": 1694783069305,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 411,
+                    "Description": "修复HTML显示失败"
+                }
+            ]
+        },
+        "0.3.152": {
+            "UpdateDate": 1694840601277,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 413,
+                    "Description": "解决时间变为负数"
+                }
+            ]
+        },
+        "0.3.153": {
+            "UpdateDate": 1694857914347,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 416,
+                    "Description": "[Bug] 编辑时有时候自动跳掉"
+                }
+            ]
+        },
+        "0.3.154": {
+            "UpdateDate": 1694858956575,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 417,
+                    "Description": "修复比赛状态页无法上传标程"
+                }
+            ]
+        },
+        "0.3.155": {
+            "UpdateDate": 1694860353202,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 418,
+                    "Description": "使用异步加载用户名，增快加载速度"
+                }
+            ]
+        },
+        "0.3.156": {
+            "UpdateDate": 1694862657621,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 419,
+                    "Description": "编辑预览放在右侧"
+                }
+            ]
         }
     }
 }
