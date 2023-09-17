@@ -249,6 +249,16 @@
                     "Description": "增加讨论锁定功能"
                 }
             ]
+        },
+        "0.3.158": {
+            "UpdateDate": 1694937813524,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 424,
+                    "Description": "解决编辑时出现多余的HTML标签"
+                }
+            ]
         }
     }
 }
