@@ -289,6 +289,80 @@
                     "Description": "修复回复的过滤以及锁定的位置"
                 }
             ]
+        },
+        "0.3.162": {
+            "UpdateDate": 1694947900839,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 368,
+                    "Description": "test"
+                },
+                {
+                    "PR": 383,
+                    "Description": "修复OI赛制下状态页无限刷新"
+                },
+                {
+                    "PR": 384,
+                    "Description": "增加XMOJ的IP地址"
+                },
+                {
+                    "PR": 391,
+                    "Description": "增加回复时引用并且支持内嵌标签"
+                },
+                {
+                    "PR": 408,
+                    "Description": "Better code"
+                },
+                {
+                    "PR": 409,
+                    "Description": "使用相对时间"
+                },
+                {
+                    "PR": 411,
+                    "Description": "修复HTML显示失败"
+                },
+                {
+                    "PR": 413,
+                    "Description": "解决时间变为负数"
+                },
+                {
+                    "PR": 416,
+                    "Description": "[Bug] 编辑时有时候自动跳掉"
+                },
+                {
+                    "PR": 417,
+                    "Description": "修复比赛状态页无法上传标程"
+                },
+                {
+                    "PR": 418,
+                    "Description": "使用异步加载用户名，增快加载速度"
+                },
+                {
+                    "PR": 419,
+                    "Description": "编辑预览放在右侧"
+                },
+                {
+                    "PR": 423,
+                    "Description": "增加讨论锁定功能"
+                },
+                {
+                    "PR": 424,
+                    "Description": "解决编辑时出现多余的HTML标签"
+                },
+                {
+                    "PR": 429,
+                    "Description": "使用新的讨论API"
+                },
+                {
+                    "PR": 430,
+                    "Description": "解决回复按钮失效与锁定被多次触发导致错误"
+                },
+                {
+                    "PR": 431,
+                    "Description": "修复回复的过滤以及锁定的位置"
+                }
+            ]
         }
     }
 }
