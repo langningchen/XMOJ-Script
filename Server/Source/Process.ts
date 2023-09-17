@@ -160,6 +160,21 @@ export class Process {
                     await this.XMOJDatabase.Delete("bbs_post", { post_id: Post["post_id"] });
                     continue;
                 }
+
+                let LockData = {
+                    Locked: false,
+                    LockPerson: "",
+                    LockTime: 0
+                };
+                let Locked = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_lock", [], {
+                    post_id: Data["PostID"]
+                }));
+                if (Locked.toString() != "") {
+                    LockData.Locked = true;
+                    LockData.LockPerson = Locked[0]["lock_person"];
+                    LockData.LockTime = Locked[0]["lock_time"];
+                }
+
                 ResponseData.Posts.push({
                     PostID: Post["post_id"],
                     UserID: Post["user_id"],
@@ -168,7 +183,8 @@ export class Process {
                     PostTime: Post["post_time"],
                     ReplyCount: ReplyCount,
                     LastReplyUserID: LastReply[0]["user_id"],
-                    LastReplyTime: LastReply[0]["reply_time"]
+                    LastReplyTime: LastReply[0]["reply_time"],
+                    Lock: LockData
                 });
             }
             return new Result(true, "获得讨论列表成功", ResponseData);
@@ -184,7 +200,12 @@ export class Process {
                 Title: "",
                 PostTime: 0,
                 Reply: new Array<Object>(),
-                PageCount: 0
+                PageCount: 0,
+                Lock: {
+                    Locked: false,
+                    LockPerson: "",
+                    LockTime: 0
+                }
             };
             let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", [], {
                 post_id: Data["PostID"]
@@ -203,6 +224,16 @@ export class Process {
             ResponseData.ProblemID = Post[0]["problem_id"];
             ResponseData.Title = Post[0]["title"];
             ResponseData.PostTime = Post[0]["post_time"];
+
+            let Locked = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_lock", [], {
+                post_id: Data["PostID"]
+            }));
+            if (Locked.toString() != "") {
+                ResponseData.Lock.Locked = true;
+                ResponseData.Lock.LockPerson = Locked[0]["lock_person"];
+                ResponseData.Lock.LockTime = Locked[0]["lock_time"];
+            }
+
             let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", [], { post_id: Data["PostID"] }, {
                 Order: "reply_time",
                 OrderIncreasing: true,
@@ -239,6 +270,13 @@ export class Process {
             }))["TableSize"] === 0) {
                 return new Result(false, "未找到讨论");
             }
+
+            if (!this.SecurityChecker.IsAdmin() && ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_lock", {
+                post_id: Reply[0]["post_id"]
+            }))["TableSize"] === 1) {
+                return new Result(false, "讨论已被锁定");
+            }
+
             Data["Content"] = Data["Content"].trim();
             if (Data["Content"] === "") {
                 return new Result(false, "内容不能为空");
@@ -278,6 +316,11 @@ export class Process {
             if (Post.toString() == "") {
                 return new Result(false, "未找到讨论");
             }
+            if (!this.SecurityChecker.IsAdmin() && ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_lock", {
+                post_id: Data["PostID"]
+            }))["TableSize"] === 1) {
+                return new Result(false, "讨论已被锁定");
+            }
             if (!this.SecurityChecker.IsAdmin() && CheckUserID && Post[0]["user_id"] != this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限删除此讨论");
             }
@@ -299,6 +342,11 @@ export class Process {
             let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["user_id", "post_id"], { reply_id: Data["ReplyID"] }));
             if (Reply.toString() == "") {
                 return new Result(false, "未找到回复");
+            }
+            if (!this.SecurityChecker.IsAdmin() && ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_lock", {
+                post_id: Reply[0]["post_id"]
+            }))["TableSize"] === 1) {
+                return new Result(false, "讨论已被锁定");
             }
             if (!this.SecurityChecker.IsAdmin() && Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限删除此回复");
