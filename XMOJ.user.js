@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.158
+// @version      0.3.159
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -20,7 +20,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
-// @connect      www.xmoj-bbs.tech
+// @connect      api.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
 // @connect      127.0.0.1
 // @license      GPL
@@ -264,7 +264,7 @@ let RequestAPI = (Action, Data, CallBack) => {
     let DataString = JSON.stringify(PostData);
     GM_xmlhttpRequest({
         method: "POST",
-        url: "https://www.xmoj-bbs.tech/" + Action,
+        url: "https://api.xmoj-bbs.tech/" + Action,
         // url: "http://127.0.0.1:8787/" + Action,
         headers: {
             "Content-Type": "application/json"
