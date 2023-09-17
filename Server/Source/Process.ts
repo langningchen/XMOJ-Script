@@ -119,7 +119,7 @@ export class Process {
                 await this.AddBBSMention(MentionPeople[i], Data["PostID"]);
             }
 
-            if (Post[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+            if (Post[0]["user_id"] !== this.SecurityChecker.GetUsername()) {
                 await this.AddBBSMention(Post[0]["user_id"], Data["PostID"]);
             }
 
@@ -157,7 +157,9 @@ export class Process {
                     Limit: 1
                 }));
                 if (ReplyCount === 0) {
-                    await this.XMOJDatabase.Delete("bbs_post", { post_id: Post["post_id"] });
+                    await this.XMOJDatabase.Delete("bbs_post", {
+                        post_id: Post["post_id"]
+                    });
                     continue;
                 }
 
@@ -167,9 +169,9 @@ export class Process {
                     LockTime: 0
                 };
                 let Locked = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_lock", [], {
-                    post_id: Data["PostID"]
+                    post_id: Post["post_id"]
                 }));
-                if (Locked.toString() != "") {
+                if (Locked.toString() !== "") {
                     LockData.Locked = true;
                     LockData.LockPerson = Locked[0]["lock_person"];
                     LockData.LockTime = Locked[0]["lock_time"];
@@ -228,7 +230,7 @@ export class Process {
             let Locked = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_lock", [], {
                 post_id: Data["PostID"]
             }));
-            if (Locked.toString() != "") {
+            if (Locked.toString() !== "") {
                 ResponseData.Lock.Locked = true;
                 ResponseData.Lock.LockPerson = Locked[0]["lock_person"];
                 ResponseData.Lock.LockTime = Locked[0]["lock_time"];
@@ -251,6 +253,52 @@ export class Process {
             }
             return new Result(true, "获得讨论成功", ResponseData);
         },
+        LockPost: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "PostID": "number"
+            }));
+            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_post", {
+                post_id: Data["PostID"]
+            }))["TableSize"] === 0) {
+                return new Result(false, "未找到讨论");
+            }
+            if (!this.SecurityChecker.IsAdmin()) {
+                return new Result(false, "没有权限锁定此讨论");
+            }
+            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_lock", {
+                post_id: Data["PostID"]
+            }))["TableSize"] === 1) {
+                return new Result(false, "讨论已经被锁定");
+            }
+            ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_lock", {
+                post_id: Data["PostID"],
+                lock_person: this.SecurityChecker.GetUsername(),
+                lock_time: new Date().getTime()
+            }));
+            return new Result(true, "讨论锁定成功");
+        },
+        UnlockPost: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
+                "PostID": "number"
+            }));
+            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_post", {
+                post_id: Data["PostID"]
+            }))["TableSize"] === 0) {
+                return new Result(false, "未找到讨论");
+            }
+            if (!this.SecurityChecker.IsAdmin()) {
+                return new Result(false, "没有权限锁定此讨论");
+            }
+            if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_lock", {
+                post_id: Data["PostID"]
+            }))["TableSize"] === 0) {
+                return new Result(false, "讨论已经被解锁");
+            }
+            ThrowErrorIfFailed(await this.XMOJDatabase.Delete("bbs_lock", {
+                post_id: Data["PostID"]
+            }));
+            return new Result(true, "讨论解锁成功");
+        },
         EditReply: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
                 "ReplyID": "number",
@@ -259,10 +307,10 @@ export class Process {
             let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["post_id", "user_id"], {
                 reply_id: Data["ReplyID"]
             }));
-            if (Reply.toString() == "") {
+            if (Reply.toString() === "") {
                 return new Result(false, "未找到回复");
             }
-            if (!this.SecurityChecker.IsAdmin() && Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+            if (!this.SecurityChecker.IsAdmin() && Reply[0]["user_id"] !== this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限编辑此回复");
             }
             if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_post", {
@@ -313,7 +361,7 @@ export class Process {
             let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", ["user_id"], {
                 post_id: Data["PostID"]
             }));
-            if (Post.toString() == "") {
+            if (Post.toString() === "") {
                 return new Result(false, "未找到讨论");
             }
             if (!this.SecurityChecker.IsAdmin() && ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_lock", {
@@ -321,7 +369,7 @@ export class Process {
             }))["TableSize"] === 1) {
                 return new Result(false, "讨论已被锁定");
             }
-            if (!this.SecurityChecker.IsAdmin() && CheckUserID && Post[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+            if (!this.SecurityChecker.IsAdmin() && CheckUserID && Post[0]["user_id"] !== this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限删除此讨论");
             }
             let Replies = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["reply_id"], {
@@ -340,7 +388,7 @@ export class Process {
                 "ReplyID": "number"
             }));
             let Reply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["user_id", "post_id"], { reply_id: Data["ReplyID"] }));
-            if (Reply.toString() == "") {
+            if (Reply.toString() === "") {
                 return new Result(false, "未找到回复");
             }
             if (!this.SecurityChecker.IsAdmin() && ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_lock", {
@@ -348,7 +396,7 @@ export class Process {
             }))["TableSize"] === 1) {
                 return new Result(false, "讨论已被锁定");
             }
-            if (!this.SecurityChecker.IsAdmin() && Reply[0]["user_id"] != this.SecurityChecker.GetUsername()) {
+            if (!this.SecurityChecker.IsAdmin() && Reply[0]["user_id"] !== this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限删除此回复");
             }
             if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_reply", {
@@ -370,7 +418,7 @@ export class Process {
             for (let i in Mentions) {
                 let Mention = Mentions[i];
                 let Post = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", ["user_id", "title"], { post_id: Mention["post_id"] }));
-                if (Post.toString() == "") {
+                if (Post.toString() === "") {
                     continue;
                 }
                 ResponseData.MentionList.push({
@@ -407,10 +455,10 @@ export class Process {
             let MentionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_mention", ["to_user_id"], {
                 bbs_mention_id: Data["MentionID"]
             }));
-            if (MentionData.toString() == "") {
+            if (MentionData.toString() === "") {
                 return new Result(false, "未找到提及");
             }
-            if (MentionData[0]["to_user_id"] != this.SecurityChecker.GetUsername()) {
+            if (MentionData[0]["to_user_id"] !== this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限阅读此提及");
             }
             ThrowErrorIfFailed(await this.XMOJDatabase.Delete("bbs_mention", {
@@ -425,10 +473,10 @@ export class Process {
             let MentionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("mail_mention", ["to_user_id"], {
                 mail_mention_id: Data["MentionID"]
             }));
-            if (MentionData.toString() == "") {
+            if (MentionData.toString() === "") {
                 return new Result(false, "未找到提及");
             }
-            if (MentionData[0]["to_user_id"] != this.SecurityChecker.GetUsername()) {
+            if (MentionData[0]["to_user_id"] !== this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限阅读此提及");
             }
             ThrowErrorIfFailed(await this.XMOJDatabase.Delete("mail_mention", {
@@ -610,7 +658,7 @@ export class Process {
             let Std = ThrowErrorIfFailed(await this.XMOJDatabase.Select("std_answer", ["std_code"], {
                 problem_id: Data["ProblemID"]
             }));
-            if (Std.toString() == "") {
+            if (Std.toString() === "") {
                 return new Result(false, "此题还没有人上传标程");
             }
             return new Result(true, "获得标程成功", {
@@ -636,12 +684,12 @@ export class Process {
                 "Color": "string",
                 "Content": "string"
             }));
-            if (!this.SecurityChecker.IsAdmin() && Data["UserID"] != this.SecurityChecker.GetUsername()) {
+            if (!this.SecurityChecker.IsAdmin() && Data["UserID"] !== this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限编辑此标签");
             }
             if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("badge", {
                 user_id: Data["UserID"]
-            }))["TableSize"] == 0) {
+            }))["TableSize"] === 0) {
                 return new Result(false, "未找到标签");
             }
             ThrowErrorIfFailed(await this.XMOJDatabase.Update("badge", {
