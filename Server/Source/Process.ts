@@ -31,18 +31,18 @@ export class Process {
         }
     };
     private AddMailMention = async (FromUserID: string, ToUserID: string): Promise<void> => {
-        if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("mail_mention", {
+        if (ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("short_message_mention", {
             from_user_id: FromUserID,
             to_user_id: ToUserID
         }))["TableSize"] === 0) {
-            ThrowErrorIfFailed(await this.XMOJDatabase.Insert("mail_mention", {
+            ThrowErrorIfFailed(await this.XMOJDatabase.Insert("short_message_mention", {
                 from_user_id: FromUserID,
                 to_user_id: ToUserID,
                 mail_mention_time: new Date().getTime()
             }));
         }
         else {
-            ThrowErrorIfFailed(await this.XMOJDatabase.Update("mail_mention", {
+            ThrowErrorIfFailed(await this.XMOJDatabase.Update("short_message_mention", {
                 mail_mention_time: new Date().getTime()
             }, {
                 from_user_id: FromUserID,
@@ -435,7 +435,7 @@ export class Process {
             let ResponseData = {
                 MentionList: new Array<Object>()
             };
-            let Mentions = ThrowErrorIfFailed(await this.XMOJDatabase.Select("mail_mention", ["mail_mention_id", "from_user_id", "mail_mention_time"], {
+            let Mentions = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message_mention", ["mail_mention_id", "from_user_id", "mail_mention_time"], {
                 to_user_id: this.SecurityChecker.GetUsername()
             }));
             for (let i in Mentions) {
@@ -470,7 +470,7 @@ export class Process {
             ThrowErrorIfFailed(this.SecurityChecker.CheckParams(Data, {
                 "MentionID": "number"
             }));
-            let MentionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("mail_mention", ["to_user_id"], {
+            let MentionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("short_message_mention", ["to_user_id"], {
                 mail_mention_id: Data["MentionID"]
             }));
             if (MentionData.toString() === "") {
@@ -479,7 +479,7 @@ export class Process {
             if (MentionData[0]["to_user_id"] !== this.SecurityChecker.GetUsername()) {
                 return new Result(false, "没有权限阅读此提及");
             }
-            ThrowErrorIfFailed(await this.XMOJDatabase.Delete("mail_mention", {
+            ThrowErrorIfFailed(await this.XMOJDatabase.Delete("short_message_mention", {
                 mail_mention_id: Data["MentionID"]
             }));
             return new Result(true, "阅读短消息提及成功");
