@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.160
+// @version      0.3.161
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -245,6 +245,11 @@ let UtilityEnabled = (Name) => {
     }
     return localStorage.getItem("UserScript-Setting-" + Name) == "true";
 };
+let FixReply = (Data) => {
+    Data = Data.replaceAll(/ ?<a class="link-info" href="http:\/\/www.xmoj.tech\/userinfo.php\?user=(.*?)">@\1<\/a> ?/g, "@$1");
+    Data = Data.replaceAll(/<br><span class="text-muted" style="font-size: 12px">已于 [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}, [0-9]{1,2}:[0-9]{2}:[0-9]{2} (A|P)M 编辑<\/span>/g, "");
+    return Data;
+}
 let RequestAPI = (Action, Data, CallBack) => {
     let UserID = profile.innerText;
     let Session = "";
@@ -3713,6 +3718,10 @@ else {
                         </nav>
                         <div>
                             <label for="ContentElement" class="mb-1">回复</label>
+                            <div class="form-check form-switch" id="ToggleLock" style="display: none">
+                                <input class="form-check-input" type="checkbox" role="switch" id="ToggleLockButton">
+                                <label class="form-check-label" for="ToggleLockButton">锁定</label>
+                            </div>
                             <div class="input-group">
                                 <textarea class="col-6 form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
                                 <div class="col-6 form-control" id="PreviewTab"></div>
@@ -3722,10 +3731,6 @@ else {
                                 发布
                                 <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                             </button>
-                        </div>
-                        <div class="form-check form-switch" id="ToggleLock" style="display: none">
-                            <input class="form-check-input" type="checkbox" role="switch" id="ToggleLockButton">
-                            <label class="form-check-label" for="ToggleLockButton">锁定</label>
                         </div>
                         <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
                         <input type="hidden" id="CaptchaSecretKey">
@@ -3832,6 +3837,11 @@ else {
                                             ReplyButton.innerText = "回复";
                                             ReplyButton.addEventListener("click", () => {
                                                 let Content = Replies[i].Content;
+                                                Content = FixReply(Content);
+                                                while (Content.startsWith(">")) {
+                                                    Content = Content.substring(Content.indexOf("\n") + 1);
+                                                }
+                                                Content = Content.trim();
                                                 Content = Content.split("\n").map((Line) => {
                                                     return "> " + Line;
                                                 }).join("\n");
@@ -3927,7 +3937,7 @@ else {
                                         ContentEditor.className = "form-control";
                                         ContentEditor.style.height = "300px";
                                         ContentEditor.value = Replies[i].Content;
-                                        ContentEditor.value = ContentEditor.value.replaceAll(/ ?<a class="link-info" href="http:\/\/www.xmoj.tech\/userinfo.php\?user=(.*?)">@\1<\/a> ?/g, "@$1");
+                                        ContentEditor.value = FixReply(ContentEditor.value);
                                         if (ContentEditor.value.indexOf("<br>") != -1) {
                                             ContentEditor.value = ContentEditor.value.substring(0, ContentEditor.value.indexOf("<br>"));
                                         }
@@ -3966,12 +3976,11 @@ else {
                                     }
 
                                     if (AdminUserList.indexOf(profile.innerText) !== -1) {
-                                        ToggleLock.style.display = "";
+                                        ToggleLock.style.display = "inline-block";
                                         ToggleLockButton.checked = ResponseData.Data.Lock.Locked;
                                         ToggleLockButton.onclick = () => {
                                             ToggleLockButton.disabled = true;
                                             ErrorElement.style.display = "none";
-                                            debugger
                                             RequestAPI((ToggleLockButton.checked ? "LockPost" : "UnlockPost"), {
                                                 "PostID": Number(ThreadID)
                                             }, (LockResponseData) => {
