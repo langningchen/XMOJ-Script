@@ -279,6 +279,16 @@
                     "Description": "解决回复按钮失效与锁定被多次触发导致错误"
                 }
             ]
+        },
+        "0.3.161": {
+            "UpdateDate": 1694947388558,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 431,
+                    "Description": "修复回复的过滤以及锁定的位置"
+                }
+            ]
         }
     }
 }
