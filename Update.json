@@ -259,6 +259,16 @@
                     "Description": "解决编辑时出现多余的HTML标签"
                 }
             ]
+        },
+        "0.3.159": {
+            "UpdateDate": 1694944745822,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 429,
+                    "Description": "使用新的讨论API"
+                }
+            ]
         }
     }
 }
