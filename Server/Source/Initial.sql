@@ -1,3 +1,29 @@
+DROP TABLE IF EXISTS badge;
+
+CREATE TABLE badge (
+    user_id TEXT PRIMARY KEY NOT NULL,
+    background_color TEXT NOT NULL DEFAULT "#000000",
+    color TEXT NOT NULL DEFAULT "#ffffff",
+    content TEXT NOT NULL DEFAULT "VIP"
+);
+
+DROP TABLE IF EXISTS bbs_lock;
+
+CREATE TABLE bbs_lock (
+    post_id INTEGER PRIMARY KEY NOT NULL,
+    lock_person TEXT NOT NULL,
+    lock_time INTEGER NOT NULL
+);
+
+DROP TABLE IF EXISTS bbs_mention;
+
+CREATE TABLE bbs_mention (
+    bbs_mention_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    to_user_id TEXT NOT NULL,
+    post_id INTEGER NOT NULL,
+    bbs_mention_time TIMESTAMP NOT NULL
+);
+
 DROP TABLE IF EXISTS bbs_post;
 
 CREATE TABLE bbs_post (
@@ -18,15 +44,6 @@ CREATE TABLE bbs_reply (
     reply_time INTEGER NOT NULL
 );
 
-DROP TABLE IF EXISTS bbs_mention;
-
-CREATE TABLE bbs_mention (
-    bbs_mention_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    to_user_id TEXT NOT NULL,
-    post_id INTEGER NOT NULL,
-    bbs_mention_time TIMESTAMP NOT NULL
-);
-
 DROP TABLE IF EXISTS short_message;
 
 CREATE TABLE short_message (
@@ -38,9 +55,9 @@ CREATE TABLE short_message (
     send_time INTEGER NOT NULL
 );
 
-DROP TABLE IF EXISTS mail_mention;
+DROP TABLE IF EXISTS short_message_mention;
 
-CREATE TABLE mail_mention (
+CREATE TABLE short_message_mention (
     mail_mention_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     from_user_id TEXT NOT NULL,
     to_user_id TEXT NOT NULL,
@@ -52,13 +69,4 @@ DROP TABLE IF EXISTS std_answer;
 CREATE TABLE std_answer (
     problem_id INTEGER PRIMARY KEY NOT NULL,
     std_code TEXT
-);
-
-DROP TABLE IF EXISTS badge;
-
-CREATE TABLE badge (
-    user_id TEXT PRIMARY KEY NOT NULL,
-    background_color TEXT NOT NULL DEFAULT "#000000",
-    color TEXT NOT NULL DEFAULT "#ffffff",
-    content TEXT NOT NULL DEFAULT "VIP"
 );
