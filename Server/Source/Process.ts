@@ -5,7 +5,7 @@ import { CaptchaSecretKey } from "./Secret"
 import * as cheerio from "cheerio";
 
 export class Process {
-    private AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
+    private AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2", "shanwenxiao"];
     private Username: string;
     private SessionID: string;
     private RemoteIP: string;
