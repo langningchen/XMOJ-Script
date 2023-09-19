@@ -1,8 +1,9 @@
 import { Result, ThrowErrorIfFailed } from "./Result";
 import { Output } from "./Output";
+import { D1Database } from "@cloudflare/workers-types";
 
 export class Database {
-    private RawDatabase: D1Database = null;
+    private RawDatabase: D1Database;
     constructor(RawDatabase: D1Database) {
         this.RawDatabase = RawDatabase;
     }

@@ -1,16 +1,18 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.144
+// @version      0.3.162
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
 // @match        http://*.xmoj.tech/*
+// @match        http://116.62.212.172/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/hmac-sha1.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/codemirror.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/mode/clike/clike.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.js
 // @require      https://cdn.bootcdn.net/ajax/libs/diff_match_patch/20121119/diff_match_patch_uncompressed.js
+// @require      https://cdn.bootcdn.net/ajax/libs/dompurify/3.0.2/purify.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/core.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/md5.min.js
@@ -18,7 +20,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
-// @connect      www.xmoj-bbs.tech
+// @connect      api.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
 // @connect      127.0.0.1
 // @license      GPL
@@ -33,6 +35,20 @@
 const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
 const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
 
+let GetRelativeTime = (Input) => {
+    Input = new Date(Input);
+    let Now = new Date();
+    let Delta = Now.getTime() - Input.getTime();
+    let RelativeName = "";
+    if (Delta < 0) { RelativeName = "未来"; }
+    else if (Delta <= 1000 * 60) { RelativeName = "刚刚"; }
+    else if (Delta <= 1000 * 60 * 60) { RelativeName = Math.floor((Now - Input) / 1000 / 60) + "分钟前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24) { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60) + "小时前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24 * 31) { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60 / 24) + "天前"; }
+    else if (Delta <= 1000 * 60 * 60 * 24 * 365) { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60 / 24 / 31) + "个月前"; }
+    else { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60 / 24 / 365) + "年前"; }
+    return "<span title=\"" + Input.toLocaleString() + "\">" + RelativeName + "</span>";
+};
 let RenderMathJax = () => {
     var ScriptElement = document.createElement("script");
     ScriptElement.id = "MathJax-script";
@@ -110,7 +126,10 @@ let GetUserBadge = async (Username) => {
         }
     }
 };
-let GetUsernameHTML = async (Username, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
+let GetUsernameHTML = async (Element, Username, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
+    let ID = "Username-" + Username + "-" + Math.random();
+    Element.id = ID;
+    Element.innerHTML = `<div class="spinner-border spinner-border-sm me-2" role="status"></div>${Username}`;
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
     if (UserInfo.EmailHash == undefined) {
@@ -144,7 +163,7 @@ let GetUsernameHTML = async (Username, Href = "http://www.xmoj.tech/userinfo.php
     if (BadgeInfo.Content != "") {
         HTMLData += `<span class="badge ms-2" style="background-color: ${BadgeInfo.BackgroundColor}; color: ${BadgeInfo.Color}">${BadgeInfo.Content}</span>`;
     }
-    return HTMLData;
+    document.getElementById(ID).innerHTML = HTMLData;
 };
 let SecondsToString = (InputSeconds) => {
     let Hours = Math.floor(InputSeconds / 3600);
@@ -227,6 +246,11 @@ let UtilityEnabled = (Name) => {
     }
     return localStorage.getItem("UserScript-Setting-" + Name) == "true";
 };
+let FixReply = (Data) => {
+    Data = Data.replaceAll(/ ?<a class="link-info" href="http:\/\/www.xmoj.tech\/userinfo.php\?user=(.*?)">@\1<\/a> ?/g, "@$1");
+    Data = Data.replaceAll(/<br><span class="text-muted" style="font-size: 12px">已于 [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}, [0-9]{1,2}:[0-9]{2}:[0-9]{2} (A|P)M 编辑<\/span>/g, "");
+    return Data;
+}
 let RequestAPI = (Action, Data, CallBack) => {
     let UserID = profile.innerText;
     let Session = "";
@@ -246,7 +270,7 @@ let RequestAPI = (Action, Data, CallBack) => {
     let DataString = JSON.stringify(PostData);
     GM_xmlhttpRequest({
         method: "POST",
-        url: "https://www.xmoj-bbs.tech/" + Action,
+        url: "https://api.xmoj-bbs.tech/" + Action,
         // url: "http://127.0.0.1:8787/" + Action,
         headers: {
             "Content-Type": "application/json"
@@ -372,8 +396,6 @@ else {
             let BootstrapStyleElement = document.createElement("link"); document.head.appendChild(BootstrapStyleElement);
             BootstrapStyleElement.rel = "stylesheet";
             BootstrapStyleElement.href = "https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0-alpha3/css/bootstrap.min.css";
-            // let SentryScriptElement = document.createElement("script"); document.head.appendChild(SentryScriptElement);
-            // SentryScriptElement.src = "https://js.sentry-cdn.com/a4c8d48a19954926bf0d8e3d6d6c3024.min.js";
             await new Promise((Resolve) => {
                 PopperScriptElement.onload = () => {
                     Resolve();
@@ -421,6 +443,10 @@ else {
                 nav {
                     border-bottom-left-radius: 5px;
                     border-bottom-right-radius: 5px;
+                }
+                blockquote {
+                    border-left: 5px solid var(--bs-secondary-bg);
+                    padding: 0.5em 1em;
                 }
                 .status_y:hover {
                     box-shadow: #52c41a 1px 1px 10px 0px !important;
@@ -659,7 +685,7 @@ else {
                     UpdateDataCardTitle.innerText = Version;
                     let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
                     UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
-                    UpdateDataCardSubtitle.innerText = new Date(Data.UpdateDate).toLocaleString();
+                    UpdateDataCardSubtitle.innerHTML = GetRelativeTime(Data.UpdateDate);
                     let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
                     UpdateDataCardText.className = "card-text";
                     let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
@@ -709,7 +735,7 @@ else {
                             ToastHeader.appendChild(ToastTitle);
                             let ToastTime = document.createElement("small");
                             ToastTime.classList.add("text-body-secondary");
-                            ToastTime.innerText = new Date(MentionList[i].MentionTime).toLocaleString();
+                            ToastTime.innerHTML = GetRelativeTime(MentionList[i].MentionTime);
                             ToastHeader.appendChild(ToastTime);
                             let ToastCloseButton = document.createElement("button");
                             ToastCloseButton.type = "button";
@@ -757,7 +783,7 @@ else {
                             ToastHeader.appendChild(ToastTitle);
                             let ToastTime = document.createElement("small");
                             ToastTime.classList.add("text-body-secondary");
-                            ToastTime.innerText = new Date(MentionList[i].MentionTime).toLocaleString();
+                            ToastTime.innerHTML = GetRelativeTime(MentionList[i].MentionTime);
                             ToastHeader.appendChild(ToastTime);
                             let ToastCloseButton = document.createElement("button");
                             ToastCloseButton.type = "button";
@@ -767,7 +793,10 @@ else {
                             Toast.appendChild(ToastHeader);
                             let ToastBody = document.createElement("div");
                             ToastBody.classList.add("toast-body");
-                            ToastBody.innerHTML = await GetUsernameHTML(MentionList[i].FromUserID) + "  给你发了一封短消息";
+                            let ToastUser = document.createElement("span");
+                            GetUsernameHTML(ToastUser, MentionList[i].FromUserID);
+                            ToastBody.appendChild(ToastUser);
+                            ToastBody.innerHTML += "  给你发了一封短消息";
                             let ToastFooter = document.createElement("div");
                             ToastFooter.classList.add("mt-2", "pt-2", "border-top");
                             let ToastButton = document.createElement("button");
@@ -1323,9 +1352,6 @@ else {
                         Temp[i].childNodes[4].childNodes[0].innerText = TimeToStringTime(Temp[i].childNodes[4].childNodes[0].innerText);
                         Temp[i].childNodes[5].innerText = Temp[i].childNodes[5].childNodes[0].innerText;
                         Temp[i].childNodes[6].innerText = SizeToStringSize(Temp[i].childNodes[6].innerText.substring(0, Temp[i].childNodes[6].innerText.length - 1));
-                        if (Temp[i].childNodes[8].innerText == "LOCAL") {
-                            location.reload();
-                        }
                         Temp[i].childNodes[9].innerText = (Temp[i].childNodes[9].innerText == "" ? "否" : "是");
                     }
                     if (SearchParams.get("cid") == null) {
@@ -1380,6 +1406,12 @@ else {
                                 return Response.text();
                             })
                             .then((Response) => {
+                                let PID = 0;
+                                if (SearchParams.get("cid") === null) {
+                                    PID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
+                                } else {
+                                    PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + (CurrentRow.cells[1].innerText.charCodeAt(0) - 65) + "-PID");
+                                }
                                 let ResponseData = Response.split(",");
                                 CurrentRow.cells[3].innerHTML = "<div id=\"center\" class=\"red\">" + SizeToStringSize(ResponseData[1]) + "</div>";
                                 CurrentRow.cells[4].innerHTML = "<div id=\"center\" class=\"red\">" + TimeToStringTime(ResponseData[2]) + "</div>";
@@ -1389,12 +1421,6 @@ else {
                                 if (Points[SolutionID] != undefined) {
                                     TempHTML += "<span style=\"margin-left: 5px\" class=\"badge text-bg-info\">" + Points[SolutionID] + "</span>";
                                     if (Points[SolutionID].substring(0, Points[SolutionID].length - 1) >= 50) {
-                                        let PID = 0;
-                                        if (SearchParams.get("cid") === null) {
-                                            PID = localStorage.getItem("UserScript-Solution-" + SolutionID + "-Problem");
-                                        } else {
-                                            PID = localStorage.getItem("UserScript-Contest-" + SearchParams.get("cid") + "-Problem-" + (CurrentRow.cells[1].innerText.charCodeAt(0) - 65) + "-PID");
-                                        }
                                         TempHTML += `<a href="http://www.xmoj.tech/showsource.php?pid=${PID}&ByUserScript=1" class="ms-1 link-secondary">查看标程</a>`;
                                     }
                                 }
@@ -1405,15 +1431,17 @@ else {
                                     TempHTML += "<img style=\"margin-left: 5px\" height=\"18\" width=\"18\" src=\"image/loader.gif\">";
                                 }
                                 else if (ResponseData[0] == 4 && UtilityEnabled("UploadStd")) {
+                                    if (SearchParams.get("cid") == null)
+                                        CurrentRow.cells[1].innerText;
                                     let Std = StdList.find((Element) => {
-                                        return Element == Number(CurrentRow.cells[1].innerText);
+                                        return Element == Number(PID);
                                     });
                                     if (Std != undefined) {
                                         TempHTML += "✅";
                                     }
                                     else {
                                         RequestAPI("UploadStd", {
-                                            "ProblemID": Number(CurrentRow.cells[1].innerText),
+                                            "ProblemID": Number(PID),
                                         }, (Result) => {
                                             if (Result.Success) {
                                                 CurrentRow.cells[2].innerHTML += "🆗";
@@ -1766,6 +1794,7 @@ else {
                                     MetalCell.innerText = "";
                                     MetalCell.appendChild(Metal);
                                     Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
+                                    GetUsernameHTML(Temp[i].cells[1], Temp[i].cells[1].innerText);
                                     Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                                     Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;
                                     for (let j = 5; j < Temp[i].cells.length; j++) {
@@ -1951,7 +1980,8 @@ else {
                                         Medal.classList.add("text-bg-secondary");
                                     }
 
-                                    UsernameCell.innerHTML += await GetUsernameHTML(RowData.Username);
+                                    let UsernameSpan = document.createElement("span"); UsernameCell.appendChild(UsernameSpan);
+                                    GetUsernameHTML(UsernameSpan, RowData.Username);
                                     if (RowData.Username == document.getElementById("profile").innerText) {
                                         Row.classList.add("table-primary");
                                     }
@@ -2073,7 +2103,7 @@ else {
                                 Metal.className = "badge text-bg-primary";
                                 MetalCell.innerText = "";
                                 MetalCell.appendChild(Metal);
-                                Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
+                                GetUsernameHTML(Temp[i].cells[1], Temp[i].cells[1].innerText);
                                 Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                                 Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;
                                 for (let j = 5; j < Temp[i].cells.length; j++) {
@@ -2325,7 +2355,7 @@ else {
                             UpdateDataCardTitle.innerText = Version;
                             let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
                             UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
-                            UpdateDataCardSubtitle.innerText = new Date(Data.UpdateDate).toLocaleString();
+                            UpdateDataCardSubtitle.innerHTML = GetRelativeTime(Data.UpdateDate);
                             let UpdateDataCardText = document.createElement("p"); UpdateDataCardBody.appendChild(UpdateDataCardText);
                             UpdateDataCardText.className = "card-text";
                             let UpdateDataCardList = document.createElement("ul"); UpdateDataCardText.appendChild(UpdateDataCardList);
@@ -2433,7 +2463,6 @@ else {
                     "UserID": String(document.querySelector("#profile").innerText)
                 }, (Response) => {
                     if (Response.Success) {
-                        debugger
                         BadgeRow.style.display = "";
                         BadgeContent.value = Response.Data.Content;
                         BadgeBackgroundColor.value = Response.Data.BackgroundColor;
@@ -3098,7 +3127,7 @@ else {
                 if (Temp[i].children[5].children[0] != null) {
                     Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText}</a>`;
                 }
-                Temp[i].children[2].innerHTML = await GetUsernameHTML(Temp[i].children[2].innerText);
+                GetUsernameHTML(Temp[i].children[2], Temp[i].children[2].innerText);
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
                 Temp[i].children[3].remove();
@@ -3283,9 +3312,9 @@ else {
                     <table class="table mb-3" id="ReceiveTable">
                         <thead>
                             <tr>
-                                <td class="col-2">接收者</td>
+                                <td class="col-3">接收者</td>
                                 <td class="col-7">最新消息</td>
-                                <td class="col-3">最后联系时间</td>
+                                <td class="col-2">最后联系时间</td>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -3309,14 +3338,18 @@ else {
                             ReceiveTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
-                                var InnerHTMLData = "";
-                                InnerHTMLData += `<td>`;
-                                InnerHTMLData += await GetUsernameHTML(Data[i].OtherUser, "http://www.xmoj.tech/mail.php?other=");
-                                InnerHTMLData += (Data[i].UnreadCount == 0 ? `` : `<span class="ms-1 badge text-bg-danger">${Data[i].UnreadCount}</span>`);
-                                InnerHTMLData += `</td>`;
-                                InnerHTMLData += `<td>${Data[i].LastsMessage}</td>`;
-                                InnerHTMLData += `<td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
-                                Row.innerHTML = InnerHTMLData;
+                                let UsernameCell = document.createElement("td"); Row.appendChild(UsernameCell);
+                                let UsernameSpan = document.createElement("span"); UsernameCell.appendChild(UsernameSpan);
+                                GetUsernameHTML(UsernameSpan, Data[i].OtherUser, "http://www.xmoj.tech/mail.php?other=");
+                                if (Data[i].UnreadCount != 0) {
+                                    let UnreadCountSpan = document.createElement("span"); UsernameCell.appendChild(UnreadCountSpan);
+                                    UnreadCountSpan.className = "ms-1 badge text-bg-danger";
+                                    UnreadCountSpan.innerText = Data[i].UnreadCount;
+                                }
+                                let LastsMessageCell = document.createElement("td"); Row.appendChild(LastsMessageCell);
+                                LastsMessageCell.innerText = Data[i].LastsMessage;
+                                let SendTimeCell = document.createElement("td"); Row.appendChild(SendTimeCell);
+                                SendTimeCell.innerHTML = GetRelativeTime(Data[i].SendTime);
                             }
                         }
                         else {
@@ -3374,10 +3407,10 @@ else {
                     <table class="table mb-3" id="MessageTable">
                         <thead>
                             <tr>
-                                <td class="col-2">发送者</td>
-                                <td class="col-6">内容</td>
-                                <td class="col-2">发送时间</td>
-                                <td class="col-2">阅读状态</td>
+                                <td class="col-3">发送者</td>
+                                <td class="col-7">内容</td>
+                                <td class="col-1">发送时间</td>
+                                <td class="col-1">阅读状态</td>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -3406,14 +3439,14 @@ else {
                                 if (!Data[i].IsRead && Data[i].FromUser != document.querySelector("#profile").innerText) {
                                     Row.className = "table-info";
                                 }
-                                var InnerHTMLData = "";
-                                InnerHTMLData += `<td>`;
-                                InnerHTMLData += await GetUsernameHTML(Data[i].FromUser);
-                                InnerHTMLData += `</td>`;
-                                InnerHTMLData += `<td>${Data[i].Content}</td>`;
-                                InnerHTMLData += `<td>${new Date(Data[i].SendTime).toLocaleString()}</td>`;
-                                InnerHTMLData += `<td>${(Data[i].IsRead ? "已读" : "未读")}</td>`;
-                                Row.innerHTML = InnerHTMLData;
+                                let UsernameCell = document.createElement("td"); Row.appendChild(UsernameCell);
+                                GetUsernameHTML(UsernameCell, Data[i].FromUser);
+                                let ContentCell = document.createElement("td"); Row.appendChild(ContentCell);
+                                ContentCell.innerHTML = DOMPurify.sanitize(Data[i].Content);
+                                let SendTimeCell = document.createElement("td"); Row.appendChild(SendTimeCell);
+                                SendTimeCell.innerHTML = GetRelativeTime(Data[i].SendTime);
+                                let IsReadCell = document.createElement("td"); Row.appendChild(IsReadCell);
+                                IsReadCell.innerHTML = (Data[i].IsRead ? "已读" : "未读");
                             }
                         }
                         else {
@@ -3480,12 +3513,12 @@ else {
                         <thead>
                             <tr>
                                 <th class="col-1">编号</th>
-                                <th class="col-2">标题</th>
-                                <th class="col-2">作者</th>
+                                <th class="col-3">标题</th>
+                                <th class="col-3">作者</th>
                                 <th class="col-1">题目编号</th>
-                                <th class="col-2">发布时间</th>
+                                <th class="col-1">发布时间</th>
                                 <th class="col-1">回复数</th>
-                                <th class="col-3">最后回复</th>
+                                <th class="col-1">最后回复</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -3536,27 +3569,33 @@ else {
                                 if (Posts.length == 0) {
                                     PostList.children[1].innerHTML = `<tr><td colspan="7">暂无数据</td></tr>`;
                                 }
-                                let InnerHTMLData = "";
                                 for (let i = 0; i < Posts.length; i++) {
-                                    InnerHTMLData += "<tr>";
-                                    InnerHTMLData += `<td>${Posts[i].PostID}</td>`;
-                                    InnerHTMLData += `<td><a href="http://www.xmoj.tech/discuss3/thread.php?tid=${Posts[i].PostID}">${Posts[i].Title}</a></td>`
-                                    InnerHTMLData += "<td>";
-                                    InnerHTMLData += await GetUsernameHTML(Posts[i].UserID);
-                                    InnerHTMLData += "</td>";
-                                    InnerHTMLData += "<td>";
-                                    if (Posts[i].ProblemID != 0) {
-                                        InnerHTMLData += `<a href="http://www.xmoj.tech/problem.php?id=${Posts[i].ProblemID}">${Posts[i].ProblemID}</a>`;
+                                    let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
+                                    let IDCell = document.createElement("td"); Row.appendChild(IDCell);
+                                    IDCell.innerText = Posts[i].PostID;
+                                    let TitleCell = document.createElement("td"); Row.appendChild(TitleCell);
+                                    let TitleLink = document.createElement("a"); TitleCell.appendChild(TitleLink);
+                                    TitleLink.href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + Posts[i].PostID;
+                                    if (Posts[i].Lock.Locked) {
+                                        TitleLink.classList.add("link-secondary");
+                                        TitleLink.innerHTML = "🔒 ";
                                     }
-                                    InnerHTMLData += "</td>";
-                                    InnerHTMLData += "<td>" + new Date(Posts[i].PostTime).toLocaleString() + "</td>";
-                                    InnerHTMLData += `<td>${Posts[i].ReplyCount}</td>`;
-                                    InnerHTMLData += "<td>";
-                                    InnerHTMLData += new Date(Posts[i].LastReplyTime).toLocaleString();
-                                    InnerHTMLData += "</td>";
-                                    InnerHTMLData += "</tr>";
+                                    TitleLink.innerHTML += Posts[i].Title;
+                                    let AuthorCell = document.createElement("td"); Row.appendChild(AuthorCell);
+                                    GetUsernameHTML(AuthorCell, Posts[i].UserID);
+                                    let ProblemIDCell = document.createElement("td"); Row.appendChild(ProblemIDCell);
+                                    if (Posts[i].ProblemID != 0) {
+                                        let ProblemIDLink = document.createElement("a"); ProblemIDCell.appendChild(ProblemIDLink);
+                                        ProblemIDLink.href = "http://www.xmoj.tech/problem.php?id=" + Posts[i].ProblemID;
+                                        ProblemIDLink.innerText = Posts[i].ProblemID;
+                                    }
+                                    let PostTimeCell = document.createElement("td"); Row.appendChild(PostTimeCell);
+                                    PostTimeCell.innerHTML = GetRelativeTime(Posts[i].PostTime);
+                                    let ReplyCountCell = document.createElement("td"); Row.appendChild(ReplyCountCell);
+                                    ReplyCountCell.innerText = Posts[i].ReplyCount;
+                                    let LastReplyTimeCell = document.createElement("td"); Row.appendChild(LastReplyTimeCell);
+                                    LastReplyTimeCell.innerHTML = GetRelativeTime(Posts[i].LastReplyTime);
                                 }
-                                PostList.children[1].innerHTML = InnerHTMLData;
                             }
                             else {
                                 ErrorElement.innerText = ResponseData.Message;
@@ -3573,27 +3612,18 @@ else {
                         <label for="Title" class="mb-1">标题</label>
                         <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
                     </div>
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ReplyTab" type="button" role="tab">编辑</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#PreviewTab" type="button" role="tab">预览</button>
-                        </li>
-                    </ul>
-                    <div class="tab-content mb-2">
-                        <div class="tab-pane fade show active" id="ReplyTab" role="tabpanel">
-                            <label for="ContentElement" class="mb-1">回复</label>
-                            <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                    <div>
+                        <label for="ContentElement" class="mb-1">回复</label>
+                        <div class="input-group">
+                            <textarea class="col-6 form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                            <div class="col-6 form-control" id="PreviewTab"></div>
                         </div>
-                        <div class="tab-pane fade" id="PreviewTab" role="tabpanel">
-                        </div>
+                        <div class="cf-turnstile mt-2" id="CaptchaContainer"></div>
+                        <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
+                            发布
+                            <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                        </button>
                     </div>
-                    <div class="cf-turnstile" id="CaptchaContainer"></div>
-                    <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
-                        发布
-                        <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
-                    </button>
                     <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
                     <input type="hidden" id="CaptchaSecretKey">
                     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback"></script>`;
@@ -3618,7 +3648,7 @@ else {
                         }
                     });
                     ContentElement.addEventListener("input", () => {
-                        PreviewTab.innerHTML = marked.parse(ContentElement.value);
+                        PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentElement.value));
                         RenderMathJax();
                     });
                     TitleElement.addEventListener("input", () => {
@@ -3687,27 +3717,22 @@ else {
                                 <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
                             </ul>
                         </nav>
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ReplyTab" type="button" role="tab">编辑</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#PreviewTab" type="button" role="tab">预览</button>
-                            </li>
-                        </ul>
-                        <div class="tab-content mb-2">
-                            <div class="tab-pane fade show active" id="ReplyTab" role="tabpanel">
-                                <label for="ContentElement" class="mb-1">回复</label>
-                                <textarea class="form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                        <div>
+                            <label for="ContentElement" class="mb-1">回复</label>
+                            <div class="form-check form-switch" id="ToggleLock" style="display: none">
+                                <input class="form-check-input" type="checkbox" role="switch" id="ToggleLockButton">
+                                <label class="form-check-label" for="ToggleLockButton">锁定</label>
                             </div>
-                            <div class="tab-pane fade" id="PreviewTab" role="tabpanel">
+                            <div class="input-group">
+                                <textarea class="col-6 form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
+                                <div class="col-6 form-control" id="PreviewTab"></div>
                             </div>
+                            <div class="cf-turnstile mt-2" id="CaptchaContainer"></div>
+                            <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
+                                发布
+                                <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
+                            </button>
                         </div>
-                        <div class="cf-turnstile" id="CaptchaContainer"></div>
-                        <button id="SubmitElement" type="button" class="btn btn-primary mb-2" disabled>
-                            发布
-                            <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
-                        </button>
                         <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
                         <input type="hidden" id="CaptchaSecretKey">
                         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback"></script>`;
@@ -3732,7 +3757,7 @@ else {
                             }
                         });
                         ContentElement.addEventListener("input", () => {
-                            PreviewTab.innerHTML = marked.parse(ContentElement.value);
+                            PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentElement.value));
                             RenderMathJax();
                         });
                         let RefreshReply = (Silent = true) => {
@@ -3745,8 +3770,8 @@ else {
                                     PostReplies.innerHTML += `<div class="card mb-3">
                                         <div class="card-body">
                                             <div class="row mb-3">
-                                                <span class="col-6"><span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span></span>
-                                                <span class="col-6"><span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span></span>
+                                            <span class="col-6"><span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span></span>
+                                            <span class="col-6"><span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span></span>
                                             </div>
                                             <hr>
                                             <span class="placeholder col-${Math.ceil(Math.random() * 12)}"></span>
@@ -3756,12 +3781,13 @@ else {
                                     </div>`;
                                 }
                             }
-                            let OldScrollTop = document.documentElement.scrollTop;
                             RequestAPI("GetPost", {
                                 "PostID": Number(ThreadID),
                                 "Page": Number(Page)
                             }, async (ResponseData) => {
                                 if (ResponseData.Success == true) {
+                                    let OldScrollTop = document.documentElement.scrollTop;
+                                    let LockButtons = AdminUserList.indexOf(profile.innerText) === -1 && ResponseData.Data.Lock.Locked;
                                     if (!Silent) {
                                         DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=1";
                                         DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
@@ -3781,162 +3807,146 @@ else {
                                         }
                                     }
                                     PostTitle.innerText = ResponseData.Data.Title + (ResponseData.Data.ProblemID == 0 ? "" : ` - 题目` + ResponseData.Data.ProblemID);
-                                    PostAuthor.innerHTML = await GetUsernameHTML(ResponseData.Data.UserID);
-                                    PostTime.innerText = new Date(ResponseData.Data.PostTime).toLocaleString();
+                                    PostAuthor.innerHTML = "<span></span>";
+                                    GetUsernameHTML(PostAuthor.children[0], ResponseData.Data.UserID);
+                                    PostTime.innerHTML = GetRelativeTime(ResponseData.Data.PostTime);
                                     let Replies = ResponseData.Data.Reply;
                                     PostReplies.innerHTML = "";
                                     for (let i = 0; i < Replies.length; i++) {
-                                        let CardElement = document.createElement("div");
+                                        let CardElement = document.createElement("div"); PostReplies.appendChild(CardElement);
                                         CardElement.className = "card mb-3";
-                                        let CardBodyElement = document.createElement("div");
+                                        let CardBodyElement = document.createElement("div"); CardElement.appendChild(CardBodyElement);
                                         CardBodyElement.className = "card-body row";
-                                        let CardBodyRowElement = document.createElement("div");
+                                        let CardBodyRowElement = document.createElement("div"); CardBodyElement.appendChild(CardBodyRowElement);
                                         CardBodyRowElement.className = "row mb-3";
-                                        let CardBodyRowSpan1Element = document.createElement("span");
-                                        CardBodyRowSpan1Element.className = "col-4 text-muted";
-                                        CardBodyRowSpan1Element.innerText = "作者：";
-                                        CardBodyRowSpan1Element.innerHTML += await GetUsernameHTML(Replies[i].UserID);
-                                        let CardBodyRowSpan2Element = document.createElement("span");
-                                        CardBodyRowSpan2Element.className = "col-4 text-muted";
-                                        CardBodyRowSpan2Element.innerText = "发布时间：";
-                                        let CardBodyRowSpan2SpanElement = document.createElement("span");
-                                        CardBodyRowSpan2SpanElement.innerText = new Date(Replies[i].ReplyTime).toLocaleString();
-                                        CardBodyRowSpan2Element.appendChild(CardBodyRowSpan2SpanElement);
-                                        let CardBodyRowSpan3Element = document.createElement("span");
-                                        CardBodyRowSpan3Element.className = "col-4";
-                                        let CardBodyRowSpan3Button1Element = document.createElement("button");
-                                        CardBodyRowSpan3Button1Element.type = "button";
-                                        CardBodyRowSpan3Button1Element.className = "btn btn-sm btn-info";
-                                        CardBodyRowSpan3Button1Element.innerText = "回复";
-                                        CardBodyRowSpan3Button1Element.addEventListener("click", () => {
-                                            ContentElement.value += `@${Replies[i].UserID} `;
-                                            ContentElement.focus();
-                                        });
-                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button1Element);
-                                        let CardBodyRowSpan3Button2Element = document.createElement("button");
-                                        CardBodyRowSpan3Button2Element.type = "button";
-                                        CardBodyRowSpan3Button2Element.className = "btn btn-sm btn-danger ms-1";
-                                        CardBodyRowSpan3Button2Element.innerText = "删除";
-                                        CardBodyRowSpan3Button2Element.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
-                                        CardBodyRowSpan3Button2Element.addEventListener("click", () => {
-                                            CardBodyRowSpan3Button2Element.disabled = true;
-                                            CardBodyRowSpan3Button2Element.lastChild.style.display = "";
-                                            RequestAPI("DeleteReply", {
-                                                "ReplyID": Number(Replies[i].ReplyID)
-                                            }, (ResponseData) => {
-                                                if (ResponseData.Success == true) {
-                                                    RefreshReply();
+                                        let AuthorElement = document.createElement("span"); CardBodyRowElement.appendChild(AuthorElement);
+                                        AuthorElement.className = "col-4 text-muted";
+                                        let AuthorSpanElement = document.createElement("span"); AuthorElement.appendChild(AuthorSpanElement);
+                                        AuthorSpanElement.innerText = "作者：";
+                                        let AuthorUsernameElement = document.createElement("span"); AuthorElement.appendChild(AuthorUsernameElement);
+                                        GetUsernameHTML(AuthorUsernameElement, Replies[i].UserID);
+                                        let SendTimeElement = document.createElement("span"); CardBodyRowElement.appendChild(SendTimeElement);
+                                        SendTimeElement.className = "col-4 text-muted";
+                                        SendTimeElement.innerHTML = "发布时间：" + GetRelativeTime(Replies[i].ReplyTime);
+
+                                        if (!LockButtons) {
+                                            let ButtonsElement = document.createElement("span"); CardBodyRowElement.appendChild(ButtonsElement);
+                                            ButtonsElement.className = "col-4";
+                                            let ReplyButton = document.createElement("button"); ButtonsElement.appendChild(ReplyButton);
+                                            ReplyButton.type = "button";
+                                            ReplyButton.className = "btn btn-sm btn-info";
+                                            ReplyButton.innerText = "回复";
+                                            ReplyButton.addEventListener("click", () => {
+                                                let Content = Replies[i].Content;
+                                                Content = FixReply(Content);
+                                                while (Content.startsWith(">")) {
+                                                    Content = Content.substring(Content.indexOf("\n") + 1);
                                                 }
-                                                else {
-                                                    CardBodyRowSpan3Button2Element.disabled = false;
-                                                    CardBodyRowSpan3Button2Element.lastChild.style.display = "none";
-                                                    ErrorElement.innerText = ResponseData.Message;
-                                                    ErrorElement.style.display = "";
-                                                }
+                                                Content = Content.trim();
+                                                Content = Content.split("\n").map((Line) => {
+                                                    return "> " + Line;
+                                                }).join("\n");
+                                                ContentElement.value += Content + `\n\n@${Replies[i].UserID} `;
+                                                ContentElement.focus();
                                             });
-                                        });
-                                        let CardBodyRowSpan3Button2SpinnerElement = document.createElement("div");
-                                        CardBodyRowSpan3Button2SpinnerElement.className = "spinner-border spinner-border-sm";
-                                        CardBodyRowSpan3Button2SpinnerElement.role = "status";
-                                        CardBodyRowSpan3Button2SpinnerElement.style.display = "none";
-                                        CardBodyRowSpan3Button2Element.appendChild(CardBodyRowSpan3Button2SpinnerElement);
-                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button2Element);
-                                        let CardBodyRowSpan3Button4Element = document.createElement("button");
-                                        CardBodyRowSpan3Button4Element.type = "button";
-                                        CardBodyRowSpan3Button4Element.style.display = "none";
-                                        CardBodyRowSpan3Button4Element.className = "btn btn-sm btn-success ms-1";
-                                        CardBodyRowSpan3Button4Element.innerText = "确认";
-                                        let CardBodyRowSpan3Button4SpinnerElement = document.createElement("div");
-                                        CardBodyRowSpan3Button4SpinnerElement.className = "spinner-border spinner-border-sm";
-                                        CardBodyRowSpan3Button4SpinnerElement.role = "status";
-                                        CardBodyRowSpan3Button4SpinnerElement.style.display = "none";
-                                        CardBodyRowSpan3Button4Element.appendChild(CardBodyRowSpan3Button4SpinnerElement);
-                                        CardBodyRowSpan3Button4Element.addEventListener("click", () => {
-                                            CardBodyRowSpan3Button4Element.disabled = true;
-                                            CardBodyRowSpan3Button4Element.lastChild.style.display = "";
-                                            RequestAPI("EditReply", {
-                                                ReplyID: Number(Replies[i].ReplyID),
-                                                Content: String(CardBodyEditTextareaElement.value)
-                                            }, (ResponseData) => {
-                                                if (ResponseData.Success == true) {
-                                                    RefreshReply();
-                                                }
-                                                else {
-                                                    CardBodyRowSpan3Button4Element.disabled = false;
-                                                    CardBodyRowSpan3Button4Element.lastChild.style.display = "none";
-                                                    ErrorElement.innerText = ResponseData.Message;
-                                                    ErrorElement.style.display = "";
-                                                }
+                                            let DeleteButton = document.createElement("button"); ButtonsElement.appendChild(DeleteButton);
+                                            DeleteButton.type = "button";
+                                            DeleteButton.className = "btn btn-sm btn-danger ms-1";
+                                            DeleteButton.innerText = "删除";
+                                            DeleteButton.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
+                                            DeleteButton.addEventListener("click", () => {
+                                                DeleteButton.disabled = true;
+                                                DeleteButton.lastChild.style.display = "";
+                                                RequestAPI("DeleteReply", {
+                                                    "ReplyID": Number(Replies[i].ReplyID)
+                                                }, (ResponseData) => {
+                                                    if (ResponseData.Success == true) {
+                                                        RefreshReply();
+                                                    }
+                                                    else {
+                                                        DeleteButton.disabled = false;
+                                                        DeleteButton.lastChild.style.display = "none";
+                                                        ErrorElement.innerText = ResponseData.Message;
+                                                        ErrorElement.style.display = "";
+                                                    }
+                                                });
                                             });
-                                        });
-                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button4Element);
-                                        let CardBodyRowSpan3Button5Element = document.createElement("button");
-                                        CardBodyRowSpan3Button5Element.type = "button";
-                                        CardBodyRowSpan3Button5Element.style.display = "none";
-                                        CardBodyRowSpan3Button5Element.className = "btn btn-sm btn-secondary ms-1";
-                                        CardBodyRowSpan3Button5Element.innerText = "取消";
-                                        CardBodyRowSpan3Button5Element.addEventListener("click", () => {
-                                            CardBodyElement.children[2].style.display = "";
-                                            CardBodyElement.children[3].style.display = "none";
-                                            CardBodyRowSpan3Button3Element.style.display = "";
-                                            CardBodyRowSpan3Button4Element.style.display = "none";
-                                            CardBodyRowSpan3Button5Element.style.display = "none";
-                                        });
-                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button5Element);
-                                        let CardBodyRowSpan3Button3Element = document.createElement("button");
-                                        CardBodyRowSpan3Button3Element.type = "button";
-                                        CardBodyRowSpan3Button3Element.className = "btn btn-sm btn-warning ms-1";
-                                        CardBodyRowSpan3Button3Element.innerText = "编辑";
-                                        CardBodyRowSpan3Button3Element.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
-                                        CardBodyRowSpan3Button3Element.addEventListener("click", () => {
-                                            CardBodyElement.children[2].style.display = "none";
-                                            CardBodyElement.children[3].style.display = "";
-                                            CardBodyRowSpan3Button3Element.style.display = "none";
-                                            CardBodyRowSpan3Button4Element.style.display = "";
-                                            CardBodyRowSpan3Button5Element.style.display = "";
-                                        });
-                                        CardBodyRowSpan3Element.appendChild(CardBodyRowSpan3Button3Element);
-                                        CardBodyRowElement.appendChild(CardBodyRowSpan1Element);
-                                        CardBodyRowElement.appendChild(CardBodyRowSpan2Element);
-                                        CardBodyRowElement.appendChild(CardBodyRowSpan3Element);
-                                        CardBodyElement.appendChild(CardBodyRowElement);
-                                        let CardBodyHRElement = document.createElement("hr");
-                                        CardBodyElement.appendChild(CardBodyHRElement);
-                                        let CardBodyDisplayElement = document.createElement("div");
-                                        CardBodyDisplayElement.innerHTML = marked.parse(Replies[i].Content);
-                                        CardBodyElement.appendChild(CardBodyDisplayElement);
-                                        let CardBodyEditElement = document.createElement("div");
-                                        CardBodyEditElement.style.display = "none";
-                                        let CardBodyEditTextareaElement = document.createElement("textarea");
-                                        CardBodyEditTextareaElement.className = "form-control";
-                                        CardBodyEditTextareaElement.style.height = "300px";
-                                        CardBodyEditTextareaElement.value = Replies[i].Content;
-                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replaceAll(/ <a class="link-info" href="http:\/\/www.xmoj.tech\/userinfo.php\?user=(.*?)">@\1<\/a> /g, "@$1");
-                                        if (CardBodyEditTextareaElement.value.indexOf("<br>") != -1) {
-                                            CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.substring(0, CardBodyEditTextareaElement.value.indexOf("<br>"));
+                                            let DeleteSpin = document.createElement("div"); DeleteButton.appendChild(DeleteSpin);
+                                            DeleteSpin.className = "spinner-border spinner-border-sm";
+                                            DeleteSpin.role = "status";
+                                            DeleteSpin.style.display = "none";
+                                            let OKButton = document.createElement("button"); ButtonsElement.appendChild(OKButton);
+                                            OKButton.type = "button";
+                                            OKButton.style.display = "none";
+                                            OKButton.className = "btn btn-sm btn-success ms-1";
+                                            OKButton.innerText = "确认";
+                                            let OKSpin = document.createElement("div"); OKButton.appendChild(OKSpin);
+                                            OKSpin.className = "spinner-border spinner-border-sm";
+                                            OKSpin.role = "status";
+                                            OKSpin.style.display = "none";
+                                            OKButton.addEventListener("click", () => {
+                                                OKButton.disabled = true;
+                                                OKButton.lastChild.style.display = "";
+                                                RequestAPI("EditReply", {
+                                                    ReplyID: Number(Replies[i].ReplyID),
+                                                    Content: String(ContentEditor.value)
+                                                }, (ResponseData) => {
+                                                    if (ResponseData.Success == true) {
+                                                        RefreshReply();
+                                                    }
+                                                    else {
+                                                        OKButton.disabled = false;
+                                                        OKButton.lastChild.style.display = "none";
+                                                        ErrorElement.innerText = ResponseData.Message;
+                                                        ErrorElement.style.display = "";
+                                                    }
+                                                });
+                                            });
+                                            let CancelButton = document.createElement("button"); ButtonsElement.appendChild(CancelButton);
+                                            CancelButton.type = "button";
+                                            CancelButton.style.display = "none";
+                                            CancelButton.className = "btn btn-sm btn-secondary ms-1";
+                                            CancelButton.innerText = "取消";
+                                            CancelButton.addEventListener("click", () => {
+                                                CardBodyElement.children[2].style.display = "";
+                                                CardBodyElement.children[3].style.display = "none";
+                                                EditButton.style.display = "";
+                                                OKButton.style.display = "none";
+                                                CancelButton.style.display = "none";
+                                            });
+                                            let EditButton = document.createElement("button"); ButtonsElement.appendChild(EditButton);
+                                            EditButton.type = "button";
+                                            EditButton.className = "btn btn-sm btn-warning ms-1";
+                                            EditButton.innerText = "编辑";
+                                            EditButton.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
+                                            EditButton.addEventListener("click", () => {
+                                                CardBodyElement.children[2].style.display = "none";
+                                                CardBodyElement.children[3].style.display = "";
+                                                EditButton.style.display = "none";
+                                                OKButton.style.display = "";
+                                                CancelButton.style.display = "";
+                                            });
                                         }
-                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replace(/&lt;/g, "<");
-                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replace(/&gt;/g, ">");
-                                        CardBodyEditTextareaElement.value = CardBodyEditTextareaElement.value.replace(/&amp;/g, "&");
-                                        CardBodyEditTextareaElement.addEventListener("keydown", (Event) => {
+
+                                        let CardBodyHRElement = document.createElement("hr"); CardBodyElement.appendChild(CardBodyHRElement);
+
+                                        let ReplyContentElement = document.createElement("div"); CardBodyElement.appendChild(ReplyContentElement);
+                                        ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content));
+                                        let ContentEditElement = document.createElement("div"); CardBodyElement.appendChild(ContentEditElement);
+                                        ContentEditElement.style.display = "none";
+                                        let ContentEditor = document.createElement("textarea"); ContentEditElement.appendChild(ContentEditor);
+                                        ContentEditor.className = "form-control";
+                                        ContentEditor.style.height = "300px";
+                                        ContentEditor.value = Replies[i].Content;
+                                        ContentEditor.value = FixReply(ContentEditor.value);
+                                        if (ContentEditor.value.indexOf("<br>") != -1) {
+                                            ContentEditor.value = ContentEditor.value.substring(0, ContentEditor.value.indexOf("<br>"));
+                                        }
+                                        ContentEditor.addEventListener("keydown", (Event) => {
                                             if (Event.ctrlKey && Event.keyCode == 13) {
-                                                CardBodyRowSpan3Button4Element.click();
+                                                OKButton.click();
                                             }
                                         });
-                                        CardBodyEditElement.appendChild(CardBodyEditTextareaElement);
-                                        CardBodyElement.appendChild(CardBodyEditElement);
-                                        CardElement.appendChild(CardBodyElement);
-                                        PostReplies.appendChild(CardElement);
-                                    }
-                                    let InlineCodeElements = document.querySelectorAll("#PostReplies > div > div > div:nth-child(3) > p > code");
-                                    for (let i = 0; i < InlineCodeElements.length; i++) {
-                                        let Code = InlineCodeElements[i].innerText;
-                                        Code = Code.replaceAll("&lt;", "<");
-                                        Code = Code.replaceAll("&gt;", ">");
-                                        Code = Code.replaceAll("&amp;", "&");
-                                        Code = Code.replaceAll("&quot;", "\"");
-                                        Code = Code.replaceAll("&apos;", "'");
-                                        InlineCodeElements[i].innerText = Code.trim();
                                     }
                                     let CodeElements = document.querySelectorAll("#PostReplies > div > div > div:nth-child(3) > pre > code");
                                     for (let i = 0; i < CodeElements.length; i++) {
@@ -3947,21 +3957,44 @@ else {
                                         else if (CodeElements[i].className == "language-cpp") {
                                             ModeName = "text/x-c++src";
                                         }
-                                        let Code = CodeElements[i].innerText;
-                                        Code = Code.replaceAll("&lt;", "<");
-                                        Code = Code.replaceAll("&gt;", ">");
-                                        Code = Code.replaceAll("&amp;", "&");
-                                        Code = Code.replaceAll("&quot;", "\"");
-                                        Code = Code.replaceAll("&apos;", "'");
-                                        Code = Code.trim();
                                         CodeMirror(CodeElements[i].parentElement, {
-                                            value: Code,
+                                            value: CodeElements[i].innerText,
                                             mode: ModeName,
                                             theme: (UtilityEnabled("DarkMode") ? "darcula" : "default"),
                                             lineNumbers: true,
                                             readOnly: true
                                         }).setSize("100%", "auto");
                                         CodeElements[i].remove();
+                                    }
+
+                                    if (LockButtons) {
+                                        let LockElement = ContentElement.parentElement.parentElement;
+                                        LockElement.innerHTML = "讨论已于 " + await GetRelativeTime(ResponseData.Data.Lock.LockTime) + " 被 ";
+                                        let LockUsernameSpan = document.createElement("span"); LockElement.appendChild(LockUsernameSpan);
+                                        GetUsernameHTML(LockUsernameSpan, ResponseData.Data.Lock.LockPerson);
+                                        LockElement.innerHTML += " 锁定";
+                                        LockElement.classList.add("mb-5");
+                                    }
+
+                                    if (AdminUserList.indexOf(profile.innerText) !== -1) {
+                                        ToggleLock.style.display = "inline-block";
+                                        ToggleLockButton.checked = ResponseData.Data.Lock.Locked;
+                                        ToggleLockButton.onclick = () => {
+                                            ToggleLockButton.disabled = true;
+                                            ErrorElement.style.display = "none";
+                                            RequestAPI((ToggleLockButton.checked ? "LockPost" : "UnlockPost"), {
+                                                "PostID": Number(ThreadID)
+                                            }, (LockResponseData) => {
+                                                ToggleLockButton.disabled = false;
+                                                if (LockResponseData.Success) {
+                                                    RefreshReply();
+                                                } else {
+                                                    ErrorElement.style.display = "";
+                                                    ErrorElement.innerText = "错误：" + LockResponseData.Message;
+                                                    ToggleLockButton.checked = !ToggleLockButton.checked;
+                                                }
+                                            });
+                                        };
                                     }
 
                                     Style.innerHTML += "img {";
@@ -4013,6 +4046,7 @@ else {
                                 if (ResponseData.Success == true) {
                                     RefreshReply();
                                     ContentElement.value = "";
+                                    PreviewTab.innerHTML = "";
                                     while (PostReplies.innerHTML.indexOf("placeholder") != -1) {
                                         await new Promise((resolve) => {
                                             setTimeout(resolve, 100);

@@ -21,24 +21,16 @@ jobs:
         run: node ./Update/GetVersion.js
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: ${{ steps.get_version.outputs.version }}
+          name: ${{ steps.get_version.outputs.version }}
+          generate_release_notes: true
           draft: false
           prerelease: false
-          body: ${{ steps.get_version.outputs.version }}
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./XMOJ.user.js
-          asset_name: XMOJ.user.js
-          asset_content_type: text/plain
+          files: XMOJ.user.js
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
