@@ -56,7 +56,7 @@ export class Process {
         // return new Result(true, "令牌检测跳过");
 
         let CurrentSessionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("phpsessid", ["user_id", "create_time"], {
-            token: this.SessionID
+            token: MD5(this.SessionID)
         }));
         if (CurrentSessionData.toString() !== "") {
             if (CurrentSessionData[0]["user_id"] === this.Username &&
@@ -98,7 +98,7 @@ export class Process {
         }
 
         ThrowErrorIfFailed(await this.XMOJDatabase.Insert("phpsessid", {
-            token: this.SessionID,
+            token: MD5(this.SessionID),
             user_id: this.Username,
             create_time: new Date().getTime()
         }));
