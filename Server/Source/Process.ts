@@ -1,5 +1,6 @@
 import { Result, ThrowErrorIfFailed } from "./Result";
 import { Database } from "./Database";
+import MD5 from "crypto-js/md5";
 import { Output } from "./Output";
 import { CaptchaSecretKey } from "./Secret"
 import * as cheerio from "cheerio";
