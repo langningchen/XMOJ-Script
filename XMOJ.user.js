@@ -129,6 +129,7 @@ let GetUserBadge = async (Username) => {
 let GetUsernameHTML = async (Element, Username, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
     let ID = "Username-" + Username + "-" + Math.random();
     Element.id = ID;
+    Element.innerHTML = `<div class="spinner-border spinner-border-sm me-2" role="status"></div>${Username}`;
     let UserInfo = await GetUserInfo(Username);
     let HTMLData = `<img src="`;
     if (UserInfo.EmailHash == undefined) {
