@@ -12,6 +12,7 @@
     "wrangler": "^3.8.0"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.12"
+    "cheerio": "^1.0.0-rc.12",
+    "cryptojs": "^2.5.3"
   }
 }
