@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: AutoLabel
-        run: node Update/AutoLabel.js
+        run: node ./Update/AutoLabel.js
