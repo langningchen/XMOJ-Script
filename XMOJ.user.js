@@ -3720,8 +3720,8 @@ else {
                         <div>
                             <label for="ContentElement" class="mb-1">回复</label>
                             <div class="form-check form-switch" id="ToggleLock" style="display: none">
-                                <input class="form-check-input" type="checkbox" role="switch" id="ToggleLockButton">
                                 <label class="form-check-label" for="ToggleLockButton">锁定本讨论</label>
+                                <input class="form-check-input" type="checkbox" role="switch" id="ToggleLockButton">
                             </div>
                             <div class="input-group">
                                 <textarea class="col-6 form-control" id="ContentElement" rows="3" placeholder="请输入内容"></textarea>
