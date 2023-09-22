@@ -365,12 +365,12 @@
             ]
         },
         "0.3.163": {
-            "UpdateDate": 1695371096165,
+            "UpdateDate": 1695371565015,
             "Prerelease": true,
             "UpdateContents": [
                 {
                     "PR": 459,
-                    "Description": "change layout ofToggleLockButton"
+                    "Description": "Change layout of ToggleLockButton"
                 }
             ]
         }
