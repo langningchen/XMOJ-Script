@@ -431,6 +431,16 @@
                     "Description": "编辑回复时提供预览"
                 }
             ]
+        },
+        "0.3.169": {
+            "UpdateDate": 1695455555937,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 491,
+                    "Description": "忽略提醒后立刻不显示该提醒"
+                }
+            ]
         }
     }
 }
