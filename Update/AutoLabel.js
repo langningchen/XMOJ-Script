@@ -23,7 +23,21 @@ if (IgnoreUsers.includes(User)) {
     process.exit(0);
 }
 
-let NewData = Data.replaceAll(/\/[a-zA-Z-]+/g, (match) => {
+let NewData = Data.replaceAll(/\/-[a-zA-Z-]+/g, (match) => {
+    let Label = match.substring(2);
+    if (github.context.payload.issue.labels.find((label) => label.name === Label)) {
+        console.log("Remove label " + Label);
+        Octokit.issues.removeLabel({
+            owner: Owner,
+            repo: Repo,
+            issue_number: IssueNumber,
+            name: Label
+        });
+    }
+    return "";
+});
+
+NewData = NewData.replaceAll(/\/[a-zA-Z-]+/g, (match) => {
     let Label = match.substring(1);
     console.log("Add label " + Label);
     Octokit.issues.addLabels({
