@@ -49,7 +49,7 @@ console.log("IssueNumber: " + IssueNumber);
 console.log("CommentID  : " + CommentID);
 console.log("User       : " + User);
 
-if (!TrustedUsers.includes(User) || User != github.context.payload.issue.user.login) {
+if (!TrustedUsers.includes(User)) {
     console.log("Not trusted user " + User);
     process.exit(0);
 }
