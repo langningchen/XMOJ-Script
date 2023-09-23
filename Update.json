@@ -393,6 +393,16 @@
                     "Description": "允许忽略提醒"
                 }
             ]
+        },
+        "0.3.166": {
+            "UpdateDate": 1695446863362,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 485,
+                    "Description": "增加清除缓存功能"
+                }
+            ]
         }
     }
 }

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.165
+// @version      0.3.166
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -291,6 +291,18 @@ let RequestAPI = (Action, Data, CallBack) => {
     });
 };
 
+GM_registerMenuCommand("清除缓存", () => {
+    let Temp = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.key(i).startsWith("UserScript-User-")) {
+            Temp.push(localStorage.key(i));
+        }
+    }
+    for (let i = 0; i < Temp.length; i++) {
+        localStorage.removeItem(Temp[i]);
+    }
+    location.reload();
+});
 GM_registerMenuCommand("重置数据", () => {
     if (confirm("确定要重置数据吗？")) {
         localStorage.clear();
