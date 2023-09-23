@@ -373,6 +373,16 @@
                     "Description": "Change layout of ToggleLockButton"
                 }
             ]
+        },
+        "0.3.164": {
+            "UpdateDate": 1695436989893,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 459,
+                    "Description": "Change layout of ToggleLockButton"
+                }
+            ]
         }
     }
 }
