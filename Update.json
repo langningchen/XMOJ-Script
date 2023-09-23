@@ -441,6 +441,16 @@
                     "Description": "忽略提醒后立刻不显示该提醒"
                 }
             ]
+        },
+        "0.3.170": {
+            "UpdateDate": 1695469445405,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 494,
+                    "Description": "将讨论中的 @ 放在前端渲染"
+                }
+            ]
         }
     }
 }
