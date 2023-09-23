@@ -431,6 +431,40 @@
                     "Description": "编辑回复时提供预览"
                 }
             ]
+        },
+        "0.3.169": {
+            "UpdateDate": 1695455555937,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 491,
+                    "Description": "忽略提醒后立刻不显示该提醒"
+                }
+            ]
+        },
+        "0.3.170": {
+            "UpdateDate": 1695469445405,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 494,
+                    "Description": "将讨论中的 @ 放在前端渲染"
+                }
+            ]
+        },
+        "0.3.171": {
+            "UpdateDate": 1695476533444,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 491,
+                    "Description": "忽略提醒后立刻不显示该提醒"
+                },
+                {
+                    "PR": 494,
+                    "Description": "将讨论中的 @ 放在前端渲染"
+                }
+            ]
         }
     }
 }

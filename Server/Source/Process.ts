@@ -1,9 +1,9 @@
 import { Result, ThrowErrorIfFailed } from "./Result";
 import { Database } from "./Database";
-import MD5 from "crypto-js/md5";
 import { Output } from "./Output";
-import { CaptchaSecretKey } from "./Secret"
-import * as cheerio from "cheerio";
+import { CaptchaSecretKey } from "./Secret";
+import { CheerioAPI, load } from "cheerio";
+import MD5 from "crypto-js/md5";
 
 export class Process {
     private AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2", "shanwenxiao"];
@@ -54,9 +54,9 @@ export class Process {
         this.SessionID = Data["SessionID"];
         this.Username = Data["Username"];
         // return new Result(true, "令牌检测跳过");
-
+        let tokenHash:string = MD5(this.SessionID).toString();
         let CurrentSessionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("phpsessid", ["user_id", "create_time"], {
-            token: MD5(this.SessionID)
+            token: tokenHash
         }));
         if (CurrentSessionData.toString() !== "") {
             if (CurrentSessionData[0]["user_id"] === this.Username &&
@@ -65,7 +65,7 @@ export class Process {
             }
             else {
                 ThrowErrorIfFailed(await this.XMOJDatabase.Delete("phpsessid", {
-                    token: this.SessionID
+                    token: tokenHash
                 }));
                 Output.Log("Session " + this.SessionID + " expired");
             }
@@ -96,14 +96,12 @@ export class Process {
                 "Username       : \"" + this.Username + "\"\n");
             return new Result(false, "令牌不匹配");
         }
-
         ThrowErrorIfFailed(await this.XMOJDatabase.Insert("phpsessid", {
-            token: MD5(this.SessionID),
+            token: tokenHash,
             user_id: this.Username,
             create_time: new Date().getTime()
         }));
         Output.Log("Record session: " + this.SessionID + " for " + this.Username);
-
         return new Result(true, "令牌匹配");
     }
     public IfUserExist = async (Username: string): Promise<Result> => {
@@ -173,7 +171,7 @@ export class Process {
             .then((Response) => {
                 return Response.text();
             }).then((Response) => {
-                let ParsedDocument: cheerio.CheerioAPI = cheerio.load(Response);
+                let ParsedDocument: CheerioAPI = load(Response);
                 let ResultTable = ParsedDocument("#result-tab");
                 if (ResultTable.length == 0) {
                     Output.Error("Get problem score failed: Cannot find table element\n" +
@@ -845,7 +843,7 @@ export class Process {
                             StdCode = "这道题没有标程（即用户std没有AC这道题）";
                             return;
                         }
-                        let ParsedDocument: cheerio.CheerioAPI = cheerio.load(Response);
+                        let ParsedDocument: CheerioAPI = load(Response);
                         let SubmitTable = ParsedDocument("#problemstatus");
                         if (SubmitTable.length == 0) {
                             Output.Error("Get Std code failed: Cannot find submit table\n" +

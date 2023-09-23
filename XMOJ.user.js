@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.168
+// @version      0.3.171
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -72,6 +72,9 @@ let GetUserInfo = async (Username) => {
     return await fetch("http://www.xmoj.tech/userinfo.php?user=" + Username).then((Response) => {
         return Response.text();
     }).then((Response) => {
+        if (Response.indexOf("No such User!") !== -1) {
+            return null;
+        }
         const ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
         let Rating = (parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(4) > td:nth-child(2)").innerText.trim()) /
             parseInt(ParsedDocument.querySelector("#statics > tbody > tr:nth-child(3) > td:nth-child(2)").innerText.trim())).toFixed(3) * 1000;
@@ -126,19 +129,26 @@ let GetUserBadge = async (Username) => {
         }
     }
 };
-let GetUsernameHTML = async (Element, Username, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
+let GetUsernameHTML = async (Element, Username, Simple = false, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
     let ID = "Username-" + Username + "-" + Math.random();
     Element.id = ID;
     Element.innerHTML = `<div class="spinner-border spinner-border-sm me-2" role="status"></div>${Username}`;
     let UserInfo = await GetUserInfo(Username);
-    let HTMLData = `<img src="`;
-    if (UserInfo.EmailHash == undefined) {
-        HTMLData += `https://cravatar.cn/avatar/00000000000000000000000000000000?d=mp&f=y`;
+    if (UserInfo === null) {
+        document.getElementById(ID).innerHTML = Username;
+        return;
     }
-    else {
-        HTMLData += `https://cravatar.cn/avatar/${UserInfo.EmailHash}?d=retro`;
+    let HTMLData = "";
+    if (!Simple) {
+        HTMLData += `<img src="`;
+        if (UserInfo.EmailHash == undefined) {
+            HTMLData += `https://cravatar.cn/avatar/00000000000000000000000000000000?d=mp&f=y`;
+        }
+        else {
+            HTMLData += `https://cravatar.cn/avatar/${UserInfo.EmailHash}?d=retro`;
+        }
+        HTMLData += `" class="rounded me-2" style="width: 20px; height: 20px; ">`;
     }
-    HTMLData += `" class="rounded me-2" style="width: 20px; height: 20px; ">`;
     HTMLData += `<a href="${Href}${Username}" class="link-offset-2 link-underline-opacity-50 `
     if (UtilityEnabled("Rating")) {
         let Rating = UserInfo.Rating;
@@ -156,12 +166,14 @@ let GetUsernameHTML = async (Element, Username, Href = "http://www.xmoj.tech/use
         HTMLData += "link-info";
     }
     HTMLData += `\";">${Username}</a>`;
-    if (AdminUserList.includes(Username)) {
-        HTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
-    }
-    let BadgeInfo = await GetUserBadge(Username);
-    if (BadgeInfo.Content != "") {
-        HTMLData += `<span class="badge ms-2" style="background-color: ${BadgeInfo.BackgroundColor}; color: ${BadgeInfo.Color}">${BadgeInfo.Content}</span>`;
+    if (!Simple) {
+        if (AdminUserList.includes(Username)) {
+            HTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
+        }
+        let BadgeInfo = await GetUserBadge(Username);
+        if (BadgeInfo.Content != "") {
+            HTMLData += `<span class="badge ms-2" style="background-color: ${BadgeInfo.BackgroundColor}; color: ${BadgeInfo.Color}">${BadgeInfo.Content}</span>`;
+        }
     }
     document.getElementById(ID).innerHTML = HTMLData;
 };
@@ -247,7 +259,6 @@ let UtilityEnabled = (Name) => {
     return localStorage.getItem("UserScript-Setting-" + Name) == "true";
 };
 let FixReply = (Data) => {
-    Data = Data.replaceAll(/ ?<a class="link-info" href="http:\/\/www.xmoj.tech\/userinfo.php\?user=(.*?)">@\1<\/a> ?/g, "@$1");
     Data = Data.replaceAll(/<br><span class="text-muted" style="font-size: 12px">已于 [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}, [0-9]{1,2}:[0-9]{2}:[0-9]{2} (A|P)M 编辑<\/span>/g, "");
     return Data;
 }
@@ -768,6 +779,7 @@ else {
                                 RequestAPI("ReadBBSMention", {
                                     "MentionID": Number(MentionList[i].MentionID)
                                 }, () => { });
+                                Toast.remove();
                             });
                             ToastFooter.appendChild(ToastDismissButton);
                             let ToastViewButton = document.createElement("button");
@@ -1828,7 +1840,6 @@ else {
                                     Metal.className = "badge text-bg-primary";
                                     MetalCell.innerText = "";
                                     MetalCell.appendChild(Metal);
-                                    Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
                                     GetUsernameHTML(Temp[i].cells[1], Temp[i].cells[1].innerText);
                                     Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                                     Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;
@@ -3375,7 +3386,7 @@ else {
                                 let Row = document.createElement("tr"); ReceiveTable.children[1].appendChild(Row);
                                 let UsernameCell = document.createElement("td"); Row.appendChild(UsernameCell);
                                 let UsernameSpan = document.createElement("span"); UsernameCell.appendChild(UsernameSpan);
-                                GetUsernameHTML(UsernameSpan, Data[i].OtherUser, "http://www.xmoj.tech/mail.php?other=");
+                                GetUsernameHTML(UsernameSpan, Data[i].OtherUser, false, "http://www.xmoj.tech/mail.php?other=");
                                 if (Data[i].UnreadCount != 0) {
                                     let UnreadCountSpan = document.createElement("span"); UsernameCell.appendChild(UnreadCountSpan);
                                     UnreadCountSpan.className = "ms-1 badge text-bg-danger";
@@ -3974,7 +3985,7 @@ else {
                                         let CardBodyHRElement = document.createElement("hr"); CardBodyElement.appendChild(CardBodyHRElement);
 
                                         let ReplyContentElement = document.createElement("div"); CardBodyElement.appendChild(ReplyContentElement);
-                                        ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content));
+                                        ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content.replaceAll(/@([a-zA-Z0-9]+)/g, `<b>@</b><span class="ms-1 Usernames">$1</span>`)));
                                         let ContentEditElement = document.createElement("div"); CardBodyElement.appendChild(ContentEditElement);
                                         ContentEditElement.classList.add("input-group");
                                         ContentEditElement.style.display = "none";
@@ -3999,6 +4010,12 @@ else {
                                             RenderMathJax();
                                         });
                                     }
+
+                                    let UsernameElements = document.getElementsByClassName("Usernames");
+                                    for (let i = 0; i < UsernameElements.length; i++) {
+                                        GetUsernameHTML(UsernameElements[i], UsernameElements[i].innerText, true);
+                                    }
+
                                     let CodeElements = document.querySelectorAll("#PostReplies > div > div > div:nth-child(3) > pre > code");
                                     for (let i = 0; i < CodeElements.length; i++) {
                                         let ModeName = "text/plain";
