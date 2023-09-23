@@ -33,8 +33,9 @@ let NewData = Data.replaceAll(/\/-[a-zA-Z-]+/g, (match) => {
             issue_number: IssueNumber,
             name: Label
         });
+        return "";
     }
-    return "";
+    return match;
 });
 
 NewData = NewData.replaceAll(/\/[a-zA-Z-]+/g, (match) => {
