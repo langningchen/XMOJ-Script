@@ -451,6 +451,20 @@
                     "Description": "将讨论中的 @ 放在前端渲染"
                 }
             ]
+        },
+        "0.3.171": {
+            "UpdateDate": 1695474334285,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 491,
+                    "Description": "忽略提醒后立刻不显示该提醒"
+                },
+                {
+                    "PR": 494,
+                    "Description": "将讨论中的 @ 放在前端渲染"
+                }
+            ]
         }
     }
 }
