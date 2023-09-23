@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: AutoLabel
         run: |
+          ls
+          pwd
           cd ./Update
           npm install
           node ./AutoLabel.js
