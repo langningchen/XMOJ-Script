@@ -648,7 +648,7 @@ else {
                 }
                 if (CurrentVersion < LatestVersion) {
                     let UpdateDiv = document.createElement("div");
-                    UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show mt-2" role="alert">
                         <div>
                             XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
                             <a href="${ServerURL}/XMOJ.user.js" target="_blank" class="alert-link">此处</a>
@@ -3976,10 +3976,11 @@ else {
                                         let ReplyContentElement = document.createElement("div"); CardBodyElement.appendChild(ReplyContentElement);
                                         ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content));
                                         let ContentEditElement = document.createElement("div"); CardBodyElement.appendChild(ContentEditElement);
+                                        ContentEditElement.classList.add("input-group");
                                         ContentEditElement.style.display = "none";
                                         let ContentEditor = document.createElement("textarea"); ContentEditElement.appendChild(ContentEditor);
-                                        ContentEditor.className = "form-control";
-                                        ContentEditor.style.height = "300px";
+                                        ContentEditor.className = "form-control col-6";
+                                        ContentEditor.rows = 3;
                                         ContentEditor.value = Replies[i].Content;
                                         ContentEditor.value = FixReply(ContentEditor.value);
                                         if (ContentEditor.value.indexOf("<br>") != -1) {
@@ -3989,6 +3990,13 @@ else {
                                             if (Event.ctrlKey && Event.keyCode == 13) {
                                                 OKButton.click();
                                             }
+                                        });
+                                        let PreviewTab = document.createElement("div"); ContentEditElement.appendChild(PreviewTab);
+                                        PreviewTab.className = "form-control col-6";
+                                        PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentEditor.value));
+                                        ContentEditor.addEventListener("input", () => {
+                                            PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentEditor.value));
+                                            RenderMathJax();
                                         });
                                     }
                                     let CodeElements = document.querySelectorAll("#PostReplies > div > div > div:nth-child(3) > pre > code");
