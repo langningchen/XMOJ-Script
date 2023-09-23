@@ -3,7 +3,7 @@ import { Database } from "./Database";
 import { Output } from "./Output";
 import { CaptchaSecretKey } from "./Secret";
 import { CheerioAPI, load } from "cheerio";
-import MD5 from "crypto-js";
+import MD5 from "crypto-js/md5";
 
 export class Process {
     private AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2", "shanwenxiao"];
@@ -54,7 +54,7 @@ export class Process {
         this.SessionID = Data["SessionID"];
         this.Username = Data["Username"];
         // return new Result(true, "令牌检测跳过");
-        let tokenHash:string = MD5(this.SessionID);
+        let tokenHash:string = MD5(this.SessionID).toString();
         let CurrentSessionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("phpsessid", ["user_id", "create_time"], {
             token: tokenHash
         }));
