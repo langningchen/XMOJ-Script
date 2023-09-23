@@ -443,12 +443,12 @@
             ]
         },
         "0.3.170": {
-            "UpdateDate": 1695469435825,
+            "UpdateDate": 1695469445405,
             "Prerelease": true,
             "UpdateContents": [
                 {
                     "PR": 494,
-                    "Description": "[Feature Request] 将 @ 放在前端渲染"
+                    "Description": "将讨论中的 @ 放在前端渲染"
                 }
             ]
         }
