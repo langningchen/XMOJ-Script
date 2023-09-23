@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.164
+// @version      0.3.165
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -718,10 +718,10 @@ else {
         ToastContainer.classList.add("toast-container", "position-fixed", "bottom-0", "end-0", "p-3");
         document.body.appendChild(ToastContainer);
         addEventListener("focus", () => {
-            ToastContainer.innerHTML = "";
             if (UtilityEnabled("BBSPopup")) {
                 RequestAPI("GetBBSMentionList", {}, (Response) => {
                     if (Response.Success) {
+                        ToastContainer.innerHTML = "";
                         let MentionList = Response.Data.MentionList;
                         for (let i = 0; i < MentionList.length; i++) {
                             let Toast = document.createElement("div");
@@ -748,17 +748,27 @@ else {
                             ToastBody.innerHTML = "讨论" + MentionList[i].PostTitle + "有新回复";
                             let ToastFooter = document.createElement("div");
                             ToastFooter.classList.add("mt-2", "pt-2", "border-top");
-                            let ToastButton = document.createElement("button");
-                            ToastButton.type = "button";
-                            ToastButton.classList.add("btn", "btn-primary", "btn-sm");
-                            ToastButton.innerText = "查看";
-                            ToastButton.addEventListener("click", () => {
+                            let ToastDismissButton = document.createElement("button");
+                            ToastDismissButton.type = "button";
+                            ToastDismissButton.classList.add("btn", "btn-secondary", "btn-sm", "me-2");
+                            ToastDismissButton.innerText = "忽略";
+                            ToastDismissButton.addEventListener("click", () => {
+                                RequestAPI("ReadBBSMention", {
+                                    "MentionID": Number(MentionList[i].MentionID)
+                                }, () => { });
+                            });
+                            ToastFooter.appendChild(ToastDismissButton);
+                            let ToastViewButton = document.createElement("button");
+                            ToastViewButton.type = "button";
+                            ToastViewButton.classList.add("btn", "btn-primary", "btn-sm");
+                            ToastViewButton.innerText = "查看";
+                            ToastViewButton.addEventListener("click", () => {
                                 open("http://www.xmoj.tech/discuss3/thread.php?tid=" + MentionList[i].PostID, "_blank");
                                 RequestAPI("ReadBBSMention", {
                                     "MentionID": Number(MentionList[i].MentionID)
                                 }, () => { });
                             });
-                            ToastFooter.appendChild(ToastButton);
+                            ToastFooter.appendChild(ToastViewButton);
                             ToastBody.appendChild(ToastFooter);
                             Toast.appendChild(ToastBody);
                             ToastContainer.appendChild(Toast);
@@ -770,6 +780,9 @@ else {
             if (UtilityEnabled("MessagePopup")) {
                 RequestAPI("GetMailMentionList", {}, async (Response) => {
                     if (Response.Success) {
+                        if (!UtilityEnabled("BBSPopup")) {
+                            ToastContainer.innerHTML = "";
+                        }
                         let MentionList = Response.Data.MentionList;
                         for (let i = 0; i < MentionList.length; i++) {
                             let Toast = document.createElement("div");
@@ -799,17 +812,27 @@ else {
                             ToastBody.innerHTML += "  给你发了一封短消息";
                             let ToastFooter = document.createElement("div");
                             ToastFooter.classList.add("mt-2", "pt-2", "border-top");
-                            let ToastButton = document.createElement("button");
-                            ToastButton.type = "button";
-                            ToastButton.classList.add("btn", "btn-primary", "btn-sm");
-                            ToastButton.innerText = "查看";
-                            ToastButton.addEventListener("click", () => {
+                            let ToastDismissButton = document.createElement("button");
+                            ToastDismissButton.type = "button";
+                            ToastDismissButton.classList.add("btn", "btn-secondary", "btn-sm", "me-2");
+                            ToastDismissButton.innerText = "忽略";
+                            ToastDismissButton.addEventListener("click", () => {
+                                RequestAPI("ReadMailMention", {
+                                    "MentionID": Number(MentionList[i].MentionID)
+                                }, () => { });
+                            });
+                            ToastFooter.appendChild(ToastDismissButton);
+                            let ToastViewButton = document.createElement("button");
+                            ToastViewButton.type = "button";
+                            ToastViewButton.classList.add("btn", "btn-primary", "btn-sm");
+                            ToastViewButton.innerText = "查看";
+                            ToastViewButton.addEventListener("click", () => {
                                 open("http://www.xmoj.tech/mail.php?other=" + MentionList[i].FromUserID, "_blank");
                                 RequestAPI("ReadMailMention", {
                                     "MentionID": Number(MentionList[i].MentionID)
                                 }, () => { });
                             });
-                            ToastFooter.appendChild(ToastButton);
+                            ToastFooter.appendChild(ToastViewButton);
                             ToastBody.appendChild(ToastFooter);
                             Toast.appendChild(ToastBody);
                             ToastContainer.appendChild(Toast);

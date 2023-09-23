@@ -383,6 +383,16 @@
                     "Description": "Change layout of ToggleLockButton"
                 }
             ]
+        },
+        "0.3.165": {
+            "UpdateDate": 1695443444738,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 483,
+                    "Description": "允许忽略提醒"
+                }
+            ]
         }
     }
 }
