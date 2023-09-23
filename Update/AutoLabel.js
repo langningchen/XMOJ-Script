@@ -1,7 +1,9 @@
 import * as github from '@actions/github';
 
-const IgnoreUsers = [
-    "cloudflare-pages[bot]"
+const TrustedUsers= [
+    "langningchen",
+    "boomzero",
+    "PythonSmall-Q"
 ];
 const LabelList = [
     "addon-script",
@@ -47,8 +49,8 @@ console.log("IssueNumber: " + IssueNumber);
 console.log("CommentID  : " + CommentID);
 console.log("User       : " + User);
 
-if (IgnoreUsers.includes(User)) {
-    console.log("Ignore user " + User);
+if (!TrustedUsers.includes(User)) {
+    console.log("Not trusted user " + User);
     process.exit(0);
 }
 
