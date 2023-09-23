@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.164
+// @version      0.3.168
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -291,6 +291,18 @@ let RequestAPI = (Action, Data, CallBack) => {
     });
 };
 
+GM_registerMenuCommand("清除缓存", () => {
+    let Temp = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.key(i).startsWith("UserScript-User-")) {
+            Temp.push(localStorage.key(i));
+        }
+    }
+    for (let i = 0; i < Temp.length; i++) {
+        localStorage.removeItem(Temp[i]);
+    }
+    location.reload();
+});
 GM_registerMenuCommand("重置数据", () => {
     if (confirm("确定要重置数据吗？")) {
         localStorage.clear();
@@ -636,7 +648,7 @@ else {
                 }
                 if (CurrentVersion < LatestVersion) {
                     let UpdateDiv = document.createElement("div");
-                    UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    UpdateDiv.innerHTML = `<div class="alert alert-warning alert-dismissible fade show mt-2" role="alert">
                         <div>
                             XMOJ用户脚本发现新版本${LatestVersion}，当前版本${CurrentVersion}，点击
                             <a href="${ServerURL}/XMOJ.user.js" target="_blank" class="alert-link">此处</a>
@@ -718,10 +730,10 @@ else {
         ToastContainer.classList.add("toast-container", "position-fixed", "bottom-0", "end-0", "p-3");
         document.body.appendChild(ToastContainer);
         addEventListener("focus", () => {
-            ToastContainer.innerHTML = "";
             if (UtilityEnabled("BBSPopup")) {
                 RequestAPI("GetBBSMentionList", {}, (Response) => {
                     if (Response.Success) {
+                        ToastContainer.innerHTML = "";
                         let MentionList = Response.Data.MentionList;
                         for (let i = 0; i < MentionList.length; i++) {
                             let Toast = document.createElement("div");
@@ -748,17 +760,27 @@ else {
                             ToastBody.innerHTML = "讨论" + MentionList[i].PostTitle + "有新回复";
                             let ToastFooter = document.createElement("div");
                             ToastFooter.classList.add("mt-2", "pt-2", "border-top");
-                            let ToastButton = document.createElement("button");
-                            ToastButton.type = "button";
-                            ToastButton.classList.add("btn", "btn-primary", "btn-sm");
-                            ToastButton.innerText = "查看";
-                            ToastButton.addEventListener("click", () => {
+                            let ToastDismissButton = document.createElement("button");
+                            ToastDismissButton.type = "button";
+                            ToastDismissButton.classList.add("btn", "btn-secondary", "btn-sm", "me-2");
+                            ToastDismissButton.innerText = "忽略";
+                            ToastDismissButton.addEventListener("click", () => {
+                                RequestAPI("ReadBBSMention", {
+                                    "MentionID": Number(MentionList[i].MentionID)
+                                }, () => { });
+                            });
+                            ToastFooter.appendChild(ToastDismissButton);
+                            let ToastViewButton = document.createElement("button");
+                            ToastViewButton.type = "button";
+                            ToastViewButton.classList.add("btn", "btn-primary", "btn-sm");
+                            ToastViewButton.innerText = "查看";
+                            ToastViewButton.addEventListener("click", () => {
                                 open("http://www.xmoj.tech/discuss3/thread.php?tid=" + MentionList[i].PostID, "_blank");
                                 RequestAPI("ReadBBSMention", {
                                     "MentionID": Number(MentionList[i].MentionID)
                                 }, () => { });
                             });
-                            ToastFooter.appendChild(ToastButton);
+                            ToastFooter.appendChild(ToastViewButton);
                             ToastBody.appendChild(ToastFooter);
                             Toast.appendChild(ToastBody);
                             ToastContainer.appendChild(Toast);
@@ -770,6 +792,9 @@ else {
             if (UtilityEnabled("MessagePopup")) {
                 RequestAPI("GetMailMentionList", {}, async (Response) => {
                     if (Response.Success) {
+                        if (!UtilityEnabled("BBSPopup")) {
+                            ToastContainer.innerHTML = "";
+                        }
                         let MentionList = Response.Data.MentionList;
                         for (let i = 0; i < MentionList.length; i++) {
                             let Toast = document.createElement("div");
@@ -799,17 +824,27 @@ else {
                             ToastBody.innerHTML += "  给你发了一封短消息";
                             let ToastFooter = document.createElement("div");
                             ToastFooter.classList.add("mt-2", "pt-2", "border-top");
-                            let ToastButton = document.createElement("button");
-                            ToastButton.type = "button";
-                            ToastButton.classList.add("btn", "btn-primary", "btn-sm");
-                            ToastButton.innerText = "查看";
-                            ToastButton.addEventListener("click", () => {
+                            let ToastDismissButton = document.createElement("button");
+                            ToastDismissButton.type = "button";
+                            ToastDismissButton.classList.add("btn", "btn-secondary", "btn-sm", "me-2");
+                            ToastDismissButton.innerText = "忽略";
+                            ToastDismissButton.addEventListener("click", () => {
+                                RequestAPI("ReadMailMention", {
+                                    "MentionID": Number(MentionList[i].MentionID)
+                                }, () => { });
+                            });
+                            ToastFooter.appendChild(ToastDismissButton);
+                            let ToastViewButton = document.createElement("button");
+                            ToastViewButton.type = "button";
+                            ToastViewButton.classList.add("btn", "btn-primary", "btn-sm");
+                            ToastViewButton.innerText = "查看";
+                            ToastViewButton.addEventListener("click", () => {
                                 open("http://www.xmoj.tech/mail.php?other=" + MentionList[i].FromUserID, "_blank");
                                 RequestAPI("ReadMailMention", {
                                     "MentionID": Number(MentionList[i].MentionID)
                                 }, () => { });
                             });
-                            ToastFooter.appendChild(ToastButton);
+                            ToastFooter.appendChild(ToastViewButton);
                             ToastBody.appendChild(ToastFooter);
                             Toast.appendChild(ToastBody);
                             ToastContainer.appendChild(Toast);
@@ -3941,10 +3976,11 @@ else {
                                         let ReplyContentElement = document.createElement("div"); CardBodyElement.appendChild(ReplyContentElement);
                                         ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content));
                                         let ContentEditElement = document.createElement("div"); CardBodyElement.appendChild(ContentEditElement);
+                                        ContentEditElement.classList.add("input-group");
                                         ContentEditElement.style.display = "none";
                                         let ContentEditor = document.createElement("textarea"); ContentEditElement.appendChild(ContentEditor);
-                                        ContentEditor.className = "form-control";
-                                        ContentEditor.style.height = "300px";
+                                        ContentEditor.className = "form-control col-6";
+                                        ContentEditor.rows = 3;
                                         ContentEditor.value = Replies[i].Content;
                                         ContentEditor.value = FixReply(ContentEditor.value);
                                         if (ContentEditor.value.indexOf("<br>") != -1) {
@@ -3954,6 +3990,13 @@ else {
                                             if (Event.ctrlKey && Event.keyCode == 13) {
                                                 OKButton.click();
                                             }
+                                        });
+                                        let PreviewTab = document.createElement("div"); ContentEditElement.appendChild(PreviewTab);
+                                        PreviewTab.className = "form-control col-6";
+                                        PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentEditor.value));
+                                        ContentEditor.addEventListener("input", () => {
+                                            PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentEditor.value));
+                                            RenderMathJax();
                                         });
                                     }
                                     let CodeElements = document.querySelectorAll("#PostReplies > div > div > div:nth-child(3) > pre > code");

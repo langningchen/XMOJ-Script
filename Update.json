@@ -383,6 +383,54 @@
                     "Description": "Change layout of ToggleLockButton"
                 }
             ]
+        },
+        "0.3.165": {
+            "UpdateDate": 1695443444738,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 483,
+                    "Description": "允许忽略提醒"
+                }
+            ]
+        },
+        "0.3.166": {
+            "UpdateDate": 1695446863362,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 485,
+                    "Description": "增加清除缓存功能"
+                }
+            ]
+        },
+        "0.3.167": {
+            "UpdateDate": 1695448389675,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 487,
+                    "Description": "编辑回复时提供预览"
+                }
+            ]
+        },
+        "0.3.168": {
+            "UpdateDate": 1695448491009,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 483,
+                    "Description": "允许忽略提醒"
+                },
+                {
+                    "PR": 485,
+                    "Description": "增加清除缓存功能"
+                },
+                {
+                    "PR": 487,
+                    "Description": "编辑回复时提供预览"
+                }
+            ]
         }
     }
 }
