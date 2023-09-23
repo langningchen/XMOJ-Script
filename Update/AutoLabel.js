@@ -20,7 +20,7 @@ console.log("User       : " + User);
 
 if (IgnoreUsers.includes(User)) {
     console.log("Ignore user " + User);
-    return;
+    process.exit(0);
 }
 
 let NewData = Data.replaceAll(/\/[a-zA-Z-]+/g, (match) => {
