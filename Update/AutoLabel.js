@@ -52,6 +52,11 @@ if (IgnoreUsers.includes(User)) {
     process.exit(0);
 }
 
+if (!Data.includes("github-actions")){
+    console.log("Ignoring comment, as it doesn't mention github-actions" + User);
+    process.exit(0);
+}
+
 let NewData = Data.replaceAll(/\/-[a-zA-Z-]+/g, (match) => {
     console.log("Found command " + match);
     let Label = match.substring(2);
