@@ -50,10 +50,13 @@ else {
 }
 
 if (User === "langningchen") {
-    Octokit.issues.removeLabel({
-        owner: Owner,
-        repo: Repo,
-        issue_number: IssueNumber,
-        name: "need-triage"
-    });
+    if (github.context.payload.issue.labels.find((label) => label.name === "need-triage")) {
+        console.log("Remove label need-triage");
+        Octokit.issues.removeLabel({
+            owner: Owner,
+            repo: Repo,
+            issue_number: IssueNumber,
+            name: "need-triage"
+        });
+    }
 }
