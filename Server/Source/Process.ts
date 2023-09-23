@@ -3,6 +3,7 @@ import { Database } from "./Database";
 import { Output } from "./Output";
 import { CaptchaSecretKey } from "./Secret";
 import { CheerioAPI, load } from "cheerio";
+import MD5 from "crypto-js";
 
 export class Process {
     private AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2", "shanwenxiao"];
@@ -53,9 +54,9 @@ export class Process {
         this.SessionID = Data["SessionID"];
         this.Username = Data["Username"];
         // return new Result(true, "令牌检测跳过");
-
+        let tokenHash:string = MD5(this.SessionID);
         let CurrentSessionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("phpsessid", ["user_id", "create_time"], {
-            token: this.SessionID
+            token: tokenHash
         }));
         if (CurrentSessionData.toString() !== "") {
             if (CurrentSessionData[0]["user_id"] === this.Username &&
@@ -64,7 +65,7 @@ export class Process {
             }
             else {
                 ThrowErrorIfFailed(await this.XMOJDatabase.Delete("phpsessid", {
-                    token: this.SessionID
+                    token: tokenHash
                 }));
                 Output.Log("Session " + this.SessionID + " expired");
             }
@@ -95,14 +96,12 @@ export class Process {
                 "Username       : \"" + this.Username + "\"\n");
             return new Result(false, "令牌不匹配");
         }
-
         ThrowErrorIfFailed(await this.XMOJDatabase.Insert("phpsessid", {
-            token: this.SessionID,
+            token: tokenHash,
             user_id: this.Username,
             create_time: new Date().getTime()
         }));
         Output.Log("Record session: " + this.SessionID + " for " + this.Username);
-
         return new Result(true, "令牌匹配");
     }
     public IfUserExist = async (Username: string): Promise<Result> => {
