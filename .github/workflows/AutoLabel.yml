@@ -1,7 +1,7 @@
 name: AutoLabel
 on:
   issue_comment:
-    types: 
+    types:
       - created
       - edited
 jobs:
@@ -10,4 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: AutoLabel
-        run: node ./Update/AutoLabel.js
+        run: |
+          cd ./Update
+          npm install
+          node ./AutoLabel.js

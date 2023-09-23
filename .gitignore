@@ -1,8 +1,6 @@
+**/node_modules
+**/package-lock.json
 Server/Source/Secret.ts
-Server/node_modules
 Server/.wrangler
-Server/package-lock.json
 Server/bun.lockb
 Server-Old/
-Email/.wrangler
-Email/node_modules
