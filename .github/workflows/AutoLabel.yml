@@ -9,7 +9,12 @@ jobs:
     name: AutoLabel
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: AutoLabel
         run: |
-          ls
-          pwd
+          cd ./Update
+          npm install
+          node ./AutoLabel.js ${{ secrets.GITHUB_TOKEN }}
