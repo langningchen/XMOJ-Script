@@ -84,6 +84,9 @@ NewData = NewData.replaceAll(/\/[a-zA-Z-]+/g, (match) => {
     return match;
 });
 
+if (NewData === "") {
+    NewData = "[]()";
+}
 console.log("NewData    : " + NewData);
 
 if (NewData === Data) {
