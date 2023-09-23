@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.168
+// @version      0.3.169
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -768,6 +768,7 @@ else {
                                 RequestAPI("ReadBBSMention", {
                                     "MentionID": Number(MentionList[i].MentionID)
                                 }, () => { });
+                                Toast.remove();
                             });
                             ToastFooter.appendChild(ToastDismissButton);
                             let ToastViewButton = document.createElement("button");
@@ -1828,7 +1829,6 @@ else {
                                     Metal.className = "badge text-bg-primary";
                                     MetalCell.innerText = "";
                                     MetalCell.appendChild(Metal);
-                                    Temp[i].cells[1].innerHTML = await GetUsernameHTML(Temp[i].cells[1].innerText);
                                     GetUsernameHTML(Temp[i].cells[1], Temp[i].cells[1].innerText);
                                     Temp[i].cells[2].innerHTML = Temp[i].cells[2].innerText;
                                     Temp[i].cells[3].innerHTML = Temp[i].cells[3].innerText;

@@ -13,6 +13,6 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
-    "cryptojs": "^2.5.3"
+    "crypto-js": "^4.1.1"
   }
 }
