@@ -403,6 +403,16 @@
                     "Description": "增加清除缓存功能"
                 }
             ]
+        },
+        "0.3.167": {
+            "UpdateDate": 1695448389675,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 487,
+                    "Description": "编辑回复时提供预览"
+                }
+            ]
         }
     }
 }
