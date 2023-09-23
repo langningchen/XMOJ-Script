@@ -23,7 +23,7 @@ if (IgnoreUsers.includes(User)) {
     return;
 }
 
-Data = Data.replaceAll(/\/[a-zA-Z-]+/g, (match) => {
+let NewData = Data.replaceAll(/\/[a-zA-Z-]+/g, (match) => {
     let Label = match.substring(1);
     console.log("Add label " + Label);
     Octokit.issues.addLabels({
@@ -35,13 +35,19 @@ Data = Data.replaceAll(/\/[a-zA-Z-]+/g, (match) => {
     return "";
 });
 
-console.log("New Data   : " + Data);
-Octokit.issues.updateComment({
-    owner: Owner,
-    repo: Repo,
-    comment_id: CommentID,
-    body: Data
-});
+console.log("NewData    : " + NewData);
+
+if (NewData === Data) {
+    console.log("No label added");
+}
+else {
+    Octokit.issues.updateComment({
+        owner: Owner,
+        repo: Repo,
+        comment_id: CommentID,
+        body: NewData
+    });
+}
 
 if (User === "langningchen") {
     Octokit.issues.removeLabel({
