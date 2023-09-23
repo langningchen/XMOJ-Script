@@ -1,6 +1,6 @@
 import * as github from '@actions/github';
 let Data = github.context.payload.comment.body;
-let Octokit = github.getOctokit();
+let Octokit = github.getOctokit(process.argv[2]);
 let Owner = github.context.repo.owner;
 let Repo = github.context.repo.repo;
 let IssueNumber = github.context.payload.issue.number;
