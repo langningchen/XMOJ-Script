@@ -395,12 +395,12 @@
             ]
         },
         "0.3.166": {
-            "UpdateDate": 1695446837545,
+            "UpdateDate": 1695446863362,
             "Prerelease": true,
             "UpdateContents": [
                 {
                     "PR": 485,
-                    "Description": "[Feature Request] 增加清除缓存功能"
+                    "Description": "增加清除缓存功能"
                 }
             ]
         }
