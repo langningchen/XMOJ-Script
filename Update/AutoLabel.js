@@ -14,16 +14,16 @@ const LabelList = [
     "frozen",
     "github_actions",
     "GitHub-related",
-    "good first issue",
+    "good-first-issue",
     "hacktoberfest-accepted",
-    "help wanted",
+    "help-wanted",
     "invalid",
     "investigating",
     "needs-triage",
     "priority-high",
     "priority-low",
     "question",
-    "review needed",
+    "review-needed",
     "server",
     "stale",
     "update-script",
@@ -53,6 +53,7 @@ if (IgnoreUsers.includes(User)) {
 }
 
 let NewData = Data.replaceAll(/\/-[a-zA-Z-]+/g, (match) => {
+    console.log("Found command " + match);
     let Label = match.substring(2);
     if (github.context.payload.issue.labels.find((label) => label.name === Label)) {
         console.log("Remove label " + Label);
@@ -68,6 +69,7 @@ let NewData = Data.replaceAll(/\/-[a-zA-Z-]+/g, (match) => {
 });
 
 NewData = NewData.replaceAll(/\/[a-zA-Z-]+/g, (match) => {
+    console.log("Found command " + match);
     let Label = match.substring(1);
     if (LabelList.includes(Label)) {
         console.log("Add label " + Label);
