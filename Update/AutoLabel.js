@@ -1,8 +1,5 @@
 import * as github from '@actions/github';
 
-const IgnoreUsers = [
-    "cloudflare-pages[bot]"
-];
 const TrustedUsers= [
     "langningchen",
     "boomzero",
@@ -52,12 +49,7 @@ console.log("IssueNumber: " + IssueNumber);
 console.log("CommentID  : " + CommentID);
 console.log("User       : " + User);
 
-if (IgnoreUsers.includes(User)) {
-    console.log("Ignore user " + User);
-    process.exit(0);
-}
-//if user is not TrustedUsers or author of issue, exit
-if(!TrustedUsers.includes(User) || User != github.context.payload.issue.user.login) {
+if (!TrustedUsers.includes(User) || User != github.context.payload.issue.user.login) {
     console.log("Not trusted user " + User);
     process.exit(0);
 }
