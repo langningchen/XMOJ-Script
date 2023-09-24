@@ -1,13 +1,14 @@
-name: SetPRLabel
 on:
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
 jobs:
-  SetPRLabel:
-    name: SetPRLabel
+  AutoLabelPR:
     runs-on: ubuntu-latest
     steps:
-      - name: Set PR labels
-        uses: actions/labeler@v4
+      - uses: actions/labeler@v4
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           dot: true
