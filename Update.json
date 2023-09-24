@@ -505,6 +505,28 @@
                     "Description": "去除获取他人样例功能"
                 }
             ]
+        },
+        "0.3.176": {
+            "UpdateDate": 1695527416171,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 501,
+                    "Description": "解决Ctrl+Enter后无法编辑讨论"
+                },
+                {
+                    "PR": 503,
+                    "Description": "更改最后编辑日期的显示方式"
+                },
+                {
+                    "PR": 504,
+                    "Description": "更换预编译接口加快预编译速度"
+                },
+                {
+                    "PR": 505,
+                    "Description": "去除获取他人样例功能"
+                }
+            ]
         }
     }
 }
