@@ -19,6 +19,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
+// @grant        unsafeWindow
 // @connect      api.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
 // @connect      runoob.com
@@ -37,8 +38,8 @@ const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
 
 let GetRelativeTime = (Input) => {
     Input = new Date(Input);
-    let Now = new Date();
-    let Delta = Now.getTime() - Input.getTime();
+    let Now = new Date().getTime();
+    let Delta = Now - Input.getTime();
     let RelativeName = "";
     if (Delta < 0) { RelativeName = "未来"; }
     else if (Delta <= 1000 * 60) { RelativeName = "刚刚"; }
@@ -121,7 +122,7 @@ let GetUserBadge = async (Username) => {
         localStorage.setItem("UserScript-User-" + Username + "-Badge-BackgroundColor", BackgroundColor);
         localStorage.setItem("UserScript-User-" + Username + "-Badge-Color", Color);
         localStorage.setItem("UserScript-User-" + Username + "-Badge-Content", Content);
-        localStorage.setItem("UserScript-User-" + Username + "-Badge-LastUpdateTime", new Date().getTime());
+        localStorage.setItem("UserScript-User-" + Username + "-Badge-LastUpdateTime", String(new Date().getTime()));
         return {
             "BackgroundColor": BackgroundColor,
             "Color": Color,
@@ -130,6 +131,7 @@ let GetUserBadge = async (Username) => {
     }
 };
 let GetUsernameHTML = async (Element, Username, Simple = false, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
+    Username = Username.replaceAll(/[^a-zA-Z0-9]/g, "");
     let ID = "Username-" + Username + "-" + Math.random();
     Element.id = ID;
     Element.innerHTML = `<div class="spinner-border spinner-border-sm me-2" role="status"></div>`;
@@ -626,20 +628,25 @@ else {
             if (UtilityEnabled("AutoCountdown")) {
                 let Temp = document.getElementsByClassName("UpdateByJS");
                 for (let i = 0; i < Temp.length; i++) {
-                    let TimeStamp = parseInt(Temp[i].getAttribute("EndTime")) - new Date().getTime();
+                    let EndTime = Temp[i].getAttribute("EndTime");
+                    if (EndTime === null) {
+                        Temp[i].classList.remove("UpdateByJS");
+                        continue;
+                    }
+                    let TimeStamp = parseInt(EndTime) - new Date().getTime();
                     if (TimeStamp < 3000) {
                         Temp[i].classList.remove("UpdateByJS");
                         location.reload();
                     }
                     let CurrentDate = new Date(TimeStamp);
-                    let Day = parseInt(TimeStamp / 1000 / 60 / 60 / 24);
+                    let Day = parseInt((TimeStamp / 1000 / 60 / 60 / 24).toFixed(0));
                     let Hour = CurrentDate.getUTCHours();
                     let Minute = CurrentDate.getUTCMinutes();
                     let Second = CurrentDate.getUTCSeconds();
-                    Temp[i].innerText = (Day != 0 ? Day + "天" : "") +
-                        (Hour != 0 ? (Hour < 10 ? "0" : "") + Hour + "小时" : "") +
-                        (Minute != 0 ? (Minute < 10 ? "0" : "") + Minute + "分" : "") +
-                        (Second != 0 ? (Second < 10 ? "0" : "") + Second + "秒" : "");
+                    Temp[i].innerHTML = (Day !== 0 ? Day + "天" : "") +
+                        (Hour !== 0 ? (Hour < 10 ? "0" : "") + Hour + "小时" : "") +
+                        (Minute !== 0 ? (Minute < 10 ? "0" : "") + Minute + "分" : "") +
+                        (Second !== 0 ? (Second < 10 ? "0" : "") + Second + "秒" : "");
                 }
             }
         }, 100);
@@ -675,7 +682,7 @@ else {
                     let UpdateDiv = document.createElement("div"); document.querySelector("body").appendChild(UpdateDiv);
                     UpdateDiv.className = "modal fade";
                     UpdateDiv.id = "UpdateModal";
-                    UpdateDiv.tabIndex = "-1";
+                    UpdateDiv.tabIndex = -1;
                     let UpdateDialog = document.createElement("div"); UpdateDiv.appendChild(UpdateDialog);
                     UpdateDialog.className = "modal-dialog";
                     let UpdateContent = document.createElement("div"); UpdateDialog.appendChild(UpdateContent);
@@ -923,7 +930,7 @@ else {
                                 CheckBox.checked = true;
                             }
                             CheckBox.addEventListener("change", () => {
-                                localStorage.setItem("UserScript-Setting-" + Data[i].ID, CheckBox.checked);
+                                return localStorage.setItem("UserScript-Setting-" + Data[i].ID, CheckBox.checked);
                             });
 
                             Row.appendChild(CheckBox);
@@ -1253,7 +1260,7 @@ else {
                 document.querySelector("body > script:nth-child(5)").remove();
                 if (UtilityEnabled("NewBootstrap")) {
                     document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
-                    <input class="form-control" type="text" size="4" name="user_id" value="${document.getElementById("profile").innerText} "style="display: none;">
+                    <input class="form-control" type="text" size="4" name="user_id" value="${CurrentUsername} "style="display: none;">
                 <div class="col-md-1">
                     <label for="problem_id" class="form-label">题目编号</label>
                     <input type="text" class="form-control" id="problem_id" name="problem_id" size="4">
@@ -1296,7 +1303,7 @@ else {
                     ImproveACRateButton.innerText = "提高AC率";
                     ImproveACRateButton.disabled = true;
                     let ACProblems = [];
-                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.getElementById("profile").innerText)
+                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + CurrentUsername)
                         .then((Response) => {
                             return Response.text();
                         }).then((Response) => {
@@ -1335,12 +1342,6 @@ else {
                                 }).then((Response) => {
                                     Code = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
                                 });
-                            await fetch("http://www.xmoj.tech/csrf.php")
-                                .then((Response) => {
-                                    return Response.text();
-                                }).then((Response) => {
-                                    CSRF = new DOMParser().parseFromString(Response, "text/html").querySelector("input[name=csrf]").value;
-                                });
                             await fetch("http://www.xmoj.tech/submit.php", {
                                 "headers": {
                                     "content-type": "application/x-www-form-urlencoded"
@@ -1371,7 +1372,7 @@ else {
                 if (UtilityEnabled("ResetType")) {
                     document.querySelector("#result-tab > thead > tr > th:nth-child(1)").remove();
                     document.querySelector("#result-tab > thead > tr > th:nth-child(2)").remove();
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(10)").innerText = "开启O2";
+                    document.querySelector("#result-tab > thead > tr > th:nth-child(10)").innerHTML = "开启O2";
                 }
                 let Temp = document.querySelector("#result-tab > tbody").childNodes;
                 let SolutionIDs = [];
@@ -1390,7 +1391,7 @@ else {
                         Temp[i].childNodes[6].innerText = SizeToStringSize(Temp[i].childNodes[6].innerText.substring(0, Temp[i].childNodes[6].innerText.length - 1));
                         Temp[i].childNodes[9].innerText = (Temp[i].childNodes[9].innerText == "" ? "否" : "是");
                     }
-                    if (SearchParams.get("cid") == null) {
+                    if (SearchParams.get("cid") === null) {
                         localStorage.setItem("UserScript-Solution-" + SID + "-Problem",
                             Temp[i].childNodes[1].innerText);
                     }
@@ -1914,7 +1915,7 @@ else {
 
                                     let UsernameSpan = document.createElement("span"); UsernameCell.appendChild(UsernameSpan);
                                     GetUsernameHTML(UsernameSpan, RowData.Username);
-                                    if (RowData.Username == document.getElementById("profile").innerText) {
+                                    if (RowData.Username == CurrentUsername) {
                                         Row.classList.add("table-primary");
                                     }
                                     if (RowData.QuickSubmitCount >= 2) {
@@ -3451,7 +3452,7 @@ else {
                         </tbody>
                     </table>`;
                     NewPost.addEventListener("click", () => {
-                        if (ProblemID != null) {
+                        if (!isNaN(ProblemID)) {
                             location.href = "http://www.xmoj.tech/discuss3/newpost.php?pid=" + ProblemID;
                         }
                         else {
@@ -3533,7 +3534,7 @@ else {
                     addEventListener("focus", RefreshPostList);
                 } else if (location.pathname == "/discuss3/newpost.php") {
                     let ProblemID = parseInt(SearchParams.get("pid"));
-                    document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (isNaN(ProblemID) ? ` - 题目` + ProblemID : ``) + `</h3>
+                    document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (!isNaN(ProblemID) ? ` - 题目` + ProblemID : ``) + `</h3>
                     <div class="form-group mb-3">
                         <label for="Title" class="mb-1">标题</label>
                         <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
@@ -3550,24 +3551,20 @@ else {
                             <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                         </button>
                     </div>
-                    <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
-                    <input type="hidden" id="CaptchaSecretKey">
-                    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback"></script>`;
-                    window.CaptchaLoadedCallback = () => {
+                    <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
+                    let CaptchaSecretKey = "";
+                    unsafeWindow.CaptchaLoadedCallback = () => {
                         turnstile.render("#CaptchaContainer", {
                             sitekey: CaptchaSiteKey,
                             callback: function (CaptchaSecretKeyValue) {
-                                CaptchaSecretKey.value = CaptchaSecretKeyValue;
+                                CaptchaSecretKey = CaptchaSecretKeyValue;
                                 SubmitElement.disabled = false;
                             },
                         });
                     };
-                    GM_xmlhttpRequest({
-                        url: "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback",
-                        onload: (Response) => {
-                            eval(Response.responseText);
-                        }
-                    });
+                    let TurnstileScript = document.createElement("script");
+                    TurnstileScript.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=CaptchaLoadedCallback";
+                    document.body.appendChild(TurnstileScript);
                     ContentElement.addEventListener("keydown", (Event) => {
                         if (Event.ctrlKey && Event.keyCode == 13) {
                             SubmitElement.click();
@@ -3602,7 +3599,7 @@ else {
                             "Title": String(Title),
                             "Content": String(Content),
                             "ProblemID": Number(isNaN(ProblemID) ? 0 : ProblemID),
-                            "CaptchaSecretKey": String(CaptchaSecretKey.value)
+                            "CaptchaSecretKey": String(CaptchaSecretKey)
                         }, (ResponseData) => {
                             SubmitElement.disabled = false;
                             SubmitElement.children[0].style.display = "none";
@@ -3667,24 +3664,20 @@ else {
                                 <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                             </button>
                         </div>
-                        <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
-                        <input type="hidden" id="CaptchaSecretKey">
-                        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback"></script>`;
-                        window.CaptchaLoadedCallback = () => {
+                        <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
+                        let CaptchaSecretKey = "";
+                        unsafeWindow.CaptchaLoadedCallback = () => {
                             turnstile.render("#CaptchaContainer", {
                                 sitekey: CaptchaSiteKey,
                                 callback: function (CaptchaSecretKeyValue) {
-                                    CaptchaSecretKey.value = CaptchaSecretKeyValue;
+                                    CaptchaSecretKey = CaptchaSecretKeyValue;
                                     SubmitElement.disabled = false;
                                 },
                             });
                         };
-                        GM_xmlhttpRequest({
-                            url: "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback",
-                            onload: (Response) => {
-                                eval(Response.responseText);
-                            }
-                        });
+                        let TurnstileScript = document.createElement("script");
+                        TurnstileScript.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=CaptchaLoadedCallback";
+                        document.body.appendChild(TurnstileScript);
                         ContentElement.addEventListener("keydown", (Event) => {
                             if (Event.ctrlKey && Event.keyCode == 13) {
                                 SubmitElement.click();
@@ -3994,7 +3987,7 @@ else {
                             RequestAPI("NewReply", {
                                 "PostID": Number(SearchParams.get("tid")),
                                 "Content": String(ContentElement.value),
-                                "CaptchaSecretKey": String(CaptchaSecretKey.value)
+                                "CaptchaSecretKey": String(CaptchaSecretKey)
                             }, async (ResponseData) => {
                                 SubmitElement.disabled = false;
                                 SubmitElement.children[0].style.display = "none";
