@@ -294,16 +294,11 @@ export class Process {
                 return new Result(false, "内容不能为空");
             }
             let MentionPeople = new Array<string>();
-            let StringToReplace = new Array<string>();
             for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
-                StringToReplace.push("@" + Match[1]);
                 if (ThrowErrorIfFailed(await this.IfUserExist(Match[1]))["Exist"]) {
                     MentionPeople.push(Match[1]);
                 }
             }
-            Data["Content"] = String(Data["Content"]).replace(/@([a-zA-Z0-9]+)/g, (Match) => {
-                return StringToReplace.shift() || "";
-            });
             MentionPeople = Array.from(new Set(MentionPeople));
             let ReplyID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_reply", {
                 user_id: this.Username,
@@ -445,7 +440,9 @@ export class Process {
                     ReplyID: ReplyItem["reply_id"],
                     UserID: ReplyItem["user_id"],
                     Content: ReplyItem["content"],
-                    ReplyTime: ReplyItem["reply_time"]
+                    ReplyTime: ReplyItem["reply_time"],
+                    EditTime: ReplyItem["edit_time"],
+                    EditPerson: ReplyItem["edit_person"]
                 });
             }
             return new Result(true, "获得讨论成功", ResponseData);
@@ -527,19 +524,15 @@ export class Process {
                 return new Result(false, "内容不能为空");
             }
             let MentionPeople = new Array<string>();
-            let StringToReplace = new Array<string>();
             for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
-                StringToReplace.push("@" + Match[1]);
                 if (ThrowErrorIfFailed(await this.IfUserExist(Match[1]))["Exist"]) {
                     MentionPeople.push(Match[1]);
                 }
             }
-            Data["Content"] = String(Data["Content"]).replace(/@([a-zA-Z0-9]+)/g, (Match) => {
-                return StringToReplace.shift() || "";
-            });
-            Data["Content"] = String(Data["Content"]).trim() + "\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 " + new Date().toLocaleString() + " 编辑</span>";
             await this.XMOJDatabase.Update("bbs_reply", {
-                content: Data["Content"]
+                content: Data["Content"],
+                edit_time: new Date().getTime(),
+                edit_person: this.Username
             }, {
                 reply_id: Data["ReplyID"]
             });

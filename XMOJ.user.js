@@ -258,10 +258,6 @@ let UtilityEnabled = (Name) => {
     }
     return localStorage.getItem("UserScript-Setting-" + Name) == "true";
 };
-let FixReply = (Data) => {
-    Data = Data.replaceAll(/<br><span class="text-muted" style="font-size: 12px">已于 [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}, [0-9]{1,2}:[0-9]{2}:[0-9]{2} (A|P)M 编辑<\/span>/g, "");
-    return Data;
-}
 let RequestAPI = (Action, Data, CallBack) => {
     let UserID = profile.innerText;
     let Session = "";
@@ -3893,7 +3889,6 @@ else {
                                             ReplyButton.innerText = "回复";
                                             ReplyButton.addEventListener("click", () => {
                                                 let Content = Replies[i].Content;
-                                                Content = FixReply(Content);
                                                 while (Content.startsWith(">")) {
                                                     Content = Content.substring(Content.indexOf("\n") + 1);
                                                 }
@@ -3987,6 +3982,14 @@ else {
 
                                         let ReplyContentElement = document.createElement("div"); CardBodyElement.appendChild(ReplyContentElement);
                                         ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content.replaceAll(/@([a-zA-Z0-9]+)/g, `<b>@</b><span class="ms-1 Usernames">$1</span>`)));
+                                        if (Replies[i].EditTime != null) {
+                                            if (Replies[i].EditPerson !== profile.innerText) {
+                                                ReplyContentElement.innerHTML += `<span class="text-muted" style="font-size: 12px">最后编辑于${GetRelativeTime(Replies[i].EditTime)}</span>`;
+                                            }
+                                            else {
+                                                ReplyContentElement.innerHTML += `<span class="text-muted" style="font-size: 12px">最后被<span class="Usernames">${Replies[i].EditPerson}</span>编辑于${GetRelativeTime(Replies[i].EditTime)}</span>`;
+                                            }
+                                        }
                                         let ContentEditElement = document.createElement("div"); CardBodyElement.appendChild(ContentEditElement);
                                         ContentEditElement.classList.add("input-group");
                                         ContentEditElement.style.display = "none";
@@ -3994,7 +3997,6 @@ else {
                                         ContentEditor.className = "form-control col-6";
                                         ContentEditor.rows = 3;
                                         ContentEditor.value = Replies[i].Content;
-                                        ContentEditor.value = FixReply(ContentEditor.value);
                                         if (ContentEditor.value.indexOf("<br>") != -1) {
                                             ContentEditor.value = ContentEditor.value.substring(0, ContentEditor.value.indexOf("<br>"));
                                         }
