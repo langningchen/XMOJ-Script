@@ -537,6 +537,16 @@
                     "Description": "解决安全问题"
                 }
             ]
+        },
+        "0.3.178": {
+            "UpdateDate": 1695555423611,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 511,
+                    "Description": "再次解决安全问题"
+                }
+            ]
         }
     }
 }
