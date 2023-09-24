@@ -22,6 +22,7 @@
 // @grant        GM_setClipboard
 // @connect      api.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
+// @connect      runoob.com
 // @connect      127.0.0.1
 // @license      GPL
 // ==/UserScript==
@@ -2322,56 +2323,41 @@ else {
                     return false;
                 }
                 if (UtilityEnabled("CompileError")) {
-                    for (let i = 0; i < 5; i++) {
-                        let TimeoutController = new AbortController();
-                        setTimeout(() => {
-                            TimeoutController.abort();
-                        }, 2000);
-                        await fetch("https://gcc.godbolt.org/api/compiler/g131/compile", {
-                            "headers": {
-                                "accept": "application/json"
-                            },
-                            "body": Source,
-                            "method": "POST",
-                            "signal": TimeoutController.signal
-                        })
-                            .then((Response) => {
-                                return Response.json()
-                            })
-                            .then((Response) => {
-                                let Transferer = new AnsiUp();
-                                let CompileError = "";
-                                for (let i = 0; i < Response.stderr.length; i++) {
-                                    CompileError += Transferer.ansi_to_html(Response.stderr[i].text) + "<br>";
-                                }
-                                if (CompileError != "") {
-                                    PassCheck.style.display = "";
-                                    ErrorElement.style.display = "block";
-                                    ErrorMessage.style.color = "";
-                                    ErrorMessage.innerHTML = "编译错误：<br>" + CompileError;
-                                    document.querySelector("#Submit").disabled = false;
-                                    document.querySelector("#Submit").value = "提交";
-                                    return false;
-                                }
-                                ErrorElement.style.display = "none";
-                            }).catch((Error) => {
-                                ErrorElement.style.display = "block";
-                                ErrorMessage.style.color = "red";
-                                if (i != 4) {
-                                    ErrorMessage.innerText = "预编译超时，正在重试(" + (i + 1) + "/5)";
-                                } else {
-                                    PassCheck.style.display = "";
-                                    ErrorMessage.innerText = "预编译超时，请重试或者点击下方按钮强制提交";
-                                    document.querySelector("#Submit").disabled = false;
-                                    document.querySelector("#Submit").value = "提交";
-                                }
-                                return false;
-                            });
-                        if (ErrorElement.style.display == "none") {
-                            PassCheck.click();
-                            break;
-                        }
-                    }
+                    await new Promise((Resolve) => {
+                        GM_xmlhttpRequest({
+                            url: "https://c.runoob.com/compile/12/",
+                            onload: async (Response) => {
+                                let Token = Response.responseText.substr(Response.responseText.indexOf("token") + 9, 32);
+                                await new Promise(async (Resolve) => {
+                                    GM_xmlhttpRequest({
+                                        method: "POST",
+                                        url: "https://www.runoob.com/try/compile2.php",
+                                        headers: {
+                                            "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+                                            "Referer": "https://c.runoob.com/"
+                                        },
+                                        data: "code=" + encodeURIComponent(Source) + "&token=" + Token + "&stdin=&language=7&fileext=cpp",
+                                        onload: (Response) => {
+                                            let ResponseJSON = JSON.parse(Response.responseText);
+                                            if (ResponseJSON["errors"].trim() != "") {
+                                                PassCheck.style.display = "";
+                                                ErrorElement.style.display = "block";
+                                                ErrorMessage.style.color = "red";
+                                                ErrorMessage.innerText = "编译错误：\n" + ResponseJSON["errors"].trim();
+                                                document.querySelector("#Submit").disabled = false;
+                                                document.querySelector("#Submit").value = "提交";
+                                            }
+                                            else {
+                                                PassCheck.click();
+                                            }
+                                            Resolve();
+                                        }
+                                    });
+                                });
+                                Resolve();
+                            }
+                        });
+                    });
                 }
                 else {
                     PassCheck.click();
