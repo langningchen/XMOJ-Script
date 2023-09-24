@@ -547,6 +547,16 @@
                     "Description": "再次解决安全问题"
                 }
             ]
+        },
+        "0.3.179": {
+            "UpdateDate": 1695560619173,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 513,
+                    "Description": "解决Cloudflare Turnstile错误"
+                }
+            ]
         }
     }
 }
