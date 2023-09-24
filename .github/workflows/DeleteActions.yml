@@ -8,6 +8,8 @@ jobs:
     name: DeleteActions
     runs-on: ubuntu-latest
     steps:
+      - name: Auth GitHub
+        run: gh auth login --with-token < ${{ secrets.GITHUB_TOKEN }}
       - name: DeleteActions
         run: gh api repos/langningchen/XMOJ-Script/actions/runs --paginate -q '.workflow_runs[] | "\(.id)"' | xargs -n1 -I % gh api --method DELETE /repos/langningchen/XMOJ-Script/actions/runs/%
         env:
