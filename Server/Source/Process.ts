@@ -54,9 +54,9 @@ export class Process {
         this.SessionID = Data["SessionID"];
         this.Username = Data["Username"];
         // return new Result(true, "令牌检测跳过");
-        let tokenHash:string = MD5(this.SessionID).toString();
+        let HashedToken: string = MD5(this.SessionID).toString();
         let CurrentSessionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("phpsessid", ["user_id", "create_time"], {
-            token: tokenHash
+            token: HashedToken
         }));
         if (CurrentSessionData.toString() !== "") {
             if (CurrentSessionData[0]["user_id"] === this.Username &&
@@ -65,7 +65,7 @@ export class Process {
             }
             else {
                 ThrowErrorIfFailed(await this.XMOJDatabase.Delete("phpsessid", {
-                    token: tokenHash
+                    token: HashedToken
                 }));
                 Output.Log("Session " + this.SessionID + " expired");
             }
@@ -97,7 +97,7 @@ export class Process {
             return new Result(false, "令牌不匹配");
         }
         ThrowErrorIfFailed(await this.XMOJDatabase.Insert("phpsessid", {
-            token: tokenHash,
+            token: HashedToken,
             user_id: this.Username,
             create_time: new Date().getTime()
         }));
@@ -296,11 +296,9 @@ export class Process {
             let MentionPeople = new Array<string>();
             let StringToReplace = new Array<string>();
             for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
+                StringToReplace.push("@" + Match[1]);
                 if (ThrowErrorIfFailed(await this.IfUserExist(Match[1]))["Exist"]) {
                     MentionPeople.push(Match[1]);
-                }
-                else {
-                    StringToReplace.push("@" + Match[1]);
                 }
             }
             Data["Content"] = String(Data["Content"]).replace(/@([a-zA-Z0-9]+)/g, (Match) => {
@@ -531,11 +529,9 @@ export class Process {
             let MentionPeople = new Array<string>();
             let StringToReplace = new Array<string>();
             for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
+                StringToReplace.push("@" + Match[1]);
                 if (ThrowErrorIfFailed(await this.IfUserExist(Match[1]))["Exist"]) {
                     MentionPeople.push(Match[1]);
-                }
-                else {
-                    StringToReplace.push("@" + Match[1]);
                 }
             }
             Data["Content"] = String(Data["Content"]).replace(/@([a-zA-Z0-9]+)/g, (Match) => {

@@ -3883,6 +3883,7 @@ else {
                                         SendTimeElement.className = "col-4 text-muted";
                                         SendTimeElement.innerHTML = "发布时间：" + GetRelativeTime(Replies[i].ReplyTime);
 
+                                        let OKButton;
                                         if (!LockButtons) {
                                             let ButtonsElement = document.createElement("span"); CardBodyRowElement.appendChild(ButtonsElement);
                                             ButtonsElement.className = "col-4";
@@ -3929,7 +3930,7 @@ else {
                                             DeleteSpin.className = "spinner-border spinner-border-sm";
                                             DeleteSpin.role = "status";
                                             DeleteSpin.style.display = "none";
-                                            let OKButton = document.createElement("button"); ButtonsElement.appendChild(OKButton);
+                                            OKButton = document.createElement("button"); ButtonsElement.appendChild(OKButton);
                                             OKButton.type = "button";
                                             OKButton.style.display = "none";
                                             OKButton.className = "btn btn-sm btn-success ms-1";
