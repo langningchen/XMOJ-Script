@@ -1,3 +1,4 @@
+name: AutoLabelPR
 on:
   pull_request:
     types:

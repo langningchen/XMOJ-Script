@@ -1,3 +1,4 @@
+name: UpdateToRelease
 on:
   pull_request:
     types:

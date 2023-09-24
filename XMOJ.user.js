@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.174
+// @version      0.3.175
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -16,7 +16,6 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/core.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/md5.min.js
-// @require      https://ghproxy.com/https://github.com/drudru/ansi_up/blob/v5.2.1/ansi_up.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
@@ -946,7 +945,6 @@ else {
                     { "ID": "Discussion", "Type": "F", "Name": "恢复讨论与短消息功能" },
                     { "ID": "MoreSTD", "Type": "F", "Name": "查看到更多标程" },
                     { "ID": "Rating", "Type": "A", "Name": "添加用户评分和用户名颜色" },
-                    { "ID": "GetOthersSample", "Type": "A", "Name": "获取到别人的测试点数据" },
                     { "ID": "AutoRefresh", "Type": "A", "Name": "比赛列表、比赛排名界面自动刷新" },
                     { "ID": "AutoCountdown", "Type": "A", "Name": "比赛列表等界面的时间自动倒计时" },
                     { "ID": "DownloadPlayback", "Type": "A", "Name": "回放视频增加下载功能" },
@@ -1286,17 +1284,6 @@ else {
                 </div><div id="csrf"></div></form>`;
                 }
 
-                if (UtilityEnabled("GetOthersSample")) {
-                    let GetOthersSampleButton = document.createElement("button");
-                    document.querySelector("body > div.container > div > div.input-append").appendChild(GetOthersSampleButton);
-                    GetOthersSampleButton.className = "btn btn-outline-secondary";
-                    GetOthersSampleButton.innerText = "获取他人样例";
-                    GetOthersSampleButton.addEventListener("click", () => {
-                        location.href = "http://www.xmoj.tech/status.php?ByUserScript=1";
-                    });
-                    GetOthersSampleButton.style.marginBottom = GetOthersSampleButton.style.marginRight = "7px";
-                    GetOthersSampleButton.style.marginRight = "7px";
-                }
                 if (UtilityEnabled("ImproveACRate")) {
                     let ImproveACRateButton = document.createElement("button");
                     document.querySelector("body > div.container > div > div.input-append").appendChild(ImproveACRateButton);
@@ -1500,109 +1487,6 @@ else {
                             });
                     };
                 }
-            }
-            else if (UtilityEnabled("GetOthersSample")) {
-                document.querySelector("body > div > div.mt-3").innerHTML = `<div class="mt-3">
-            <div class="row g-3 align-items-center mb-2">
-            <div class="col-auto">
-                <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
-            </div>
-            <div class="col-auto">
-                <input type="text" id="NameInput" class="form-control" value="${document.getElementById("profile").innerText}">
-            </div>
-            </div>
-            <div class="row g-3 align-items-center mb-2">
-            <div class="col-auto">
-                <label for="DateInput" class="col-form-label">测试点获取的日期</label>
-            </div>
-            <div class="col-auto">
-                <input type="date" id="DateInput" class="form-control" value="${new Date().toISOString().slice(0, 10)}">
-            </div>
-            </div>
-            <div class="row g-3 align-items-center mb-2">
-            <div class="col-auto">
-                <label for="ProblemInput" class="col-form-label">获取测试点的题目ID</label>
-            </div>
-            <div class="col-auto">
-                <input type="number" id="ProblemInput" class="form-control">
-            </div>
-            </div>
-            <div class="row g-3 align-items-center mb-2">
-            <div class="col-auto">
-                <label for="SID" class="col-form-label">获取测试点的提交ID</label>
-            </div>
-            <div class="col-auto">
-                <input type="number" id="SID" class="form-control">
-            </div>
-            </div>
-            <div class="row g-3 align-items-center mb-2">
-            <div class="col-auto">
-                <label for="SampleInput" class="col-form-label">获取的测试点编号</label>
-            </div>
-            <div class="col-auto">
-                <input type="number" id="SampleInput" class="form-control">
-            </div>
-            </div>
-            <button type="submit" class="btn btn-primary mb-3" id="GetSample">获取</button>
-            <div role="alert" id="GetSampleAlert" style="display: none"></div>
-        </div>`;
-                GetSample.addEventListener("click", async () => {
-                    document.getElementById("GetSampleAlert").style.display = "none";
-                    let Name = document.getElementById("NameInput").value;
-                    let DateInput = document.getElementById("DateInput").value.replaceAll("-", "");
-                    let ProblemID = document.getElementById("ProblemInput").value;
-                    let SID = document.getElementById("SID").value;
-                    let Sample = document.getElementById("SampleInput").value;
-                    if (Name == "" || DateInput == "" || SID == "" || Sample == "") {
-                        document.getElementById("GetSampleAlert").classList = "alert alert-danger";
-                        document.getElementById("GetSampleAlert").innerText = "请填写完整信息";
-                        document.getElementById("GetSampleAlert").style.display = "block";
-                        return;
-                    }
-                    if (DateInput < new Date().toISOString().slice(0, 10).replaceAll("-", "") - 7) {
-                        document.getElementById("GetSampleAlert").classList = "alert alert-danger";
-                        document.getElementById("GetSampleAlert").innerText = "只能获取7天内的测试点";
-                        document.getElementById("GetSampleAlert").style.display = "block";
-                        return;
-                    }
-                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + Name)
-                        .then((Response) => {
-                            return Response.text();
-                        }).then(async (Response) => {
-                            if (Response.indexOf("No such User") != -1) {
-                                document.getElementById("GetSampleAlert").classList = "alert alert-danger";
-                                document.getElementById("GetSampleAlert").innerText = "用户不存在";
-                                document.getElementById("GetSampleAlert").style.display = "block";
-                                return;
-                            }
-                            await fetch("http://www.xmoj.tech/data_down/" + DateInput + "/" + Name + "_" + SID + "_" +
-                                (localStorage.getItem("UserScript-Problem-" + ProblemID + "-IOFilename") == null ?
-                                    "" :
-                                    localStorage.getItem("UserScript-Problem-" + ProblemID + "-IOFilename"))
-                                + Sample + ".zip")
-                                .then((Response) => {
-                                    if (Response.status == 404) {
-                                        document.getElementById("GetSampleAlert").classList = "alert alert-danger";
-                                        document.getElementById("GetSampleAlert").innerText = "无此测试点";
-                                        document.getElementById("GetSampleAlert").style.display = "block";
-                                        return;
-                                    }
-                                    return Response.blob();
-                                })
-                                .then((Response) => {
-                                    if (Response == undefined) {
-                                        return;
-                                    }
-                                    document.getElementById("GetSampleAlert").classList = "alert alert-success";
-                                    document.getElementById("GetSampleAlert").innerText = "获取成功";
-                                    document.getElementById("GetSampleAlert").style.display = "block";
-                                    let a = document.createElement("a");
-                                    a.href = window.URL.createObjectURL(Response);
-                                    a.download = Name + "_" + SID + "_" + Sample + ".zip";
-                                    a.click();
-                                });
-                        });
-                });
             }
         } else if (location.pathname == "/contest.php") {
             if (UtilityEnabled("AutoCountdown")) {
@@ -2823,7 +2707,7 @@ else {
                 }
                 else {
                     document.querySelector("body > div > div.mt-3").innerHTML = `
-                < div class="form-check" >
+                        <div class="form-check">
                             <input class="form-check-input" type="checkbox" checked id="IgnoreWhitespace">
                             <label class="form-check-label" for="IgnoreWhitespace">忽略空白</label>
                         </div>
