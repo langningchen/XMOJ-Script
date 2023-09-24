@@ -298,7 +298,6 @@ export class Process {
             for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
                 if (ThrowErrorIfFailed(await this.IfUserExist(Match[1]))["Exist"]) {
                     MentionPeople.push(Match[1]);
-                    StringToReplace.push(" <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=" + Match[1] + "\">@" + Match[1] + "</a> ");
                 }
                 else {
                     StringToReplace.push("@" + Match[1]);
@@ -534,7 +533,6 @@ export class Process {
             for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
                 if (ThrowErrorIfFailed(await this.IfUserExist(Match[1]))["Exist"]) {
                     MentionPeople.push(Match[1]);
-                    StringToReplace.push(" <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=" + Match[1] + "\">@" + Match[1] + "</a> ");
                 }
                 else {
                     StringToReplace.push("@" + Match[1]);
