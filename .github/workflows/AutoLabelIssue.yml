@@ -1,3 +1,4 @@
+name: AutoLabelIssue
 on:
   issue_comment:
     types:

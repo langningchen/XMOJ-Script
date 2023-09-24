@@ -1,3 +1,4 @@
+name: UpdateVersion
 on:
   pull_request:
     types:
