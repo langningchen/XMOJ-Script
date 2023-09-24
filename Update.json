@@ -485,6 +485,16 @@
                     "Description": "更改最后编辑日期的显示方式"
                 }
             ]
+        },
+        "0.3.174": {
+            "UpdateDate": 1695523305344,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 504,
+                    "Description": "更换预编译接口加快预编译速度"
+                }
+            ]
         }
     }
 }
