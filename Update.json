@@ -475,6 +475,16 @@
                     "Description": "解决Ctrl+Enter后无法编辑讨论"
                 }
             ]
+        },
+        "0.3.173": {
+            "UpdateDate": 1695522157501,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 503,
+                    "Description": "更改最后编辑日期的显示方式"
+                }
+            ]
         }
     }
 }
