@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.177
+// @version      0.3.178
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -262,7 +262,6 @@ let UtilityEnabled = (Name) => {
     return localStorage.getItem("UserScript-Setting-" + Name) == "true";
 };
 let RequestAPI = (Action, Data, CallBack) => {
-    let UserID = profile.innerText;
     let Session = "";
     let Temp = document.cookie.split(";");
     for (let i = 0; i < Temp.length; i++) {
@@ -273,7 +272,7 @@ let RequestAPI = (Action, Data, CallBack) => {
     let PostData = {
         "Authentication": {
             "SessionID": Session,
-            "Username": UserID,
+            "Username": CurrentUsername,
         },
         "Data": Data
     };
@@ -322,6 +321,9 @@ GM_registerMenuCommand("重置数据", () => {
 
 let SearchParams = new URLSearchParams(location.search);
 let ServerURL = (UtilityEnabled("DebugMode") ? "https://langningchen.github.io/XMOJ-Script" : "https://web.xmoj-bbs.tech")
+let CurrentUsername = document.querySelector("#profile").innerText;
+CurrentUsername = CurrentUsername.replaceAll(/[^a-zA-Z0-9]/g, "");
+let IsAdmin = AdminUserList.indexOf(CurrentUsername) !== -1;
 
 if (location.host != "www.xmoj.tech") {
     location.host = "www.xmoj.tech";
@@ -353,7 +355,7 @@ else {
         if (document.querySelector("#navbar > ul:nth-child(1)").childElementCount > 8 && UtilityEnabled("ACMRank")) {
             let ACMRank = document.createElement("li");
             document.querySelector("#navbar > ul:nth-child(1)").insertBefore(ACMRank, document.querySelector("#navbar > ul:nth-child(1) > li:nth-child(9)"));
-            ACMRank.innerHTML = "<a href=\"http://www.xmoj.tech/contestrank-oi.php?cid=" + SearchParams.get("cid") + "&ByUserScript=1\">ACM 排名</a>";
+            ACMRank.innerHTML = "<a href=\"http://www.xmoj.tech/contestrank-oi.php?cid=" + Number(SearchParams.get("cid")) + "&ByUserScript=1\">ACM 排名</a>";
             ACMRank.classList.add("active");
         }
         if (UtilityEnabled("Translate")) {
@@ -603,7 +605,7 @@ else {
                         location.href = "http://www.xmoj.tech/modifypage.php";
                     });
                     PopupUL.children[1].addEventListener("click", () => {
-                        location.href = "http://www.xmoj.tech/userinfo.php?user=" + document.querySelector("#profile").innerText;
+                        location.href = "http://www.xmoj.tech/userinfo.php?user=" + CurrentUsername;
                     });
                     PopupUL.children[2].addEventListener("click", () => {
                         location.href = "http://www.xmoj.tech/mail.php";
@@ -1633,7 +1635,7 @@ else {
                         document.querySelector("#problemset > thead > tr").innerHTML += "<td width=\"5%\">标程</td>";
                         Temp = document.querySelector("#problemset > tbody").children;
                         for (let i = 0; i < Temp.length; i++) {
-                            Temp[i].innerHTML += "<td><a href=\"http://www.xmoj.tech/problem_std.php?cid=" + SearchParams.get("cid") + "&pid=" + i + "\" target=\"_blank\">打开</a></td>";
+                            Temp[i].innerHTML += "<td><a href=\"http://www.xmoj.tech/problem_std.php?cid=" + Number(SearchParams.get("cid")) + "&pid=" + i + "\" target=\"_blank\">打开</a></td>";
                         }
                     }
 
@@ -2301,12 +2303,12 @@ else {
                 let LuoguAccount = document.getElementsByName("acc_luogu")[0].value;
                 document.querySelector("body > div > div").innerHTML = `<div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="UserID" class="col-form-label">用户ID</label></div>
-                    <div class="col-9"><input id="UserID" class="form-control" disabled readonly value="${document.querySelector("#profile").innerText}"></div>
+                    <div class="col-9"><input id="UserID" class="form-control" disabled readonly value="${CurrentUsername}"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="Avatar" class="col-form-label">头像</label></div>
                     <div class="col-9">
-                        <img width="64" height="64" src="https://cravatar.cn/avatar/` + (await GetUserInfo(document.querySelector("#profile").innerText)).EmailHash + `?d=retro">
+                        <img width="64" height="64" src="https://cravatar.cn/avatar/` + (await GetUserInfo(CurrentUsername)).EmailHash + `?d=retro">
                         <a href="https://cravatar.cn/avatars" target="_blank">修改头像</a>
                     </div>
                 </div>
@@ -2382,7 +2384,7 @@ else {
                 document.getElementById("USACOAccount").value = USACOAccount;
                 document.getElementById("LuoguAccount").value = LuoguAccount;
                 RequestAPI("GetBadge", {
-                    "UserID": String(document.querySelector("#profile").innerText)
+                    "UserID": String(CurrentUsername)
                 }, (Response) => {
                     if (Response.Success) {
                         BadgeRow.style.display = "";
@@ -2402,7 +2404,7 @@ else {
                     let BadgeColor = document.querySelector("#BadgeColor").value;
                     await new Promise((Resolve) => {
                         RequestAPI("EditBadge", {
-                            "UserID": String(document.querySelector("#profile").innerText),
+                            "UserID": String(CurrentUsername),
                             "Content": String(BadgeContent),
                             "BackgroundColor": String(BadgeBackgroundColor),
                             "Color": String(BadgeColor)
@@ -2609,7 +2611,7 @@ else {
                     UploadProgress.style.width = "0%";
                     UploadProgress.innerText = "0%";
                     let ACList = [];
-                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.querySelector("#profile").innerText)
+                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + CurrentUsername)
                         .then((Response) => {
                             return Response.text();
                         }).then((Response) => {
@@ -2934,7 +2936,7 @@ else {
                             headers: {
                                 "Content-Type": "application/x-www-form-urlencoded"
                             },
-                            body: "user_id=" + document.querySelector("#profile").innerText + "&" +
+                            body: "user_id=" + CurrentUsername + "&" +
                                 "solution_id=" + SearchParams.get("sid") + "&" +
                                 "name=" + ApplyElements[i].getAttribute("name")
                         }).then((Response) => {
@@ -3029,7 +3031,7 @@ else {
             for (let i = 0; i < Temp.length; i++) {
                 Temp[i].removeAttribute("class");
                 if (Temp[i].children.length == 2) {
-                    Temp[i].children[1].innerHTML = Temp[i].children[1].innerText;
+                    Temp[i].children[1].innerText = Temp[i].children[1].innerText;
                 }
             }
 
@@ -3360,7 +3362,7 @@ else {
                             MessageTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); MessageTable.children[1].appendChild(Row);
-                                if (!Data[i].IsRead && Data[i].FromUser != document.querySelector("#profile").innerText) {
+                                if (!Data[i].IsRead && Data[i].FromUser != CurrentUsername) {
                                     Row.className = "table-info";
                                 }
                                 let UsernameCell = document.createElement("td"); Row.appendChild(UsernameCell);
@@ -3719,7 +3721,7 @@ else {
                             }, async (ResponseData) => {
                                 if (ResponseData.Success == true) {
                                     let OldScrollTop = document.documentElement.scrollTop;
-                                    let LockButtons = AdminUserList.indexOf(profile.innerText) === -1 && ResponseData.Data.Lock.Locked;
+                                    let LockButtons = !IsAdmin && ResponseData.Data.Lock.Locked;
                                     if (!Silent) {
                                         DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=1";
                                         DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
@@ -3734,7 +3736,7 @@ else {
                                             DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
                                             DiscussPagination.children[DiscussPagination.children.length - 2].remove();
                                         }
-                                        if (AdminUserList.indexOf(profile.innerText) !== -1 || ResponseData.Data.UserID == profile.innerText) {
+                                        if (IsAdmin || ResponseData.Data.UserID == CurrentUsername) {
                                             Delete.style.display = "";
                                         }
                                     }
@@ -3785,7 +3787,7 @@ else {
                                             DeleteButton.type = "button";
                                             DeleteButton.className = "btn btn-sm btn-danger ms-1";
                                             DeleteButton.innerText = "删除";
-                                            DeleteButton.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
+                                            DeleteButton.style.display = (IsAdmin || Replies[i].UserID == CurrentUsername ? "" : "none");
                                             DeleteButton.addEventListener("click", () => {
                                                 DeleteButton.disabled = true;
                                                 DeleteButton.lastChild.style.display = "";
@@ -3850,7 +3852,7 @@ else {
                                             EditButton.type = "button";
                                             EditButton.className = "btn btn-sm btn-warning ms-1";
                                             EditButton.innerText = "编辑";
-                                            EditButton.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
+                                            EditButton.style.display = (IsAdmin || Replies[i].UserID == CurrentUsername ? "" : "none");
                                             EditButton.addEventListener("click", () => {
                                                 CardBodyElement.children[2].style.display = "none";
                                                 CardBodyElement.children[3].style.display = "";
@@ -3865,7 +3867,7 @@ else {
                                         let ReplyContentElement = document.createElement("div"); CardBodyElement.appendChild(ReplyContentElement);
                                         ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content.replaceAll(/@([a-zA-Z0-9]+)/g, `<b>@</b><span class="ms-1 Usernames">$1</span>`)));
                                         if (Replies[i].EditTime != null) {
-                                            if (Replies[i].EditPerson !== profile.innerText) {
+                                            if (Replies[i].EditPerson !== CurrentUsername) {
                                                 ReplyContentElement.innerHTML += `<span class="text-muted" style="font-size: 12px">最后编辑于${GetRelativeTime(Replies[i].EditTime)}</span>`;
                                             }
                                             else {
@@ -3929,7 +3931,7 @@ else {
                                         LockElement.classList.add("mb-5");
                                     }
 
-                                    if (AdminUserList.indexOf(profile.innerText) !== -1) {
+                                    if (IsAdmin) {
                                         ToggleLock.style.display = "inline-block";
                                         ToggleLockButton.checked = ResponseData.Data.Lock.Locked;
                                         ToggleLockButton.onclick = () => {
