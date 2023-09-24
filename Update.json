@@ -527,6 +527,16 @@
                     "Description": "去除获取他人样例功能"
                 }
             ]
+        },
+        "0.3.177": {
+            "UpdateDate": 1695554507788,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 510,
+                    "Description": "解决安全问题"
+                }
+            ]
         }
     }
 }

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.176
+// @version      0.3.177
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -132,10 +132,12 @@ let GetUserBadge = async (Username) => {
 let GetUsernameHTML = async (Element, Username, Simple = false, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
     let ID = "Username-" + Username + "-" + Math.random();
     Element.id = ID;
-    Element.innerHTML = `<div class="spinner-border spinner-border-sm me-2" role="status"></div>${Username}`;
+    Element.innerHTML = `<div class="spinner-border spinner-border-sm me-2" role="status"></div>`;
+    Element.appendChild(document.createTextNode(Username));
     let UserInfo = await GetUserInfo(Username);
     if (UserInfo === null) {
-        document.getElementById(ID).innerHTML = Username;
+        document.getElementById(ID).innerHTML = "";
+        document.getElementById(ID).appendChild(document.createTextNode(Username));
         return;
     }
     let HTMLData = "";
@@ -165,7 +167,7 @@ let GetUsernameHTML = async (Element, Username, Simple = false, Href = "http://w
     else {
         HTMLData += "link-info";
     }
-    HTMLData += `\";">${Username}</a>`;
+    HTMLData += `\";"></a>`;
     if (!Simple) {
         if (AdminUserList.includes(Username)) {
             HTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
@@ -176,6 +178,7 @@ let GetUsernameHTML = async (Element, Username, Simple = false, Href = "http://w
         }
     }
     document.getElementById(ID).innerHTML = HTMLData;
+    document.getElementById(ID).getElementsByTagName("a")[0].appendChild(document.createTextNode(Username));
 };
 let SecondsToString = (InputSeconds) => {
     let Hours = Math.floor(InputSeconds / 3600);
@@ -1022,7 +1025,7 @@ else {
                         Time = Temp[i].children[1].innerText;
                     }
                     let Body = Temp[i + 1].innerHTML;
-                    NewsData.push({ "Title": Title, "Time": Time, "Body": Body });
+                    NewsData.push({ "Title": Title, "Time": new Date(Time), "Body": Body });
                 }
                 document.querySelector("body > div > div.mt-3 > div > div.col-md-8").innerHTML = "";
                 for (let i = 0; i < NewsData.length; i++) {
@@ -1030,9 +1033,9 @@ else {
                     NewsRow.className = "cnt-row";
                     let NewsRowHead = document.createElement("div");
                     NewsRowHead.className = "cnt-row-head title";
-                    NewsRowHead.innerHTML = NewsData[i].Title;
+                    NewsRowHead.innerText = NewsData[i].Title;
                     if (NewsData[i].Time != 0) {
-                        NewsRowHead.innerHTML += "<small class=\"ms-3\">" + NewsData[i].Time + "</small>";
+                        NewsRowHead.innerHTML += "<small class=\"ms-3\">" + NewsData[i].Time.toLocaleDateString() + "</small>";
                     }
                     NewsRow.appendChild(NewsRowHead);
                     let NewsRowBody = document.createElement("div");
@@ -1371,7 +1374,7 @@ else {
                 let Temp = document.querySelector("#result-tab > tbody").childNodes;
                 let SolutionIDs = [];
                 for (let i = 1; i < Temp.length; i += 2) {
-                    let SID = Temp[i].childNodes[1].innerText;
+                    let SID = Number(Temp[i].childNodes[1].innerText);
                     SolutionIDs.push(SID);
                     if (UtilityEnabled("ResetType")) {
                         Temp[i].childNodes[0].remove();
@@ -2083,8 +2086,8 @@ else {
             document.querySelector("body > div > div.mt-3").innerHTML = `<center class="mb-3">` +
                 `<h3>提交代码</h3>` +
                 (SearchParams.get("id") != null ?
-                    `题目<span class="blue">${SearchParams.get("id")}</span>` :
-                    `比赛<span class="blue">${SearchParams.get("cid") + `</span>&emsp;题目<span class="blue">` + String.fromCharCode(65 + parseInt(SearchParams.get("pid")))}</span>`) +
+                    `题目<span class="blue">${Number(SearchParams.get("id"))}</span>` :
+                    `比赛<span class="blue">${Number(SearchParams.get("cid")) + `</span>&emsp;题目<span class="blue">` + String.fromCharCode(65 + parseInt(SearchParams.get("pid")))}</span>`) +
                 `</center>
     <textarea id="CodeInput"></textarea>
     <center class="mt-3">
@@ -2326,7 +2329,7 @@ else {
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="Nickname" class="col-form-label">昵称</label></div>
-                    <div class="col-9"><input id="Nickname" class="form-control" value="${Nickname}"></div>
+                    <div class="col-9"><input id="Nickname" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="OldPassword" class="col-form-label">旧密码</label></div>
@@ -2342,27 +2345,27 @@ else {
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="School" class="col-form-label">学校</label></div>
-                    <div class="col-9"><input id="School" class="form-control" value="${School}"></div>
+                    <div class="col-9"><input id="School" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="EmailAddress" class="col-form-label">电子邮箱</label></div>
-                    <div class="col-9"><input id="EmailAddress" class="form-control" value="${EmailAddress}"></div>
+                    <div class="col-9"><input id="EmailAddress" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="CodeforcesAccount" class="col-form-label">Codeforces账号</label></div>
-                    <div class="col-9"><input id="CodeforcesAccount" class="form-control" value="${CodeforcesAccount}"></div>
+                    <div class="col-9"><input id="CodeforcesAccount" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="AtcoderAccount" class="col-form-label">Atcoder账号</label></div>
-                    <div class="col-9"><input id="AtcoderAccount" class="form-control" value="${AtcoderAccount}"></div>
+                    <div class="col-9"><input id="AtcoderAccount" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="USACOAccount" class="col-form-label">USACO账号</label></div>
-                    <div class="col-9"><input id="USACOAccount" class="form-control" value="${USACOAccount}"></div>
+                    <div class="col-9"><input id="USACOAccount" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="LuoguAccount" class="col-form-label">洛谷账号</label></div>
-                    <div class="col-9"><input id="LuoguAccount" class="form-control" value="${LuoguAccount}"></div>
+                    <div class="col-9"><input id="LuoguAccount" class="form-control"></div>
                 </div>
                 <button type="submit" class="btn btn-primary mb-2" id="ModifyInfo">
                     修改
@@ -2371,6 +2374,13 @@ else {
                 <div class="alert alert-danger mb-3" role="alert" id="ErrorElement" style="display: none;"></div>
                 <div class="alert alert-success mb-3" role="alert" id="SuccessElement" style="display: none;">修改成功</div>
                 <br>`;
+                document.getElementById("Nickname").value = Nickname;
+                document.getElementById("School").value = School;
+                document.getElementById("EmailAddress").value = EmailAddress;
+                document.getElementById("CodeforcesAccount").value = CodeforcesAccount;
+                document.getElementById("AtcoderAccount").value = AtcoderAccount;
+                document.getElementById("USACOAccount").value = USACOAccount;
+                document.getElementById("LuoguAccount").value = LuoguAccount;
                 RequestAPI("GetBadge", {
                     "UserID": String(document.querySelector("#profile").innerText)
                 }, (Response) => {
@@ -2702,7 +2712,7 @@ else {
                     CompareButton.innerText = "比较";
                     CompareButton.className = "btn btn-primary";
                     CompareButton.addEventListener("click", () => {
-                        location.href = "http://www.xmoj.tech/comparesource.php?left=" + LeftCode.value + "&right=" + RightCode.value;
+                        location.href = "http://www.xmoj.tech/comparesource.php?left=" + Number(LeftCode.value) + "&right=" + Number(RightCode.value);
                     });
                 }
                 else {
@@ -3037,7 +3047,8 @@ else {
             Temp = document.querySelector("#problemstatus > tbody").children;
             for (let i = 0; i < Temp.length; i++) {
                 if (Temp[i].children[5].children[0] != null) {
-                    Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText}</a>`;
+                    Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href}"></a>`;
+                    Temp[i].children[1].children[0].innerText = Temp[i].children[1].innerText;
                 }
                 GetUsernameHTML(Temp[i].children[2], Temp[i].children[2].innerText);
                 Temp[i].children[3].remove();
@@ -3048,7 +3059,7 @@ else {
 
 
             let CurrentPage = parseInt(SearchParams.get("page") || 1);
-            let PID = SearchParams.get("id");
+            let PID = Number(SearchParams.get("id"));
             let Pagination = `<nav class="center"><ul class="pagination justify-content-center">`;
             if (CurrentPage != 1) {
                 Pagination += `<li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=${PID + `&page=1" class="page-link">&laquo;</a></li><li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1)}</a></li>`;
@@ -3083,7 +3094,8 @@ else {
             let Temp = document.getElementsByClassName("prettyprint");
             for (let i = 0; i < Temp.length; i++) {
                 let Code = Temp[i].innerText;
-                Temp[i].outerHTML = `<textarea class="prettyprint">${Code}</textarea>`;
+                Temp[i].outerHTML = `<textarea class="prettyprint"></textarea>`;
+                Temp[i].value = Code;
             }
             for (let i = 0; i < Temp.length; i++) {
                 CodeMirror.fromTextArea(Temp[i], {
@@ -3111,9 +3123,9 @@ else {
                 NewsRow.className = "cnt-row";
                 let NewsRowHead = document.createElement("div");
                 NewsRowHead.className = "cnt-row-head title";
-                NewsRowHead.innerHTML = NewsData[i].Title;
+                NewsRowHead.innerText = NewsData[i].Title;
                 if (NewsData[i].Time != 0) {
-                    NewsRowHead.innerHTML += "<small class=\"ms-3\">" + NewsData[i].Time + "</small>";
+                    NewsRowHead.innerHTML += "<small class=\"ms-3\">" + NewsData[i].Time.toLocaleDateString() + "</small>";
                 }
                 NewsRow.appendChild(NewsRowHead);
                 let NewsRowBody = document.createElement("div");
@@ -3303,7 +3315,7 @@ else {
             else {
                 document.querySelector("body > div > div.mt-3").innerHTML = `<div class="row g-2 mb-3">
                         <div class="col-md form-floating">
-                            <input class="form-control" id="ToUser" value="${SearchParams.get("other")}" readonly>
+                            <input class="form-control" id="ToUser" readonly>
                             <label for="ToUser">接收用户</label>
                         </div>
                         <div class="col-md form-floating">
@@ -3326,8 +3338,8 @@ else {
                             </tr>
                         </thead>
                         <tbody></tbody>
-                    </table>
-                    `;
+                    </table>`;
+                GetUsernameHTML(ToUser, SearchParams.get("other"));
                 let RefreshMessage = (Silent = true) => {
                     if (!Silent) {
                         MessageTable.children[1].innerHTML = "";
@@ -3407,9 +3419,9 @@ else {
             if (UtilityEnabled("Discussion")) {
                 Discussion.classList.add("active");
                 if (location.pathname == "/discuss3/discuss.php") {
-                    let ProblemID = SearchParams.get("pid");
+                    let ProblemID = parseInt(SearchParams.get("pid"));
                     let Page = Number(SearchParams.get("page")) || 1;
-                    document.querySelector("body > div > div").innerHTML = `<h3>讨论列表${(ProblemID == null ? "" : ` - 题目` + ProblemID)}</h3>
+                    document.querySelector("body > div > div").innerHTML = `<h3>讨论列表${(isNaN(ProblemID) ? "" : ` - 题目` + ProblemID)}</h3>
                     <button id="NewPost" type="button" class="btn btn-primary">发布新讨论</button>
                     <nav>
                         <ul class="pagination justify-content-center" id="DiscussPagination">
@@ -3518,8 +3530,8 @@ else {
                     RefreshPostList(false);
                     addEventListener("focus", RefreshPostList);
                 } else if (location.pathname == "/discuss3/newpost.php") {
-                    let ProblemID = SearchParams.get("pid");
-                    document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (ProblemID != null ? ` - 题目` + ProblemID : ``) + `</h3>
+                    let ProblemID = parseInt(SearchParams.get("pid"));
+                    document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (isNaN(ProblemID) ? ` - 题目` + ProblemID : ``) + `</h3>
                     <div class="form-group mb-3">
                         <label for="Title" class="mb-1">标题</label>
                         <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
@@ -3573,7 +3585,7 @@ else {
                         ErrorElement.style.display = "none";
                         let Title = TitleElement.value;
                         let Content = ContentElement.value;
-                        let ProblemID = SearchParams.get("pid");
+                        let ProblemID = parseInt(SearchParams.get("pid"));
                         if (Title == "") {
                             TitleElement.classList.add("is-invalid");
                             return;
@@ -3587,7 +3599,7 @@ else {
                         RequestAPI("NewPost", {
                             "Title": String(Title),
                             "Content": String(Content),
-                            "ProblemID": Number(ProblemID == null ? 0 : ProblemID),
+                            "ProblemID": Number(isNaN(ProblemID) ? 0 : ProblemID),
                             "CaptchaSecretKey": String(CaptchaSecretKey.value)
                         }, (ResponseData) => {
                             SubmitElement.disabled = false;
