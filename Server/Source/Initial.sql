@@ -41,7 +41,9 @@ CREATE TABLE bbs_reply (
     post_id INTEGER NOT NULL,
     user_id TEXT NOT NULL,
     content TEXT NOT NULL,
-    reply_time INTEGER NOT NULL
+    reply_time INTEGER NOT NULL,
+    edit_time INTEGER,
+    edit_person TEXT
 );
 
 DROP TABLE IF EXISTS phpsessid;

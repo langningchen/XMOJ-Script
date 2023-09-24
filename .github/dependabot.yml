@@ -1,7 +1,7 @@
 version: 2
 updates:
-  - package-ecosystem: "npm" 
-    directory: "/Server" 
+  - package-ecosystem: "npm"
+    directory: "/Server"
     target-branch: "dev"
     schedule:
       interval: "weekly"

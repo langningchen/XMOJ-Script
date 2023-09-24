@@ -1,4 +1,4 @@
-name: AutoLabel
+name: AutoLabelIssue
 on:
   issue_comment:
     types:
@@ -6,15 +6,13 @@ on:
       - edited
 jobs:
   AutoLabel:
-    name: AutoLabel
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: AutoLabel
-        run: |
+      - run: |
           cd ./Update
           npm install
           node ./AutoLabel.js ${{ secrets.GITHUB_TOKEN }}

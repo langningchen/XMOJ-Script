@@ -54,9 +54,9 @@ export class Process {
         this.SessionID = Data["SessionID"];
         this.Username = Data["Username"];
         // return new Result(true, "令牌检测跳过");
-        let tokenHash:string = MD5(this.SessionID).toString();
+        let HashedToken: string = MD5(this.SessionID).toString();
         let CurrentSessionData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("phpsessid", ["user_id", "create_time"], {
-            token: tokenHash
+            token: HashedToken
         }));
         if (CurrentSessionData.toString() !== "") {
             if (CurrentSessionData[0]["user_id"] === this.Username &&
@@ -65,7 +65,7 @@ export class Process {
             }
             else {
                 ThrowErrorIfFailed(await this.XMOJDatabase.Delete("phpsessid", {
-                    token: tokenHash
+                    token: HashedToken
                 }));
                 Output.Log("Session " + this.SessionID + " expired");
             }
@@ -97,7 +97,7 @@ export class Process {
             return new Result(false, "令牌不匹配");
         }
         ThrowErrorIfFailed(await this.XMOJDatabase.Insert("phpsessid", {
-            token: tokenHash,
+            token: HashedToken,
             user_id: this.Username,
             create_time: new Date().getTime()
         }));
@@ -294,19 +294,11 @@ export class Process {
                 return new Result(false, "内容不能为空");
             }
             let MentionPeople = new Array<string>();
-            let StringToReplace = new Array<string>();
             for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
                 if (ThrowErrorIfFailed(await this.IfUserExist(Match[1]))["Exist"]) {
                     MentionPeople.push(Match[1]);
-                    StringToReplace.push(" <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=" + Match[1] + "\">@" + Match[1] + "</a> ");
-                }
-                else {
-                    StringToReplace.push("@" + Match[1]);
                 }
             }
-            Data["Content"] = String(Data["Content"]).replace(/@([a-zA-Z0-9]+)/g, (Match) => {
-                return StringToReplace.shift() || "";
-            });
             MentionPeople = Array.from(new Set(MentionPeople));
             let ReplyID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_reply", {
                 user_id: this.Username,
@@ -448,7 +440,9 @@ export class Process {
                     ReplyID: ReplyItem["reply_id"],
                     UserID: ReplyItem["user_id"],
                     Content: ReplyItem["content"],
-                    ReplyTime: ReplyItem["reply_time"]
+                    ReplyTime: ReplyItem["reply_time"],
+                    EditTime: ReplyItem["edit_time"],
+                    EditPerson: ReplyItem["edit_person"]
                 });
             }
             return new Result(true, "获得讨论成功", ResponseData);
@@ -530,22 +524,15 @@ export class Process {
                 return new Result(false, "内容不能为空");
             }
             let MentionPeople = new Array<string>();
-            let StringToReplace = new Array<string>();
             for (let Match of String(Data["Content"]).matchAll(/@([a-zA-Z0-9]+)/g)) {
                 if (ThrowErrorIfFailed(await this.IfUserExist(Match[1]))["Exist"]) {
                     MentionPeople.push(Match[1]);
-                    StringToReplace.push(" <a class=\"link-info\" href=\"http://www.xmoj.tech/userinfo.php?user=" + Match[1] + "\">@" + Match[1] + "</a> ");
-                }
-                else {
-                    StringToReplace.push("@" + Match[1]);
                 }
             }
-            Data["Content"] = String(Data["Content"]).replace(/@([a-zA-Z0-9]+)/g, (Match) => {
-                return StringToReplace.shift() || "";
-            });
-            Data["Content"] = String(Data["Content"]).trim() + "\n<br><span class=\"text-muted\" style=\"font-size: 12px\">已于 " + new Date().toLocaleString() + " 编辑</span>";
             await this.XMOJDatabase.Update("bbs_reply", {
-                content: Data["Content"]
+                content: Data["Content"],
+                edit_time: new Date().getTime(),
+                edit_person: this.Username
             }, {
                 reply_id: Data["ReplyID"]
             });

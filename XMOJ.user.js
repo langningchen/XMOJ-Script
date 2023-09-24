@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.171
+// @version      0.3.176
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -16,12 +16,12 @@
 // @require      https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/core.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/md5.min.js
-// @require      https://ghproxy.com/https://github.com/drudru/ansi_up/blob/v5.2.1/ansi_up.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
 // @connect      api.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
+// @connect      runoob.com
 // @connect      127.0.0.1
 // @license      GPL
 // ==/UserScript==
@@ -258,10 +258,6 @@ let UtilityEnabled = (Name) => {
     }
     return localStorage.getItem("UserScript-Setting-" + Name) == "true";
 };
-let FixReply = (Data) => {
-    Data = Data.replaceAll(/<br><span class="text-muted" style="font-size: 12px">已于 [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}, [0-9]{1,2}:[0-9]{2}:[0-9]{2} (A|P)M 编辑<\/span>/g, "");
-    return Data;
-}
 let RequestAPI = (Action, Data, CallBack) => {
     let UserID = profile.innerText;
     let Session = "";
@@ -949,7 +945,6 @@ else {
                     { "ID": "Discussion", "Type": "F", "Name": "恢复讨论与短消息功能" },
                     { "ID": "MoreSTD", "Type": "F", "Name": "查看到更多标程" },
                     { "ID": "Rating", "Type": "A", "Name": "添加用户评分和用户名颜色" },
-                    { "ID": "GetOthersSample", "Type": "A", "Name": "获取到别人的测试点数据" },
                     { "ID": "AutoRefresh", "Type": "A", "Name": "比赛列表、比赛排名界面自动刷新" },
                     { "ID": "AutoCountdown", "Type": "A", "Name": "比赛列表等界面的时间自动倒计时" },
                     { "ID": "DownloadPlayback", "Type": "A", "Name": "回放视频增加下载功能" },
@@ -1289,17 +1284,6 @@ else {
                 </div><div id="csrf"></div></form>`;
                 }
 
-                if (UtilityEnabled("GetOthersSample")) {
-                    let GetOthersSampleButton = document.createElement("button");
-                    document.querySelector("body > div.container > div > div.input-append").appendChild(GetOthersSampleButton);
-                    GetOthersSampleButton.className = "btn btn-outline-secondary";
-                    GetOthersSampleButton.innerText = "获取他人样例";
-                    GetOthersSampleButton.addEventListener("click", () => {
-                        location.href = "http://www.xmoj.tech/status.php?ByUserScript=1";
-                    });
-                    GetOthersSampleButton.style.marginBottom = GetOthersSampleButton.style.marginRight = "7px";
-                    GetOthersSampleButton.style.marginRight = "7px";
-                }
                 if (UtilityEnabled("ImproveACRate")) {
                     let ImproveACRateButton = document.createElement("button");
                     document.querySelector("body > div.container > div > div.input-append").appendChild(ImproveACRateButton);
@@ -1503,109 +1487,6 @@ else {
                             });
                     };
                 }
-            }
-            else if (UtilityEnabled("GetOthersSample")) {
-                document.querySelector("body > div > div.mt-3").innerHTML = `<div class="mt-3">
-            <div class="row g-3 align-items-center mb-2">
-            <div class="col-auto">
-                <label for="NameInput" class="col-form-label">测试点获取人姓名的拼音</label>
-            </div>
-            <div class="col-auto">
-                <input type="text" id="NameInput" class="form-control" value="${document.getElementById("profile").innerText}">
-            </div>
-            </div>
-            <div class="row g-3 align-items-center mb-2">
-            <div class="col-auto">
-                <label for="DateInput" class="col-form-label">测试点获取的日期</label>
-            </div>
-            <div class="col-auto">
-                <input type="date" id="DateInput" class="form-control" value="${new Date().toISOString().slice(0, 10)}">
-            </div>
-            </div>
-            <div class="row g-3 align-items-center mb-2">
-            <div class="col-auto">
-                <label for="ProblemInput" class="col-form-label">获取测试点的题目ID</label>
-            </div>
-            <div class="col-auto">
-                <input type="number" id="ProblemInput" class="form-control">
-            </div>
-            </div>
-            <div class="row g-3 align-items-center mb-2">
-            <div class="col-auto">
-                <label for="SID" class="col-form-label">获取测试点的提交ID</label>
-            </div>
-            <div class="col-auto">
-                <input type="number" id="SID" class="form-control">
-            </div>
-            </div>
-            <div class="row g-3 align-items-center mb-2">
-            <div class="col-auto">
-                <label for="SampleInput" class="col-form-label">获取的测试点编号</label>
-            </div>
-            <div class="col-auto">
-                <input type="number" id="SampleInput" class="form-control">
-            </div>
-            </div>
-            <button type="submit" class="btn btn-primary mb-3" id="GetSample">获取</button>
-            <div role="alert" id="GetSampleAlert" style="display: none"></div>
-        </div>`;
-                GetSample.addEventListener("click", async () => {
-                    document.getElementById("GetSampleAlert").style.display = "none";
-                    let Name = document.getElementById("NameInput").value;
-                    let DateInput = document.getElementById("DateInput").value.replaceAll("-", "");
-                    let ProblemID = document.getElementById("ProblemInput").value;
-                    let SID = document.getElementById("SID").value;
-                    let Sample = document.getElementById("SampleInput").value;
-                    if (Name == "" || DateInput == "" || SID == "" || Sample == "") {
-                        document.getElementById("GetSampleAlert").classList = "alert alert-danger";
-                        document.getElementById("GetSampleAlert").innerText = "请填写完整信息";
-                        document.getElementById("GetSampleAlert").style.display = "block";
-                        return;
-                    }
-                    if (DateInput < new Date().toISOString().slice(0, 10).replaceAll("-", "") - 7) {
-                        document.getElementById("GetSampleAlert").classList = "alert alert-danger";
-                        document.getElementById("GetSampleAlert").innerText = "只能获取7天内的测试点";
-                        document.getElementById("GetSampleAlert").style.display = "block";
-                        return;
-                    }
-                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + Name)
-                        .then((Response) => {
-                            return Response.text();
-                        }).then(async (Response) => {
-                            if (Response.indexOf("No such User") != -1) {
-                                document.getElementById("GetSampleAlert").classList = "alert alert-danger";
-                                document.getElementById("GetSampleAlert").innerText = "用户不存在";
-                                document.getElementById("GetSampleAlert").style.display = "block";
-                                return;
-                            }
-                            await fetch("http://www.xmoj.tech/data_down/" + DateInput + "/" + Name + "_" + SID + "_" +
-                                (localStorage.getItem("UserScript-Problem-" + ProblemID + "-IOFilename") == null ?
-                                    "" :
-                                    localStorage.getItem("UserScript-Problem-" + ProblemID + "-IOFilename"))
-                                + Sample + ".zip")
-                                .then((Response) => {
-                                    if (Response.status == 404) {
-                                        document.getElementById("GetSampleAlert").classList = "alert alert-danger";
-                                        document.getElementById("GetSampleAlert").innerText = "无此测试点";
-                                        document.getElementById("GetSampleAlert").style.display = "block";
-                                        return;
-                                    }
-                                    return Response.blob();
-                                })
-                                .then((Response) => {
-                                    if (Response == undefined) {
-                                        return;
-                                    }
-                                    document.getElementById("GetSampleAlert").classList = "alert alert-success";
-                                    document.getElementById("GetSampleAlert").innerText = "获取成功";
-                                    document.getElementById("GetSampleAlert").style.display = "block";
-                                    let a = document.createElement("a");
-                                    a.href = window.URL.createObjectURL(Response);
-                                    a.download = Name + "_" + SID + "_" + Sample + ".zip";
-                                    a.click();
-                                });
-                        });
-                });
             }
         } else if (location.pathname == "/contest.php") {
             if (UtilityEnabled("AutoCountdown")) {
@@ -2326,56 +2207,41 @@ else {
                     return false;
                 }
                 if (UtilityEnabled("CompileError")) {
-                    for (let i = 0; i < 5; i++) {
-                        let TimeoutController = new AbortController();
-                        setTimeout(() => {
-                            TimeoutController.abort();
-                        }, 2000);
-                        await fetch("https://gcc.godbolt.org/api/compiler/g131/compile", {
-                            "headers": {
-                                "accept": "application/json"
-                            },
-                            "body": Source,
-                            "method": "POST",
-                            "signal": TimeoutController.signal
-                        })
-                            .then((Response) => {
-                                return Response.json()
-                            })
-                            .then((Response) => {
-                                let Transferer = new AnsiUp();
-                                let CompileError = "";
-                                for (let i = 0; i < Response.stderr.length; i++) {
-                                    CompileError += Transferer.ansi_to_html(Response.stderr[i].text) + "<br>";
-                                }
-                                if (CompileError != "") {
-                                    PassCheck.style.display = "";
-                                    ErrorElement.style.display = "block";
-                                    ErrorMessage.style.color = "";
-                                    ErrorMessage.innerHTML = "编译错误：<br>" + CompileError;
-                                    document.querySelector("#Submit").disabled = false;
-                                    document.querySelector("#Submit").value = "提交";
-                                    return false;
-                                }
-                                ErrorElement.style.display = "none";
-                            }).catch((Error) => {
-                                ErrorElement.style.display = "block";
-                                ErrorMessage.style.color = "red";
-                                if (i != 4) {
-                                    ErrorMessage.innerText = "预编译超时，正在重试(" + (i + 1) + "/5)";
-                                } else {
-                                    PassCheck.style.display = "";
-                                    ErrorMessage.innerText = "预编译超时，请重试或者点击下方按钮强制提交";
-                                    document.querySelector("#Submit").disabled = false;
-                                    document.querySelector("#Submit").value = "提交";
-                                }
-                                return false;
-                            });
-                        if (ErrorElement.style.display == "none") {
-                            PassCheck.click();
-                            break;
-                        }
-                    }
+                    await new Promise((Resolve) => {
+                        GM_xmlhttpRequest({
+                            url: "https://c.runoob.com/compile/12/",
+                            onload: async (Response) => {
+                                let Token = Response.responseText.substr(Response.responseText.indexOf("token") + 9, 32);
+                                await new Promise(async (Resolve) => {
+                                    GM_xmlhttpRequest({
+                                        method: "POST",
+                                        url: "https://www.runoob.com/try/compile2.php",
+                                        headers: {
+                                            "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+                                            "Referer": "https://c.runoob.com/"
+                                        },
+                                        data: "code=" + encodeURIComponent(Source) + "&token=" + Token + "&stdin=&language=7&fileext=cpp",
+                                        onload: (Response) => {
+                                            let ResponseJSON = JSON.parse(Response.responseText);
+                                            if (ResponseJSON["errors"].trim() != "") {
+                                                PassCheck.style.display = "";
+                                                ErrorElement.style.display = "block";
+                                                ErrorMessage.style.color = "red";
+                                                ErrorMessage.innerText = "编译错误：\n" + ResponseJSON["errors"].trim();
+                                                document.querySelector("#Submit").disabled = false;
+                                                document.querySelector("#Submit").value = "提交";
+                                            }
+                                            else {
+                                                PassCheck.click();
+                                            }
+                                            Resolve();
+                                        }
+                                    });
+                                });
+                                Resolve();
+                            }
+                        });
+                    });
                 }
                 else {
                     PassCheck.click();
@@ -2841,7 +2707,7 @@ else {
                 }
                 else {
                     document.querySelector("body > div > div.mt-3").innerHTML = `
-                < div class="form-check" >
+                        <div class="form-check">
                             <input class="form-check-input" type="checkbox" checked id="IgnoreWhitespace">
                             <label class="form-check-label" for="IgnoreWhitespace">忽略空白</label>
                         </div>
@@ -3883,6 +3749,7 @@ else {
                                         SendTimeElement.className = "col-4 text-muted";
                                         SendTimeElement.innerHTML = "发布时间：" + GetRelativeTime(Replies[i].ReplyTime);
 
+                                        let OKButton;
                                         if (!LockButtons) {
                                             let ButtonsElement = document.createElement("span"); CardBodyRowElement.appendChild(ButtonsElement);
                                             ButtonsElement.className = "col-4";
@@ -3892,7 +3759,6 @@ else {
                                             ReplyButton.innerText = "回复";
                                             ReplyButton.addEventListener("click", () => {
                                                 let Content = Replies[i].Content;
-                                                Content = FixReply(Content);
                                                 while (Content.startsWith(">")) {
                                                     Content = Content.substring(Content.indexOf("\n") + 1);
                                                 }
@@ -3929,7 +3795,7 @@ else {
                                             DeleteSpin.className = "spinner-border spinner-border-sm";
                                             DeleteSpin.role = "status";
                                             DeleteSpin.style.display = "none";
-                                            let OKButton = document.createElement("button"); ButtonsElement.appendChild(OKButton);
+                                            OKButton = document.createElement("button"); ButtonsElement.appendChild(OKButton);
                                             OKButton.type = "button";
                                             OKButton.style.display = "none";
                                             OKButton.className = "btn btn-sm btn-success ms-1";
@@ -3986,6 +3852,14 @@ else {
 
                                         let ReplyContentElement = document.createElement("div"); CardBodyElement.appendChild(ReplyContentElement);
                                         ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content.replaceAll(/@([a-zA-Z0-9]+)/g, `<b>@</b><span class="ms-1 Usernames">$1</span>`)));
+                                        if (Replies[i].EditTime != null) {
+                                            if (Replies[i].EditPerson !== profile.innerText) {
+                                                ReplyContentElement.innerHTML += `<span class="text-muted" style="font-size: 12px">最后编辑于${GetRelativeTime(Replies[i].EditTime)}</span>`;
+                                            }
+                                            else {
+                                                ReplyContentElement.innerHTML += `<span class="text-muted" style="font-size: 12px">最后被<span class="Usernames">${Replies[i].EditPerson}</span>编辑于${GetRelativeTime(Replies[i].EditTime)}</span>`;
+                                            }
+                                        }
                                         let ContentEditElement = document.createElement("div"); CardBodyElement.appendChild(ContentEditElement);
                                         ContentEditElement.classList.add("input-group");
                                         ContentEditElement.style.display = "none";
@@ -3993,7 +3867,6 @@ else {
                                         ContentEditor.className = "form-control col-6";
                                         ContentEditor.rows = 3;
                                         ContentEditor.value = Replies[i].Content;
-                                        ContentEditor.value = FixReply(ContentEditor.value);
                                         if (ContentEditor.value.indexOf("<br>") != -1) {
                                             ContentEditor.value = ContentEditor.value.substring(0, ContentEditor.value.indexOf("<br>"));
                                         }

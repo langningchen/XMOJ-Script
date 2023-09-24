@@ -3,19 +3,18 @@ on:
   pull_request:
     types:
       - opened
+      - reopened
       - synchronize
     branches:
       - master
 jobs:
   UpdateToRelease:
-    name: UpdateToRelease
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: Update to release

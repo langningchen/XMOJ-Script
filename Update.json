@@ -465,6 +465,68 @@
                     "Description": "将讨论中的 @ 放在前端渲染"
                 }
             ]
+        },
+        "0.3.172": {
+            "UpdateDate": 1695516472984,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 501,
+                    "Description": "解决Ctrl+Enter后无法编辑讨论"
+                }
+            ]
+        },
+        "0.3.173": {
+            "UpdateDate": 1695522157501,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 503,
+                    "Description": "更改最后编辑日期的显示方式"
+                }
+            ]
+        },
+        "0.3.174": {
+            "UpdateDate": 1695523305344,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 504,
+                    "Description": "更换预编译接口加快预编译速度"
+                }
+            ]
+        },
+        "0.3.175": {
+            "UpdateDate": 1695527318557,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 505,
+                    "Description": "去除获取他人样例功能"
+                }
+            ]
+        },
+        "0.3.176": {
+            "UpdateDate": 1695527416171,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 501,
+                    "Description": "解决Ctrl+Enter后无法编辑讨论"
+                },
+                {
+                    "PR": 503,
+                    "Description": "更改最后编辑日期的显示方式"
+                },
+                {
+                    "PR": 504,
+                    "Description": "更换预编译接口加快预编译速度"
+                },
+                {
+                    "PR": 505,
+                    "Description": "去除获取他人样例功能"
+                }
+            ]
         }
     }
 }

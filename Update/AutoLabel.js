@@ -111,7 +111,8 @@ let NewData = Data.replaceAll(/\/[a-zA-Z-_]+/g, (match) => {
                     owner: Owner,
                     repo: Repo,
                     issue_number: IssueNumber,
-                    state: "closed"
+                    state: "closed",
+                    state_reason: "not_planned"
                 });
 
                 RemoveLabel("good-first-issue");
@@ -135,6 +136,20 @@ let NewData = Data.replaceAll(/\/[a-zA-Z-_]+/g, (match) => {
 if (User === "langningchen") {
     if (RemoveLabel("needs-triage")) {
         AddLabel("investigating");
+        Octokit.issues.listMilestones({
+            owner: Owner,
+            repo: Repo,
+            state: "open"
+        }).then((response) => {
+            if (response.data.length !== 0) {
+                Octokit.issues.update({
+                    owner: Owner,
+                    repo: Repo,
+                    issue_number: IssueNumber,
+                    milestone: response.data[response.data.length - 1].number
+                });
+            }
+        });
     }
 }
 
