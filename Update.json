@@ -465,6 +465,16 @@
                     "Description": "将讨论中的 @ 放在前端渲染"
                 }
             ]
+        },
+        "0.3.172": {
+            "UpdateDate": 1695516472984,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 501,
+                    "Description": "解决Ctrl+Enter后无法编辑讨论"
+                }
+            ]
         }
     }
 }
