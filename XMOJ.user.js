@@ -3686,9 +3686,10 @@ else {
                         let Page = Number(SearchParams.get("page")) || 1;
                         document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
                         <div class="row mb-3">
-                            <span class="col-4 text-muted">作者：<div style="display: inline-block;" id="PostAuthor"></div></span>
-                            <span class="col-4 text-muted">发布时间：<span id="PostTime"></span></span>
-                            <span class="col-4">
+                            <span class="col-3 text-muted">作者：<div style="display: inline-block;" id="PostAuthor"></div></span>
+                            <span class="col-3 text-muted">发布时间：<span id="PostTime"></span></span>
+                            <span class="col-3 text-muted">板块：<span id="PostBoard"></span></span>
+                            <span class="col-3">
                                 <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
                                     删除
                                     <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
@@ -3757,6 +3758,7 @@ else {
                                 PostTitle.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
                                 PostAuthor.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
                                 PostTime.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
+                                PostBoard.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
                                 PostReplies.innerHTML = "";
                                 for (let i = 0; i < 10; i++) {
                                     PostReplies.innerHTML += `<div class="card mb-3">
@@ -3802,6 +3804,7 @@ else {
                                     PostAuthor.innerHTML = "<span></span>";
                                     GetUsernameHTML(PostAuthor.children[0], ResponseData.Data.UserID);
                                     PostTime.innerHTML = GetRelativeTime(ResponseData.Data.PostTime);
+                                    PostBoard.innerHTML = ResponseData.Data.BoardName;
                                     let Replies = ResponseData.Data.Reply;
                                     PostReplies.innerHTML = "";
                                     for (let i = 0; i < Replies.length; i++) {
