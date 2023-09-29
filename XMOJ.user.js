@@ -3461,6 +3461,9 @@ else {
                         if (!isNaN(ProblemID)) {
                             location.href = "http://www.xmoj.tech/discuss3/newpost.php?pid=" + ProblemID;
                         }
+                        else if (SearchParams.get("bid") != null) {
+                            location.href = "http://www.xmoj.tech/discuss3/newpost.php?bid=" + SearchParams.get("bid");
+                        }
                         else {
                             location.href = "http://www.xmoj.tech/discuss3/newpost.php";
                         }
@@ -3662,6 +3665,9 @@ else {
                                 RadioInput.id = "Board" + Data[i].BoardID;
                                 RadioInput.value = Data[i].BoardID;
                                 RadioElement.appendChild(RadioInput);
+                                if (SearchParams.get("bid") !== null && SearchParams.get("bid") == Data[i].BoardID) {
+                                    RadioInput.checked = true;
+                                }
                                 let RadioLabel = document.createElement("label");
                                 RadioLabel.className = "form-check-label";
                                 RadioLabel.htmlFor = "Board" + Data[i].BoardID;
