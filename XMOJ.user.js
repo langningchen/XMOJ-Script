@@ -3541,6 +3541,11 @@ else {
                     let ProblemID = parseInt(SearchParams.get("pid"));
                     document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (!isNaN(ProblemID) ? ` - 题目` + ProblemID : ``) + `</h3>
                     <div class="form-group mb-3">
+                        <label for="Board" class="mb-1">请选择要发布的板块</label>
+                        <div class="row ps-3" id="Board">
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
                         <label for="Title" class="mb-1">标题</label>
                         <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
                     </div>
@@ -3616,6 +3621,28 @@ else {
                                 ErrorElement.style.display = "block";
                             }
                         });
+                    });
+                    RequestAPI("GetBoards", {}, (ResponseData) => {
+                        if (ResponseData.Success === true) {
+                            let Data = ResponseData.Data.Boards;
+                            for (let i = 0; i < Data.length; i++) {
+                                let RadioElement = document.createElement("div");
+                                RadioElement.className = "col-auto form-check form-check-inline";
+                                let RadioInput = document.createElement("input");
+                                RadioInput.className = "form-check-input";
+                                RadioInput.type = "radio";
+                                RadioInput.name = "Board";
+                                RadioInput.id = "Board" + Data[i].BoardID;
+                                RadioInput.value = Data[i].BoardID;
+                                RadioElement.appendChild(RadioInput);
+                                let RadioLabel = document.createElement("label");
+                                RadioLabel.className = "form-check-label";
+                                RadioLabel.htmlFor = "Board" + Data[i].BoardID;
+                                RadioLabel.innerText = Data[i].BoardName;
+                                RadioElement.appendChild(RadioLabel);
+                                Board.appendChild(RadioElement);
+                            }
+                        }
                     });
                 } else if (location.pathname == "/discuss3/thread.php") {
                     if (SearchParams.get("tid") == null) {

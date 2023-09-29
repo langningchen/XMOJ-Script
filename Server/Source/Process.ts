@@ -969,6 +969,21 @@ export class Process {
                 user_id: Data["UserID"]
             }));
             return new Result(true, "删除标签成功");
+        },
+        GetBoards: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.CheckParams(Data, {}));
+            let Boards: Array<Object> = new Array<Object>();
+            let BoardsData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("board_id", []));
+            for (let i in BoardsData) {
+                let Board = BoardsData[i];
+                Boards.push({
+                    BoardID: Board["board_id"],
+                    BoardName: Board["board_name"]
+                });
+            }
+            return new Result(true, "获得板块列表成功", {
+                "Boards": Boards
+            });
         }
     };
     constructor(RequestData: Request, Environment) {
