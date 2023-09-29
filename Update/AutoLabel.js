@@ -1,5 +1,6 @@
 import * as github from '@actions/github';
 
+const Octokit = github.getOctokit(process.argv[2]);
 const TrustedUsers = [
     "langningchen",
     "boomzero",
@@ -10,6 +11,7 @@ const LabelList = [
     "bug",
     "Cloudflare-related",
     "dependency",
+    "designing",
     "documentation",
     "duplicate",
     "enhancement",
@@ -35,6 +37,23 @@ const LabelList = [
     "wontfix",
     "working-on-it"
 ];
+let Data = github.context.payload.comment.body;
+let Owner = github.context.repo.owner;
+let Repo = github.context.repo.repo;
+let IssueNumber = github.context.payload.issue.number;
+let CommentID = github.context.payload.comment.id;
+let User = github.context.payload.comment.user.login;
+let Labels = github.context.payload.issue.labels.map((label) => label.name);
+let Milestone = github.context.payload.issue.milestone?.number;
+console.log("Data       : " + Data);
+console.log("Owner      : " + Owner);
+console.log("Repo       : " + Repo);
+console.log("IssueNumber: " + IssueNumber);
+console.log("CommentID  : " + CommentID);
+console.log("User       : " + User);
+console.log("Labels     : " + Labels);
+console.log("Milestone  : " + Milestone);
+
 const LatestMilestone = Octokit.issues.listMilestones({
     owner: Owner,
     repo: Repo,
@@ -45,25 +64,6 @@ const LatestMilestone = Octokit.issues.listMilestones({
     }
     return null;
 });
-
-let Data = github.context.payload.comment.body;
-let Octokit = github.getOctokit(process.argv[2]);
-let Owner = github.context.repo.owner;
-let Repo = github.context.repo.repo;
-let IssueNumber = github.context.payload.issue.number;
-let CommentID = github.context.payload.comment.id;
-let User = github.context.payload.comment.user.login;
-let Labels = github.context.payload.issue.labels.map((label) => label.name);
-let Milestone = github.context.payload.issue.milestone.number;
-console.log("Data       : " + Data);
-console.log("Owner      : " + Owner);
-console.log("Repo       : " + Repo);
-console.log("IssueNumber: " + IssueNumber);
-console.log("CommentID  : " + CommentID);
-console.log("User       : " + User);
-console.log("Labels     : " + CurrentLabels);
-console.log("Milestone  : " + Milestone);
-
 const AddLabel = (Label) => {
     if (Labels.includes(Label)) {
         console.log("Label " + Label + " already exists");
