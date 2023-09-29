@@ -557,6 +557,16 @@
                     "Description": "解决Cloudflare Turnstile错误"
                 }
             ]
+        },
+        "0.3.180": {
+            "UpdateDate": 1695972963810,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 518,
+                    "Description": "增加预览版标签"
+                }
+            ]
         }
     }
 }
