@@ -51,7 +51,7 @@ console.log("Repo       : " + Repo);
 console.log("IssueNumber: " + IssueNumber);
 console.log("CommentID  : " + CommentID);
 console.log("User       : " + User);
-console.log("Labels     : " + CurrentLabels);
+console.log("Labels     : " + Labels);
 console.log("Milestone  : " + Milestone);
 
 const LatestMilestone = Octokit.issues.listMilestones({
