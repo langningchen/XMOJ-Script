@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.180
+// @version      0.3.181
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -3432,14 +3432,15 @@ else {
                     document.querySelector("body > div > div").innerHTML = `<h3>讨论列表${(isNaN(ProblemID) ? "" : ` - 题目` + ProblemID)}</h3>
                     <button id="NewPost" type="button" class="btn btn-primary">发布新讨论</button>
                     <nav>
-                        <ul class="pagination justify-content-center" id="DiscussPagination">
-                            <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
-                            <li class="page-item"><a class="page-link" href="#">${Page - 1}</a></li>
-                            <li class="page-item"><a class="page-link active" href="#">${Page}</a></li>
-                            <li class="page-item"><a class="page-link" href="#">${Page + 1}</a></li>
-                            <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
-                        </ul>
+                    <ul class="pagination justify-content-center" id="DiscussPagination">
+                    <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+                    <li class="page-item"><a class="page-link" href="#">${Page - 1}</a></li>
+                    <li class="page-item"><a class="page-link active" href="#">${Page}</a></li>
+                    <li class="page-item"><a class="page-link" href="#">${Page + 1}</a></li>
+                    <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+                    </ul>
                     </nav>
+                    <div id="GotoBoard"></div>
                     <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
                     <table id="PostList" class="table table-hover">
                         <thead>
@@ -3460,6 +3461,9 @@ else {
                         if (!isNaN(ProblemID)) {
                             location.href = "http://www.xmoj.tech/discuss3/newpost.php?pid=" + ProblemID;
                         }
+                        else if (SearchParams.get("bid") != null) {
+                            location.href = "http://www.xmoj.tech/discuss3/newpost.php?bid=" + SearchParams.get("bid");
+                        }
                         else {
                             location.href = "http://www.xmoj.tech/discuss3/newpost.php";
                         }
@@ -3477,16 +3481,17 @@ else {
                         }
                         RequestAPI("GetPosts", {
                             "ProblemID": Number(ProblemID || 0),
-                            "Page": Number(Page)
+                            "Page": Number(Page),
+                            "BoardID": Number(SearchParams.get("bid") || -1)
                         }, async (ResponseData) => {
                             if (ResponseData.Success == true) {
                                 ErrorElement.style.display = "none";
                                 if (!Silent) {
-                                    DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
-                                    DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
-                                    DiscussPagination.children[2].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
-                                    DiscussPagination.children[3].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
-                                    DiscussPagination.children[4].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
+                                    DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (isNaN(ProblemID) ? "" : "pid=" + ProblemID + "&") + "page=1";
+                                    DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (isNaN(ProblemID) ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
+                                    DiscussPagination.children[2].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (isNaN(ProblemID) ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
+                                    DiscussPagination.children[3].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (isNaN(ProblemID) ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
+                                    DiscussPagination.children[4].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (isNaN(ProblemID) ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
                                     if (Page <= 1) {
                                         DiscussPagination.children[0].classList.add("disabled");
                                         DiscussPagination.children[1].remove();
@@ -3504,7 +3509,7 @@ else {
                                 for (let i = 0; i < Posts.length; i++) {
                                     let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
                                     let IDCell = document.createElement("td"); Row.appendChild(IDCell);
-                                    IDCell.innerText = Posts[i].PostID;
+                                    IDCell.innerText = Posts[i].PostID + " " + Posts[i].BoardName;
                                     let TitleCell = document.createElement("td"); Row.appendChild(TitleCell);
                                     let TitleLink = document.createElement("a"); TitleCell.appendChild(TitleLink);
                                     TitleLink.href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + Posts[i].PostID;
@@ -3537,9 +3542,30 @@ else {
                     };
                     RefreshPostList(false);
                     addEventListener("focus", RefreshPostList);
+                    RequestAPI("GetBoards", {}, (ResponseData) => {
+                        if (ResponseData.Success === true) {
+                            let LinkElement = document.createElement("a");
+                            LinkElement.href = "http://www.xmoj.tech/discuss3/discuss.php";
+                            LinkElement.classList.add("me-2");
+                            LinkElement.innerText = "全部";
+                            GotoBoard.appendChild(LinkElement);
+                            for (let i = 0; i < ResponseData.Data.Boards.length; i++) {
+                                let LinkElement = document.createElement("a");
+                                LinkElement.href = "http://www.xmoj.tech/discuss3/discuss.php?bid=" + ResponseData.Data.Boards[i].BoardID;
+                                LinkElement.classList.add("me-2");
+                                LinkElement.innerText = ResponseData.Data.Boards[i].BoardName;
+                                GotoBoard.appendChild(LinkElement);
+                            }
+                        }
+                    });
                 } else if (location.pathname == "/discuss3/newpost.php") {
                     let ProblemID = parseInt(SearchParams.get("pid"));
                     document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (!isNaN(ProblemID) ? ` - 题目` + ProblemID : ``) + `</h3>
+                    <div class="form-group mb-3" id="BoardSelect">
+                        <label for="Board" class="mb-1">请选择要发布的板块</label>
+                        <div class="row ps-3" id="Board">
+                        </div>
+                    </div>
                     <div class="form-group mb-3">
                         <label for="Title" class="mb-1">标题</label>
                         <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
@@ -3570,6 +3596,9 @@ else {
                     let TurnstileScript = document.createElement("script");
                     TurnstileScript.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=CaptchaLoadedCallback";
                     document.body.appendChild(TurnstileScript);
+                    if (!isNaN(ProblemID)) {
+                        BoardSelect.style.display = "none";
+                    }
                     ContentElement.addEventListener("keydown", (Event) => {
                         if (Event.ctrlKey && Event.keyCode == 13) {
                             SubmitElement.click();
@@ -3590,12 +3619,17 @@ else {
                         let Title = TitleElement.value;
                         let Content = ContentElement.value;
                         let ProblemID = parseInt(SearchParams.get("pid"));
-                        if (Title == "") {
+                        if (Title === "") {
                             TitleElement.classList.add("is-invalid");
                             return;
                         }
-                        if (Content == "") {
+                        if (Content === "") {
                             ContentElement.classList.add("is-invalid");
+                            return;
+                        }
+                        if (document.querySelector("#Board input:checked") === null) {
+                            ErrorElement.innerText = "请选择要发布的板块";
+                            ErrorElement.style.display = "block";
                             return;
                         }
                         SubmitElement.disabled = true;
@@ -3604,7 +3638,8 @@ else {
                             "Title": String(Title),
                             "Content": String(Content),
                             "ProblemID": Number(isNaN(ProblemID) ? 0 : ProblemID),
-                            "CaptchaSecretKey": String(CaptchaSecretKey)
+                            "CaptchaSecretKey": String(CaptchaSecretKey),
+                            "BoardID": Number(document.querySelector("#Board input:checked").value)
                         }, (ResponseData) => {
                             SubmitElement.disabled = false;
                             SubmitElement.children[0].style.display = "none";
@@ -3617,6 +3652,31 @@ else {
                             }
                         });
                     });
+                    RequestAPI("GetBoards", {}, (ResponseData) => {
+                        if (ResponseData.Success === true) {
+                            let Data = ResponseData.Data.Boards;
+                            for (let i = 0; i < Data.length; i++) {
+                                let RadioElement = document.createElement("div");
+                                RadioElement.className = "col-auto form-check form-check-inline";
+                                let RadioInput = document.createElement("input");
+                                RadioInput.className = "form-check-input";
+                                RadioInput.type = "radio";
+                                RadioInput.name = "Board";
+                                RadioInput.id = "Board" + Data[i].BoardID;
+                                RadioInput.value = Data[i].BoardID;
+                                RadioElement.appendChild(RadioInput);
+                                if (SearchParams.get("bid") !== null && SearchParams.get("bid") == Data[i].BoardID) {
+                                    RadioInput.checked = true;
+                                }
+                                let RadioLabel = document.createElement("label");
+                                RadioLabel.className = "form-check-label";
+                                RadioLabel.htmlFor = "Board" + Data[i].BoardID;
+                                RadioLabel.innerText = Data[i].BoardName;
+                                RadioElement.appendChild(RadioLabel);
+                                Board.appendChild(RadioElement);
+                            }
+                        }
+                    });
                 } else if (location.pathname == "/discuss3/thread.php") {
                     if (SearchParams.get("tid") == null) {
                         location.href = "http://www.xmoj.tech/discuss3/discuss.php";
@@ -3626,9 +3686,10 @@ else {
                         let Page = Number(SearchParams.get("page")) || 1;
                         document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
                         <div class="row mb-3">
-                            <span class="col-4 text-muted">作者：<div style="display: inline-block;" id="PostAuthor"></div></span>
-                            <span class="col-4 text-muted">发布时间：<span id="PostTime"></span></span>
-                            <span class="col-4">
+                            <span class="col-3 text-muted">作者：<div style="display: inline-block;" id="PostAuthor"></div></span>
+                            <span class="col-3 text-muted">发布时间：<span id="PostTime"></span></span>
+                            <span class="col-3 text-muted">板块：<span id="PostBoard"></span></span>
+                            <span class="col-3">
                                 <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
                                     删除
                                     <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
@@ -3697,6 +3758,7 @@ else {
                                 PostTitle.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
                                 PostAuthor.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
                                 PostTime.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
+                                PostBoard.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
                                 PostReplies.innerHTML = "";
                                 for (let i = 0; i < 10; i++) {
                                     PostReplies.innerHTML += `<div class="card mb-3">
@@ -3742,6 +3804,7 @@ else {
                                     PostAuthor.innerHTML = "<span></span>";
                                     GetUsernameHTML(PostAuthor.children[0], ResponseData.Data.UserID);
                                     PostTime.innerHTML = GetRelativeTime(ResponseData.Data.PostTime);
+                                    PostBoard.innerHTML = ResponseData.Data.BoardName;
                                     let Replies = ResponseData.Data.Reply;
                                     PostReplies.innerHTML = "";
                                     for (let i = 0; i < Replies.length; i++) {

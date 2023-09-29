@@ -256,14 +256,30 @@ export class Process {
                 "ProblemID": "number",
                 "Title": "string",
                 "Content": "string",
-                "CaptchaSecretKey": "string"
+                "CaptchaSecretKey": "string",
+                "BoardID": "number"
             }));
             ThrowErrorIfFailed(await this.VerifyCaptcha(Data["CaptchaSecretKey"]));
+            if (Data["Title"].trim() === "") {
+                return new Result(false, "标题不能为空");
+            }
+            if (Data["Content"].trim() === "") {
+                return new Result(false, "内容不能为空");
+            }
+            if (!this.IsAdmin && Data["BoardID"] === 0) {
+                return new Result(false, "没有权限发表公告");
+            }
+            if (Data["BoardID"] !== 0 && ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_board", {
+                board_id: Data["BoardID"]
+            }))["TableSize"] === 0) {
+                return new Result(false, "未找到板块");
+            }
             let PostID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_post", {
                 user_id: this.Username,
                 problem_id: Data["ProblemID"],
                 title: Data["Title"],
-                post_time: new Date().getTime()
+                post_time: new Date().getTime(),
+                board_id: Data["BoardID"]
             }))["InsertID"];
             let ReplyID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_reply", {
                 user_id: this.Username,
@@ -322,7 +338,8 @@ export class Process {
         GetPosts: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.CheckParams(Data, {
                 "ProblemID": "number",
-                "Page": "number"
+                "Page": "number",
+                "BoardID": "number"
             }));
             let ResponseData = {
                 Posts: new Array<Object>,
@@ -334,7 +351,14 @@ export class Process {
             if (Data["Page"] < 1 || Data["Page"] > ResponseData.PageCount) {
                 return new Result(false, "参数页数不在范围1~" + ResponseData.PageCount + "内");
             }
-            let Posts = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", [], (Data["ProblemID"] === 0 ? undefined : { problem_id: Data["ProblemID"] }), {
+            let SearchCondition = {};
+            if (Data["ProblemID"] !== 0) {
+                SearchCondition["problem_id"] = Data["ProblemID"];
+            }
+            if (Data["BoardID"] !== -1) {
+                SearchCondition["board_id"] = Data["BoardID"];
+            }
+            let Posts = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_post", [], SearchCondition, {
                 Order: "post_id",
                 OrderIncreasing: false,
                 Limit: 10,
@@ -342,6 +366,7 @@ export class Process {
             }));
             for (let i in Posts) {
                 let Post = Posts[i];
+
                 let ReplyCount: number = ThrowErrorIfFailed(await this.XMOJDatabase.GetTableSize("bbs_reply", { post_id: Post["post_id"] }))["TableSize"];
                 let LastReply = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_reply", ["user_id", "reply_time"], { post_id: Post["post_id"] }, {
                     Order: "reply_time",
@@ -375,6 +400,10 @@ export class Process {
                     ProblemID: Post["problem_id"],
                     Title: Post["title"],
                     PostTime: Post["post_time"],
+                    BoardID: Post["board_id"],
+                    BoardName: ThrowErrorIfFailed(await this.XMOJDatabase.Select("board_id", ["board_name"], {
+                        board_id: Post["board_id"]
+                    }))[0]["board_name"],
                     ReplyCount: ReplyCount,
                     LastReplyUserID: LastReply[0]["user_id"],
                     LastReplyTime: LastReply[0]["reply_time"],
@@ -392,6 +421,8 @@ export class Process {
                 UserID: "",
                 ProblemID: 0,
                 Title: "",
+                BoardID: 0,
+                BoardName: "",
                 PostTime: 0,
                 Reply: new Array<Object>(),
                 PageCount: 0,
@@ -418,6 +449,8 @@ export class Process {
             ResponseData.ProblemID = Post[0]["problem_id"];
             ResponseData.Title = Post[0]["title"];
             ResponseData.PostTime = Post[0]["post_time"];
+            ResponseData.BoardID = Post[0]["board_id"];
+            ResponseData.BoardName = ThrowErrorIfFailed(await this.XMOJDatabase.Select("board_id", ["board_name"], { board_id: Post[0]["board_id"] }))[0]["board_name"];
 
             let Locked = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_lock", [], {
                 post_id: Data["PostID"]
@@ -969,6 +1002,21 @@ export class Process {
                 user_id: Data["UserID"]
             }));
             return new Result(true, "删除标签成功");
+        },
+        GetBoards: async (Data: object): Promise<Result> => {
+            ThrowErrorIfFailed(this.CheckParams(Data, {}));
+            let Boards: Array<Object> = new Array<Object>();
+            let BoardsData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("board_id", []));
+            for (let i in BoardsData) {
+                let Board = BoardsData[i];
+                Boards.push({
+                    BoardID: Board["board_id"],
+                    BoardName: Board["board_name"]
+                });
+            }
+            return new Result(true, "获得板块列表成功", {
+                "Boards": Boards
+            });
         }
     };
     constructor(RequestData: Request, Environment) {

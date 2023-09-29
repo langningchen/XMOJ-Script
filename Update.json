@@ -567,6 +567,16 @@
                     "Description": "增加预览版标签"
                 }
             ]
+        },
+        "0.3.181": {
+            "UpdateDate": 1695991181322,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 528,
+                    "Description": "增加讨论板块功能"
+                }
+            ]
         }
     }
 }
