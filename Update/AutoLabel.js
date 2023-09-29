@@ -37,17 +37,6 @@ const LabelList = [
     "wontfix",
     "working-on-it"
 ];
-const LatestMilestone = Octokit.issues.listMilestones({
-    owner: Owner,
-    repo: Repo,
-    state: "open"
-}).then((response) => {
-    if (response.data.length !== 0) {
-        return response.data[response.data.length - 1].number;
-    }
-    return null;
-});
-
 let Data = github.context.payload.comment.body;
 let Owner = github.context.repo.owner;
 let Repo = github.context.repo.repo;
@@ -65,6 +54,16 @@ console.log("User       : " + User);
 console.log("Labels     : " + CurrentLabels);
 console.log("Milestone  : " + Milestone);
 
+const LatestMilestone = Octokit.issues.listMilestones({
+    owner: Owner,
+    repo: Repo,
+    state: "open"
+}).then((response) => {
+    if (response.data.length !== 0) {
+        return response.data[response.data.length - 1].number;
+    }
+    return null;
+});
 const AddLabel = (Label) => {
     if (Labels.includes(Label)) {
         console.log("Label " + Label + " already exists");
