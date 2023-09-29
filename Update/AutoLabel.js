@@ -17,6 +17,7 @@ const LabelList = [
     "github_actions",
     "GitHub-related",
     "good-first-issue",
+    "good first issue",
     "hacktoberfest-accepted",
     "help-wanted",
     "invalid",
