@@ -44,7 +44,7 @@ let IssueNumber = github.context.payload.issue.number;
 let CommentID = github.context.payload.comment.id;
 let User = github.context.payload.comment.user.login;
 let Labels = github.context.payload.issue.labels.map((label) => label.name);
-let Milestone = github.context.payload.issue.milestone.number;
+let Milestone = github.context.payload.issue.milestone?.number;
 console.log("Data       : " + Data);
 console.log("Owner      : " + Owner);
 console.log("Repo       : " + Repo);
