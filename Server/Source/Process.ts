@@ -263,7 +263,8 @@ export class Process {
                 user_id: this.Username,
                 problem_id: Data["ProblemID"],
                 title: Data["Title"],
-                post_time: new Date().getTime()
+                post_time: new Date().getTime(),
+                board_id: 2
             }))["InsertID"];
             let ReplyID = ThrowErrorIfFailed(await this.XMOJDatabase.Insert("bbs_reply", {
                 user_id: this.Username,
