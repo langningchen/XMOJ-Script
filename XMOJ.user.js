@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.179
+// @version      0.3.180
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -2266,11 +2266,16 @@ else {
                             let Data = Response.UpdateHistory[Version];
                             let UpdateDataCard = document.createElement("div"); document.querySelector("body > div > div.mt-3").appendChild(UpdateDataCard);
                             UpdateDataCard.className = "card mb-3";
+                            if (Data.Prerelease)
+                                UpdateDataCard.classList.add("text-secondary");
                             let UpdateDataCardBody = document.createElement("div"); UpdateDataCard.appendChild(UpdateDataCardBody);
                             UpdateDataCardBody.className = "card-body";
                             let UpdateDataCardTitle = document.createElement("h5"); UpdateDataCardBody.appendChild(UpdateDataCardTitle);
                             UpdateDataCardTitle.className = "card-title";
                             UpdateDataCardTitle.innerText = Version;
+                            if (Data.Prerelease) {
+                                UpdateDataCardTitle.innerHTML += "（预览版）";
+                            }
                             let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
                             UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
                             UpdateDataCardSubtitle.innerHTML = GetRelativeTime(Data.UpdateDate);
