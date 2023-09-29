@@ -18,6 +18,7 @@ const LabelList = [
     "github_actions",
     "GitHub-related",
     "good-first-issue",
+    "good first issue",
     "hacktoberfest-accepted",
     "help-wanted",
     "invalid",
@@ -35,7 +36,16 @@ const LabelList = [
     "wontfix",
     "working-on-it"
 ];
-
+const LatestMilestone = Octokit.issues.listMilestones({
+    owner: Owner,
+    repo: Repo,
+    state: "open"
+}).then((response) => {
+    if (response.data.length !== 0) {
+        return response.data[response.data.length - 1].number;
+    }
+    return null;
+});
 
 let Data = github.context.payload.comment.body;
 let Octokit = github.getOctokit(process.argv[2]);
@@ -44,15 +54,19 @@ let Repo = github.context.repo.repo;
 let IssueNumber = github.context.payload.issue.number;
 let CommentID = github.context.payload.comment.id;
 let User = github.context.payload.comment.user.login;
+let Labels = github.context.payload.issue.labels.map((label) => label.name);
+let Milestone = github.context.payload.issue.milestone.number;
 console.log("Data       : " + Data);
 console.log("Owner      : " + Owner);
 console.log("Repo       : " + Repo);
 console.log("IssueNumber: " + IssueNumber);
 console.log("CommentID  : " + CommentID);
 console.log("User       : " + User);
+console.log("Labels     : " + CurrentLabels);
+console.log("Milestone  : " + Milestone);
 
 const AddLabel = (Label) => {
-    if (github.context.payload.issue.labels.find((label) => label.name === Label)) {
+    if (Labels.includes(Label)) {
         console.log("Label " + Label + " already exists");
         return false;
     }
@@ -60,28 +74,19 @@ const AddLabel = (Label) => {
         console.log("Label " + Label + " not exists");
         return false;
     }
-    console.log("Add label " + Label);
-    Octokit.issues.addLabels({
-        owner: Owner,
-        repo: Repo,
-        issue_number: IssueNumber,
-        labels: [Label]
-    });
+    Labels.push(Label);
     return true;
 };
 const RemoveLabel = (Label) => {
-    if (!github.context.payload.issue.labels.find((label) => label.name === Label)) {
+    if (!Labels.includes(Label)) {
         console.log("Label " + Label + " not exists");
         return false;
     }
-    console.log("Remove label " + Label);
-    Octokit.issues.removeLabel({
-        owner: Owner,
-        repo: Repo,
-        issue_number: IssueNumber,
-        name: Label
-    });
+    Labels = Labels.filter((label) => label !== Label);
     return true;
+};
+const ClearLabel = () => {
+    Labels = [];
 };
 
 if (!TrustedUsers.includes(User)) {
@@ -89,7 +94,7 @@ if (!TrustedUsers.includes(User)) {
     process.exit(0);
 }
 
-let NewData = Data.replaceAll(/\/[a-zA-Z-_]+/g, (match) => {
+let NewData = Data.replaceAll(/\/[a-zA-Z-_(good first issue)]+/g, (match) => {
     console.log("Found command " + match);
     let Label = match.substring(1);
     if (Label.startsWith("-")) {
@@ -116,17 +121,9 @@ let NewData = Data.replaceAll(/\/[a-zA-Z-_]+/g, (match) => {
                     state_reason: "not_planned"
                 });
 
-                RemoveLabel("good-first-issue");
-                RemoveLabel("hacktoberfest-accepted");
-                RemoveLabel("help-wanted");
-                RemoveLabel("investigating");
-                RemoveLabel("needs-triage");
-                RemoveLabel("priority-high");
-                RemoveLabel("priority-low");
-                RemoveLabel("question");
-                RemoveLabel("review-needed");
-                RemoveLabel("server");
-                RemoveLabel("working-on-it");
+                ClearLabel();
+                AddLabel(Label);
+                Milestone = null;
             }
             return "";
         }
@@ -137,28 +134,16 @@ let NewData = Data.replaceAll(/\/[a-zA-Z-_]+/g, (match) => {
 if (User === "langningchen") {
     if (RemoveLabel("needs-triage")) {
         AddLabel("investigating");
-        Octokit.issues.listMilestones({
-            owner: Owner,
-            repo: Repo,
-            state: "open"
-        }).then((response) => {
-            if (response.data.length !== 0) {
-                Octokit.issues.update({
-                    owner: Owner,
-                    repo: Repo,
-                    issue_number: IssueNumber,
-                    milestone: response.data[response.data.length - 1].number
-                });
-            }
-        });
+        Milestone = LatestMilestone;
     }
 }
 
+console.log("----------------------------------------");
 console.log("NewData    : " + NewData);
+console.log("NewLabels  : " + Labels);
 
-if (NewData === Data) {
-    console.log("No label modified");
-} else if (NewData.trim() === "") {
+NewData = NewData.trim();
+if (NewData === "") {
     Octokit.issues.deleteComment({
         owner: Owner,
         repo: Repo,
@@ -172,3 +157,11 @@ if (NewData === Data) {
         body: NewData
     });
 }
+
+Octokit.issues.update({
+    owner: Owner,
+    repo: Repo,
+    issue_number: IssueNumber,
+    labels: Labels,
+    milestone: Milestone
+});

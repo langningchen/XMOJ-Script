@@ -527,6 +527,82 @@
                     "Description": "去除获取他人样例功能"
                 }
             ]
+        },
+        "0.3.177": {
+            "UpdateDate": 1695554507788,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 510,
+                    "Description": "解决安全问题"
+                }
+            ]
+        },
+        "0.3.178": {
+            "UpdateDate": 1695555423611,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 511,
+                    "Description": "再次解决安全问题"
+                }
+            ]
+        },
+        "0.3.179": {
+            "UpdateDate": 1695560619173,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 513,
+                    "Description": "解决Cloudflare Turnstile错误"
+                }
+            ]
+        },
+        "0.3.180": {
+            "UpdateDate": 1695972963810,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 518,
+                    "Description": "增加预览版标签"
+                }
+            ]
+        },
+        "0.3.181": {
+            "UpdateDate": 1695991181322,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 528,
+                    "Description": "增加讨论板块功能"
+                }
+            ]
+        },
+        "0.3.182": {
+            "UpdateDate": 1695991801853,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 510,
+                    "Description": "解决安全问题"
+                },
+                {
+                    "PR": 511,
+                    "Description": "再次解决安全问题"
+                },
+                {
+                    "PR": 513,
+                    "Description": "解决Cloudflare Turnstile错误"
+                },
+                {
+                    "PR": 518,
+                    "Description": "增加预览版标签"
+                },
+                {
+                    "PR": 528,
+                    "Description": "增加讨论板块功能"
+                }
+            ]
         }
     }
 }

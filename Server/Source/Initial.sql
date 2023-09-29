@@ -31,7 +31,8 @@ CREATE TABLE bbs_post (
     user_id TEXT NOT NULL,
     problem_id INT NOT NULL,
     title TEXT NOT NULL,
-    post_time INTEGER NOT NULL
+    post_time INTEGER NOT NULL,
+    board_id INTEGER NOT NULL
 );
 
 DROP TABLE IF EXISTS bbs_reply;
@@ -44,6 +45,13 @@ CREATE TABLE bbs_reply (
     reply_time INTEGER NOT NULL,
     edit_time INTEGER,
     edit_person TEXT
+);
+
+DROP TABLE IF EXISTS board_id;
+
+CREATE TABLE board_id (
+    board_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    board_name TEXT NOT NULL
 );
 
 DROP TABLE IF EXISTS phpsessid;

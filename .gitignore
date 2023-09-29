@@ -4,3 +4,4 @@ Server/Source/Secret.ts
 Server/.wrangler
 Server/bun.lockb
 Server-Old/
+.DS_Store

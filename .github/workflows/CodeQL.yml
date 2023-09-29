@@ -1,15 +1,11 @@
+name: CodeQL
 on:
   push:
-    branches: 
-      - master
+    branches:
       - dev
   pull_request:
-    branches: 
-      - master
+    branches:
       - dev
-  schedule:
-    - cron: '0 0 * * 1'
-  workflow_dispatch:
 jobs:
   CodeQL:
     runs-on: 'ubuntu-latest'

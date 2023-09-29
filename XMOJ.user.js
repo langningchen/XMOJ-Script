@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.176
+// @version      0.3.182
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -19,6 +19,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
+// @grant        unsafeWindow
 // @connect      api.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
 // @connect      runoob.com
@@ -37,8 +38,8 @@ const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
 
 let GetRelativeTime = (Input) => {
     Input = new Date(Input);
-    let Now = new Date();
-    let Delta = Now.getTime() - Input.getTime();
+    let Now = new Date().getTime();
+    let Delta = Now - Input.getTime();
     let RelativeName = "";
     if (Delta < 0) { RelativeName = "未来"; }
     else if (Delta <= 1000 * 60) { RelativeName = "刚刚"; }
@@ -121,7 +122,7 @@ let GetUserBadge = async (Username) => {
         localStorage.setItem("UserScript-User-" + Username + "-Badge-BackgroundColor", BackgroundColor);
         localStorage.setItem("UserScript-User-" + Username + "-Badge-Color", Color);
         localStorage.setItem("UserScript-User-" + Username + "-Badge-Content", Content);
-        localStorage.setItem("UserScript-User-" + Username + "-Badge-LastUpdateTime", new Date().getTime());
+        localStorage.setItem("UserScript-User-" + Username + "-Badge-LastUpdateTime", String(new Date().getTime()));
         return {
             "BackgroundColor": BackgroundColor,
             "Color": Color,
@@ -130,12 +131,15 @@ let GetUserBadge = async (Username) => {
     }
 };
 let GetUsernameHTML = async (Element, Username, Simple = false, Href = "http://www.xmoj.tech/userinfo.php?user=") => {
+    Username = Username.replaceAll(/[^a-zA-Z0-9]/g, "");
     let ID = "Username-" + Username + "-" + Math.random();
     Element.id = ID;
-    Element.innerHTML = `<div class="spinner-border spinner-border-sm me-2" role="status"></div>${Username}`;
+    Element.innerHTML = `<div class="spinner-border spinner-border-sm me-2" role="status"></div>`;
+    Element.appendChild(document.createTextNode(Username));
     let UserInfo = await GetUserInfo(Username);
     if (UserInfo === null) {
-        document.getElementById(ID).innerHTML = Username;
+        document.getElementById(ID).innerHTML = "";
+        document.getElementById(ID).appendChild(document.createTextNode(Username));
         return;
     }
     let HTMLData = "";
@@ -165,7 +169,7 @@ let GetUsernameHTML = async (Element, Username, Simple = false, Href = "http://w
     else {
         HTMLData += "link-info";
     }
-    HTMLData += `\";">${Username}</a>`;
+    HTMLData += `\";"></a>`;
     if (!Simple) {
         if (AdminUserList.includes(Username)) {
             HTMLData += `<span class="badge text-bg-danger ms-2">管理员</span>`;
@@ -176,6 +180,7 @@ let GetUsernameHTML = async (Element, Username, Simple = false, Href = "http://w
         }
     }
     document.getElementById(ID).innerHTML = HTMLData;
+    document.getElementById(ID).getElementsByTagName("a")[0].appendChild(document.createTextNode(Username));
 };
 let SecondsToString = (InputSeconds) => {
     let Hours = Math.floor(InputSeconds / 3600);
@@ -259,7 +264,6 @@ let UtilityEnabled = (Name) => {
     return localStorage.getItem("UserScript-Setting-" + Name) == "true";
 };
 let RequestAPI = (Action, Data, CallBack) => {
-    let UserID = profile.innerText;
     let Session = "";
     let Temp = document.cookie.split(";");
     for (let i = 0; i < Temp.length; i++) {
@@ -270,7 +274,7 @@ let RequestAPI = (Action, Data, CallBack) => {
     let PostData = {
         "Authentication": {
             "SessionID": Session,
-            "Username": UserID,
+            "Username": CurrentUsername,
         },
         "Data": Data
     };
@@ -319,6 +323,9 @@ GM_registerMenuCommand("重置数据", () => {
 
 let SearchParams = new URLSearchParams(location.search);
 let ServerURL = (UtilityEnabled("DebugMode") ? "https://langningchen.github.io/XMOJ-Script" : "https://web.xmoj-bbs.tech")
+let CurrentUsername = document.querySelector("#profile").innerText;
+CurrentUsername = CurrentUsername.replaceAll(/[^a-zA-Z0-9]/g, "");
+let IsAdmin = AdminUserList.indexOf(CurrentUsername) !== -1;
 
 if (location.host != "www.xmoj.tech") {
     location.host = "www.xmoj.tech";
@@ -350,7 +357,7 @@ else {
         if (document.querySelector("#navbar > ul:nth-child(1)").childElementCount > 8 && UtilityEnabled("ACMRank")) {
             let ACMRank = document.createElement("li");
             document.querySelector("#navbar > ul:nth-child(1)").insertBefore(ACMRank, document.querySelector("#navbar > ul:nth-child(1) > li:nth-child(9)"));
-            ACMRank.innerHTML = "<a href=\"http://www.xmoj.tech/contestrank-oi.php?cid=" + SearchParams.get("cid") + "&ByUserScript=1\">ACM 排名</a>";
+            ACMRank.innerHTML = "<a href=\"http://www.xmoj.tech/contestrank-oi.php?cid=" + Number(SearchParams.get("cid")) + "&ByUserScript=1\">ACM 排名</a>";
             ACMRank.classList.add("active");
         }
         if (UtilityEnabled("Translate")) {
@@ -600,7 +607,7 @@ else {
                         location.href = "http://www.xmoj.tech/modifypage.php";
                     });
                     PopupUL.children[1].addEventListener("click", () => {
-                        location.href = "http://www.xmoj.tech/userinfo.php?user=" + document.querySelector("#profile").innerText;
+                        location.href = "http://www.xmoj.tech/userinfo.php?user=" + CurrentUsername;
                     });
                     PopupUL.children[2].addEventListener("click", () => {
                         location.href = "http://www.xmoj.tech/mail.php";
@@ -621,20 +628,25 @@ else {
             if (UtilityEnabled("AutoCountdown")) {
                 let Temp = document.getElementsByClassName("UpdateByJS");
                 for (let i = 0; i < Temp.length; i++) {
-                    let TimeStamp = parseInt(Temp[i].getAttribute("EndTime")) - new Date().getTime();
+                    let EndTime = Temp[i].getAttribute("EndTime");
+                    if (EndTime === null) {
+                        Temp[i].classList.remove("UpdateByJS");
+                        continue;
+                    }
+                    let TimeStamp = parseInt(EndTime) - new Date().getTime();
                     if (TimeStamp < 3000) {
                         Temp[i].classList.remove("UpdateByJS");
                         location.reload();
                     }
                     let CurrentDate = new Date(TimeStamp);
-                    let Day = parseInt(TimeStamp / 1000 / 60 / 60 / 24);
+                    let Day = parseInt((TimeStamp / 1000 / 60 / 60 / 24).toFixed(0));
                     let Hour = CurrentDate.getUTCHours();
                     let Minute = CurrentDate.getUTCMinutes();
                     let Second = CurrentDate.getUTCSeconds();
-                    Temp[i].innerText = (Day != 0 ? Day + "天" : "") +
-                        (Hour != 0 ? (Hour < 10 ? "0" : "") + Hour + "小时" : "") +
-                        (Minute != 0 ? (Minute < 10 ? "0" : "") + Minute + "分" : "") +
-                        (Second != 0 ? (Second < 10 ? "0" : "") + Second + "秒" : "");
+                    Temp[i].innerHTML = (Day !== 0 ? Day + "天" : "") +
+                        (Hour !== 0 ? (Hour < 10 ? "0" : "") + Hour + "小时" : "") +
+                        (Minute !== 0 ? (Minute < 10 ? "0" : "") + Minute + "分" : "") +
+                        (Second !== 0 ? (Second < 10 ? "0" : "") + Second + "秒" : "");
                 }
             }
         }, 100);
@@ -670,7 +682,7 @@ else {
                     let UpdateDiv = document.createElement("div"); document.querySelector("body").appendChild(UpdateDiv);
                     UpdateDiv.className = "modal fade";
                     UpdateDiv.id = "UpdateModal";
-                    UpdateDiv.tabIndex = "-1";
+                    UpdateDiv.tabIndex = -1;
                     let UpdateDialog = document.createElement("div"); UpdateDiv.appendChild(UpdateDialog);
                     UpdateDialog.className = "modal-dialog";
                     let UpdateContent = document.createElement("div"); UpdateDialog.appendChild(UpdateContent);
@@ -918,7 +930,7 @@ else {
                                 CheckBox.checked = true;
                             }
                             CheckBox.addEventListener("change", () => {
-                                localStorage.setItem("UserScript-Setting-" + Data[i].ID, CheckBox.checked);
+                                return localStorage.setItem("UserScript-Setting-" + Data[i].ID, CheckBox.checked);
                             });
 
                             Row.appendChild(CheckBox);
@@ -1022,7 +1034,7 @@ else {
                         Time = Temp[i].children[1].innerText;
                     }
                     let Body = Temp[i + 1].innerHTML;
-                    NewsData.push({ "Title": Title, "Time": Time, "Body": Body });
+                    NewsData.push({ "Title": Title, "Time": new Date(Time), "Body": Body });
                 }
                 document.querySelector("body > div > div.mt-3 > div > div.col-md-8").innerHTML = "";
                 for (let i = 0; i < NewsData.length; i++) {
@@ -1030,9 +1042,9 @@ else {
                     NewsRow.className = "cnt-row";
                     let NewsRowHead = document.createElement("div");
                     NewsRowHead.className = "cnt-row-head title";
-                    NewsRowHead.innerHTML = NewsData[i].Title;
+                    NewsRowHead.innerText = NewsData[i].Title;
                     if (NewsData[i].Time != 0) {
-                        NewsRowHead.innerHTML += "<small class=\"ms-3\">" + NewsData[i].Time + "</small>";
+                        NewsRowHead.innerHTML += "<small class=\"ms-3\">" + NewsData[i].Time.toLocaleDateString() + "</small>";
                     }
                     NewsRow.appendChild(NewsRowHead);
                     let NewsRowBody = document.createElement("div");
@@ -1248,7 +1260,7 @@ else {
                 document.querySelector("body > script:nth-child(5)").remove();
                 if (UtilityEnabled("NewBootstrap")) {
                     document.querySelector("#simform").outerHTML = `<form id="simform" class="justify-content-center form-inline row g-2" action="status.php" method="get" style="padding-bottom: 7px;">
-                    <input class="form-control" type="text" size="4" name="user_id" value="${document.getElementById("profile").innerText} "style="display: none;">
+                    <input class="form-control" type="text" size="4" name="user_id" value="${CurrentUsername} "style="display: none;">
                 <div class="col-md-1">
                     <label for="problem_id" class="form-label">题目编号</label>
                     <input type="text" class="form-control" id="problem_id" name="problem_id" size="4">
@@ -1291,7 +1303,7 @@ else {
                     ImproveACRateButton.innerText = "提高AC率";
                     ImproveACRateButton.disabled = true;
                     let ACProblems = [];
-                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.getElementById("profile").innerText)
+                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + CurrentUsername)
                         .then((Response) => {
                             return Response.text();
                         }).then((Response) => {
@@ -1330,12 +1342,6 @@ else {
                                 }).then((Response) => {
                                     Code = Response.substring(0, Response.indexOf("/**************************************************************")).trim();
                                 });
-                            await fetch("http://www.xmoj.tech/csrf.php")
-                                .then((Response) => {
-                                    return Response.text();
-                                }).then((Response) => {
-                                    CSRF = new DOMParser().parseFromString(Response, "text/html").querySelector("input[name=csrf]").value;
-                                });
                             await fetch("http://www.xmoj.tech/submit.php", {
                                 "headers": {
                                     "content-type": "application/x-www-form-urlencoded"
@@ -1366,12 +1372,12 @@ else {
                 if (UtilityEnabled("ResetType")) {
                     document.querySelector("#result-tab > thead > tr > th:nth-child(1)").remove();
                     document.querySelector("#result-tab > thead > tr > th:nth-child(2)").remove();
-                    document.querySelector("#result-tab > thead > tr > th:nth-child(10)").innerText = "开启O2";
+                    document.querySelector("#result-tab > thead > tr > th:nth-child(10)").innerHTML = "开启O2";
                 }
                 let Temp = document.querySelector("#result-tab > tbody").childNodes;
                 let SolutionIDs = [];
                 for (let i = 1; i < Temp.length; i += 2) {
-                    let SID = Temp[i].childNodes[1].innerText;
+                    let SID = Number(Temp[i].childNodes[1].innerText);
                     SolutionIDs.push(SID);
                     if (UtilityEnabled("ResetType")) {
                         Temp[i].childNodes[0].remove();
@@ -1385,7 +1391,7 @@ else {
                         Temp[i].childNodes[6].innerText = SizeToStringSize(Temp[i].childNodes[6].innerText.substring(0, Temp[i].childNodes[6].innerText.length - 1));
                         Temp[i].childNodes[9].innerText = (Temp[i].childNodes[9].innerText == "" ? "否" : "是");
                     }
-                    if (SearchParams.get("cid") == null) {
+                    if (SearchParams.get("cid") === null) {
                         localStorage.setItem("UserScript-Solution-" + SID + "-Problem",
                             Temp[i].childNodes[1].innerText);
                     }
@@ -1630,7 +1636,7 @@ else {
                         document.querySelector("#problemset > thead > tr").innerHTML += "<td width=\"5%\">标程</td>";
                         Temp = document.querySelector("#problemset > tbody").children;
                         for (let i = 0; i < Temp.length; i++) {
-                            Temp[i].innerHTML += "<td><a href=\"http://www.xmoj.tech/problem_std.php?cid=" + SearchParams.get("cid") + "&pid=" + i + "\" target=\"_blank\">打开</a></td>";
+                            Temp[i].innerHTML += "<td><a href=\"http://www.xmoj.tech/problem_std.php?cid=" + Number(SearchParams.get("cid")) + "&pid=" + i + "\" target=\"_blank\">打开</a></td>";
                         }
                     }
 
@@ -1909,7 +1915,7 @@ else {
 
                                     let UsernameSpan = document.createElement("span"); UsernameCell.appendChild(UsernameSpan);
                                     GetUsernameHTML(UsernameSpan, RowData.Username);
-                                    if (RowData.Username == document.getElementById("profile").innerText) {
+                                    if (RowData.Username == CurrentUsername) {
                                         Row.classList.add("table-primary");
                                     }
                                     if (RowData.QuickSubmitCount >= 2) {
@@ -2083,8 +2089,8 @@ else {
             document.querySelector("body > div > div.mt-3").innerHTML = `<center class="mb-3">` +
                 `<h3>提交代码</h3>` +
                 (SearchParams.get("id") != null ?
-                    `题目<span class="blue">${SearchParams.get("id")}</span>` :
-                    `比赛<span class="blue">${SearchParams.get("cid") + `</span>&emsp;题目<span class="blue">` + String.fromCharCode(65 + parseInt(SearchParams.get("pid")))}</span>`) +
+                    `题目<span class="blue">${Number(SearchParams.get("id"))}</span>` :
+                    `比赛<span class="blue">${Number(SearchParams.get("cid")) + `</span>&emsp;题目<span class="blue">` + String.fromCharCode(65 + parseInt(SearchParams.get("pid")))}</span>`) +
                 `</center>
     <textarea id="CodeInput"></textarea>
     <center class="mt-3">
@@ -2260,11 +2266,16 @@ else {
                             let Data = Response.UpdateHistory[Version];
                             let UpdateDataCard = document.createElement("div"); document.querySelector("body > div > div.mt-3").appendChild(UpdateDataCard);
                             UpdateDataCard.className = "card mb-3";
+                            if (Data.Prerelease)
+                                UpdateDataCard.classList.add("text-secondary");
                             let UpdateDataCardBody = document.createElement("div"); UpdateDataCard.appendChild(UpdateDataCardBody);
                             UpdateDataCardBody.className = "card-body";
                             let UpdateDataCardTitle = document.createElement("h5"); UpdateDataCardBody.appendChild(UpdateDataCardTitle);
                             UpdateDataCardTitle.className = "card-title";
                             UpdateDataCardTitle.innerText = Version;
+                            if (Data.Prerelease) {
+                                UpdateDataCardTitle.innerHTML += "（预览版）";
+                            }
                             let UpdateDataCardSubtitle = document.createElement("h6"); UpdateDataCardBody.appendChild(UpdateDataCardSubtitle);
                             UpdateDataCardSubtitle.className = "card-subtitle mb-2 text-muted";
                             UpdateDataCardSubtitle.innerHTML = GetRelativeTime(Data.UpdateDate);
@@ -2298,12 +2309,12 @@ else {
                 let LuoguAccount = document.getElementsByName("acc_luogu")[0].value;
                 document.querySelector("body > div > div").innerHTML = `<div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="UserID" class="col-form-label">用户ID</label></div>
-                    <div class="col-9"><input id="UserID" class="form-control" disabled readonly value="${document.querySelector("#profile").innerText}"></div>
+                    <div class="col-9"><input id="UserID" class="form-control" disabled readonly value="${CurrentUsername}"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="Avatar" class="col-form-label">头像</label></div>
                     <div class="col-9">
-                        <img width="64" height="64" src="https://cravatar.cn/avatar/` + (await GetUserInfo(document.querySelector("#profile").innerText)).EmailHash + `?d=retro">
+                        <img width="64" height="64" src="https://cravatar.cn/avatar/` + (await GetUserInfo(CurrentUsername)).EmailHash + `?d=retro">
                         <a href="https://cravatar.cn/avatars" target="_blank">修改头像</a>
                     </div>
                 </div>
@@ -2326,7 +2337,7 @@ else {
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="Nickname" class="col-form-label">昵称</label></div>
-                    <div class="col-9"><input id="Nickname" class="form-control" value="${Nickname}"></div>
+                    <div class="col-9"><input id="Nickname" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="OldPassword" class="col-form-label">旧密码</label></div>
@@ -2342,27 +2353,27 @@ else {
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="School" class="col-form-label">学校</label></div>
-                    <div class="col-9"><input id="School" class="form-control" value="${School}"></div>
+                    <div class="col-9"><input id="School" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="EmailAddress" class="col-form-label">电子邮箱</label></div>
-                    <div class="col-9"><input id="EmailAddress" class="form-control" value="${EmailAddress}"></div>
+                    <div class="col-9"><input id="EmailAddress" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="CodeforcesAccount" class="col-form-label">Codeforces账号</label></div>
-                    <div class="col-9"><input id="CodeforcesAccount" class="form-control" value="${CodeforcesAccount}"></div>
+                    <div class="col-9"><input id="CodeforcesAccount" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="AtcoderAccount" class="col-form-label">Atcoder账号</label></div>
-                    <div class="col-9"><input id="AtcoderAccount" class="form-control" value="${AtcoderAccount}"></div>
+                    <div class="col-9"><input id="AtcoderAccount" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="USACOAccount" class="col-form-label">USACO账号</label></div>
-                    <div class="col-9"><input id="USACOAccount" class="form-control" value="${USACOAccount}"></div>
+                    <div class="col-9"><input id="USACOAccount" class="form-control"></div>
                 </div>
                 <div class="row g-2 align-items-center col-6 mb-1">
                     <div class="col-3"><label for="LuoguAccount" class="col-form-label">洛谷账号</label></div>
-                    <div class="col-9"><input id="LuoguAccount" class="form-control" value="${LuoguAccount}"></div>
+                    <div class="col-9"><input id="LuoguAccount" class="form-control"></div>
                 </div>
                 <button type="submit" class="btn btn-primary mb-2" id="ModifyInfo">
                     修改
@@ -2371,8 +2382,15 @@ else {
                 <div class="alert alert-danger mb-3" role="alert" id="ErrorElement" style="display: none;"></div>
                 <div class="alert alert-success mb-3" role="alert" id="SuccessElement" style="display: none;">修改成功</div>
                 <br>`;
+                document.getElementById("Nickname").value = Nickname;
+                document.getElementById("School").value = School;
+                document.getElementById("EmailAddress").value = EmailAddress;
+                document.getElementById("CodeforcesAccount").value = CodeforcesAccount;
+                document.getElementById("AtcoderAccount").value = AtcoderAccount;
+                document.getElementById("USACOAccount").value = USACOAccount;
+                document.getElementById("LuoguAccount").value = LuoguAccount;
                 RequestAPI("GetBadge", {
-                    "UserID": String(document.querySelector("#profile").innerText)
+                    "UserID": String(CurrentUsername)
                 }, (Response) => {
                     if (Response.Success) {
                         BadgeRow.style.display = "";
@@ -2392,7 +2410,7 @@ else {
                     let BadgeColor = document.querySelector("#BadgeColor").value;
                     await new Promise((Resolve) => {
                         RequestAPI("EditBadge", {
-                            "UserID": String(document.querySelector("#profile").innerText),
+                            "UserID": String(CurrentUsername),
                             "Content": String(BadgeContent),
                             "BackgroundColor": String(BadgeBackgroundColor),
                             "Color": String(BadgeColor)
@@ -2599,7 +2617,7 @@ else {
                     UploadProgress.style.width = "0%";
                     UploadProgress.innerText = "0%";
                     let ACList = [];
-                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + document.querySelector("#profile").innerText)
+                    await fetch("http://www.xmoj.tech/userinfo.php?user=" + CurrentUsername)
                         .then((Response) => {
                             return Response.text();
                         }).then((Response) => {
@@ -2702,7 +2720,7 @@ else {
                     CompareButton.innerText = "比较";
                     CompareButton.className = "btn btn-primary";
                     CompareButton.addEventListener("click", () => {
-                        location.href = "http://www.xmoj.tech/comparesource.php?left=" + LeftCode.value + "&right=" + RightCode.value;
+                        location.href = "http://www.xmoj.tech/comparesource.php?left=" + Number(LeftCode.value) + "&right=" + Number(RightCode.value);
                     });
                 }
                 else {
@@ -2924,7 +2942,7 @@ else {
                             headers: {
                                 "Content-Type": "application/x-www-form-urlencoded"
                             },
-                            body: "user_id=" + document.querySelector("#profile").innerText + "&" +
+                            body: "user_id=" + CurrentUsername + "&" +
                                 "solution_id=" + SearchParams.get("sid") + "&" +
                                 "name=" + ApplyElements[i].getAttribute("name")
                         }).then((Response) => {
@@ -3019,7 +3037,7 @@ else {
             for (let i = 0; i < Temp.length; i++) {
                 Temp[i].removeAttribute("class");
                 if (Temp[i].children.length == 2) {
-                    Temp[i].children[1].innerHTML = Temp[i].children[1].innerText;
+                    Temp[i].children[1].innerText = Temp[i].children[1].innerText;
                 }
             }
 
@@ -3037,7 +3055,8 @@ else {
             Temp = document.querySelector("#problemstatus > tbody").children;
             for (let i = 0; i < Temp.length; i++) {
                 if (Temp[i].children[5].children[0] != null) {
-                    Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href + `">` + Temp[i].children[1].innerText}</a>`;
+                    Temp[i].children[1].innerHTML = `<a href="${Temp[i].children[5].children[0].href}"></a>`;
+                    Temp[i].children[1].children[0].innerText = Temp[i].children[1].innerText;
                 }
                 GetUsernameHTML(Temp[i].children[2], Temp[i].children[2].innerText);
                 Temp[i].children[3].remove();
@@ -3048,7 +3067,7 @@ else {
 
 
             let CurrentPage = parseInt(SearchParams.get("page") || 1);
-            let PID = SearchParams.get("id");
+            let PID = Number(SearchParams.get("id"));
             let Pagination = `<nav class="center"><ul class="pagination justify-content-center">`;
             if (CurrentPage != 1) {
                 Pagination += `<li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=${PID + `&page=1" class="page-link">&laquo;</a></li><li class="page-item"><a href="http://www.xmoj.tech/problemstatus.php?id=` + PID + `&page=` + (CurrentPage - 1) + `" class="page-link">` + (CurrentPage - 1)}</a></li>`;
@@ -3083,7 +3102,8 @@ else {
             let Temp = document.getElementsByClassName("prettyprint");
             for (let i = 0; i < Temp.length; i++) {
                 let Code = Temp[i].innerText;
-                Temp[i].outerHTML = `<textarea class="prettyprint">${Code}</textarea>`;
+                Temp[i].outerHTML = `<textarea class="prettyprint"></textarea>`;
+                Temp[i].value = Code;
             }
             for (let i = 0; i < Temp.length; i++) {
                 CodeMirror.fromTextArea(Temp[i], {
@@ -3111,9 +3131,9 @@ else {
                 NewsRow.className = "cnt-row";
                 let NewsRowHead = document.createElement("div");
                 NewsRowHead.className = "cnt-row-head title";
-                NewsRowHead.innerHTML = NewsData[i].Title;
+                NewsRowHead.innerText = NewsData[i].Title;
                 if (NewsData[i].Time != 0) {
-                    NewsRowHead.innerHTML += "<small class=\"ms-3\">" + NewsData[i].Time + "</small>";
+                    NewsRowHead.innerHTML += "<small class=\"ms-3\">" + NewsData[i].Time.toLocaleDateString() + "</small>";
                 }
                 NewsRow.appendChild(NewsRowHead);
                 let NewsRowBody = document.createElement("div");
@@ -3303,7 +3323,7 @@ else {
             else {
                 document.querySelector("body > div > div.mt-3").innerHTML = `<div class="row g-2 mb-3">
                         <div class="col-md form-floating">
-                            <input class="form-control" id="ToUser" value="${SearchParams.get("other")}" readonly>
+                            <input class="form-control" id="ToUser" readonly>
                             <label for="ToUser">接收用户</label>
                         </div>
                         <div class="col-md form-floating">
@@ -3326,8 +3346,8 @@ else {
                             </tr>
                         </thead>
                         <tbody></tbody>
-                    </table>
-                    `;
+                    </table>`;
+                GetUsernameHTML(ToUser, SearchParams.get("other"));
                 let RefreshMessage = (Silent = true) => {
                     if (!Silent) {
                         MessageTable.children[1].innerHTML = "";
@@ -3348,7 +3368,7 @@ else {
                             MessageTable.children[1].innerHTML = "";
                             for (let i = 0; i < Data.length; i++) {
                                 let Row = document.createElement("tr"); MessageTable.children[1].appendChild(Row);
-                                if (!Data[i].IsRead && Data[i].FromUser != document.querySelector("#profile").innerText) {
+                                if (!Data[i].IsRead && Data[i].FromUser != CurrentUsername) {
                                     Row.className = "table-info";
                                 }
                                 let UsernameCell = document.createElement("td"); Row.appendChild(UsernameCell);
@@ -3407,19 +3427,20 @@ else {
             if (UtilityEnabled("Discussion")) {
                 Discussion.classList.add("active");
                 if (location.pathname == "/discuss3/discuss.php") {
-                    let ProblemID = SearchParams.get("pid");
+                    let ProblemID = parseInt(SearchParams.get("pid"));
                     let Page = Number(SearchParams.get("page")) || 1;
-                    document.querySelector("body > div > div").innerHTML = `<h3>讨论列表${(ProblemID == null ? "" : ` - 题目` + ProblemID)}</h3>
+                    document.querySelector("body > div > div").innerHTML = `<h3>讨论列表${(isNaN(ProblemID) ? "" : ` - 题目` + ProblemID)}</h3>
                     <button id="NewPost" type="button" class="btn btn-primary">发布新讨论</button>
                     <nav>
-                        <ul class="pagination justify-content-center" id="DiscussPagination">
-                            <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
-                            <li class="page-item"><a class="page-link" href="#">${Page - 1}</a></li>
-                            <li class="page-item"><a class="page-link active" href="#">${Page}</a></li>
-                            <li class="page-item"><a class="page-link" href="#">${Page + 1}</a></li>
-                            <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
-                        </ul>
+                    <ul class="pagination justify-content-center" id="DiscussPagination">
+                    <li class="page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+                    <li class="page-item"><a class="page-link" href="#">${Page - 1}</a></li>
+                    <li class="page-item"><a class="page-link active" href="#">${Page}</a></li>
+                    <li class="page-item"><a class="page-link" href="#">${Page + 1}</a></li>
+                    <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+                    </ul>
                     </nav>
+                    <div id="GotoBoard"></div>
                     <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
                     <table id="PostList" class="table table-hover">
                         <thead>
@@ -3437,8 +3458,11 @@ else {
                         </tbody>
                     </table>`;
                     NewPost.addEventListener("click", () => {
-                        if (ProblemID != null) {
+                        if (!isNaN(ProblemID)) {
                             location.href = "http://www.xmoj.tech/discuss3/newpost.php?pid=" + ProblemID;
+                        }
+                        else if (SearchParams.get("bid") != null) {
+                            location.href = "http://www.xmoj.tech/discuss3/newpost.php?bid=" + SearchParams.get("bid");
                         }
                         else {
                             location.href = "http://www.xmoj.tech/discuss3/newpost.php";
@@ -3457,16 +3481,17 @@ else {
                         }
                         RequestAPI("GetPosts", {
                             "ProblemID": Number(ProblemID || 0),
-                            "Page": Number(Page)
+                            "Page": Number(Page),
+                            "BoardID": Number(SearchParams.get("bid") || -1)
                         }, async (ResponseData) => {
                             if (ResponseData.Success == true) {
                                 ErrorElement.style.display = "none";
                                 if (!Silent) {
-                                    DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=1";
-                                    DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
-                                    DiscussPagination.children[2].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
-                                    DiscussPagination.children[3].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
-                                    DiscussPagination.children[4].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (ProblemID == null ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
+                                    DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (isNaN(ProblemID) ? "" : "pid=" + ProblemID + "&") + "page=1";
+                                    DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (isNaN(ProblemID) ? "" : "pid=" + ProblemID + "&") + "page=" + (Page - 1);
+                                    DiscussPagination.children[2].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (isNaN(ProblemID) ? "" : "pid=" + ProblemID + "&") + "page=" + Page;
+                                    DiscussPagination.children[3].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (isNaN(ProblemID) ? "" : "pid=" + ProblemID + "&") + "page=" + (Page + 1);
+                                    DiscussPagination.children[4].children[0].href = "http://www.xmoj.tech/discuss3/discuss.php?" + (isNaN(ProblemID) ? "" : "pid=" + ProblemID + "&") + "page=" + ResponseData.Data.PageCount;
                                     if (Page <= 1) {
                                         DiscussPagination.children[0].classList.add("disabled");
                                         DiscussPagination.children[1].remove();
@@ -3484,7 +3509,7 @@ else {
                                 for (let i = 0; i < Posts.length; i++) {
                                     let Row = document.createElement("tr"); PostList.children[1].appendChild(Row);
                                     let IDCell = document.createElement("td"); Row.appendChild(IDCell);
-                                    IDCell.innerText = Posts[i].PostID;
+                                    IDCell.innerText = Posts[i].PostID + " " + Posts[i].BoardName;
                                     let TitleCell = document.createElement("td"); Row.appendChild(TitleCell);
                                     let TitleLink = document.createElement("a"); TitleCell.appendChild(TitleLink);
                                     TitleLink.href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + Posts[i].PostID;
@@ -3517,9 +3542,30 @@ else {
                     };
                     RefreshPostList(false);
                     addEventListener("focus", RefreshPostList);
+                    RequestAPI("GetBoards", {}, (ResponseData) => {
+                        if (ResponseData.Success === true) {
+                            let LinkElement = document.createElement("a");
+                            LinkElement.href = "http://www.xmoj.tech/discuss3/discuss.php";
+                            LinkElement.classList.add("me-2");
+                            LinkElement.innerText = "全部";
+                            GotoBoard.appendChild(LinkElement);
+                            for (let i = 0; i < ResponseData.Data.Boards.length; i++) {
+                                let LinkElement = document.createElement("a");
+                                LinkElement.href = "http://www.xmoj.tech/discuss3/discuss.php?bid=" + ResponseData.Data.Boards[i].BoardID;
+                                LinkElement.classList.add("me-2");
+                                LinkElement.innerText = ResponseData.Data.Boards[i].BoardName;
+                                GotoBoard.appendChild(LinkElement);
+                            }
+                        }
+                    });
                 } else if (location.pathname == "/discuss3/newpost.php") {
-                    let ProblemID = SearchParams.get("pid");
-                    document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (ProblemID != null ? ` - 题目` + ProblemID : ``) + `</h3>
+                    let ProblemID = parseInt(SearchParams.get("pid"));
+                    document.querySelector("body > div > div").innerHTML = `<h3>发布新讨论` + (!isNaN(ProblemID) ? ` - 题目` + ProblemID : ``) + `</h3>
+                    <div class="form-group mb-3" id="BoardSelect">
+                        <label for="Board" class="mb-1">请选择要发布的板块</label>
+                        <div class="row ps-3" id="Board">
+                        </div>
+                    </div>
                     <div class="form-group mb-3">
                         <label for="Title" class="mb-1">标题</label>
                         <input type="text" class="form-control" id="TitleElement" placeholder="请输入标题">
@@ -3536,24 +3582,23 @@ else {
                             <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                         </button>
                     </div>
-                    <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
-                    <input type="hidden" id="CaptchaSecretKey">
-                    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback"></script>`;
-                    window.CaptchaLoadedCallback = () => {
+                    <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
+                    let CaptchaSecretKey = "";
+                    unsafeWindow.CaptchaLoadedCallback = () => {
                         turnstile.render("#CaptchaContainer", {
                             sitekey: CaptchaSiteKey,
                             callback: function (CaptchaSecretKeyValue) {
-                                CaptchaSecretKey.value = CaptchaSecretKeyValue;
+                                CaptchaSecretKey = CaptchaSecretKeyValue;
                                 SubmitElement.disabled = false;
                             },
                         });
                     };
-                    GM_xmlhttpRequest({
-                        url: "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback",
-                        onload: (Response) => {
-                            eval(Response.responseText);
-                        }
-                    });
+                    let TurnstileScript = document.createElement("script");
+                    TurnstileScript.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=CaptchaLoadedCallback";
+                    document.body.appendChild(TurnstileScript);
+                    if (!isNaN(ProblemID)) {
+                        BoardSelect.style.display = "none";
+                    }
                     ContentElement.addEventListener("keydown", (Event) => {
                         if (Event.ctrlKey && Event.keyCode == 13) {
                             SubmitElement.click();
@@ -3573,13 +3618,18 @@ else {
                         ErrorElement.style.display = "none";
                         let Title = TitleElement.value;
                         let Content = ContentElement.value;
-                        let ProblemID = SearchParams.get("pid");
-                        if (Title == "") {
+                        let ProblemID = parseInt(SearchParams.get("pid"));
+                        if (Title === "") {
                             TitleElement.classList.add("is-invalid");
                             return;
                         }
-                        if (Content == "") {
+                        if (Content === "") {
                             ContentElement.classList.add("is-invalid");
+                            return;
+                        }
+                        if (document.querySelector("#Board input:checked") === null) {
+                            ErrorElement.innerText = "请选择要发布的板块";
+                            ErrorElement.style.display = "block";
                             return;
                         }
                         SubmitElement.disabled = true;
@@ -3587,8 +3637,9 @@ else {
                         RequestAPI("NewPost", {
                             "Title": String(Title),
                             "Content": String(Content),
-                            "ProblemID": Number(ProblemID == null ? 0 : ProblemID),
-                            "CaptchaSecretKey": String(CaptchaSecretKey.value)
+                            "ProblemID": Number(isNaN(ProblemID) ? 0 : ProblemID),
+                            "CaptchaSecretKey": String(CaptchaSecretKey),
+                            "BoardID": Number(document.querySelector("#Board input:checked").value)
                         }, (ResponseData) => {
                             SubmitElement.disabled = false;
                             SubmitElement.children[0].style.display = "none";
@@ -3601,6 +3652,31 @@ else {
                             }
                         });
                     });
+                    RequestAPI("GetBoards", {}, (ResponseData) => {
+                        if (ResponseData.Success === true) {
+                            let Data = ResponseData.Data.Boards;
+                            for (let i = 0; i < Data.length; i++) {
+                                let RadioElement = document.createElement("div");
+                                RadioElement.className = "col-auto form-check form-check-inline";
+                                let RadioInput = document.createElement("input");
+                                RadioInput.className = "form-check-input";
+                                RadioInput.type = "radio";
+                                RadioInput.name = "Board";
+                                RadioInput.id = "Board" + Data[i].BoardID;
+                                RadioInput.value = Data[i].BoardID;
+                                RadioElement.appendChild(RadioInput);
+                                if (SearchParams.get("bid") !== null && SearchParams.get("bid") == Data[i].BoardID) {
+                                    RadioInput.checked = true;
+                                }
+                                let RadioLabel = document.createElement("label");
+                                RadioLabel.className = "form-check-label";
+                                RadioLabel.htmlFor = "Board" + Data[i].BoardID;
+                                RadioLabel.innerText = Data[i].BoardName;
+                                RadioElement.appendChild(RadioLabel);
+                                Board.appendChild(RadioElement);
+                            }
+                        }
+                    });
                 } else if (location.pathname == "/discuss3/thread.php") {
                     if (SearchParams.get("tid") == null) {
                         location.href = "http://www.xmoj.tech/discuss3/discuss.php";
@@ -3610,9 +3686,10 @@ else {
                         let Page = Number(SearchParams.get("page")) || 1;
                         document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
                         <div class="row mb-3">
-                            <span class="col-4 text-muted">作者：<div style="display: inline-block;" id="PostAuthor"></div></span>
-                            <span class="col-4 text-muted">发布时间：<span id="PostTime"></span></span>
-                            <span class="col-4">
+                            <span class="col-3 text-muted">作者：<div style="display: inline-block;" id="PostAuthor"></div></span>
+                            <span class="col-3 text-muted">发布时间：<span id="PostTime"></span></span>
+                            <span class="col-3 text-muted">板块：<span id="PostBoard"></span></span>
+                            <span class="col-3">
                                 <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
                                     删除
                                     <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
@@ -3653,24 +3730,20 @@ else {
                                 <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
                             </button>
                         </div>
-                        <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>
-                        <input type="hidden" id="CaptchaSecretKey">
-                        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback"></script>`;
-                        window.CaptchaLoadedCallback = () => {
+                        <div id="ErrorElement" class="alert alert-danger" role="alert" style="display: none;"></div>`;
+                        let CaptchaSecretKey = "";
+                        unsafeWindow.CaptchaLoadedCallback = () => {
                             turnstile.render("#CaptchaContainer", {
                                 sitekey: CaptchaSiteKey,
                                 callback: function (CaptchaSecretKeyValue) {
-                                    CaptchaSecretKey.value = CaptchaSecretKeyValue;
+                                    CaptchaSecretKey = CaptchaSecretKeyValue;
                                     SubmitElement.disabled = false;
                                 },
                             });
                         };
-                        GM_xmlhttpRequest({
-                            url: "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=CaptchaLoadedCallback",
-                            onload: (Response) => {
-                                eval(Response.responseText);
-                            }
-                        });
+                        let TurnstileScript = document.createElement("script");
+                        TurnstileScript.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=CaptchaLoadedCallback";
+                        document.body.appendChild(TurnstileScript);
                         ContentElement.addEventListener("keydown", (Event) => {
                             if (Event.ctrlKey && Event.keyCode == 13) {
                                 SubmitElement.click();
@@ -3685,6 +3758,7 @@ else {
                                 PostTitle.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
                                 PostAuthor.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
                                 PostTime.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
+                                PostBoard.innerHTML = `<span class="placeholder col-${Math.ceil(Math.random() * 6)}"></span>`;
                                 PostReplies.innerHTML = "";
                                 for (let i = 0; i < 10; i++) {
                                     PostReplies.innerHTML += `<div class="card mb-3">
@@ -3707,7 +3781,7 @@ else {
                             }, async (ResponseData) => {
                                 if (ResponseData.Success == true) {
                                     let OldScrollTop = document.documentElement.scrollTop;
-                                    let LockButtons = AdminUserList.indexOf(profile.innerText) === -1 && ResponseData.Data.Lock.Locked;
+                                    let LockButtons = !IsAdmin && ResponseData.Data.Lock.Locked;
                                     if (!Silent) {
                                         DiscussPagination.children[0].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=1";
                                         DiscussPagination.children[1].children[0].href = "http://www.xmoj.tech/discuss3/thread.php?tid=" + ThreadID + "&page=" + (Page - 1);
@@ -3722,7 +3796,7 @@ else {
                                             DiscussPagination.children[DiscussPagination.children.length - 1].classList.add("disabled");
                                             DiscussPagination.children[DiscussPagination.children.length - 2].remove();
                                         }
-                                        if (AdminUserList.indexOf(profile.innerText) !== -1 || ResponseData.Data.UserID == profile.innerText) {
+                                        if (IsAdmin || ResponseData.Data.UserID == CurrentUsername) {
                                             Delete.style.display = "";
                                         }
                                     }
@@ -3730,6 +3804,7 @@ else {
                                     PostAuthor.innerHTML = "<span></span>";
                                     GetUsernameHTML(PostAuthor.children[0], ResponseData.Data.UserID);
                                     PostTime.innerHTML = GetRelativeTime(ResponseData.Data.PostTime);
+                                    PostBoard.innerHTML = ResponseData.Data.BoardName;
                                     let Replies = ResponseData.Data.Reply;
                                     PostReplies.innerHTML = "";
                                     for (let i = 0; i < Replies.length; i++) {
@@ -3773,7 +3848,7 @@ else {
                                             DeleteButton.type = "button";
                                             DeleteButton.className = "btn btn-sm btn-danger ms-1";
                                             DeleteButton.innerText = "删除";
-                                            DeleteButton.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
+                                            DeleteButton.style.display = (IsAdmin || Replies[i].UserID == CurrentUsername ? "" : "none");
                                             DeleteButton.addEventListener("click", () => {
                                                 DeleteButton.disabled = true;
                                                 DeleteButton.lastChild.style.display = "";
@@ -3838,7 +3913,7 @@ else {
                                             EditButton.type = "button";
                                             EditButton.className = "btn btn-sm btn-warning ms-1";
                                             EditButton.innerText = "编辑";
-                                            EditButton.style.display = (AdminUserList.indexOf(profile.innerText) !== -1 || Replies[i].UserID == profile.innerText ? "" : "none");
+                                            EditButton.style.display = (IsAdmin || Replies[i].UserID == CurrentUsername ? "" : "none");
                                             EditButton.addEventListener("click", () => {
                                                 CardBodyElement.children[2].style.display = "none";
                                                 CardBodyElement.children[3].style.display = "";
@@ -3853,7 +3928,7 @@ else {
                                         let ReplyContentElement = document.createElement("div"); CardBodyElement.appendChild(ReplyContentElement);
                                         ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content.replaceAll(/@([a-zA-Z0-9]+)/g, `<b>@</b><span class="ms-1 Usernames">$1</span>`)));
                                         if (Replies[i].EditTime != null) {
-                                            if (Replies[i].EditPerson !== profile.innerText) {
+                                            if (Replies[i].EditPerson !== CurrentUsername) {
                                                 ReplyContentElement.innerHTML += `<span class="text-muted" style="font-size: 12px">最后编辑于${GetRelativeTime(Replies[i].EditTime)}</span>`;
                                             }
                                             else {
@@ -3917,7 +3992,7 @@ else {
                                         LockElement.classList.add("mb-5");
                                     }
 
-                                    if (AdminUserList.indexOf(profile.innerText) !== -1) {
+                                    if (IsAdmin) {
                                         ToggleLock.style.display = "inline-block";
                                         ToggleLockButton.checked = ResponseData.Data.Lock.Locked;
                                         ToggleLockButton.onclick = () => {
@@ -3980,7 +4055,7 @@ else {
                             RequestAPI("NewReply", {
                                 "PostID": Number(SearchParams.get("tid")),
                                 "Content": String(ContentElement.value),
-                                "CaptchaSecretKey": String(CaptchaSecretKey.value)
+                                "CaptchaSecretKey": String(CaptchaSecretKey)
                             }, async (ResponseData) => {
                                 SubmitElement.disabled = false;
                                 SubmitElement.children[0].style.display = "none";
