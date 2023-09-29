@@ -17,6 +17,10 @@ export default {
                 "send_time": {
                     "Operator": "<=",
                     "Value": new Date().getTime() - 1000 * 60 * 60 * 24 * 14
+                },
+                "is_read": {
+                    "Operator": "=",
+                    "Value": 1
                 }
             });
             await XMOJDatabase.Delete("phpsessid", {
