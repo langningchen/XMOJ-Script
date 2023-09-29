@@ -10,6 +10,7 @@ const LabelList = [
     "bug",
     "Cloudflare-related",
     "dependency",
+    "designing",
     "documentation",
     "duplicate",
     "enhancement",
