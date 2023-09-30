@@ -45,14 +45,14 @@ let CommentID = github.context.payload.comment.id;
 let User = github.context.payload.comment.user.login;
 let Labels = github.context.payload.issue.labels.map((label) => label.name);
 let Milestone = github.context.payload.issue.milestone?.number;
-console.log("Data       : " + Data);
-console.log("Owner      : " + Owner);
-console.log("Repo       : " + Repo);
-console.log("IssueNumber: " + IssueNumber);
-console.log("CommentID  : " + CommentID);
-console.log("User       : " + User);
-console.log("Labels     : " + Labels);
-console.log("Milestone  : " + Milestone);
+console.log("Data        : " + Data);
+console.log("Owner       : " + Owner);
+console.log("Repo        : " + Repo);
+console.log("IssueNumber : " + IssueNumber);
+console.log("CommentID   : " + CommentID);
+console.log("User        : " + User);
+console.log("Labels      : " + Labels);
+console.log("Milestone   : " + Milestone);
 
 const LatestMilestone = Octokit.issues.listMilestones({
     owner: Owner,
@@ -138,8 +138,9 @@ if (User === "langningchen") {
 }
 
 console.log("----------------------------------------");
-console.log("NewData    : " + NewData);
-console.log("NewLabels  : " + Labels);
+console.log("NewData     : " + NewData);
+console.log("NewLabels   : " + Labels);
+console.log("NewMilestone: " + Milestone);
 
 NewData = NewData.trim();
 if (NewData === "") {
@@ -162,5 +163,5 @@ Octokit.issues.update({
     repo: Repo,
     issue_number: IssueNumber,
     labels: Labels,
-    milestone: Milestone
+    milestone: Milestone === undefined ? null : Milestone
 });
