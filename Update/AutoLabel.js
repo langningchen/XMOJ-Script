@@ -149,7 +149,7 @@ if (NewData === "") {
         repo: Repo,
         comment_id: CommentID
     });
-} else {
+} else if (NewData !== Data) {
     Octokit.issues.updateComment({
         owner: Owner,
         repo: Repo,
