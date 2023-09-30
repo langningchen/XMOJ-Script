@@ -613,6 +613,16 @@
                     "Description": "解决无法发帖"
                 }
             ]
+        },
+        "0.3.184": {
+            "UpdateDate": 1696053709803,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 566,
+                    "Description": "允许直接获取数据，而不是申请数据"
+                }
+            ]
         }
     }
 }
