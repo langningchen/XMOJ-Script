@@ -633,6 +633,16 @@
                     "Description": "允许直接获取数据，而不是申请数据"
                 }
             ]
+        },
+        "0.3.186": {
+            "UpdateDate": 1696060570244,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 567,
+                    "Description": "修复月赛界面下部缺失"
+                }
+            ]
         }
     }
 }
