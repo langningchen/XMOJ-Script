@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.183
+// @version      0.3.184
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -3596,9 +3596,6 @@ else {
                     let TurnstileScript = document.createElement("script");
                     TurnstileScript.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=CaptchaLoadedCallback";
                     document.body.appendChild(TurnstileScript);
-                    if (!isNaN(ProblemID)) {
-                        BoardSelect.style.display = "none";
-                    }
                     ContentElement.addEventListener("keydown", (Event) => {
                         if (Event.ctrlKey && Event.keyCode == 13) {
                             SubmitElement.click();
@@ -3667,6 +3664,14 @@ else {
                                 RadioElement.appendChild(RadioInput);
                                 if (SearchParams.get("bid") !== null && SearchParams.get("bid") == Data[i].BoardID) {
                                     RadioInput.checked = true;
+                                }
+                                if (!isNaN(ProblemID)) {
+                                    RadioInput.disabled = true;
+                                }
+                                if (Data[i].BoardID == 4) {
+                                    if (!isNaN(ProblemID))
+                                        RadioInput.checked = true;
+                                    RadioInput.disabled = true;
                                 }
                                 let RadioLabel = document.createElement("label");
                                 RadioLabel.className = "form-check-label";

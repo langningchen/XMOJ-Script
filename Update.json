@@ -613,6 +613,16 @@
                     "Description": "解决无法发帖"
                 }
             ]
+        },
+        "0.3.184": {
+            "UpdateDate": 1696048489225,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 559,
+                    "Description": "解决无法在题目板块发布讨论"
+                }
+            ]
         }
     }
 }
