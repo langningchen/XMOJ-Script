@@ -93,7 +93,7 @@ if (!TrustedUsers.includes(User)) {
     process.exit(0);
 }
 
-let NewData = Data.replaceAll(/\/[a-zA-Z-_]+|( first issue)/g, (match) => {
+let NewData = Data.replaceAll(/(\/good first issue)|\/[A-Za-z_-]+/g, (match) => {
     console.log("Found command " + match);
     let Label = match.substring(1);
     if (Label.startsWith("-")) {
