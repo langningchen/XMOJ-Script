@@ -401,7 +401,7 @@ export class Process {
                     Title: Post["title"],
                     PostTime: Post["post_time"],
                     BoardID: Post["board_id"],
-                    BoardName: ThrowErrorIfFailed(await this.XMOJDatabase.Select("board_id", ["board_name"], {
+                    BoardName: ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_board", ["board_name"], {
                         board_id: Post["board_id"]
                     }))[0]["board_name"],
                     ReplyCount: ReplyCount,
@@ -450,7 +450,7 @@ export class Process {
             ResponseData.Title = Post[0]["title"];
             ResponseData.PostTime = Post[0]["post_time"];
             ResponseData.BoardID = Post[0]["board_id"];
-            ResponseData.BoardName = ThrowErrorIfFailed(await this.XMOJDatabase.Select("board_id", ["board_name"], { board_id: Post[0]["board_id"] }))[0]["board_name"];
+            ResponseData.BoardName = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_board", ["board_name"], { board_id: Post[0]["board_id"] }))[0]["board_name"];
 
             let Locked = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_lock", [], {
                 post_id: Data["PostID"]
@@ -1006,7 +1006,7 @@ export class Process {
         GetBoards: async (Data: object): Promise<Result> => {
             ThrowErrorIfFailed(this.CheckParams(Data, {}));
             let Boards: Array<Object> = new Array<Object>();
-            let BoardsData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("board_id", []));
+            let BoardsData = ThrowErrorIfFailed(await this.XMOJDatabase.Select("bbs_board", []));
             for (let i in BoardsData) {
                 let Board = BoardsData[i];
                 Boards.push({

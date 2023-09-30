@@ -1,21 +1,18 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.182
+// @version      0.3.187
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
 // @match        http://*.xmoj.tech/*
 // @match        http://116.62.212.172/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
-// @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/hmac-sha1.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/codemirror.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/mode/clike/clike.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/codemirror/6.65.7/addon/merge/merge.js
 // @require      https://cdn.bootcdn.net/ajax/libs/diff_match_patch/20121119/diff_match_patch_uncompressed.js
 // @require      https://cdn.bootcdn.net/ajax/libs/dompurify/3.0.2/purify.min.js
 // @require      https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js
-// @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/core.min.js
-// @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/md5.min.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
@@ -2927,6 +2924,107 @@ else {
                     CurrentElement.innerText = TimeToStringTime(Temp[0]) + "/" + SizeToStringSize(Temp[1]);
                 }
                 if (document.getElementById("apply_data")) {
+                    let ApplyDiv = document.getElementById("apply_data").parentElement;
+                    let GetDataButton = document.createElement("button");
+                    GetDataButton.className = "ms-2 btn btn-outline-secondary";
+                    GetDataButton.innerText = "获取数据";
+                    ApplyDiv.appendChild(GetDataButton);
+                    GetDataButton.addEventListener("click", async () => {
+                        GetDataButton.disabled = true;
+                        GetDataButton.innerText = "正在获取数据...";
+                        let PID = localStorage.getItem("UserScript-Solution-" + SearchParams.get("sid") + "-Problem");
+                        let Code = "";
+                        if (localStorage.getItem(`UserScript-Problem-${PID}-IOFilename`) !== null) {
+                            Code = `#define IOFile "${localStorage.getItem(`UserScript-Problem-${PID}-IOFilename`)}"\n`;
+                        }
+                        Code += `#include <bits/stdc++.h>
+using namespace std;
+string Base64Encode(string Input)
+{
+    const string Base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    string Output;
+    for (int i = 0; i < Input.length(); i += 3)
+    {
+        Output.push_back(i + 0 > Input.length() ? '=' : Base64Chars[(Input[i + 0] & 0xfc) >> 2]);
+        Output.push_back(i + 1 > Input.length() ? '=' : Base64Chars[((Input[i + 0] & 0x03) << 4) + ((Input[i + 1] & 0xf0) >> 4)]);
+        Output.push_back(i + 2 > Input.length() ? '=' : Base64Chars[((Input[i + 1] & 0x0f) << 2) + ((Input[i + 2] & 0xc0) >> 6)]);
+        Output.push_back(i + 3 > Input.length() ? '=' : Base64Chars[Input[i + 2] & 0x3f]);
+    }
+    return Output;
+}
+int main()
+{
+#ifdef IOFile
+    freopen(IOFile ".in", "r", stdin);
+    freopen(IOFile ".out", "w", stdout);
+#endif
+    string Input;
+    while (1)
+    {
+        char Data = getchar();
+        if (Data == EOF)
+            break;
+        Input.push_back(Data);
+    }
+    throw runtime_error("[" + Base64Encode(Input.c_str()) + "]");
+    return 0;
+}`;
+
+                        await fetch("http://www.xmoj.tech/submit.php", {
+                            "headers": {
+                                "content-type": "application/x-www-form-urlencoded"
+                            },
+                            "referrer": "http://www.xmoj.tech/submitpage.php?id=" + PID,
+                            "method": "POST",
+                            "body": "id=" + PID + "&" +
+                                "language=1&" +
+                                "source=" + encodeURIComponent(Code) + "&" +
+                                "enable_O2=on"
+                        });
+
+                        let SID = await fetch("http://www.xmoj.tech/status.php").then((Response) => {
+                            return Response.text();
+                        }).then((Response) => {
+                            let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                            return ParsedDocument.querySelector("#result-tab > tbody > tr:nth-child(1) > td:nth-child(2)").innerText;
+                        });
+
+                        await new Promise((Resolve) => {
+                            let Interval = setInterval(async () => {
+                                await fetch("status-ajax.php?solution_id=" + SID).then((Response) => {
+                                    return Response.text();
+                                }).then((Response) => {
+                                    if (Response.split(",")[0] >= 4) {
+                                        clearInterval(Interval);
+                                        Resolve();
+                                    }
+                                });
+                            }, 500);
+                        });
+
+                        await fetch(`http://www.xmoj.tech/reinfo.php?sid=${SID}`).then((Response) => {
+                            return Response.text();
+                        }).then((Response) => {
+                            let ParsedDocument = new DOMParser().parseFromString(Response, "text/html");
+                            let ErrorData = ParsedDocument.getElementById("errtxt").innerText;
+                            let MatchResult = ErrorData.match(/\what\(\):  \[([A-Za-z0-9+\/=]+)\]/g);
+                            for (let i = 0; i < MatchResult.length; i++) {
+                                let Data = CryptoJS.enc.Base64.parse(MatchResult[i].substring(10, MatchResult[i].length - 1)).toString(CryptoJS.enc.Utf8);
+                                ApplyDiv.appendChild(document.createElement("hr"));
+                                ApplyDiv.appendChild(document.createTextNode("数据" + (i + 1) + "："));
+                                let CodeElement = document.createElement("div");
+                                ApplyDiv.appendChild(CodeElement);
+                                CodeMirror(CodeElement, {
+                                    value: Data,
+                                    theme: (UtilityEnabled("DarkMode") ? "darcula" : "default"),
+                                    lineNumbers: true,
+                                    readOnly: true
+                                }).setSize("100%", "auto");
+                            }
+                            GetDataButton.innerText = "获取数据成功";
+                            GetDataButton.disabled = false;
+                        });
+                    });
                     document.getElementById("apply_data").addEventListener("click", () => {
                         let ApplyElements = document.getElementsByClassName("data");
                         for (let i = 0; i < ApplyElements.length; i++) {
@@ -3123,7 +3221,7 @@ else {
                     Time = Temp[i].children[1].innerText;
                 }
                 let Body = Temp[i + 1].innerHTML;
-                NewsData.push({ "Title": Title, "Time": Time, "Body": Body });
+                NewsData.push({ "Title": Title, "Time": new Date(Time), "Body": Body });
             }
             document.querySelector("body > div > div.mt-3 > div > div.col-md-8").innerHTML = "";
             for (let i = 0; i < NewsData.length; i++) {
@@ -3132,7 +3230,7 @@ else {
                 let NewsRowHead = document.createElement("div");
                 NewsRowHead.className = "cnt-row-head title";
                 NewsRowHead.innerText = NewsData[i].Title;
-                if (NewsData[i].Time != 0) {
+                if (NewsData[i].Time.getTime() != 0) {
                     NewsRowHead.innerHTML += "<small class=\"ms-3\">" + NewsData[i].Time.toLocaleDateString() + "</small>";
                 }
                 NewsRow.appendChild(NewsRowHead);
@@ -3596,9 +3694,6 @@ else {
                     let TurnstileScript = document.createElement("script");
                     TurnstileScript.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=CaptchaLoadedCallback";
                     document.body.appendChild(TurnstileScript);
-                    if (!isNaN(ProblemID)) {
-                        BoardSelect.style.display = "none";
-                    }
                     ContentElement.addEventListener("keydown", (Event) => {
                         if (Event.ctrlKey && Event.keyCode == 13) {
                             SubmitElement.click();
@@ -3668,6 +3763,14 @@ else {
                                 if (SearchParams.get("bid") !== null && SearchParams.get("bid") == Data[i].BoardID) {
                                     RadioInput.checked = true;
                                 }
+                                if (!isNaN(ProblemID)) {
+                                    RadioInput.disabled = true;
+                                }
+                                if (Data[i].BoardID == 4) {
+                                    if (!isNaN(ProblemID))
+                                        RadioInput.checked = true;
+                                    RadioInput.disabled = true;
+                                }
                                 let RadioLabel = document.createElement("label");
                                 RadioLabel.className = "form-check-label";
                                 RadioLabel.htmlFor = "Board" + Data[i].BoardID;
@@ -3686,10 +3789,10 @@ else {
                         let Page = Number(SearchParams.get("page")) || 1;
                         document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
                         <div class="row mb-3">
-                            <span class="col-3 text-muted">作者：<div style="display: inline-block;" id="PostAuthor"></div></span>
+                            <span class="col-5 text-muted">作者：<div style="display: inline-block;" id="PostAuthor"></div></span>
                             <span class="col-3 text-muted">发布时间：<span id="PostTime"></span></span>
-                            <span class="col-3 text-muted">板块：<span id="PostBoard"></span></span>
-                            <span class="col-3">
+                            <span class="col-2 text-muted">板块：<span id="PostBoard"></span></span>
+                            <span class="col-2">
                                 <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
                                     删除
                                     <div class="spinner-border spinner-border-sm" role="status" style="display: none;">

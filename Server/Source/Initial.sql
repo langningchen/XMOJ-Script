@@ -47,9 +47,9 @@ CREATE TABLE bbs_reply (
     edit_person TEXT
 );
 
-DROP TABLE IF EXISTS board_id;
+DROP TABLE IF EXISTS bbs_board;
 
-CREATE TABLE board_id (
+CREATE TABLE bbs_board (
     board_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     board_name TEXT NOT NULL
 );
