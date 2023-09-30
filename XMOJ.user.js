@@ -3221,7 +3221,7 @@ int main()
                     Time = Temp[i].children[1].innerText;
                 }
                 let Body = Temp[i + 1].innerHTML;
-                NewsData.push({ "Title": Title, "Time": Time, "Body": Body });
+                NewsData.push({ "Title": Title, "Time": new Date(Time), "Body": Body });
             }
             document.querySelector("body > div > div.mt-3 > div > div.col-md-8").innerHTML = "";
             for (let i = 0; i < NewsData.length; i++) {
@@ -3230,7 +3230,7 @@ int main()
                 let NewsRowHead = document.createElement("div");
                 NewsRowHead.className = "cnt-row-head title";
                 NewsRowHead.innerText = NewsData[i].Title;
-                if (NewsData[i].Time != 0) {
+                if (NewsData[i].Time.getTime() != 0) {
                     NewsRowHead.innerHTML += "<small class=\"ms-3\">" + NewsData[i].Time.toLocaleDateString() + "</small>";
                 }
                 NewsRow.appendChild(NewsRowHead);
