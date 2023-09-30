@@ -615,6 +615,16 @@
             ]
         },
         "0.3.184": {
+            "UpdateDate": 1696048489225,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 559,
+                    "Description": "解决无法在题目板块发布讨论"
+                }
+            ]
+        },
+        "0.3.185": {
             "UpdateDate": 1696053709803,
             "Prerelease": true,
             "UpdateContents": [
