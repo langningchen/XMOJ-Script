@@ -3686,10 +3686,10 @@ else {
                         let Page = Number(SearchParams.get("page")) || 1;
                         document.querySelector("body > div > div").innerHTML = `<h3 id="PostTitle"></h3>
                         <div class="row mb-3">
-                            <span class="col-3 text-muted">作者：<div style="display: inline-block;" id="PostAuthor"></div></span>
+                            <span class="col-5 text-muted">作者：<div style="display: inline-block;" id="PostAuthor"></div></span>
                             <span class="col-3 text-muted">发布时间：<span id="PostTime"></span></span>
-                            <span class="col-3 text-muted">板块：<span id="PostBoard"></span></span>
-                            <span class="col-3">
+                            <span class="col-2 text-muted">板块：<span id="PostBoard"></span></span>
+                            <span class="col-2">
                                 <button id="Delete" type="button" class="btn btn-sm btn-danger" style="display: none;">
                                     删除
                                     <div class="spinner-border spinner-border-sm" role="status" style="display: none;">
