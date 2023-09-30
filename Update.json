@@ -643,6 +643,28 @@
                     "Description": "修复月赛界面下部缺失"
                 }
             ]
+        },
+        "0.3.187": {
+            "UpdateDate": 1696060746821,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 557,
+                    "Description": "解决无法发帖"
+                },
+                {
+                    "PR": 559,
+                    "Description": "解决无法在题目板块发布讨论"
+                },
+                {
+                    "PR": 566,
+                    "Description": "允许直接获取数据，而不是申请数据"
+                },
+                {
+                    "PR": 567,
+                    "Description": "修复月赛界面下部缺失"
+                }
+            ]
         }
     }
 }
