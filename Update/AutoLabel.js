@@ -54,7 +54,7 @@ console.log("User        : " + User);
 console.log("Labels      : " + Labels);
 console.log("Milestone   : " + Milestone);
 
-const LatestMilestone = Octokit.issues.listMilestones({
+const LatestMilestone = await Octokit.issues.listMilestones({
     owner: Owner,
     repo: Repo,
     state: "open"
@@ -163,5 +163,5 @@ Octokit.issues.update({
     repo: Repo,
     issue_number: IssueNumber,
     labels: Labels,
-    milestone: Milestone === undefined ? null : Milestone
+    milestone: Milestone
 });
