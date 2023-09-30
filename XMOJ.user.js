@@ -2927,10 +2927,11 @@ else {
                     CurrentElement.innerText = TimeToStringTime(Temp[0]) + "/" + SizeToStringSize(Temp[1]);
                 }
                 if (document.getElementById("apply_data")) {
+                    let ApplyDiv = document.getElementById("apply_data").parentElement;
                     let GetDataButton = document.createElement("button");
                     GetDataButton.className = "ms-2 btn btn-outline-secondary";
                     GetDataButton.innerText = "获取数据";
-                    document.getElementById("apply_data").parentElement.appendChild(GetDataButton);
+                    ApplyDiv.appendChild(GetDataButton);
                     GetDataButton.addEventListener("click", async () => {
                         GetDataButton.disabled = true;
                         GetDataButton.innerText = "正在获取数据...";
@@ -3012,7 +3013,16 @@ int main()
                             let MatchResult = ErrorData.match(/\what\(\):  \[([A-Za-z0-9+\/=]+)\]/g);
                             for (let i = 0; i < MatchResult.length; i++) {
                                 let Data = CryptoJS.enc.Base64.parse(MatchResult[i].substring(10, MatchResult[i].length - 1)).toString(CryptoJS.enc.Utf8);
-                                console.log(Data);
+                                ApplyDiv.appendChild(document.createElement("hr"));
+                                ApplyDiv.appendChild(document.createTextNode("数据" + (i + 1) + "："));
+                                let CodeElement = document.createElement("div");
+                                ApplyDiv.appendChild(CodeElement);
+                                CodeMirror(CodeElement, {
+                                    value: Data,
+                                    theme: (UtilityEnabled("DarkMode") ? "darcula" : "default"),
+                                    lineNumbers: true,
+                                    readOnly: true
+                                }).setSize("100%", "auto");
                             }
                             GetDataButton.innerText = "获取数据成功";
                             GetDataButton.disabled = false;
