@@ -2853,7 +2853,7 @@ else {
                 document.querySelector("#login > div:nth-child(2) > div > input").value = localStorage.getItem("UserScript-Password");
                 LoginButton.click();
             }
-        } else if (location.pathname == "/contest_video.php") {
+        } else if (location.pathname == "/contest_video.php"|| location.pathname == "/problem_video.php") {
             let ScriptData = document.querySelector("body > div > div.mt-3 > center > script").innerHTML;
             if (document.getElementById("J_prismPlayer0").innerHTML != "") {
                 document.getElementById("J_prismPlayer0").innerHTML = "";
