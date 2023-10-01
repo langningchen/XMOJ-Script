@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.189
+// @version      0.3.190
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -3418,7 +3418,7 @@ int main()
             else {
                 document.querySelector("body > div > div.mt-3").innerHTML = `<div class="row g-2 mb-3">
                         <div class="col-md form-floating">
-                            <input class="form-control" id="ToUser" readonly>
+                            <div class="form-control" id="ToUser"></div>
                             <label for="ToUser">接收用户</label>
                         </div>
                         <div class="col-md form-floating">
