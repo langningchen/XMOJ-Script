@@ -672,7 +672,7 @@
             "UpdateContents": [
                 {
                     "PR": 575,
-                    "Description": "fix #573"
+                    "Description": "修复无法显示problem_video.php"
                 }
             ]
         }
