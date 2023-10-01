@@ -1,7 +1,7 @@
 import { Result, ThrowErrorIfFailed } from "./Result";
 import { Database } from "./Database";
 import { Output } from "./Output";
-import { CaptchaSecretKey } from "./Secret";
+import { CaptchaSecretKey, GithubImagePAT } from "./Secret";
 import { CheerioAPI, load } from "cheerio";
 import CryptoJS from "crypto-js";
 
@@ -1017,6 +1017,68 @@ export class Process {
             return new Result(true, "获得板块列表成功", {
                 "Boards": Boards
             });
+        },
+        UploadImage: async (Data: object): Promise<Result> => {
+            const GithubImageRepo = "langningchen/XMOJ-Script-Pictures";
+            ThrowErrorIfFailed(this.CheckParams(Data, {
+                "Image": "string"
+            }));
+            let Image: String = Data["Image"];
+            let ImageID: String = "";
+            for (let i = 0; i < 32; i++) {
+                ImageID += String.fromCharCode(Math.floor(Math.random() * 26) + 97);
+            }
+            let ImageData = Image.replace(/^data:image\/\w+;base64,/, "");
+            await fetch(new URL("https://api.github.com/repos/" + GithubImageRepo + "/contents/" + ImageID), {
+                method: "PUT",
+                headers: {
+                    "Authorization": "Bearer " + GithubImagePAT,
+                    "Content-Type": "application/json",
+                    "User-Agent": "XMOJ-Script-Server"
+                },
+                body: JSON.stringify({
+                    message: "Upload image",
+                    content: ImageData
+                })
+            }).then((Response) => {
+                return Response.json();
+            }).then((Response) => {
+                if (Response["content"]["name"] !== ImageID) {
+                    Output.Error("Upload image failed\n" +
+                        "Username: \"" + this.Username + "\"\n" +
+                        "ImageID : \"" + ImageID + "\"\n" +
+                        "Response: \"" + JSON.stringify(Response) + "\"\n");
+                    ThrowErrorIfFailed(new Result(false, "上传图片失败"));
+                }
+            }).catch((Error) => {
+                Output.Error("Upload image failed: " + Error + "\n" +
+                    "Username: \"" + this.Username + "\"\n" +
+                    "ImageID : \"" + ImageID + "\"\n");
+                ThrowErrorIfFailed(new Result(false, "上传图片失败"));
+            });
+            return new Result(true, "上传图片成功", {
+                ImageID: ImageID
+            });
+        },
+        GetImage: async (Data: object): Promise<string> => {
+            const GithubImageRepo = "langningchen/XMOJ-Script-Pictures";
+            ThrowErrorIfFailed(this.CheckParams(Data, {
+                "ImageID": "string"
+            }));
+            return await fetch(new URL("https://api.github.com/repos/" + GithubImageRepo + "/contents/" + Data["ImageID"]), {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + GithubImagePAT,
+                    "Accept": "application/vnd.github.raw",
+                    "User-Agent": "XMOJ-Script-Server"
+                }
+            }).then((Response) => {
+                return Response.text();
+            }).catch((Error) => {
+                Output.Error("Get image failed: " + Error + "\n" +
+                    "ImageID : \"" + Data["ImageID"] + "\"\n");
+                return "";
+            });
         }
     };
     constructor(RequestData: Request, Environment) {
@@ -1024,13 +1086,23 @@ export class Process {
         this.RequestData = RequestData;
         this.RemoteIP = RequestData.headers.get("CF-Connecting-IP") || "";
     }
-    public async Process(): Promise<Result> {
+    public async Process(): Promise<Response> {
         try {
             let PathName = new URL(this.RequestData.url).pathname;
             PathName = PathName === "/" ? "/index" : PathName;
             PathName = PathName.substring(1);
             if (this.ProcessFunctions[PathName] === undefined) {
                 throw new Result(false, "访问的页面不存在");
+            }
+            if (this.RequestData.method === "GET" && PathName === "GetImage") {
+                let ImageID = new URL(this.RequestData.url).searchParams.get("ImageID");
+                return new Response(await this.ProcessFunctions[PathName]({
+                    ImageID: ImageID
+                }), {
+                    headers: {
+                        "content-type": "image/png"
+                    }
+                });
             }
             if (this.RequestData.method !== "POST") {
                 throw new Result(false, "不允许此请求方式");
@@ -1067,7 +1139,11 @@ export class Process {
                 Output.Error(ResponseData);
                 ResponseData = new Result(false, "服务器运行错误：" + String(ResponseData).split("\n")[0]);
             }
-            return ResponseData;
+            return new Response(JSON.stringify(ResponseData), {
+                headers: {
+                    "content-type": "application/json;charset=UTF-8"
+                }
+            });
         }
     }
 }

@@ -47,17 +47,22 @@ let GetRelativeTime = (Input) => {
     else { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60 / 24 / 365) + "年前"; }
     return "<span title=\"" + Input.toLocaleString() + "\">" + RelativeName + "</span>";
 };
-let RenderMathJax = () => {
-    var ScriptElement = document.createElement("script");
-    ScriptElement.id = "MathJax-script";
-    ScriptElement.type = "text/javascript";
-    ScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/mathjax/3.0.5/es5/tex-chtml.js";
-    document.body.appendChild(ScriptElement);
-    ScriptElement.onload = () => {
-        MathJax.startup.input[0].findTeX.options.inlineMath.push(["$", "$"]);
-        MathJax.startup.input[0].findTeX.getPatterns();
-        MathJax.typeset();
-    };
+let RenderMathJax = async () => {
+    if (document.getElementById("MathJax-script") === null) {
+        var ScriptElement = document.createElement("script");
+        ScriptElement.id = "MathJax-script";
+        ScriptElement.type = "text/javascript";
+        ScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/mathjax/3.0.5/es5/tex-chtml.js";
+        document.body.appendChild(ScriptElement);
+        await new Promise((Resolve) => {
+            ScriptElement.onload = () => {
+                Resolve();
+            };
+        });
+    }
+    MathJax.startup.input[0].findTeX.options.inlineMath.push(["$", "$"]);
+    MathJax.startup.input[0].findTeX.getPatterns();
+    MathJax.typeset();
 };
 let GetUserInfo = async (Username) => {
     if (localStorage.getItem("UserScript-User-" + Username + "-UserRating") != null &&
@@ -3852,6 +3857,26 @@ int main()
                         ContentElement.addEventListener("input", () => {
                             PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentElement.value));
                             RenderMathJax();
+                        });
+                        ContentElement.addEventListener("paste", (Event) => {
+                            let Items = Event.clipboardData.items;
+                            if (Items.length !== 0) {
+                                for (let i = 0; i < Items.length; i++) {
+                                    if (Items[i].type.indexOf("image") != -1) {
+                                        let Reader = new FileReader();
+                                        Reader.readAsDataURL(Items[i].getAsFile());
+                                        Reader.onload = () => {
+                                            RequestAPI("UploadImage", {
+                                                "Image": Reader.result
+                                            }, (ResponseData) => {
+                                                if (ResponseData.Success) {
+                                                    console.log(ResponseData.Data.ImageID);
+                                                }
+                                            });
+                                        };
+                                    }
+                                }
+                            }
                         });
                         let RefreshReply = (Silent = true) => {
                             if (!Silent) {
