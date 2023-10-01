@@ -685,6 +685,16 @@
                     "Description": "更换预编译接口，解决奇怪的Compile Error"
                 }
             ]
+        },
+        "0.3.190": {
+            "UpdateDate": 1696120459819,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 577,
+                    "Description": "修复短消息接受用户显示异常"
+                }
+            ]
         }
     }
 }
