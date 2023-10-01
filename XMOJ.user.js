@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.188
+// @version      0.3.189
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -19,7 +19,7 @@
 // @grant        unsafeWindow
 // @connect      api.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
-// @connect      runoob.com
+// @connect      cppinsights.io
 // @connect      127.0.0.1
 // @license      GPL
 // ==/UserScript==
@@ -2210,41 +2210,38 @@ else {
                     return false;
                 }
                 if (UtilityEnabled("CompileError")) {
-                    await new Promise((Resolve) => {
+                    let ResponseData = await new Promise((Resolve) => {
                         GM_xmlhttpRequest({
-                            url: "https://c.runoob.com/compile/12/",
-                            onload: async (Response) => {
-                                let Token = Response.responseText.substr(Response.responseText.indexOf("token") + 9, 32);
-                                await new Promise(async (Resolve) => {
-                                    GM_xmlhttpRequest({
-                                        method: "POST",
-                                        url: "https://www.runoob.com/try/compile2.php",
-                                        headers: {
-                                            "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-                                            "Referer": "https://c.runoob.com/"
-                                        },
-                                        data: "code=" + encodeURIComponent(Source) + "&token=" + Token + "&stdin=&language=7&fileext=cpp",
-                                        onload: (Response) => {
-                                            let ResponseJSON = JSON.parse(Response.responseText);
-                                            if (ResponseJSON["errors"].trim() != "") {
-                                                PassCheck.style.display = "";
-                                                ErrorElement.style.display = "block";
-                                                ErrorMessage.style.color = "red";
-                                                ErrorMessage.innerText = "编译错误：\n" + ResponseJSON["errors"].trim();
-                                                document.querySelector("#Submit").disabled = false;
-                                                document.querySelector("#Submit").value = "提交";
-                                            }
-                                            else {
-                                                PassCheck.click();
-                                            }
-                                            Resolve();
-                                        }
-                                    });
-                                });
-                                Resolve();
+                            method: "POST",
+                            url: "https://cppinsights.io/api/v1/transform",
+                            headers: {
+                                "content-type": "application/json;charset=UTF-8"
+                            },
+                            referrer: "https://cppinsights.io/",
+                            data: JSON.stringify({
+                                "insightsOptions": [
+                                    "cpp17"
+                                ],
+                                "code": Source
+                            }),
+                            onload: (Response) => {
+                                Resolve(Response);
                             }
                         });
                     });
+                    let Response = JSON.parse(ResponseData.responseText);
+                    if (Response.returncode) {
+                        PassCheck.style.display = "";
+                        ErrorElement.style.display = "block";
+                        ErrorMessage.style.color = "red";
+                        ErrorMessage.innerText = "编译错误：\n" + Response.stderr.trim();
+                        document.querySelector("#Submit").disabled = false;
+                        document.querySelector("#Submit").value = "提交";
+                        return false;
+                    }
+                    else {
+                        PassCheck.click();
+                    }
                 }
                 else {
                     PassCheck.click();
@@ -2853,7 +2850,7 @@ else {
                 document.querySelector("#login > div:nth-child(2) > div > input").value = localStorage.getItem("UserScript-Password");
                 LoginButton.click();
             }
-        } else if (location.pathname == "/contest_video.php"|| location.pathname == "/problem_video.php") {
+        } else if (location.pathname == "/contest_video.php" || location.pathname == "/problem_video.php") {
             let ScriptData = document.querySelector("body > div > div.mt-3 > center > script").innerHTML;
             if (document.getElementById("J_prismPlayer0").innerHTML != "") {
                 document.getElementById("J_prismPlayer0").innerHTML = "";

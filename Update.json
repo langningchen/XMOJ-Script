@@ -675,6 +675,16 @@
                     "Description": "修复无法显示problem_video.php"
                 }
             ]
+        },
+        "0.3.189": {
+            "UpdateDate": 1696120262725,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 576,
+                    "Description": "更换预编译接口，解决奇怪的Compile Error"
+                }
+            ]
         }
     }
 }
