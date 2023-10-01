@@ -695,6 +695,16 @@
                     "Description": "修复短消息接受用户显示异常"
                 }
             ]
+        },
+        "0.3.191": {
+            "UpdateDate": 1696120913676,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 578,
+                    "Description": "修复关闭时左上角仍显示为高老师的OJ"
+                }
+            ]
         }
     }
 }
