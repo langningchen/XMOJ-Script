@@ -665,6 +665,16 @@
                     "Description": "修复月赛界面下部缺失"
                 }
             ]
+        },
+        "0.3.188": {
+            "UpdateDate": 1696118603087,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 575,
+                    "Description": "fix #573"
+                }
+            ]
         }
     }
 }
