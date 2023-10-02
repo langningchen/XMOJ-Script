@@ -1223,6 +1223,11 @@ else {
                     RefreshCount();
                     addEventListener("focus", RefreshCount);
                 }
+
+                let Tables = document.getElementsByTagName("table");
+                for (let i = 0; i < Tables.length; i++) {
+                    TidyTable(Tables[i]);
+                }
             }
             Style.innerHTML += "code, kbd, pre, samp {";
             Style.innerHTML += "    font-family: monospace, Consolas, 'Courier New';";
