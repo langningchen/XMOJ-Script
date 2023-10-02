@@ -783,6 +783,16 @@
                     "Description": "Update XMOJ.user.js"
                 }
             ]
+        },
+        "0.3.197": {
+            "UpdateDate": 1696237931701,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 8,
+                    "Description": "Python small q patch 2"
+                }
+            ]
         }
     }
 }
