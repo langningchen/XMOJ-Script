@@ -30,7 +30,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
+const CaptchaSiteKey = "0x4AAAAAAALBT58IhyDViNmv";
 const AdminUserList = ["zhuchenrui2", "shanwenxiao", "admin"];
 
 let PurifyHTML = (Input) => {
