@@ -3702,14 +3702,33 @@ int main()
                         }
                     });
                     ContentElement.addEventListener("input", () => {
+                        ContentElement.classList.remove("is-invalid");
                         PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentElement.value));
                         RenderMathJax();
                     });
                     TitleElement.addEventListener("input", () => {
                         TitleElement.classList.remove("is-invalid");
                     });
-                    ContentElement.addEventListener("input", () => {
-                        ContentElement.classList.remove("is-invalid");
+                    ContentElement.addEventListener("paste", (Event) => {
+                        let Items = Event.clipboardData.items;
+                        if (Items.length !== 0) {
+                            for (let i = 0; i < Items.length; i++) {
+                                if (Items[i].type.indexOf("image") != -1) {
+                                    let Reader = new FileReader();
+                                    Reader.readAsDataURL(Items[i].getAsFile());
+                                    Reader.onload = () => {
+                                        RequestAPI("UploadImage", {
+                                            "Image": Reader.result
+                                        }, (ResponseData) => {
+                                            if (ResponseData.Success) {
+                                                ContentElement.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                ContentElement.dispatchEvent(new Event("input"));
+                                            }
+                                        });
+                                    };
+                                }
+                            }
+                        }
                     });
                     SubmitElement.addEventListener("click", async () => {
                         ErrorElement.style.display = "none";
@@ -4082,6 +4101,27 @@ int main()
                                         ContentEditor.addEventListener("input", () => {
                                             PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentEditor.value));
                                             RenderMathJax();
+                                        });
+                                        ContentElement.addEventListener("paste", (Event) => {
+                                            let Items = Event.clipboardData.items;
+                                            if (Items.length !== 0) {
+                                                for (let i = 0; i < Items.length; i++) {
+                                                    if (Items[i].type.indexOf("image") != -1) {
+                                                        let Reader = new FileReader();
+                                                        Reader.readAsDataURL(Items[i].getAsFile());
+                                                        Reader.onload = () => {
+                                                            RequestAPI("UploadImage", {
+                                                                "Image": Reader.result
+                                                            }, (ResponseData) => {
+                                                                if (ResponseData.Success) {
+                                                                    ContentElement.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                                    ContentElement.dispatchEvent(new Event("input"));
+                                                                }
+                                                            });
+                                                        };
+                                                    }
+                                                }
+                                            }
                                         });
                                     }
 
