@@ -3870,7 +3870,8 @@ int main()
                                                 "Image": Reader.result
                                             }, (ResponseData) => {
                                                 if (ResponseData.Success) {
-                                                    console.log(ResponseData.Data.ImageID);
+                                                    ContentElement.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                    ContentElement.dispatchEvent(new Event("input"));
                                                 }
                                             });
                                         };

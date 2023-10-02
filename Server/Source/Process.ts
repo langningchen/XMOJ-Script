@@ -4,6 +4,7 @@ import { Output } from "./Output";
 import { CaptchaSecretKey, GithubImagePAT } from "./Secret";
 import { CheerioAPI, load } from "cheerio";
 import CryptoJS from "crypto-js";
+import md5 from "crypto-js/md5";
 
 export class Process {
     private AdminUserList: Array<string> = ["chenlangning", "zhuchenrui2", "shanwenxiao"];
@@ -1037,7 +1038,7 @@ export class Process {
                     "User-Agent": "XMOJ-Script-Server"
                 },
                 body: JSON.stringify({
-                    message: "Upload image",
+                    message: `${this.Username} ${new Date().getFullYear()}/${new Date().getMonth() + 1}/${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`,
                     content: ImageData
                 })
             }).then((Response) => {
@@ -1060,24 +1061,24 @@ export class Process {
                 ImageID: ImageID
             });
         },
-        GetImage: async (Data: object): Promise<string> => {
+        GetImage: async (Data: object): Promise<Blob> => {
             const GithubImageRepo = "langningchen/XMOJ-Script-Pictures";
             ThrowErrorIfFailed(this.CheckParams(Data, {
                 "ImageID": "string"
             }));
-            return await fetch(new URL("https://api.github.com/repos/" + GithubImageRepo + "/contents/" + Data["ImageID"]), {
+            return await fetch(new URL("https://api.github.com/repos/" + GithubImageRepo + "/contents/" + Data["ImageID"] + "?1=1"), {
                 method: "GET",
                 headers: {
                     "Authorization": "Bearer " + GithubImagePAT,
-                    "Accept": "application/vnd.github.raw",
+                    "Accept": "application/vnd.github.v3.raw",
                     "User-Agent": "XMOJ-Script-Server"
                 }
             }).then((Response) => {
-                return Response.text();
+                return Response.blob();
             }).catch((Error) => {
                 Output.Error("Get image failed: " + Error + "\n" +
                     "ImageID : \"" + Data["ImageID"] + "\"\n");
-                return "";
+                return new Blob();
             });
         }
     };
@@ -1095,9 +1096,8 @@ export class Process {
                 throw new Result(false, "访问的页面不存在");
             }
             if (this.RequestData.method === "GET" && PathName === "GetImage") {
-                let ImageID = new URL(this.RequestData.url).searchParams.get("ImageID");
                 return new Response(await this.ProcessFunctions[PathName]({
-                    ImageID: ImageID
+                    ImageID: new URL(this.RequestData.url).searchParams.get("ImageID")
                 }), {
                     headers: {
                         "content-type": "image/png"
