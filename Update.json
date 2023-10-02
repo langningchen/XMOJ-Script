@@ -1,24 +1,10 @@
 {
     "UpdateHistory": {
-        "1.0.200": {
-            "UpdateDate": 1696254577068,
-            "Prerelease": false,
-            "UpdateContents": [
-                {
-                    "PR": 0,
-                    "Description": ""
-                }
-            ]
-        },
         "1.0.201": {
-            "UpdateDate": 1696254705419,
+            "UpdateDate": 1696246054517,
             "Prerelease": false,
-            "UpdateContents": [
-                {
-                    "PR": 26,
-                    "Description": "重大更新"
-                }
-            ]
+--            "UpdateContents": []
+++            "PR": 0
         }
     }
 }
