@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.194
+// @version      0.3.198
 // @description  XMOJ增强脚本
 // @author       @PythonSmall-Q
 // @namespace    https://github.com/PythonSmall-Q

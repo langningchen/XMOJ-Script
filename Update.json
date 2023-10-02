@@ -735,6 +735,74 @@
                     "Description": "修复题目中表格线条缺失"
                 }
             ]
+        },
+        "0.3.195": {
+            "UpdateDate": 1696235895109,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 5,
+                    "Description": "Update XMOJ.user.js"
+                }
+            ]
+        },
+        "0.3.196": {
+            "UpdateDate": 1696236634830,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 575,
+                    "Description": "修复无法显示problem_video.php"
+                },
+                {
+                    "PR": 576,
+                    "Description": "更换预编译接口，解决奇怪的Compile Error"
+                },
+                {
+                    "PR": 577,
+                    "Description": "修复短消息接受用户显示异常"
+                },
+                {
+                    "PR": 578,
+                    "Description": "修复关闭时左上角仍显示为高老师的OJ"
+                },
+                {
+                    "PR": 583,
+                    "Description": "自制图床，讨论区 Ctrl+V 上传图片"
+                },
+                {
+                    "PR": 586,
+                    "Description": "修复因为严格导致的 @ 不显示"
+                },
+                {
+                    "PR": 588,
+                    "Description": "修复题目中表格线条缺失"
+                },
+                {
+                    "PR": 5,
+                    "Description": "Update XMOJ.user.js"
+                }
+            ]
+        },
+        "0.3.197": {
+            "UpdateDate": 1696237931701,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 8,
+                    "Description": "Python small q patch 2"
+                }
+            ]
+        },
+        "0.3.198": {
+            "UpdateDate": 1696238317981,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 8,
+                    "Description": "Python small q patch 2"
+                }
+            ]
         }
     }
 }
