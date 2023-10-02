@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         小明的OJ增强脚本
-// @version      0.3.198
+// @version      0.3.199
 // @description  小明的OJ增强脚本
 // @author       @PythonSmall-Q & langningchen
 // @namespace    https://github/PythonSmall-Q
@@ -17,7 +17,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
 // @grant        unsafeWindow
-// @connect      api.xmoj-bbs.tech
+// @connect      api.seanoj.edu.eu.org
 // @connect      challenges.cloudflare.com
 // @connect      cppinsights.io
 // @connect      127.0.0.1
@@ -289,7 +289,7 @@ let RequestAPI = (Action, Data, CallBack) => {
     let DataString = JSON.stringify(PostData);
     GM_xmlhttpRequest({
         method: "POST",
-        url: "https://api.xmoj-bbs.tech/" + Action,
+        url: "https://api.seanoj.edu.eu.org/" + Action,
         // url: "http://127.0.0.1:8787/" + Action,
         headers: {
             "Content-Type": "application/json"
@@ -3732,7 +3732,7 @@ int main()
                                             "Image": Reader.result
                                         }, (ResponseData) => {
                                             if (ResponseData.Success) {
-                                                ContentElement.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                ContentElement.value += `![](https://api.seanoj.edu.eu.org/GetImage?ImageID=${ResponseData.Data.ImageID})`;
                                                 ContentElement.dispatchEvent(new Event("input"));
                                             }
                                         });
@@ -3900,7 +3900,7 @@ int main()
                                                 "Image": Reader.result
                                             }, (ResponseData) => {
                                                 if (ResponseData.Success) {
-                                                    ContentElement.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                    ContentElement.value += `![](https://api.seanoj.edu.eu.org/GetImage?ImageID=${ResponseData.Data.ImageID})`;
                                                     ContentElement.dispatchEvent(new Event("input"));
                                                 }
                                             });
@@ -4125,7 +4125,7 @@ int main()
                                                                 "Image": Reader.result
                                                             }, (ResponseData) => {
                                                                 if (ResponseData.Success) {
-                                                                    ContentEditor.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                                    ContentEditor.value += `![](https://api.seanoj.edu.eu.org/GetImage?ImageID=${ResponseData.Data.ImageID})`;
                                                                     ContentEditor.dispatchEvent(new Event("input"));
                                                                 }
                                                             });
