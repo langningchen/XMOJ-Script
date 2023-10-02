@@ -3,7 +3,12 @@
         "1.0.200": {
             "UpdateDate": 1696246054517,
             "Prerelease": false,
-            "PR": 0
+            "UpdateContents": [
+                {
+                    "PR": 0,
+                    "Description": "对不起，先前的更新历史已被删除"
+                }
+            ]
         }
     }
 }
