@@ -3,7 +3,7 @@
 // @version      0.2.200
 // @description  XMOJ增强脚本
 // @author       @PythonSmall-Q
-// @namespace    https://github.com/PythonSmall-Q
+// @namespace    https://github/langningchen
 // @match        http://*.xmoj.tech/*
 // @match        http://116.62.212.172/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
