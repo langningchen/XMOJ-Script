@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         XMOJ
+// @name         小明的OJ增强脚本
 // @version      0.3.195
-// @description  XMOJ增强脚本
-// @author       @langningchen
-// @namespace    https://github/langningchen
+// @description  小明的OJ增强脚本
+// @author       @PythonSmall-Q & langningchen
+// @namespace    https://github/PythonSmall-Q
 // @match        http://*.xmoj.tech/*
 // @match        http://116.62.212.172/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
