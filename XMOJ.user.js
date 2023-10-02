@@ -2,8 +2,8 @@
 // @name         XMOJ
 // @version      0.3.194
 // @description  XMOJ增强脚本
-// @author       @langningchen
-// @namespace    https://github/langningchen
+// @author       @PythonSmall-Q
+// @namespace    https://github.com/PythonSmall-Q
 // @match        http://*.xmoj.tech/*
 // @match        http://116.62.212.172/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
@@ -17,7 +17,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
 // @grant        unsafeWindow
-// @connect      api.xmoj-bbs.tech
+// @connect      api.seanoj.edu.eu.org
 // @connect      challenges.cloudflare.com
 // @connect      cppinsights.io
 // @connect      127.0.0.1
@@ -31,7 +31,7 @@
  */
 
 const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
-const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
+const AdminUserList = ["zhuchenrui2", "shanwenxiao", "admin"];
 
 let PurifyHTML = (Input) => {
     return DOMPurify.sanitize(Input, {
@@ -289,7 +289,7 @@ let RequestAPI = (Action, Data, CallBack) => {
     let DataString = JSON.stringify(PostData);
     GM_xmlhttpRequest({
         method: "POST",
-        url: "https://api.xmoj-bbs.tech/" + Action,
+        url: "https://api.seanoj.edu.eu.org/" + Action,
         // url: "http://127.0.0.1:8787/" + Action,
         headers: {
             "Content-Type": "application/json"
@@ -330,7 +330,7 @@ GM_registerMenuCommand("重置数据", () => {
 });
 
 let SearchParams = new URLSearchParams(location.search);
-let ServerURL = (UtilityEnabled("DebugMode") ? "https://langningchen.github.io/XMOJ-Script" : "https://web.xmoj-bbs.tech")
+let ServerURL = (UtilityEnabled("DebugMode") ? "https://PythonSmall-Q.github.io/XMOJ-Script" : "https://www.seanoj.edu.eu.org")
 let CurrentUsername = document.querySelector("#profile").innerText;
 CurrentUsername = CurrentUsername.replaceAll(/[^a-zA-Z0-9]/g, "");
 let IsAdmin = AdminUserList.indexOf(CurrentUsername) !== -1;
@@ -733,13 +733,13 @@ else {
                         let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                         UpdateDataCardListItem.className = "list-group-item";
                         UpdateDataCardListItem.innerHTML =
-                            "(<a href=\"https://github.com/langningchen/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
+                            "(<a href=\"https://github.com/PythonSmall-QQ/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
                             "#" + Data.UpdateContents[j].PR + "</a>) " +
                             Data.UpdateContents[j].Description;
                     }
                     let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                     UpdateDataCardLink.className = "card-link";
-                    UpdateDataCardLink.href = "https://github.com/langningchen/XMOJ-Script/releases/tag/" + Version;
+                    UpdateDataCardLink.href = "https://github.com/PythonSmall-Q/XMOJ-Script/releases/tag/" + Version;
                     UpdateDataCardLink.target = "_blank";
                     UpdateDataCardLink.innerText = "查看该版本";
                     new bootstrap.Modal(document.getElementById("UpdateModal")).show();
@@ -1027,7 +1027,7 @@ else {
                 let FeedbackCardLink = document.createElement("a");
                 FeedbackCardLink.className = "card-link";
                 FeedbackCardLink.innerText = "GitHub";
-                FeedbackCardLink.href = "https://github.com/langningchen/XMOJ-Script";
+                FeedbackCardLink.href = "https://github.com/PythonSmall-Q/XMOJ-Script";
                 FeedbackCardBody.appendChild(FeedbackCardLink);
                 FeedbackCard.appendChild(FeedbackCardBody);
                 Container.appendChild(FeedbackCard);
@@ -2297,13 +2297,13 @@ else {
                                 let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                                 UpdateDataCardListItem.className = "list-group-item";
                                 UpdateDataCardListItem.innerHTML =
-                                    "(<a href=\"https://github.com/langningchen/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
+                                    "(<a href=\"https://github.com/PythonSmall-Q/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
                                     "#" + Data.UpdateContents[j].PR + "</a>) " +
                                     Data.UpdateContents[j].Description;
                             }
                             let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                             UpdateDataCardLink.className = "card-link";
-                            UpdateDataCardLink.href = "https://github.com/langningchen/XMOJ-Script/releases/tag/" + Version;
+                            UpdateDataCardLink.href = "https://github.com/PythonSmall-Q/XMOJ-Script/releases/tag/" + Version;
                             UpdateDataCardLink.target = "_blank";
                             UpdateDataCardLink.innerText = "查看该版本";
                         }
@@ -3732,7 +3732,7 @@ int main()
                                             "Image": Reader.result
                                         }, (ResponseData) => {
                                             if (ResponseData.Success) {
-                                                ContentElement.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                ContentElement.value += `![](https://api.seanoj.edu.eu.org/GetImage?ImageID=${ResponseData.Data.ImageID})`;
                                                 ContentElement.dispatchEvent(new Event("input"));
                                             }
                                         });
@@ -3900,7 +3900,7 @@ int main()
                                                 "Image": Reader.result
                                             }, (ResponseData) => {
                                                 if (ResponseData.Success) {
-                                                    ContentElement.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                    ContentElement.value += `![](https://api.seanoj.edu.eu.org/GetImage?ImageID=${ResponseData.Data.ImageID})`;
                                                     ContentElement.dispatchEvent(new Event("input"));
                                                 }
                                             });
@@ -4125,7 +4125,7 @@ int main()
                                                                 "Image": Reader.result
                                                             }, (ResponseData) => {
                                                                 if (ResponseData.Success) {
-                                                                    ContentEditor.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                                    ContentEditor.value += `![](https://api.seanoj.edu.eu.org/GetImage?ImageID=${ResponseData.Data.ImageID})`;
                                                                     ContentEditor.dispatchEvent(new Event("input"));
                                                                 }
                                                             });
