@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.187
+// @version      0.3.193
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -19,7 +19,7 @@
 // @grant        unsafeWindow
 // @connect      api.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
-// @connect      runoob.com
+// @connect      cppinsights.io
 // @connect      127.0.0.1
 // @license      GPL
 // ==/UserScript==
@@ -33,6 +33,12 @@
 const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
 const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
 
+let PurifyHTML = (Input) => {
+    return DOMPurify.sanitize(Input, {
+        "ALLOWED_TAGS": ["a", "b", "blockquote", "br", "code", "dd", "del", "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "hr", "i", "img", "ins", "kbd", "li", "ol", "p", "pre", "q", "rp", "rt", "ruby", "s", "samp", "strike", "strong", "sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "tt", "ul", "var"],
+        "ALLOWED_ATTR": ["abbr", "accept", "accept-charset", "accesskey", "action", "align", "alt", "axis", "border", "cellpadding", "cellspacing", "char", "charoff", "charset", "checked", "cite", "clear", "color", "cols", "colspan", "compact", "coords", "datetime", "dir", "disabled", "enctype", "for", "frame", "headers", "height", "href", "hreflang", "hspace", "ismap", "itemprop", "label", "lang", "longdesc", "maxlength", "media", "method", "multiple", "name", "nohref", "noshade", "nowrap", "prompt", "readonly", "rel", "rev", "rows", "rowspan", "rules", "scope", "selected", "shape", "size", "span", "src", "start", "summary", "tabindex", "target", "title", "type", "usemap", "valign", "value", "vspace", "width"]
+    });
+}
 let GetRelativeTime = (Input) => {
     Input = new Date(Input);
     let Now = new Date().getTime();
@@ -47,17 +53,22 @@ let GetRelativeTime = (Input) => {
     else { RelativeName = Math.floor((Now - Input) / 1000 / 60 / 60 / 24 / 365) + "年前"; }
     return "<span title=\"" + Input.toLocaleString() + "\">" + RelativeName + "</span>";
 };
-let RenderMathJax = () => {
-    var ScriptElement = document.createElement("script");
-    ScriptElement.id = "MathJax-script";
-    ScriptElement.type = "text/javascript";
-    ScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/mathjax/3.0.5/es5/tex-chtml.js";
-    document.body.appendChild(ScriptElement);
-    ScriptElement.onload = () => {
-        MathJax.startup.input[0].findTeX.options.inlineMath.push(["$", "$"]);
-        MathJax.startup.input[0].findTeX.getPatterns();
-        MathJax.typeset();
-    };
+let RenderMathJax = async () => {
+    if (document.getElementById("MathJax-script") === null) {
+        var ScriptElement = document.createElement("script");
+        ScriptElement.id = "MathJax-script";
+        ScriptElement.type = "text/javascript";
+        ScriptElement.src = "https://cdn.bootcdn.net/ajax/libs/mathjax/3.0.5/es5/tex-chtml.js";
+        document.body.appendChild(ScriptElement);
+        await new Promise((Resolve) => {
+            ScriptElement.onload = () => {
+                Resolve();
+            };
+        });
+    }
+    MathJax.startup.input[0].findTeX.options.inlineMath.push(["$", "$"]);
+    MathJax.startup.input[0].findTeX.getPatterns();
+    MathJax.typeset();
 };
 let GetUserInfo = async (Username) => {
     if (localStorage.getItem("UserScript-User-" + Username + "-UserRating") != null &&
@@ -440,7 +451,7 @@ else {
             }
             document.querySelector("nav").className = "navbar navbar-expand-lg bg-body-tertiary";
             document.querySelector("#navbar > ul:nth-child(1)").classList = "navbar-nav me-auto mb-2 mb-lg-0";
-            document.querySelector("body > div > nav > div > div.navbar-header").outerHTML = `<a class="navbar-brand" href="http://www.xmoj.tech/">高老师的OJ</a><button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"><span class="navbar-toggler-icon"></span></button>`;
+            document.querySelector("body > div > nav > div > div.navbar-header").outerHTML = `<a class="navbar-brand" href="http://www.xmoj.tech/">${UtilityEnabled("ReplaceXM") ? "高老师" : "小明"}的OJ</a><button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"><span class="navbar-toggler-icon"></span></button>`;
             document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li").classList = "nav-item dropdown";
             document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > a").className = "nav-link dropdown-toggle";
             document.querySelector("#navbar > ul.nav.navbar-nav.navbar-right > li > a > span.caret").remove();
@@ -2210,41 +2221,38 @@ else {
                     return false;
                 }
                 if (UtilityEnabled("CompileError")) {
-                    await new Promise((Resolve) => {
+                    let ResponseData = await new Promise((Resolve) => {
                         GM_xmlhttpRequest({
-                            url: "https://c.runoob.com/compile/12/",
-                            onload: async (Response) => {
-                                let Token = Response.responseText.substr(Response.responseText.indexOf("token") + 9, 32);
-                                await new Promise(async (Resolve) => {
-                                    GM_xmlhttpRequest({
-                                        method: "POST",
-                                        url: "https://www.runoob.com/try/compile2.php",
-                                        headers: {
-                                            "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-                                            "Referer": "https://c.runoob.com/"
-                                        },
-                                        data: "code=" + encodeURIComponent(Source) + "&token=" + Token + "&stdin=&language=7&fileext=cpp",
-                                        onload: (Response) => {
-                                            let ResponseJSON = JSON.parse(Response.responseText);
-                                            if (ResponseJSON["errors"].trim() != "") {
-                                                PassCheck.style.display = "";
-                                                ErrorElement.style.display = "block";
-                                                ErrorMessage.style.color = "red";
-                                                ErrorMessage.innerText = "编译错误：\n" + ResponseJSON["errors"].trim();
-                                                document.querySelector("#Submit").disabled = false;
-                                                document.querySelector("#Submit").value = "提交";
-                                            }
-                                            else {
-                                                PassCheck.click();
-                                            }
-                                            Resolve();
-                                        }
-                                    });
-                                });
-                                Resolve();
+                            method: "POST",
+                            url: "https://cppinsights.io/api/v1/transform",
+                            headers: {
+                                "content-type": "application/json;charset=UTF-8"
+                            },
+                            referrer: "https://cppinsights.io/",
+                            data: JSON.stringify({
+                                "insightsOptions": [
+                                    "cpp17"
+                                ],
+                                "code": Source
+                            }),
+                            onload: (Response) => {
+                                Resolve(Response);
                             }
                         });
                     });
+                    let Response = JSON.parse(ResponseData.responseText);
+                    if (Response.returncode) {
+                        PassCheck.style.display = "";
+                        ErrorElement.style.display = "block";
+                        ErrorMessage.style.color = "red";
+                        ErrorMessage.innerText = "编译错误：\n" + Response.stderr.trim();
+                        document.querySelector("#Submit").disabled = false;
+                        document.querySelector("#Submit").value = "提交";
+                        return false;
+                    }
+                    else {
+                        PassCheck.click();
+                    }
                 }
                 else {
                     PassCheck.click();
@@ -2853,7 +2861,7 @@ else {
                 document.querySelector("#login > div:nth-child(2) > div > input").value = localStorage.getItem("UserScript-Password");
                 LoginButton.click();
             }
-        } else if (location.pathname == "/contest_video.php") {
+        } else if (location.pathname == "/contest_video.php" || location.pathname == "/problem_video.php") {
             let ScriptData = document.querySelector("body > div > div.mt-3 > center > script").innerHTML;
             if (document.getElementById("J_prismPlayer0").innerHTML != "") {
                 document.getElementById("J_prismPlayer0").innerHTML = "";
@@ -3421,7 +3429,7 @@ int main()
             else {
                 document.querySelector("body > div > div.mt-3").innerHTML = `<div class="row g-2 mb-3">
                         <div class="col-md form-floating">
-                            <input class="form-control" id="ToUser" readonly>
+                            <div class="form-control" id="ToUser"></div>
                             <label for="ToUser">接收用户</label>
                         </div>
                         <div class="col-md form-floating">
@@ -3472,7 +3480,7 @@ int main()
                                 let UsernameCell = document.createElement("td"); Row.appendChild(UsernameCell);
                                 GetUsernameHTML(UsernameCell, Data[i].FromUser);
                                 let ContentCell = document.createElement("td"); Row.appendChild(ContentCell);
-                                ContentCell.innerHTML = DOMPurify.sanitize(Data[i].Content);
+                                ContentCell.innerHTML = PurifyHTML(Data[i].Content);
                                 let SendTimeCell = document.createElement("td"); Row.appendChild(SendTimeCell);
                                 SendTimeCell.innerHTML = GetRelativeTime(Data[i].SendTime);
                                 let IsReadCell = document.createElement("td"); Row.appendChild(IsReadCell);
@@ -3700,14 +3708,33 @@ int main()
                         }
                     });
                     ContentElement.addEventListener("input", () => {
-                        PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentElement.value));
+                        ContentElement.classList.remove("is-invalid");
+                        PreviewTab.innerHTML = PurifyHTML(marked.parse(ContentElement.value));
                         RenderMathJax();
                     });
                     TitleElement.addEventListener("input", () => {
                         TitleElement.classList.remove("is-invalid");
                     });
-                    ContentElement.addEventListener("input", () => {
-                        ContentElement.classList.remove("is-invalid");
+                    ContentElement.addEventListener("paste", (Event) => {
+                        let Items = Event.clipboardData.items;
+                        if (Items.length !== 0) {
+                            for (let i = 0; i < Items.length; i++) {
+                                if (Items[i].type.indexOf("image") != -1) {
+                                    let Reader = new FileReader();
+                                    Reader.readAsDataURL(Items[i].getAsFile());
+                                    Reader.onload = () => {
+                                        RequestAPI("UploadImage", {
+                                            "Image": Reader.result
+                                        }, (ResponseData) => {
+                                            if (ResponseData.Success) {
+                                                ContentElement.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                ContentElement.dispatchEvent(new Event("input"));
+                                            }
+                                        });
+                                    };
+                                }
+                            }
+                        }
                     });
                     SubmitElement.addEventListener("click", async () => {
                         ErrorElement.style.display = "none";
@@ -3853,8 +3880,29 @@ int main()
                             }
                         });
                         ContentElement.addEventListener("input", () => {
-                            PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentElement.value));
+                            PreviewTab.innerHTML = PurifyHTML(marked.parse(ContentElement.value));
                             RenderMathJax();
+                        });
+                        ContentElement.addEventListener("paste", (Event) => {
+                            let Items = Event.clipboardData.items;
+                            if (Items.length !== 0) {
+                                for (let i = 0; i < Items.length; i++) {
+                                    if (Items[i].type.indexOf("image") != -1) {
+                                        let Reader = new FileReader();
+                                        Reader.readAsDataURL(Items[i].getAsFile());
+                                        Reader.onload = () => {
+                                            RequestAPI("UploadImage", {
+                                                "Image": Reader.result
+                                            }, (ResponseData) => {
+                                                if (ResponseData.Success) {
+                                                    ContentElement.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                    ContentElement.dispatchEvent(new Event("input"));
+                                                }
+                                            });
+                                        };
+                                    }
+                                }
+                            }
                         });
                         let RefreshReply = (Silent = true) => {
                             if (!Silent) {
@@ -4029,7 +4077,7 @@ int main()
                                         let CardBodyHRElement = document.createElement("hr"); CardBodyElement.appendChild(CardBodyHRElement);
 
                                         let ReplyContentElement = document.createElement("div"); CardBodyElement.appendChild(ReplyContentElement);
-                                        ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content.replaceAll(/@([a-zA-Z0-9]+)/g, `<b>@</b><span class="ms-1 Usernames">$1</span>`)));
+                                        ReplyContentElement.innerHTML = PurifyHTML(marked.parse(Replies[i].Content)).replaceAll(/@([a-zA-Z0-9]+)/g, `<b>@</b><span class="ms-1 Usernames">$1</span>`);
                                         if (Replies[i].EditTime != null) {
                                             if (Replies[i].EditPerson !== CurrentUsername) {
                                                 ReplyContentElement.innerHTML += `<span class="text-muted" style="font-size: 12px">最后编辑于${GetRelativeTime(Replies[i].EditTime)}</span>`;
@@ -4055,10 +4103,31 @@ int main()
                                         });
                                         let PreviewTab = document.createElement("div"); ContentEditElement.appendChild(PreviewTab);
                                         PreviewTab.className = "form-control col-6";
-                                        PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentEditor.value));
+                                        PreviewTab.innerHTML = PurifyHTML(marked.parse(ContentEditor.value));
                                         ContentEditor.addEventListener("input", () => {
-                                            PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentEditor.value));
+                                            PreviewTab.innerHTML = PurifyHTML(marked.parse(ContentEditor.value));
                                             RenderMathJax();
+                                        });
+                                        ContentEditor.addEventListener("paste", (Event) => {
+                                            let Items = Event.clipboardData.items;
+                                            if (Items.length !== 0) {
+                                                for (let i = 0; i < Items.length; i++) {
+                                                    if (Items[i].type.indexOf("image") != -1) {
+                                                        let Reader = new FileReader();
+                                                        Reader.readAsDataURL(Items[i].getAsFile());
+                                                        Reader.onload = () => {
+                                                            RequestAPI("UploadImage", {
+                                                                "Image": Reader.result
+                                                            }, (ResponseData) => {
+                                                                if (ResponseData.Success) {
+                                                                    ContentEditor.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                                    ContentEditor.dispatchEvent(new Event("input"));
+                                                                }
+                                                            });
+                                                        };
+                                                    }
+                                                }
+                                            }
                                         });
                                     }
 

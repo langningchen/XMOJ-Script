@@ -665,6 +665,66 @@
                     "Description": "修复月赛界面下部缺失"
                 }
             ]
+        },
+        "0.3.188": {
+            "UpdateDate": 1696118603087,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 575,
+                    "Description": "修复无法显示problem_video.php"
+                }
+            ]
+        },
+        "0.3.189": {
+            "UpdateDate": 1696120262725,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 576,
+                    "Description": "更换预编译接口，解决奇怪的Compile Error"
+                }
+            ]
+        },
+        "0.3.190": {
+            "UpdateDate": 1696120459819,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 577,
+                    "Description": "修复短消息接受用户显示异常"
+                }
+            ]
+        },
+        "0.3.191": {
+            "UpdateDate": 1696120913676,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 578,
+                    "Description": "修复关闭时左上角仍显示为高老师的OJ"
+                }
+            ]
+        },
+        "0.3.192": {
+            "UpdateDate": 1696222135180,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 583,
+                    "Description": "自制图床，讨论区 Ctrl+V 上传图片"
+                }
+            ]
+        },
+        "0.3.193": {
+            "UpdateDate": 1696227624991,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 586,
+                    "Description": "修复因为严格导致的 @ 不显示"
+                }
+            ]
         }
     }
 }
