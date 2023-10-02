@@ -813,6 +813,16 @@
                     "Description": "更换链接"
                 }
             ]
+        },
+        "0.3.200": {
+            "UpdateDate": 1696240216754,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 13,
+                    "Description": "Update XMOJ.user.js"
+                }
+            ]
         }
     }
 }
