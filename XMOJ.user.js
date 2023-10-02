@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.193
+// @version      0.3.194
 // @description  XMOJ增强脚本
 // @author       @langningchen
 // @namespace    https://github/langningchen
@@ -1222,6 +1222,11 @@ else {
                     };
                     RefreshCount();
                     addEventListener("focus", RefreshCount);
+                }
+
+                let Tables = document.getElementsByTagName("table");
+                for (let i = 0; i < Tables.length; i++) {
+                    TidyTable(Tables[i]);
                 }
             }
             Style.innerHTML += "code, kbd, pre, samp {";
