@@ -4102,7 +4102,7 @@ int main()
                                             PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentEditor.value));
                                             RenderMathJax();
                                         });
-                                        ContentElement.addEventListener("paste", (Event) => {
+                                        ContentEditor.addEventListener("paste", (Event) => {
                                             let Items = Event.clipboardData.items;
                                             if (Items.length !== 0) {
                                                 for (let i = 0; i < Items.length; i++) {
@@ -4114,8 +4114,8 @@ int main()
                                                                 "Image": Reader.result
                                                             }, (ResponseData) => {
                                                                 if (ResponseData.Success) {
-                                                                    ContentElement.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
-                                                                    ContentElement.dispatchEvent(new Event("input"));
+                                                                    ContentEditor.value += `![](https://api.xmoj-bbs.tech/GetImage?ImageID=${ResponseData.Data.ImageID})`;
+                                                                    ContentEditor.dispatchEvent(new Event("input"));
                                                                 }
                                                             });
                                                         };
