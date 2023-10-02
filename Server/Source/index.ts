@@ -4,11 +4,7 @@ import { Database } from "./Database";
 export default {
     async fetch(RequestData: Request, Environment, Context) {
         let Processor = new Process(RequestData, Environment);
-        return new Response(JSON.stringify(await Processor.Process()), {
-            headers: {
-                "content-type": "application/json;charset=UTF-8"
-            }
-        });
+        return await Processor.Process();
     },
     async scheduled(Event, Environment, Context) {
         let XMOJDatabase = new Database(Environment.DB);
