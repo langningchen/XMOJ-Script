@@ -961,6 +961,7 @@ else {
                     return List;
                 };
                 UtilitiesCardBody.appendChild(CreateList([
+                    { "ID": "ScholarMode", "Type": "A", "Name": "学术模式（开启后状态：关闭获取数据功能）"}.
                     { "ID": "ACMRank", "Type": "A", "Name": "比赛ACM排名，并且能下载ACM排名" },
                     { "ID": "Discussion", "Type": "F", "Name": "恢复讨论与短消息功能" },
                     { "ID": "MoreSTD", "Type": "F", "Name": "查看到更多标程" },
@@ -2940,8 +2941,11 @@ else {
                     let ApplyDiv = document.getElementById("apply_data").parentElement;
                     let GetDataButton = document.createElement("button");
                     GetDataButton.className = "ms-2 btn btn-outline-secondary";
-                    GetDataButton.innerText = "获取数据";
-                    ApplyDiv.appendChild(GetDataButton);
+                    if(!utilityEnabled()){
+                        GetDataButton.innerText = "获取数据";
+                        ApplyDiv.appendChild(GetDataButton);
+                    }
+                    else{
                     GetDataButton.addEventListener("click", async () => {
                         GetDataButton.disabled = true;
                         GetDataButton.innerText = "正在获取数据...";
@@ -3044,6 +3048,7 @@ int main()
                             ApplyElements[i].style.display = (ApplyElements[i].style.display == "block" ? "" : "block");
                         }
                     });
+                    }
                 }
                 let ApplyElements = document.getElementsByClassName("data");
                 for (let i = 0; i < ApplyElements.length; i++) {
