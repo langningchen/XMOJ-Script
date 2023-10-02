@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         小明的OJ增强脚本
-// @version      0.3.196
+// @version      0.3.197
 // @description  小明的OJ增强脚本
 // @author       @PythonSmall-Q & langningchen
 // @namespace    https://github/PythonSmall-Q
@@ -330,7 +330,7 @@ GM_registerMenuCommand("重置数据", () => {
 });
 
 let SearchParams = new URLSearchParams(location.search);
-let ServerURL = (UtilityEnabled("DebugMode") ? "https://langningchen.github.io/XMOJ-Script" : "https://web.xmoj-bbs.tech")
+let ServerURL = (UtilityEnabled("DebugMode") ? "https://pythonsmall-q.github.io/XMOJ-Script/" : "https://web.seanoj.edu.eu.org")
 let CurrentUsername = document.querySelector("#profile").innerText;
 CurrentUsername = CurrentUsername.replaceAll(/[^a-zA-Z0-9]/g, "");
 let IsAdmin = AdminUserList.indexOf(CurrentUsername) !== -1;

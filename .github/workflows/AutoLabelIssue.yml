@@ -16,3 +16,4 @@ jobs:
           cd ./Update
           npm install
           node ./AutoLabel.js ${{ secrets.GITHUB_TOKEN }}
+	
