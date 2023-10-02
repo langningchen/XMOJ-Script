@@ -1,9 +1,9 @@
 {
     "UpdateHistory": {
         "0.2.200": {
+            "PR": 0,
             "UpdateDate": 1696246054517,
-            "Prerelease": false,
-            "UpdateContents": []
+            "Prerelease": false
         }
     }
 }
