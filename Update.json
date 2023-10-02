@@ -1,7 +1,17 @@
 {
     "UpdateHistory": {
-        "0.2.200": {
-            "UpdateDate": 1696246054517,
+        "1.0.200": {
+            "UpdateDate": 1696254577068,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 0,
+                    "Description": ""
+                }
+            ]
+        },
+        "1.0.201": {
+            "UpdateDate": 1696255471868,
             "Prerelease": false,
             "UpdateContents": []
         }
