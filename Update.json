@@ -715,6 +715,16 @@
                     "Description": "自制图床，讨论区 Ctrl+V 上传图片"
                 }
             ]
+        },
+        "0.3.193": {
+            "UpdateDate": 1696227624991,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 586,
+                    "Description": "修复因为严格导致的 @ 不显示"
+                }
+            ]
         }
     }
 }
