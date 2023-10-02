@@ -735,6 +735,16 @@
                     "Description": "修复题目中表格线条缺失"
                 }
             ]
+        },
+        "0.3.195": {
+            "UpdateDate": 1696229484579,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 591,
+                    "Description": "582 feature request scholar mode"
+                }
+            ]
         }
     }
 }
