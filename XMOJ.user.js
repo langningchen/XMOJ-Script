@@ -18,6 +18,7 @@
 // @grant        GM_setClipboard
 // @grant        unsafeWindow
 // @connect      api.seanoj.edu.eu.org
+// @connect      api.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
 // @connect      cppinsights.io
 // @connect      127.0.0.1
@@ -30,8 +31,8 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
-const AdminUserList = ["zhuchenrui2", "shanwenxiao", "admin"];
+const CaptchaSiteKey = "0x4AAAAAAALBT58IhyDViNmv";
+const AdminUserList = ["zhuchenrui2", "shanwenxiao", "admin", "wangmaohua"];
 
 let PurifyHTML = (Input) => {
     return DOMPurify.sanitize(Input, {
