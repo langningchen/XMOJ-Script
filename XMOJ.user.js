@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         小明的OJ增强脚本
+// @name         XMOJ
 // @version      0.3.200
-// @description  小明的OJ增强脚本
-// @author       @PythonSmall-Q & langningchen
-// @namespace    https://github/PythonSmall-Q
+// @description  XMOJ增强脚本
+// @author       @PythonSmall-Q
+// @namespace    https://github.com/PythonSmall-Q
 // @match        http://*.xmoj.tech/*
 // @match        http://116.62.212.172/*
 // @require      https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
@@ -31,7 +31,7 @@
  */
 
 const CaptchaSiteKey = "0x4AAAAAAALBT58IhyDViNmv";
-const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
+const AdminUserList = ["zhuchenrui2", "shanwenxiao", "admin"];
 
 let PurifyHTML = (Input) => {
     return DOMPurify.sanitize(Input, {
@@ -330,7 +330,7 @@ GM_registerMenuCommand("重置数据", () => {
 });
 
 let SearchParams = new URLSearchParams(location.search);
-let ServerURL = (UtilityEnabled("DebugMode") ? "https://pythonsmall-q.github.io/XMOJ-Script/" : "https://web.seanoj.edu.eu.org")
+let ServerURL = (UtilityEnabled("DebugMode") ? "https://PythonSmall-Q.github.io/XMOJ-Script" : "https://www.seanoj.edu.eu.org")
 let CurrentUsername = document.querySelector("#profile").innerText;
 CurrentUsername = CurrentUsername.replaceAll(/[^a-zA-Z0-9]/g, "");
 let IsAdmin = AdminUserList.indexOf(CurrentUsername) !== -1;

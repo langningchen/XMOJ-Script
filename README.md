@@ -1,12 +1,11 @@
-![wakatime](https://wakatime.com/badge/github/langningchen/XMOJ-Script.svg)
-![Release](https://github.com/langningchen/XMOJ-Script/actions/workflows/Release.yml/badge.svg)
-![Prerelease](https://github.com/langningchen/XMOJ-Script/actions/workflows/Prerelease.yml/badge.svg)
-![GitHub](https://img.shields.io/github/license/langningchen/XMOJ-Script)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/langningchen/XMOJ-Script)
-![GitHub release](https://img.shields.io/github/v/release/langningchen/XMOJ-Script)
-![GitHub issues](https://img.shields.io/github/issues/langningchen/XMOJ-Script)
+![Release](https://github.com/PythonSmall-Q/XMOJ-Script/actions/workflows/Release.yml/badge.svg)
+![Prerelease](https://github.com/PythonSmall-Q/XMOJ-Script/actions/workflows/Prerelease.yml/badge.svg)
+![GitHub](https://img.shields.io/github/license/PythonSmall-Q/XMOJ-Script)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/PythonSmall-Q/XMOJ-Script)
+![GitHub release](https://img.shields.io/github/v/release/PythonSmall-Q/XMOJ-Script)
+![GitHub issues](https://img.shields.io/github/issues/PythonSmall-Q/XMOJ-Script)
 
-[点击此处访问官网查看更多内容](https://web.xmoj-bbs.tech)
+[点击此处访问官网查看更多内容](https://www.seanoj.edu.eu.org)
 
 ### 介绍
 
@@ -78,7 +77,7 @@
 
 
 ### 安装
-请参考 [官网介绍](https://web.xmoj-bbs.tech) 。
+请参考 [官网介绍](https://www.seanoj.edu.eu.org) 。
 
 ### 加入我们
 您想为我们的脚本添砖加瓦吗？快加入我们，为小明的OJ用户创造更美好的环境！（具体要求参见Code Of Conduct）
