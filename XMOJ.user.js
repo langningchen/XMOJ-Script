@@ -961,7 +961,7 @@ else {
                     return List;
                 };
                 UtilitiesCardBody.appendChild(CreateList([
-                    { "ID": "ScholarMode", "Type": "A", "Name": "学术模式（开启后状态：关闭获取数据功能）"}.
+                    { "ID": "ScholarMode", "Type": "A", "Name": "学术模式（开启后状态：关闭获取数据功能）"},
                     { "ID": "ACMRank", "Type": "A", "Name": "比赛ACM排名，并且能下载ACM排名" },
                     { "ID": "Discussion", "Type": "F", "Name": "恢复讨论与短消息功能" },
                     { "ID": "MoreSTD", "Type": "F", "Name": "查看到更多标程" },
