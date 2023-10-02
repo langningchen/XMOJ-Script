@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.3.198
+// @version      0.3.200
 // @description  XMOJ增强脚本
 // @author       @PythonSmall-Q
 // @namespace    https://github.com/PythonSmall-Q
@@ -30,7 +30,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
+const CaptchaSiteKey = "0x4AAAAAAALBT58IhyDViNmv";
 const AdminUserList = ["zhuchenrui2", "shanwenxiao", "admin"];
 
 let PurifyHTML = (Input) => {
@@ -733,7 +733,7 @@ else {
                         let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                         UpdateDataCardListItem.className = "list-group-item";
                         UpdateDataCardListItem.innerHTML =
-                            "(<a href=\"https://github.com/PythonSmall-QQ/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
+                            "(<a href=\"https://github.com/PythonSmall-Q/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
                             "#" + Data.UpdateContents[j].PR + "</a>) " +
                             Data.UpdateContents[j].Description;
                     }
