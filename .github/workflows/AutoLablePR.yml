@@ -7,6 +7,8 @@ on:
       - synchronize
 jobs:
   AutoLabelPR:
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/labeler@v4
