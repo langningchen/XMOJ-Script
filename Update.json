@@ -1,14 +1,9 @@
 {
     "UpdateHistory": {
         "0.2.200": {
-            "UpdateDate": 0,
+            "UpdateDate": 1696246054517,
             "Prerelease": false,
-            "UpdateContents": [
-                {
-                    "PR": 0,
-                    "Description": "对不起，先前的更新历史已被删除"
-                }
-            ]
+            "UpdateContents": []
         }
     }
 }
