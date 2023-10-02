@@ -735,6 +735,40 @@
                     "Description": "修复题目中表格线条缺失"
                 }
             ]
+        },
+        "0.3.195": {
+            "UpdateDate": 1696235039959,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 575,
+                    "Description": "修复无法显示problem_video.php"
+                },
+                {
+                    "PR": 576,
+                    "Description": "更换预编译接口，解决奇怪的Compile Error"
+                },
+                {
+                    "PR": 577,
+                    "Description": "修复短消息接受用户显示异常"
+                },
+                {
+                    "PR": 578,
+                    "Description": "修复关闭时左上角仍显示为高老师的OJ"
+                },
+                {
+                    "PR": 583,
+                    "Description": "自制图床，讨论区 Ctrl+V 上传图片"
+                },
+                {
+                    "PR": 586,
+                    "Description": "修复因为严格导致的 @ 不显示"
+                },
+                {
+                    "PR": 588,
+                    "Description": "修复题目中表格线条缺失"
+                }
+            ]
         }
     }
 }
