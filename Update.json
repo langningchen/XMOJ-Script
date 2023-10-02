@@ -5,8 +5,18 @@
             "Prerelease": true,
             "UpdateContents": [
                 {
+                    "PR": 0,
+                    "Description": ""
+                }
+            ]
+        },
+        "1.0.201": {
+            "UpdateDate": 1696254577068,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
                     "PR": 26,
-                    "Description": "Trigger"
+                    "Description": "重大更新"
                 }
             ]
         }
