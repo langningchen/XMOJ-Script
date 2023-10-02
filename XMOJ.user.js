@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.200
+// @version      1.0.201
 // @description  XMOJ增强脚本
 // @author       @PythonSmall-Q
 // @namespace    https://github/langningchen
@@ -18,6 +18,7 @@
 // @grant        GM_setClipboard
 // @grant        unsafeWindow
 // @connect      api.seanoj.edu.eu.org
+// @connect      api.xmoj-bbs.tech
 // @connect      challenges.cloudflare.com
 // @connect      cppinsights.io
 // @connect      127.0.0.1
@@ -31,7 +32,7 @@
  */
 
 const CaptchaSiteKey = "0x4AAAAAAALBT58IhyDViNmv";
-const AdminUserList = ["zhuchenrui2", "shanwenxiao", "admin"];
+const AdminUserList = ["zhuchenrui2", "shanwenxiao", "admin", "wangmaohua"];
 
 let PurifyHTML = (Input) => {
     return DOMPurify.sanitize(Input, {
