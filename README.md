@@ -5,7 +5,7 @@
 ![GitHub release](https://img.shields.io/github/v/release/PythonSmall-Q/XMOJ-Script)
 ![GitHub issues](https://img.shields.io/github/issues/PythonSmall-Q/XMOJ-Script)
 
-[点击此处访问官网查看更多内容](https://www.seanoj.edu.eu.org)
+[点击此处访问官网查看更多内容](https://web.xmoj-bbs.tech)
 
 
 ### 介绍
@@ -78,7 +78,7 @@
 
 
 ### 安装
-请参考 [官网介绍](https://www.seanoj.edu.eu.org) 。
+请参考 [官网介绍](https://web.xmoj-bbs.tech) 。
 
 ### 加入我们
 您想为我们的脚本添砖加瓦吗？快加入我们，为小明的OJ用户创造更美好的环境！（具体要求参见Code Of Conduct）
