@@ -33,6 +33,12 @@
 const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
 const AdminUserList = ["chenlangning", "zhuchenrui2", "shanwenxiao", "admin"];
 
+let PurifyHTML = (Input) => {
+    return DOMPurify.sanitize(Input, {
+        "ALLOWED_TAGS": ["a", "b", "blockquote", "br", "code", "dd", "del", "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "hr", "i", "img", "ins", "kbd", "li", "ol", "p", "pre", "q", "rp", "rt", "ruby", "s", "samp", "strike", "strong", "sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "tt", "ul", "var"],
+        "ALLOWED_ATTR": ["abbr", "accept", "accept-charset", "accesskey", "action", "align", "alt", "axis", "border", "cellpadding", "cellspacing", "char", "charoff", "charset", "checked", "cite", "clear", "color", "cols", "colspan", "compact", "coords", "datetime", "dir", "disabled", "enctype", "for", "frame", "headers", "height", "href", "hreflang", "hspace", "ismap", "itemprop", "label", "lang", "longdesc", "maxlength", "media", "method", "multiple", "name", "nohref", "noshade", "nowrap", "prompt", "readonly", "rel", "rev", "rows", "rowspan", "rules", "scope", "selected", "shape", "size", "span", "src", "start", "summary", "tabindex", "target", "title", "type", "usemap", "valign", "value", "vspace", "width"]
+    });
+}
 let GetRelativeTime = (Input) => {
     Input = new Date(Input);
     let Now = new Date().getTime();
@@ -3474,7 +3480,7 @@ int main()
                                 let UsernameCell = document.createElement("td"); Row.appendChild(UsernameCell);
                                 GetUsernameHTML(UsernameCell, Data[i].FromUser);
                                 let ContentCell = document.createElement("td"); Row.appendChild(ContentCell);
-                                ContentCell.innerHTML = DOMPurify.sanitize(Data[i].Content);
+                                ContentCell.innerHTML = PurifyHTML(Data[i].Content);
                                 let SendTimeCell = document.createElement("td"); Row.appendChild(SendTimeCell);
                                 SendTimeCell.innerHTML = GetRelativeTime(Data[i].SendTime);
                                 let IsReadCell = document.createElement("td"); Row.appendChild(IsReadCell);
@@ -3703,7 +3709,7 @@ int main()
                     });
                     ContentElement.addEventListener("input", () => {
                         ContentElement.classList.remove("is-invalid");
-                        PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentElement.value));
+                        PreviewTab.innerHTML = PurifyHTML(marked.parse(ContentElement.value));
                         RenderMathJax();
                     });
                     TitleElement.addEventListener("input", () => {
@@ -3874,7 +3880,7 @@ int main()
                             }
                         });
                         ContentElement.addEventListener("input", () => {
-                            PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentElement.value));
+                            PreviewTab.innerHTML = PurifyHTML(marked.parse(ContentElement.value));
                             RenderMathJax();
                         });
                         ContentElement.addEventListener("paste", (Event) => {
@@ -4071,7 +4077,7 @@ int main()
                                         let CardBodyHRElement = document.createElement("hr"); CardBodyElement.appendChild(CardBodyHRElement);
 
                                         let ReplyContentElement = document.createElement("div"); CardBodyElement.appendChild(ReplyContentElement);
-                                        ReplyContentElement.innerHTML = DOMPurify.sanitize(marked.parse(Replies[i].Content.replaceAll(/@([a-zA-Z0-9]+)/g, `<b>@</b><span class="ms-1 Usernames">$1</span>`)));
+                                        ReplyContentElement.innerHTML = PurifyHTML(marked.parse(Replies[i].Content.replaceAll(/@([a-zA-Z0-9]+)/g, `<b>@</b><span class="ms-1 Usernames">$1</span>`)));
                                         if (Replies[i].EditTime != null) {
                                             if (Replies[i].EditPerson !== CurrentUsername) {
                                                 ReplyContentElement.innerHTML += `<span class="text-muted" style="font-size: 12px">最后编辑于${GetRelativeTime(Replies[i].EditTime)}</span>`;
@@ -4097,9 +4103,9 @@ int main()
                                         });
                                         let PreviewTab = document.createElement("div"); ContentEditElement.appendChild(PreviewTab);
                                         PreviewTab.className = "form-control col-6";
-                                        PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentEditor.value));
+                                        PreviewTab.innerHTML = PurifyHTML(marked.parse(ContentEditor.value));
                                         ContentEditor.addEventListener("input", () => {
-                                            PreviewTab.innerHTML = DOMPurify.sanitize(marked.parse(ContentEditor.value));
+                                            PreviewTab.innerHTML = PurifyHTML(marked.parse(ContentEditor.value));
                                             RenderMathJax();
                                         });
                                         ContentEditor.addEventListener("paste", (Event) => {
