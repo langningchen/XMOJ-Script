@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         小明的OJ增强脚本
-// @version      0.3.195
+// @version      0.3.196
 // @description  小明的OJ增强脚本
 // @author       @PythonSmall-Q & langningchen
 // @namespace    https://github/PythonSmall-Q
