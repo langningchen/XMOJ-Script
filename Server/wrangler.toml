@@ -5,7 +5,7 @@ compatibility_date = "2023-08-17"
 [[d1_databases]]
 binding = "DB"
 database_name = "xmoj-bbs"
-database_id = "f70729f0-6ac4-4c31-8bf4-0e1ce18d1fd6"
+database_id = "f6607070-7f3b-4a9b-95a2-40ff67283362"
 
 [triggers]
 crons = ["0 0 * * *"]
