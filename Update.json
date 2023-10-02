@@ -725,6 +725,16 @@
                     "Description": "修复因为严格导致的 @ 不显示"
                 }
             ]
+        },
+        "0.3.194": {
+            "UpdateDate": 1696228292398,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 588,
+                    "Description": "修复题目中表格线条缺失"
+                }
+            ]
         }
     }
 }
