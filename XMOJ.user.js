@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         XMOJ
-// @version      0.2.200
+// @version      1.0.201
 // @description  XMOJ增强脚本
 // @author       @PythonSmall-Q
 // @namespace    https://github/langningchen
@@ -30,7 +30,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-const CaptchaSiteKey = "0x4AAAAAAALBT58IhyDViNmv";
+const CaptchaSiteKey = "0x4AAAAAAAI4scL-wknSAXKD";
 const AdminUserList = ["zhuchenrui2", "shanwenxiao", "admin"];
 
 let PurifyHTML = (Input) => {
