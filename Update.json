@@ -11,14 +11,9 @@
             ]
         },
         "1.0.201": {
-            "UpdateDate": 1696254705419,
+            "UpdateDate": 1696255471868,
             "Prerelease": false,
-            "UpdateContents": [
-                {
-                    "PR": 26,
-                    "Description": "重大更新"
-                }
-            ]
+            "UpdateContents": []
         }
     }
 }
