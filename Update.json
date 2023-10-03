@@ -16,7 +16,7 @@
             "UpdateContents": [
                 {
                     "PR": 26,
-                    "Description": "23 feature request names"
+                    "Description": "增加部分账户的名字匹配"
                 }
             ]
         }
