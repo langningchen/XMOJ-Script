@@ -1,4 +1,4 @@
-# 开发转到这里：[链接](https://github.com/XMOJ-Script-dev/XMOJ-Script/)
+# 开发者repo转换，开发转到这里：[链接](https://github.com/XMOJ-Script-dev/XMOJ-Script/)
 ![Release](https://github.com/PythonSmall-Q/XMOJ-Script/actions/workflows/Release.yml/badge.svg)
 ![Prerelease](https://github.com/PythonSmall-Q/XMOJ-Script/actions/workflows/Prerelease.yml/badge.svg)
 ![GitHub](https://img.shields.io/github/license/PythonSmall-Q/XMOJ-Script)
