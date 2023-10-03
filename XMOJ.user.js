@@ -670,7 +670,7 @@ else {
             .then((Response) => {
                 let CurrentVersion = GM_info.script.version;
                 let LatestVersion;
-                for (let i = Object.keys(Response.UpdateHistory).length - 1; i > 0; i--) {
+                for (let i = Object.keys(Response.UpdateHistory).length - 1; i >= 0; i--) {
                     let VersionInfo = Object.keys(Response.UpdateHistory)[i];
                     if (UtilityEnabled("DebugMode") || Response.UpdateHistory[VersionInfo].Prerelease == false) {
                         LatestVersion = VersionInfo;
