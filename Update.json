@@ -13,7 +13,12 @@
         "1.0.201": {
             "UpdateDate": 1696255471868,
             "Prerelease": false,
-            "UpdateContents": []
+            "UpdateContents": [
+                {
+                    "PR": 13,
+                    "Description": ""
+                }
+            ]
         }
     }
 }
