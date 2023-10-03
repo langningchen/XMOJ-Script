@@ -11,12 +11,12 @@
             ]
         },
         "1.0.201": {
-            "UpdateDate": 1696315302956,
+            "UpdateDate": 1696315453970,
             "Prerelease": true,
             "UpdateContents": [
                 {
                     "PR": 26,
-                    "Description": "增加部分账户的名字匹配"
+                    "Description": "增加名字"
                 }
             ]
         }
