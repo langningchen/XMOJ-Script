@@ -331,7 +331,7 @@ GM_registerMenuCommand("重置数据", () => {
 });
 
 let SearchParams = new URLSearchParams(location.search);
-let ServerURL = (UtilityEnabled("DebugMode") ? "https://PythonSmall-Q.github.io/XMOJ-Script" : "https://www.seanoj.edu.eu.org")
+let ServerURL = (UtilityEnabled("DebugMode") ? "https://xmoj-script-dev.github.io/XMOJ-Script" : "https://www.seanoj.edu.eu.org")
 let CurrentUsername = document.querySelector("#profile").innerText;
 CurrentUsername = CurrentUsername.replaceAll(/[^a-zA-Z0-9]/g, "");
 let IsAdmin = AdminUserList.indexOf(CurrentUsername) !== -1;
@@ -734,13 +734,13 @@ else {
                         let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                         UpdateDataCardListItem.className = "list-group-item";
                         UpdateDataCardListItem.innerHTML =
-                            "(<a href=\"https://github.com/PythonSmall-Q/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
+                            "(<a href=\"https://github.com/XMOJ-Script-dev/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
                             "#" + Data.UpdateContents[j].PR + "</a>) " +
                             Data.UpdateContents[j].Description;
                     }
                     let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                     UpdateDataCardLink.className = "card-link";
-                    UpdateDataCardLink.href = "https://github.com/PythonSmall-Q/XMOJ-Script/releases/tag/" + Version;
+                    UpdateDataCardLink.href = "https://github.com/XMOJ-Script-dev/XMOJ-Script/releases/tag/" + Version;
                     UpdateDataCardLink.target = "_blank";
                     UpdateDataCardLink.innerText = "查看该版本";
                     new bootstrap.Modal(document.getElementById("UpdateModal")).show();
@@ -1028,7 +1028,7 @@ else {
                 let FeedbackCardLink = document.createElement("a");
                 FeedbackCardLink.className = "card-link";
                 FeedbackCardLink.innerText = "GitHub";
-                FeedbackCardLink.href = "https://github.com/PythonSmall-Q/XMOJ-Script";
+                FeedbackCardLink.href = "https://github.com/XMOJ-Script-dev/XMOJ-Script";
                 FeedbackCardBody.appendChild(FeedbackCardLink);
                 FeedbackCard.appendChild(FeedbackCardBody);
                 Container.appendChild(FeedbackCard);
@@ -1934,7 +1934,7 @@ else {
                                     }
                                     if (RowData.QuickSubmitCount >= 2) {
                                         let QuickSubmitBadge = document.createElement("span"); UsernameCell.appendChild(QuickSubmitBadge);
-                                        QuickSubmitBadge.innerText = "疑似抄当年代码";
+                                        QuickSubmitBadge.innerText = "疑似提交当年代码";
                                         QuickSubmitBadge.className = "badge text-bg-warning ms-2";
                                     }
 
@@ -1950,7 +1950,8 @@ else {
                                         "xiaoguanxun": "肖贯勋", "xiaojiasheng": "肖嘉盛", "xiaruicheng": "夏瑞成", "xiaweimin": "夏蔚民", "xiaxuran": "夏诩然", "xiebingxiu": "谢秉修", "xiebingxiu": "谢秉修", "xieliren": "谢立仁", "xinyihan": "辛轶涵", "xuconghan": "徐从瀚", "xukan": "徐衎",
                                         "xuweiyi": "徐维易", "yanghaochen": "杨皓宸", "yezijiong": "叶梓炅", "youzhouhang": "尤周杭", "yuanruiqing": "袁瑞擎", "yutingjun": "于庭郡", "zhangchenming": "张宸铭", "zhangqiuze": "张秋泽", "zhangshuxuan": "张澍萱", "zhangwenda": "张闻达", "zhangyifu": "张亦夫",
                                         "zhangyouheng": "张佑恒", "zhaochenshen": "赵晨神", "zhaochenwei": "赵晨伟", "zhengyinan": "郑逸楠", "zhonghongyi": "钟弘毅", "zhoujunyu": "周峻瑜", "zhouziyi": "周子逸", "zhouziyou": "周子游", "zhuchenrui2": "朱晨瑞", "zhuruichen": "朱睿宸", "zhuxule": "朱徐乐",
-                                        "zhuyikun": "朱奕坤", "leiwenda": "雷文达", "wangyuancheng": "王源成", "zhuyiyang": "朱奕阳", "hanjialin": "韩佳霖"
+                                        "zhuyikun": "朱奕坤", "leiwenda": "雷文达", "wangyuancheng": "王源成", "zhuyiyang": "朱奕阳", "hanjialin": "韩佳霖", "zhaozichen": "赵紫辰", "zhuaiwei": "朱艾薇", "linlitong": "林立桐", "xuyan":"徐衍", "fenghaochen": "冯皓宸" ,"lutianlang": "陆天朗", "tangyuhan": "唐钰涵",
+                                        "jiangbowen": "姜博文", "shangguanbocheng": "上官伯呈" , "wangchengqi": "王呈齐", "yanpeitong": "颜培桐", "gongcheng": "龚橙", "weijiefu": "韦杰夫", "": ""
                                     };
                                     NameCell.innerText = (Names[RowData.Username] == undefined ? "" : Names[RowData.Username]);
 
@@ -2298,13 +2299,13 @@ else {
                                 let UpdateDataCardListItem = document.createElement("li"); UpdateDataCardList.appendChild(UpdateDataCardListItem);
                                 UpdateDataCardListItem.className = "list-group-item";
                                 UpdateDataCardListItem.innerHTML =
-                                    "(<a href=\"https://github.com/PythonSmall-Q/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
+                                    "(<a href=\"https://github.com/XMOJ-Script-dev/XMOJ-Script/pull/" + Data.UpdateContents[j].PR + "\" target=\"_blank\">" +
                                     "#" + Data.UpdateContents[j].PR + "</a>) " +
                                     Data.UpdateContents[j].Description;
                             }
                             let UpdateDataCardLink = document.createElement("a"); UpdateDataCardBody.appendChild(UpdateDataCardLink);
                             UpdateDataCardLink.className = "card-link";
-                            UpdateDataCardLink.href = "https://github.com/PythonSmall-Q/XMOJ-Script/releases/tag/" + Version;
+                            UpdateDataCardLink.href = "https://github.com/XMOJ-Script-dev/XMOJ-Script/releases/tag/" + Version;
                             UpdateDataCardLink.target = "_blank";
                             UpdateDataCardLink.innerText = "查看该版本";
                         }
