@@ -11,9 +11,14 @@
             ]
         },
         "1.0.201": {
-            "UpdateDate": 1696255471868,
-            "Prerelease": false,
-            "UpdateContents": []
+            "UpdateDate": 1696315453970,
+            "Prerelease": true,
+            "UpdateContents": [
+                {
+                    "PR": 26,
+                    "Description": "增加名字"
+                }
+            ]
         }
     }
 }
