@@ -19,6 +19,16 @@
                     "Description": "增加名字"
                 }
             ]
+        },
+        "1.0.202": {
+            "UpdateDate": 1696317251678,
+            "Prerelease": false,
+            "UpdateContents": [
+                {
+                    "PR": 26,
+                    "Description": "增加名字"
+                }
+            ]
         }
     }
 }
