@@ -1,3 +1,5 @@
+**此项目已经停止开发，不再提供任何更新和维护。后续开发工作将在 [XMOJ-Script](https://github.com/PythonSmall-Q/XMOJ-Script) 项目中进行。**
+
 ![wakatime](https://wakatime.com/badge/github/langningchen/XMOJ-Script.svg)
 ![Release](https://github.com/langningchen/XMOJ-Script/actions/workflows/Release.yml/badge.svg)
 ![Prerelease](https://github.com/langningchen/XMOJ-Script/actions/workflows/Prerelease.yml/badge.svg)
